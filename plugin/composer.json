@@ -1,0 +1,46 @@
+{
+  "name": "tud/verdatasdsh",
+  "description": "Short description",
+  "type": "project",
+  "keywords": [
+    "ILIAS",
+    "Plugin"
+  ],
+  "authors": [
+    {
+      "name": "tud",
+      "email": "tommy.kubica@tu-dresden.de",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "tommy.kubica@tu-dresden.de"
+  },
+  "require": {
+    "php": ">=7.2",
+    "srag/activerecordconfig": ">=0.1.0",
+    "srag/custominputguis": ">=0.1.0",
+    "srag/dic": ">=0.1.0",
+    "srag/librariesnamespacechanger": ">=0.1.0",
+    "srag/removeplugindataconfirm": ">=0.1.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "tud\\Plugins\\VerDatAsDsh\\": "src/"
+    },
+    "classmap": [
+      "classes/",
+      "src/Config/class.ConfigCtrl.php"
+    ]
+  },
+  "config": {
+    "classmap-authoritative": true,
+    "optimize-autoloader": true,
+    "sort-packages": true
+  },
+  "scripts": {
+    "pre-autoload-dump": [
+      "srag\\LibrariesNamespaceChanger\\LibrariesNamespaceChanger::rewriteLibrariesNamespaces"
+    ]
+  }
+}

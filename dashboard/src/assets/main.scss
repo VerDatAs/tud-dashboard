@@ -1,0 +1,53 @@
+@import 'diagram-js/assets/diagram-js.css';
+@import 'vue-multiselect/dist/vue3-multiselect.css';
+@import './utilities.css';
+
+/*
+ * Do not visually select labels
+ * Selector retrieved from https://stackoverflow.com/a/59576781
+ */
+[data-element-id$='label'] {
+  .djs-hit-all {
+    cursor: default !important;
+  }
+  .djs-outline {
+    stroke: none !important;
+  }
+}
+
+[data-element-id^='SequenceFlow'] {
+  .djs-hit {
+    cursor: default !important;
+  }
+  .djs-outline {
+    stroke: none !important;
+  }
+}
+
+.viewOnly .djs-hit-all {
+  cursor: pointer !important;
+}
+
+/* Highlighting for viewer */
+.djs-shape.highlight .djs-visual .icon-bg {
+  fill: #fcd26f !important;
+}
+
+/* Multiselect styles */
+.multiselect {
+  .multiselect__tags {
+    border: 1px solid #ccc;
+    border-radius: 0;
+  }
+  .multiselect__content-wrapper {
+    border-top: 1px solid #ccc;
+  }
+  .multiselect__tag,
+  .multiselect__option--highlight,
+  .multiselect__option--highlight:after {
+    background: #4c6586;
+  }
+  .multiselect__tag-icon:after {
+    color: #fff;
+  }
+}
