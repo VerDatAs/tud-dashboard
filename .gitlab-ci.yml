@@ -1,0 +1,13 @@
+include:
+  - project: 'verdatas/verdatas-pipeline-helpers'
+    ref: 'master'
+    file: 'docker.yml'
+
+stages:
+  - run
+  - docker
+
+test:
+  stage: run
+  script:
+    - echo "Test"
