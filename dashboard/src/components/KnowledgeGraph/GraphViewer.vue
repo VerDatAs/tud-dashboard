@@ -317,6 +317,10 @@ export default {
               const chapterShape = elementFactory.createShape(chapterAttributes)
               canvas.addShape(chapterShape)
 
+              // Set title of the chapter
+              const chapterTitle = chapter.title ?? 'Chapter'
+              modeling.updateLabel(chapterShape, chapterTitle)
+
               // Add it to the modeling object of the knowledgeGraphTopic
               const existingChapters = moduleShape.businessObject?.chapters ?? []
               existingChapters.push(chapterShape.businessObject)
@@ -328,7 +332,6 @@ export default {
 
               // Iterate contentPages and its interactive tasks
               const contentPages = []
-              const chapterTaskShapes = []
               let taskIndex = 0
               chapter['pages']?.forEach((page) => {
                 let taskShapesBusinessObjects = []
@@ -352,12 +355,14 @@ export default {
                     const taskDimensions = getDefaultSize(taskType.type)
                     const taskAttributes = { ...taskPosition, ...taskDimensions, ...taskType }
                     const taskShape = elementFactory.createShape(taskAttributes)
-                    taskShape.businessObject.name = interactiveTask.title ?? 'Task'
                     taskShape.businessObject.objectId = interactiveTask['object_id']
                     canvas.addShape(taskShape)
+                    // set title of the task and connect it to the chapter shape
+                    const taskTitle = interactiveTask.title ?? 'Task'
+                    modeling.updateLabel(taskShape, taskTitle)
+                    modeling.connect(chapterShape, taskShape)
                     taskIndex += 1
                     taskShapesBusinessObjects.push(taskShape.businessObject)
-                    chapterTaskShapes.push(taskShape)
                   })
                   pageProperties.interactiveTasks = taskShapesBusinessObjects
                 }
@@ -367,18 +372,7 @@ export default {
               })
               chapterProperties['contentPages'] = contentPages
 
-              // Finally, set titles for the tasks and connect them to the chapter shapes
-              chapterTaskShapes?.forEach((taskShape) => {
-                const taskTitle = taskShape.businessObject.name
-                modeling.updateLabel(taskShape, taskTitle)
-                modeling.connect(chapterShape, taskShape)
-              })
-
               modeling.updateProperties(chapterShape, chapterProperties)
-
-              // Set title of the chapter
-              const chapterTitle = chapter.title ?? 'Chapter'
-              modeling.updateLabel(chapterShape, chapterTitle)
 
               // Draw connection to the module
               modeling.connect(moduleShape, chapterShape)
