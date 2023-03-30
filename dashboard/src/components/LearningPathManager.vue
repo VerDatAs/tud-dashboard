@@ -32,22 +32,22 @@ export default {
       })
       return contentPages
     },
-    currentTopic() {
+    currentKnowledgeGraph() {
       this.refreshKey
-      return this.diagram?.get('elementRegistry')?.find((element) => element.type === 'verDatAs:Topic')
+      return this.diagram?.get('canvas')?.getRootElement()
     },
     learningPaths() {
       this.refreshKey
       let learningPaths = []
-      if (this.currentTopic?.businessObject?.learningPaths) {
-        learningPaths = this.currentTopic.businessObject.learningPaths
+      if (this.currentKnowledgeGraph?.businessObject?.learningPaths) {
+        learningPaths = this.currentKnowledgeGraph.businessObject.learningPaths
       }
       return learningPaths
     }
   },
   methods: {
     addLearningPath() {
-      const learningPaths = this.currentTopic?.businessObject?.learningPaths ?? []
+      const learningPaths = this.currentKnowledgeGraph?.businessObject?.learningPaths ?? []
       // Empty "verDatAs:LearningPathElement"
       const learningPathElementObject = this.diagram.get('moddle').create('verDatAs:LearningPathElement')
       const learningPathObject = this.diagram.get('moddle').create('verDatAs:LearningPath', {
@@ -91,7 +91,7 @@ export default {
       this.updateLearningPaths(learningPaths)
     },
     updateLearningPaths(learningPaths) {
-      this.diagram.get('modeling').updateProperties(this.currentTopic, { learningPaths })
+      this.diagram.get('modeling').updateProperties(this.currentKnowledgeGraph, { learningPaths })
       this.refreshKey++
     },
     saveXML() {

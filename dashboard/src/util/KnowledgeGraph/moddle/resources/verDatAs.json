@@ -57,6 +57,11 @@
           "name": "graphElements",
           "isMany": true,
           "type": "GraphElement"
+        },
+        {
+          "name": "learningPaths",
+          "isMany": true,
+          "type": "LearningPath"
         }
       ]
     },
@@ -126,7 +131,6 @@
     },
     {
       "name": "LearningPath",
-      "superClass": ["GraphElement"],
       "properties": [
         {
           "name": "title",
@@ -168,11 +172,6 @@
           "name": "modules",
           "isMany": true,
           "type": "Module"
-        },
-        {
-          "name": "learningPaths",
-          "isMany": true,
-          "type": "LearningPath"
         }
       ]
     },
