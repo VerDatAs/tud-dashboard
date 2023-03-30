@@ -1,6 +1,6 @@
-# verdatas-dashboard-vue
+# dashboard
 
-This project contains the template used within the `VerDatAsDsh`-plugin.
+This folder contains the template used within the `plugin`.
 
 ## Project Setup
 
@@ -38,6 +38,12 @@ Format the code using Prettier:
 
 ```sh
 npm run format
+```
+
+For developing locally, you can build the project and move the specific folders directly into your ilias directory, in which they are loaded in the volume (using the `docker-compose-plugin-dev.yml` setup of ilias). In case, the `VerDatAsDsh`-folder does not yet exist in the ilias `Customizing`-folder, adjust the `local_development.sh` script to your needs.
+
+```sh
+sh local_development.sh
 ```
 
 ## Information on the metamodel
