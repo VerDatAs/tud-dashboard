@@ -4,10 +4,4 @@ include:
     file: 'docker.yml'
 
 stages:
-  - run
   - docker
-
-test:
-  stage: run
-  script:
-    - echo "Test"
