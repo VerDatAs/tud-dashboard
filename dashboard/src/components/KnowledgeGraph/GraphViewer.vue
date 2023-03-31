@@ -244,7 +244,7 @@ export default {
             const knowledgeGraphTests = []
             tests?.forEach((test) => {
               const learningPathElementObject = this.diagram.get('moddle').create('verDatAs:Test', {
-                objectId: test.objectId ?? test['ref_id']
+                objectId: test['object_id'] || test['ref_id']
               })
               knowledgeGraphTests.push(learningPathElementObject)
             })

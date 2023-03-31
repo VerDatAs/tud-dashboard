@@ -391,6 +391,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                             }
                         }
                         else if ($subNode['type'] === 'tst') {
+                            $subNode['object_id'] = $this->getObjectPermaLink('tst', $subNode['ref_id'], $courseId);
                             $tests[] = $subNode;
                         }
                         else if ($subNode['type'] === 'cmix') {
@@ -592,6 +593,9 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                 // TODO: Dirty fix for setting the URL to the learning module
                 $objectType = 'pg';
                 $reference = $pageId . '_' . $referenceId;
+                break;
+            case 'tst':
+                $reference = $referenceId;
                 break;
             default:
                 $reference = $referenceId;
