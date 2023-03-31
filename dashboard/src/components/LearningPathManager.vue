@@ -16,11 +16,12 @@ export default {
       const chapters = this.diagram
         ?.get('elementRegistry')
         ?.filter((element) => selectableElements.includes(element.type))
-      let contentPages = []
+      let selectableOptions = []
+      // Add contentPages to the selectable options
       chapters?.forEach((chapter) => {
         if (chapter?.businessObject?.contentPages?.length > 0) {
           // TODO: ContentPages need a name, too
-          contentPages = contentPages.concat(
+          selectableOptions = selectableOptions.concat(
             chapter.businessObject.contentPages.map((element) => {
               return {
                 text: element.objectId + ' (Chapter: ' + chapter.businessObject.name + ')',
@@ -30,7 +31,14 @@ export default {
           )
         }
       })
-      return contentPages
+      // Add tests to the selectable options
+      this.currentKnowledgeGraph?.businessObject?.tests?.forEach((test, testIndex) => {
+        selectableOptions = selectableOptions.concat({
+          text: test.objectId + ' (Test: ' + (testIndex + 1) + ')',
+          value: test.objectId
+        })
+      })
+      return selectableOptions
     },
     currentKnowledgeGraph() {
       this.refreshKey
