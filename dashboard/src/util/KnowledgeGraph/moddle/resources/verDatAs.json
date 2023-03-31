@@ -62,6 +62,11 @@
           "name": "learningPaths",
           "isMany": true,
           "type": "LearningPath"
+        },
+        {
+          "name": "tests",
+          "isMany": true,
+          "type": "Test"
         }
       ]
     },
@@ -160,6 +165,26 @@
       ]
     },
     {
+      "name": "Test",
+      "properties": [
+        {
+          "name": "objectId",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "ReferencedTest",
+      "properties": [
+        {
+          "name": "elementId",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
       "name": "Topic",
       "superClass": ["GraphElement", "GraphNodeElement"],
       "properties": [
@@ -172,6 +197,11 @@
           "name": "modules",
           "isMany": true,
           "type": "Module"
+        },
+        {
+          "name": "finalTests",
+          "isMany": true,
+          "type": "ReferencedTest"
         }
       ]
     },
@@ -198,6 +228,11 @@
           "name": "chapters",
           "isMany": true,
           "type": "Chapter"
+        },
+        {
+          "name": "referencedTests",
+          "isMany": true,
+          "type": "ReferencedTest"
         }
       ]
     },

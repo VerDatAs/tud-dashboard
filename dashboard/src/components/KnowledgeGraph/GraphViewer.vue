@@ -237,6 +237,20 @@ export default {
           const parentElement = elementRegistry.find((element) => element.type === 'verDatAs:KnowledgeGraph')
           const rootElement = canvas.getRootElement()
 
+          // Add tests to KnowledgeGraph
+          let tests = this.courseData['tests']
+          if (tests?.length > 0) {
+            tests = tests.filter((m) => m.offline === '0')
+            const knowledgeGraphTests = []
+            tests?.forEach((test) => {
+              const learningPathElementObject = this.diagram.get('moddle').create('verDatAs:Test', {
+                objectId: test.objectId ?? test['ref_id']
+              })
+              knowledgeGraphTests.push(learningPathElementObject)
+            })
+            this.diagram.get('modeling').updateProperties(rootElement, { tests: knowledgeGraphTests })
+          }
+
           // General idea: Draw first and center afterwards
           const topicDimensions = getDefaultSize(knowledgeGraphTopic)
           const topicWidth = topicDimensions.width
