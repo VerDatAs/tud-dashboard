@@ -385,6 +385,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                                 // TODO: 'content' is not yet used
                                 // $subNode['content'] = $lmContent;
                                 $subNode['chapters'] = $lmChapters;
+                                $modules[] = $subNode;
                             } catch (Exception $e) {
                                 ChromePhp::log('error', $e);
                             }
@@ -395,7 +396,6 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                         else if ($subNode['type'] === 'cmix') {
                             ChromePhp::log('Type cmix detected, but not yet taken into account.');
                         }
-                        $modules[] = $subNode;
                     }
                     // TODO: When reworking, this might be moved a few lines down
                     $courseNode['modules'] = $modules;
