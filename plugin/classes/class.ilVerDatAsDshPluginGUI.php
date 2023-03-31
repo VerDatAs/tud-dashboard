@@ -137,6 +137,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
             $courseNode = (object) [];
             $modules = [];
             $interactiveTasks = [];
+            $tests = [];
             // Check, whether the current user should be able to edit the knowledge_structure or just view it
             $hasReadAccess = $this->dic->access()->checkAccessOfUser(
                 $this->dic->user()->getId(),
@@ -259,7 +260,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                 ChromePhp::log('Course Node', $courseNode);
                 $courseNode['object_id'] = $this->getObjectPermaLink('crs', $courseId, $courseNode['obj_id']);
                 // Currently supported module types by VerDatAs
-                $moduleTypesArray = array('lm', 'cmix');
+                $moduleTypesArray = array('lm', 'cmix', 'tst');
                 // Sort learning modules by their titles
                 $subNodes = $tree->getSubTree($courseNode);
                 usort($subNodes, function($a, $b) {
@@ -388,13 +389,17 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                                 ChromePhp::log('error', $e);
                             }
                         }
-                        $modules[] = $subNode;
-                    } else {
-                        if ($subNode['type'] === 'tst') {
-                            $interactiveTasks[] = $subNode;
+                        else if ($subNode['type'] === 'tst') {
+                            $tests[] = $subNode;
                         }
+                        else if ($subNode['type'] === 'cmix') {
+                            ChromePhp::log('Type cmix detected, but not yet taken into account.');
+                        }
+                        $modules[] = $subNode;
                     }
+                    // TODO: When reworking, this might be moved a few lines down
                     $courseNode['modules'] = $modules;
+                    $courseNode['tests'] = $tests;
                 }
 
 //                ChromePhp::log($modules);
