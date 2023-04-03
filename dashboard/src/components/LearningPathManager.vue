@@ -24,7 +24,7 @@ export default {
           selectableOptions = selectableOptions.concat(
             chapter.businessObject.contentPages.map((element) => {
               return {
-                text: element.objectId + ' (Chapter: ' + chapter.businessObject.name + ')',
+                text: '(Chapter: ' + chapter.businessObject.name + ') / ' + (element.title || element.objectId),
                 value: element.objectId
               }
             })

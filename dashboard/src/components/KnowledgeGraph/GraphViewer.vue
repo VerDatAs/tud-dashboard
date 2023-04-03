@@ -348,10 +348,11 @@ export default {
               // Iterate contentPages and its interactive tasks
               const contentPages = []
               let taskIndex = 0
-              chapter['pages']?.forEach((page) => {
+              chapter['pages']?.forEach((page, pageIndex) => {
                 let taskShapesBusinessObjects = []
                 const pageProperties = {
-                  objectId: page['object_id']
+                  objectId: page['object_id'],
+                  title: page.title || 'ContentPage ' + (pageIndex + 1)
                 }
                 // Add interactiveTasks here
                 if (page?.interactiveTasks?.length > 0) {

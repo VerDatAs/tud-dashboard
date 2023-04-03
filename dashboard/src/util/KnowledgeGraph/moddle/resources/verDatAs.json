@@ -247,11 +247,6 @@
       "superClass": ["GraphElement", "GraphNodeElement", "PriorKnowledgeElement"],
       "properties": [
         {
-          "name": "chapters",
-          "isMany": true,
-          "type": "Chapter"
-        },
-        {
           "name": "contentPages",
           "isMany": true,
           "type": "ContentPage"
@@ -263,6 +258,11 @@
       "properties": [
         {
           "name": "objectId",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "title",
           "isAttr": true,
           "type": "String"
         },

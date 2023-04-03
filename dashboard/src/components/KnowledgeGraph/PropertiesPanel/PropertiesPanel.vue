@@ -237,6 +237,18 @@ export default {
                   </VueMultiselect>
                 </div>
               </template>
+              <template v-if="parameter.type === 'verDatAs:ContentPage'">
+                <div class="col-xs-12">
+                  <label :for="parameter.name" class="control-label">{{ parameter.name }}</label>
+                </div>
+                <div class="col-xs-12">
+                  <ul class="fs-5 mt-2 ps-5" v-if="elementSelected && elementSelected.businessObject && elementSelected.businessObject[parameter.name] && elementSelected.businessObject[parameter.name].length > 0">
+                    <li v-for="(contentPage, pageIndex) in elementSelected.businessObject[parameter.name]" :key="'contentPage'+pageIndex">
+                      {{ contentPage.title ? contentPage.title : 'ContentPage ' + (pageIndex + 1) }}
+                    </li>
+                  </ul>
+                </div>
+              </template>
             </template>
             <div class="col-xs-12" v-if="!basicTypes.includes(parameter.type) && !customTypes.includes(parameter.type)">
               <p class="alert alert-info py-3 mb-2 fs-5">The parameter {{ parameter.name }} will be supported soon.</p>
@@ -314,6 +326,8 @@ export default {
   border: 1px solid #ccc;
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 #propertiesPanel h2 {
@@ -329,6 +343,7 @@ export default {
 
 .form-horizontal {
   background: none;
+  margin-bottom: 0;
 }
 
 .form-horizontal .control-label {
