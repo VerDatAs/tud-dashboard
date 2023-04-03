@@ -14,7 +14,8 @@ export default {
     customTypes,
     parameters: [],
     parametrizedElement: null,
-    priorKnowledgeValue: null
+    priorKnowledgeValue: null,
+    referencedTestValue: null
   }),
   props: {
     diagram: Object,
@@ -35,20 +36,29 @@ export default {
           this.parametrizedElement?.businessObject?.priorKnowledgeElements?.map(
             (priorKnowledgeElement) => priorKnowledgeElement?.elementId
           ) ?? []
-        this.priorKnowledgeValue = this.allElements.filter((element) =>
+        this.priorKnowledgeValue = this.allGraphElements.filter((element) =>
           priorKnowledgeElements.includes(element.businessObject.objectId)
         )
+        // load referencedTests
+        const referencedTestElements =
+          this.parametrizedElement?.businessObject?.referencedTests?.map(
+            (referencedTest) => referencedTest?.elementId
+          ) ?? []
+        this.referencedTestValue = this.allTests.filter((element) => referencedTestElements.includes(element.objectId))
       }
     }
   },
   computed: {
-    allElements() {
+    allGraphElements() {
       return (
         this.diagram
           ?.get('elementRegistry')
           ?.getAll()
           ?.filter((element) => !nonSelectableElements.includes(element.type)) ?? []
       )
+    },
+    allTests() {
+      return this.diagram?.get('canvas')?.getRootElement()?.businessObject?.tests ?? []
     }
   },
   methods: {
@@ -115,10 +125,17 @@ export default {
     },
     // Custom label for multiselect
     customLabel(element) {
-      return element.businessObject.name ? element.businessObject.name : element.businessObject.objectId
+      // This option is used for priorKnowledge, as the elements are displayed in the diagram
+      if (element.businessObject) {
+        return element.businessObject.name ? element.businessObject.name : element.businessObject.objectId
+      }
+      // This option is used for referencedTests, which do not have a visual part in the diagram
+      else {
+        return element.name ? element.name : element.objectId
+      }
     },
-    // Update the multiselect value
-    updateSelected(selectedElements) {
+    // Update the priorKnowledge multiselect value
+    updateSelectedPriorKnowledge(selectedElements, parameterName) {
       this.priorKnowledgeValue = selectedElements
       // TODO: Updating only works with businessObjects, e.g.,
       // const element = this.diagram.get('moddle').create('verDatAs:InteractiveTask')
@@ -131,7 +148,20 @@ export default {
         })
         priorKnowledgeElements.push(element)
       })
-      this.changeInput('priorKnowledgeElements', priorKnowledgeElements) // this.priorKnowledgeValue.map((elem) => elem.businessObject))
+      this.changeInput(parameterName, priorKnowledgeElements)
+    },
+    // Update the referenced test multiselect value
+    updateSelectedReferencedTest(selectedElements, parameterName) {
+      this.referencedTestValue = selectedElements
+      const referencedTestElements = []
+      this.referencedTestValue.forEach((elem) => {
+        const element = this.diagram.get('moddle').create('verDatAs:ReferencedTest', {
+          // Note: In this case, no businessObject exists
+          elementId: elem.objectId
+        })
+        referencedTestElements.push(element)
+      })
+      this.changeInput(parameterName, referencedTestElements)
     }
   }
 }
@@ -182,18 +212,37 @@ export default {
                     :id="parameter.name"
                     :name="parameter.name"
                     :multiple="true"
-                    :options="allElements"
+                    :options="allGraphElements"
                     :custom-label="customLabel"
                     :show-labels="false"
-                    @update:model-value="updateSelected"
+                    @update:model-value="updateSelectedPriorKnowledge($event, parameter.name)"
                   >
                   </VueMultiselect>
                 </div>
               </template>
-              <template v-if="parameter.type !== 'verDatAs:PriorKnowledge'">
-                <p class="alert alert-info py-3 mb-2 fs-5">
-                  The parameter {{ parameter.name }} will be supported soon.
-                </p>
+              <template v-if="parameter.type === 'verDatAs:ReferencedTest'">
+                <div class="col-xs-12">
+                  <label :for="parameter.name" class="control-label">{{
+                    elementSelected.type === 'verDatAs:Topic' ? 'finalTests' : parameter.name
+                  }}</label>
+                </div>
+                <div class="col-xs-12">
+                  <!-- Options retrieved from https://vue-multiselect.js.org/#sub-custom-option-template -->
+                  <VueMultiselect
+                    label="objectId"
+                    track-by="objectId"
+                    placeholder="Select referenced test"
+                    :model-value="referencedTestValue"
+                    :id="parameter.name"
+                    :name="parameter.name"
+                    :multiple="true"
+                    :options="allTests"
+                    :custom-label="customLabel"
+                    :show-labels="false"
+                    @update:model-value="updateSelectedReferencedTest($event, parameter.name)"
+                  >
+                  </VueMultiselect>
+                </div>
               </template>
             </template>
             <div class="col-xs-12" v-if="!basicTypes.includes(parameter.type) && !customTypes.includes(parameter.type)">

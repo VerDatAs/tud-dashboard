@@ -175,6 +175,17 @@
       ]
     },
     {
+      "name": "ReferencedTestElement",
+      "isAbstract": true,
+      "properties": [
+        {
+          "name": "referencedTests",
+          "isMany": true,
+          "type": "ReferencedTest"
+        }
+      ]
+    },
+    {
       "name": "ReferencedTest",
       "properties": [
         {
@@ -186,7 +197,7 @@
     },
     {
       "name": "Topic",
-      "superClass": ["GraphElement", "GraphNodeElement"],
+      "superClass": ["GraphElement", "GraphNodeElement", "ReferencedTestElement"],
       "properties": [
         {
           "name": "selfRatingElements",
@@ -197,17 +208,12 @@
           "name": "modules",
           "isMany": true,
           "type": "Module"
-        },
-        {
-          "name": "finalTests",
-          "isMany": true,
-          "type": "ReferencedTest"
         }
       ]
     },
     {
       "name": "Module",
-      "superClass": ["GraphElement", "GraphNodeElement", "PriorKnowledgeElement"],
+      "superClass": ["GraphElement", "GraphNodeElement", "PriorKnowledgeElement", "ReferencedTestElement"],
       "properties": [
         {
           "name": "level",
@@ -228,11 +234,6 @@
           "name": "chapters",
           "isMany": true,
           "type": "Chapter"
-        },
-        {
-          "name": "referencedTests",
-          "isMany": true,
-          "type": "ReferencedTest"
         }
       ]
     },

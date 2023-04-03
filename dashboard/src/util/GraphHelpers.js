@@ -9,7 +9,7 @@ const chapterType = 'verDatAs:Chapter'
 const interactiveTaskType = 'verDatAs:InteractiveTask'
 
 export const basicTypes = ['String', 'Integer']
-export const customTypes = ['verDatAs:PriorKnowledge']
+export const customTypes = ['verDatAs:PriorKnowledge', 'verDatAs:ReferencedTest']
 export const excludedParameters = ['id', 'name', 'objectId']
 export const excludedTypeNames = [
   'Definitions',
