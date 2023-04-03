@@ -32,9 +32,10 @@ export default {
         }
       })
       // Add tests to the selectable options
-      this.currentKnowledgeGraph?.businessObject?.tests?.forEach((test, testIndex) => {
+      // TODO: We might want to iterate the topic and the modules to find "assigned" tests and display this relationship as well
+      this.currentKnowledgeGraph?.businessObject?.tests?.forEach((test) => {
         selectableOptions = selectableOptions.concat({
-          text: test.objectId + ' (Test: ' + (testIndex + 1) + ')',
+          text: test.title || test.objectId,
           value: test.objectId
         })
       })
@@ -197,7 +198,7 @@ export default {
                   class="form-control my-2"
                   @change="setLearningPathElementId(learningPathIndex, learningPathElementIndex, $event.target.value)"
                 >
-                  <option disabled value="">Please select an element</option>
+                  <option value="">-- Select an element --</option>
                   <option
                     v-for="(option, optionKey) in elementOptions"
                     :selected="learningPathElement.objectId"

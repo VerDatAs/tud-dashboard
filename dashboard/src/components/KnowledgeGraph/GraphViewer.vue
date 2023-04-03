@@ -242,9 +242,10 @@ export default {
           if (tests?.length > 0) {
             tests = tests.filter((m) => m.offline === '0')
             const knowledgeGraphTests = []
-            tests?.forEach((test) => {
+            tests?.forEach((test, testIndex) => {
               const learningPathElementObject = this.diagram.get('moddle').create('verDatAs:Test', {
-                objectId: test['object_id'] || test['ref_id']
+                objectId: test['object_id'] || test['ref_id'],
+                title: test.title || 'Test ' + (testIndex + 1)
               })
               knowledgeGraphTests.push(learningPathElementObject)
             })

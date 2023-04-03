@@ -125,14 +125,8 @@ export default {
     },
     // Custom label for multiselect
     customLabel(element) {
-      // This option is used for priorKnowledge, as the elements are displayed in the diagram
-      if (element.businessObject) {
-        return element.businessObject.name ? element.businessObject.name : element.businessObject.objectId
-      }
-      // This option is used for referencedTests, which do not have a visual part in the diagram
-      else {
-        return element.name ? element.name : element.objectId
-      }
+      // This option is used for priorKnowledge, as the elements are displayed in the diagram (.businessObject)
+      return element.businessObject.name ? element.businessObject.name : element.businessObject.objectId
     },
     // Update the priorKnowledge multiselect value
     updateSelectedPriorKnowledge(selectedElements, parameterName) {
@@ -228,8 +222,9 @@ export default {
                 </div>
                 <div class="col-xs-12">
                   <!-- Options retrieved from https://vue-multiselect.js.org/#sub-custom-option-template -->
+                  <!-- As a businessObject does not exist, a customLabel is not necessary -->
                   <VueMultiselect
-                    label="objectId"
+                    label="title"
                     track-by="objectId"
                     placeholder="Select referenced test"
                     :model-value="referencedTestValue"
@@ -237,8 +232,6 @@ export default {
                     :name="parameter.name"
                     :multiple="true"
                     :options="allTests"
-                    :custom-label="customLabel"
-                    :show-labels="false"
                     @update:model-value="updateSelectedReferencedTest($event, parameter.name)"
                   >
                   </VueMultiselect>

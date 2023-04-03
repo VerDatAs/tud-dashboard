@@ -171,6 +171,11 @@
           "name": "objectId",
           "isAttr": true,
           "type": "String"
+        },
+        {
+          "name": "title",
+          "isAttr": true,
+          "type": "String"
         }
       ]
     },
