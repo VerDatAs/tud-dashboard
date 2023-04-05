@@ -137,6 +137,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
             $courseNode = (object) [];
             $modules = [];
             $interactiveTasks = [];
+            $tests = [];
             // Check, whether the current user should be able to edit the knowledge_structure or just view it
             $hasReadAccess = $this->dic->access()->checkAccessOfUser(
                 $this->dic->user()->getId(),
@@ -259,7 +260,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                 ChromePhp::log('Course Node', $courseNode);
                 $courseNode['object_id'] = $this->getObjectPermaLink('crs', $courseId, $courseNode['obj_id']);
                 // Currently supported module types by VerDatAs
-                $moduleTypesArray = array('lm', 'cmix');
+                $moduleTypesArray = array('lm', 'cmix', 'tst');
                 // Sort learning modules by their titles
                 $subNodes = $tree->getSubTree($courseNode);
                 usort($subNodes, function($a, $b) {
@@ -384,17 +385,22 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                                 // TODO: 'content' is not yet used
                                 // $subNode['content'] = $lmContent;
                                 $subNode['chapters'] = $lmChapters;
+                                $modules[] = $subNode;
                             } catch (Exception $e) {
                                 ChromePhp::log('error', $e);
                             }
                         }
-                        $modules[] = $subNode;
-                    } else {
-                        if ($subNode['type'] === 'tst') {
-                            $interactiveTasks[] = $subNode;
+                        else if ($subNode['type'] === 'tst') {
+                            $subNode['object_id'] = $this->getObjectPermaLink('tst', $subNode['ref_id'], $courseId);
+                            $tests[] = $subNode;
+                        }
+                        else if ($subNode['type'] === 'cmix') {
+                            ChromePhp::log('Type cmix detected, but not yet taken into account.');
                         }
                     }
+                    // TODO: When reworking, this might be moved a few lines down
                     $courseNode['modules'] = $modules;
+                    $courseNode['tests'] = $tests;
                 }
 
 //                ChromePhp::log($modules);
@@ -587,6 +593,9 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                 // TODO: Dirty fix for setting the URL to the learning module
                 $objectType = 'pg';
                 $reference = $pageId . '_' . $referenceId;
+                break;
+            case 'tst':
+                $reference = $referenceId;
                 break;
             default:
                 $reference = $referenceId;

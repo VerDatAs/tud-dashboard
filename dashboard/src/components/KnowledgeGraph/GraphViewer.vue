@@ -237,6 +237,21 @@ export default {
           const parentElement = elementRegistry.find((element) => element.type === 'verDatAs:KnowledgeGraph')
           const rootElement = canvas.getRootElement()
 
+          // Add tests to KnowledgeGraph
+          let tests = this.courseData['tests']
+          if (tests?.length > 0) {
+            tests = tests.filter((m) => m.offline === '0')
+            const knowledgeGraphTests = []
+            tests?.forEach((test, testIndex) => {
+              const learningPathElementObject = this.diagram.get('moddle').create('verDatAs:Test', {
+                objectId: test['object_id'] || test['ref_id'],
+                title: test.title || 'Test ' + (testIndex + 1)
+              })
+              knowledgeGraphTests.push(learningPathElementObject)
+            })
+            this.diagram.get('modeling').updateProperties(rootElement, { tests: knowledgeGraphTests })
+          }
+
           // General idea: Draw first and center afterwards
           const topicDimensions = getDefaultSize(knowledgeGraphTopic)
           const topicWidth = topicDimensions.width
@@ -333,10 +348,11 @@ export default {
               // Iterate contentPages and its interactive tasks
               const contentPages = []
               let taskIndex = 0
-              chapter['pages']?.forEach((page) => {
+              chapter['pages']?.forEach((page, pageIndex) => {
                 let taskShapesBusinessObjects = []
                 const pageProperties = {
-                  objectId: page['object_id']
+                  objectId: page['object_id'],
+                  title: page.title || 'ContentPage ' + (pageIndex + 1)
                 }
                 // Add interactiveTasks here
                 if (page?.interactiveTasks?.length > 0) {

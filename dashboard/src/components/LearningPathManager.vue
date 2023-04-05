@@ -16,21 +16,30 @@ export default {
       const chapters = this.diagram
         ?.get('elementRegistry')
         ?.filter((element) => selectableElements.includes(element.type))
-      let contentPages = []
+      let selectableOptions = []
+      // Add contentPages to the selectable options
       chapters?.forEach((chapter) => {
         if (chapter?.businessObject?.contentPages?.length > 0) {
           // TODO: ContentPages need a name, too
-          contentPages = contentPages.concat(
+          selectableOptions = selectableOptions.concat(
             chapter.businessObject.contentPages.map((element) => {
               return {
-                text: element.objectId + ' (Chapter: ' + chapter.businessObject.name + ')',
+                text: '(Chapter: ' + chapter.businessObject.name + ') / ' + (element.title || element.objectId),
                 value: element.objectId
               }
             })
           )
         }
       })
-      return contentPages
+      // Add tests to the selectable options
+      // TODO: We might want to iterate the topic and the modules to find "assigned" tests and display this relationship as well
+      this.currentKnowledgeGraph?.businessObject?.tests?.forEach((test) => {
+        selectableOptions = selectableOptions.concat({
+          text: test.title || test.objectId,
+          value: test.objectId
+        })
+      })
+      return selectableOptions
     },
     currentKnowledgeGraph() {
       this.refreshKey
@@ -189,7 +198,7 @@ export default {
                   class="form-control my-2"
                   @change="setLearningPathElementId(learningPathIndex, learningPathElementIndex, $event.target.value)"
                 >
-                  <option disabled value="">Please select an element</option>
+                  <option value="">-- Select an element --</option>
                   <option
                     v-for="(option, optionKey) in elementOptions"
                     :selected="learningPathElement.objectId"
