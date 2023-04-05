@@ -26,8 +26,11 @@ RUN cp dashboard/dist/logo.jpeg plugin/templates/
 FROM php:8.2.4-zts-alpine3.16
 
 COPY --from=composer /usr/bin/composer /usr/bin/composer
-COPY --from=build /plugin /app
+COPY --from=build /plugin /plugin
 
-WORKDIR /app
-
+WORKDIR /plugin
 RUN composer install
+
+WORKDIR /
+RUN mkdir -p /app
+RUN cp -r /plugin/templates/ /app
