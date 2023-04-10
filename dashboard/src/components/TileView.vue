@@ -26,7 +26,7 @@ export default {
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 tile-col">
         <div class="flex-col flex-grow tile-flex-col">
-          <button class="btn btn-default tile-btn">Choose modules</button>
+          <button class="btn btn-default tile-btn" @click="setCurrentView('moduleSelection')">Choose modules</button>
         </div>
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 tile-col">

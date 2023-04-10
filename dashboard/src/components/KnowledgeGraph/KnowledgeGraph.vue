@@ -19,9 +19,12 @@ export default {
     metamodel: null
   }),
   props: {
+    backendURL: String,
     diagram: Object,
     diagramLoaded: Boolean,
+    courseData: Object,
     currentView: String,
+    token: String,
     viewOnly: Boolean
   },
   methods: {
@@ -34,9 +37,24 @@ export default {
     selectedElement(element) {
       this.elementSelected = element
     },
+    setBackendURL(backendURL) {
+      if (backendURL && backendURL !== '') {
+        this.$emit('setBackendURL', backendURL)
+      }
+    },
+    setCourseData(courseData) {
+      if (courseData) {
+        this.$emit('setCourseData', courseData)
+      }
+    },
     setCurrentView(viewName) {
       if (viewName && viewName !== '') {
         this.$emit('setCurrentView', viewName)
+      }
+    },
+    setToken(token) {
+      if (token && token !== '') {
+        this.$emit('setToken', token)
       }
     },
     saveXML(value) {
@@ -86,13 +104,19 @@ export default {
     />
     <GraphViewer
       ref="graphViewer"
+      :backendURL="backendURL"
+      :courseData="courseData"
+      :token="token"
       :diagram="diagram"
       :diagramLoaded="diagramLoaded"
       :elementSelected="elementSelected"
       :viewOnly="viewOnly"
       @loadedDiagram="changeDiagramLoaded"
       @selectedElement="selectedElement"
+      @setBackendURL="setBackendURL"
+      @setCourseData="setCourseData"
       @setDiagram="setDiagram"
+      @setToken="setToken"
       @updateMetamodel="updateMetamodel"
       @updateViewOnly="updateViewOnly"
     />

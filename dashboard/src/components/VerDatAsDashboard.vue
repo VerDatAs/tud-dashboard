@@ -2,6 +2,7 @@
 import KnowledgeGraph from './KnowledgeGraph/KnowledgeGraph.vue'
 import LearningPathManager from './LearningPathManager.vue'
 import LoadingScreen from './LoadingScreen.vue'
+import ModuleSelection from './ModuleSelection.vue'
 import TileView from './TileView.vue'
 
 export default {
@@ -10,10 +11,14 @@ export default {
     KnowledgeGraph,
     LearningPathManager,
     LoadingScreen,
+    ModuleSelection,
     TileView
   },
   data() {
     return {
+      backendURL: '',
+      courseData: null,
+      token: '',
       diagram: null,
       diagramLoaded: false,
       currentView: 'tileView',
@@ -34,6 +39,16 @@ export default {
     changeDiagramLoaded(diagramLoaded) {
       this.diagramLoaded = diagramLoaded
     },
+    setBackendURL(backendURL) {
+      if (backendURL && backendURL !== '') {
+        this.backendURL = backendURL
+      }
+    },
+    setCourseData(courseData) {
+      if (courseData) {
+        this.courseData = courseData
+      }
+    },
     setCurrentView(viewName) {
       if (viewName && viewName !== '') {
         this.currentView = viewName
@@ -41,6 +56,11 @@ export default {
     },
     setDiagram(diagram) {
       this.diagram = diagram
+    },
+    setToken(token) {
+      if (token && token !== '') {
+        this.token = token
+      }
     },
     updateViewOnly(viewOnly) {
       this.viewOnly = viewOnly
@@ -56,19 +76,33 @@ export default {
   <div id="verdatas-dashboard">
     <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
     <TileView :currentView="currentView" :viewOnly="viewOnly" @setCurrentView="setCurrentView" />
+    <ModuleSelection
+      v-if="currentView === 'moduleSelection'"
+      :backendURL="backendURL"
+      :courseData="courseData"
+      :diagram="diagram"
+      :token="token"
+      @setCurrentView="setCurrentView"
+    />
     <LearningPathManager
       v-if="currentView === 'learningPathManager'"
       :diagram="diagram"
       @setCurrentView="setCurrentView"
     />
     <KnowledgeGraph
+      :backendURL="backendURL"
+      :courseData="courseData"
+      :token="token"
       :currentView="currentView"
       :diagram="diagram"
       :diagramLoaded="diagramLoaded"
       :viewOnly="viewOnly"
       @loadedDiagram="changeDiagramLoaded"
+      @setBackendURL="setBackendURL"
+      @setCourseData="setCourseData"
       @setCurrentView="setCurrentView"
       @setDiagram="setDiagram"
+      @setToken="setToken"
       @updateViewOnly="updateViewOnly"
     />
   </div>
