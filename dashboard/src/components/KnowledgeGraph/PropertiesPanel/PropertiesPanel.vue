@@ -242,8 +242,19 @@ export default {
                   <label :for="parameter.name" class="control-label">{{ parameter.name }}</label>
                 </div>
                 <div class="col-xs-12">
-                  <ul class="fs-5 mt-2 ps-5" v-if="elementSelected && elementSelected.businessObject && elementSelected.businessObject[parameter.name] && elementSelected.businessObject[parameter.name].length > 0">
-                    <li v-for="(contentPage, pageIndex) in elementSelected.businessObject[parameter.name]" :key="'contentPage'+pageIndex">
+                  <ul
+                    class="fs-5 mt-2 ps-5"
+                    v-if="
+                      elementSelected &&
+                      elementSelected.businessObject &&
+                      elementSelected.businessObject[parameter.name] &&
+                      elementSelected.businessObject[parameter.name].length > 0
+                    "
+                  >
+                    <li
+                      v-for="(contentPage, pageIndex) in elementSelected.businessObject[parameter.name]"
+                      :key="'contentPage' + pageIndex"
+                    >
                       {{ contentPage.title ? contentPage.title : 'ContentPage ' + (pageIndex + 1) }}
                     </li>
                   </ul>

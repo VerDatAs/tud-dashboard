@@ -3,6 +3,9 @@ import axios from 'axios'
 
 export default {
   data: () => ({
+    initialRunExecuted: false,
+    isLoading: false,
+    errorResponse: '',
     features: [],
     courseFeatures: [],
     // This is just a workaround for making both courseFeatures and checkboxes map working
@@ -14,11 +17,18 @@ export default {
     token: String,
     diagram: Object
   },
-  async mounted() {
-    await this.loadFeatures()
-    await this.loadCourseFeatures()
+  mounted() {
+    this.initializeModuleSelection()
   },
   methods: {
+    async initializeModuleSelection() {
+      this.isLoading = true
+      this.errorResponse = ''
+      await this.loadFeatures()
+      await this.loadCourseFeatures()
+      this.isLoading = false
+      this.initialRunExecuted = true
+    },
     async loadFeatures() {
       const featuresURL = this.backendURL + '/api/v1/features'
 
@@ -32,6 +42,12 @@ export default {
         this.features = featuresResult.data
       } catch (e) {
         console.log(e)
+        const msg = e.message
+        this.errorResponse =
+          'The features could not be loaded. The displayed features are just for demo purposes.'
+        if (msg) {
+          this.errorResponse += (' ' + msg)
+        }
         // prototype features
         // TODO: Remove as soon as loading features does work
         this.features = ['glossary', 'SRL']
@@ -40,6 +56,7 @@ export default {
     async loadCourseFeatures() {
       const objectId = this.courseData['object_id']
       if (!objectId) {
+        this.errorResponse = 'The ID of the course could not be retrieved.'
         return
       }
 
@@ -65,11 +82,18 @@ export default {
         })
       } catch (e) {
         console.log(e)
+        const msg = e.message
+        this.errorResponse = 'The course features could not be retrieved.'
+        if (msg) {
+          this.errorResponse += (' ' + msg)
+        }
       }
     },
-    async selectCourseFeature() {
+    async selectCourseFeatures() {
+      this.errorResponse = ''
       const objectId = this.courseData['object_id']
       if (!objectId) {
+        this.errorResponse = 'The ID of the course could not be retrieved.'
         return
       }
 
@@ -85,13 +109,13 @@ export default {
 
       const request = []
 
-      Object.keys(this.selectedFeatures)?.forEach(key => {
+      Object.keys(this.selectedFeatures)?.forEach((key) => {
         if (this.selectedFeatures[key]) {
           request.push({
-            "feature": {
+            feature: {
               key
             },
-            "enabled": true
+            enabled: true
           })
         }
       })
@@ -101,6 +125,11 @@ export default {
         await this.loadCourseFeatures()
       } catch (e) {
         console.log(e)
+        const msg = e.message
+        this.errorResponse = 'The selected course features could not be saved.'
+        if (msg) {
+          this.errorResponse += (' ' + msg)
+        }
       }
     },
     setCurrentView(viewName) {
@@ -116,17 +145,25 @@ export default {
   <div id="module-selection">
     <div class="container py-4" style="max-width: 100%">
       <button class="btn btn-primary" @click="setCurrentView('tileView')">Back</button>
-      <button class="btn btn-primary ms-2" @click="loadCourseFeatures()">Reload</button>
+      <button class="btn btn-primary ms-2" @click="initializeModuleSelection()">Reload</button>
       <hr />
-      <h2>
-        Module Selection
-      </h2>
-      <ul v-if="features.length > 0">
-        <li v-for="(feature, key) in features" :key="feature + '_' + key">
-          {{ feature }} <input type="checkbox" v-model="selectedFeatures[feature]" />
-        </li>
-      </ul>
-      <button class="btn btn-primary" @click="selectCourseFeature()">Select course feature</button>
+      <template v-if="errorResponse !== ''">
+        <div class="alert alert-danger">
+          {{ errorResponse }}
+        </div>
+        <hr />
+      </template>
+      <h2>Module Selection</h2>
+      <template v-if="initialRunExecuted">
+        <div v-if="isLoading">Loading features...</div>
+        <div v-if="!isLoading && features.length === 0">No features found.</div>
+        <ul v-if="!isLoading && features.length > 0" class="ps-3" style="list-style: none">
+          <li v-for="(feature, key) in features" :key="feature + '_' + key">
+            <input type="checkbox" v-model="selectedFeatures[feature]" /> {{ feature }}
+          </li>
+        </ul>
+        <button class="btn btn-primary" @click="selectCourseFeatures()">Select features</button>
+      </template>
     </div>
   </div>
 </template>
