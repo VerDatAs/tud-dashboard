@@ -12,12 +12,12 @@ import Viewer from '@/util/KnowledgeGraph/Viewer'
 
 export default {
   data: () => ({
-    graph: initialModel,
-    backendURL: '',
-    token: '',
-    courseData: null
+    graph: initialModel
   }),
   props: {
+    backendURL: String,
+    courseData: Object,
+    token: String,
     diagram: Object,
     diagramLoaded: Boolean,
     elementSelected: Object,
@@ -32,19 +32,22 @@ export default {
         // https://github.com/vaadin/vaadin-upload/issues/138#issuecomment-266773430
         console.log('init-graph', event.detail)
         const { detail } = event
-        this.backendURL = detail.backendURL
-        this.token = detail.token
-        this.courseData = detail.courseNode
+        const backendURL = detail.backendURL
+        this.$emit('setBackendURL', backendURL)
+        const token = detail.token
+        this.$emit('setToken', token)
+        const courseData = detail.courseNode
+        this.$emit('setCourseData', courseData)
         this.$emit('updateViewOnly', detail.canViewOnly)
-        if (this.courseData?.ref_id) {
-          this.retrieveKnowledgeGraph()
+        if (courseData?.ref_id) {
+          this.retrieveKnowledgeGraph(courseData, backendURL, token)
         } else {
           console.error('There was no ref_id found for the course.')
         }
       })
     },
-    async retrieveKnowledgeGraph() {
-      const objectId = this.courseData['object_id']
+    async retrieveKnowledgeGraph(courseData, backendURL, token) {
+      const objectId = courseData['object_id']
       if (!objectId) {
         return
       }
@@ -54,10 +57,10 @@ export default {
       // example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
       // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
       const encodedId = btoa(objectId)
-      const knowledgeGraphUrl = this.backendURL + '/api/v1/courses/' + encodedId + '/knowledge-graph'
+      const knowledgeGraphUrl = backendURL + '/api/v1/courses/' + encodedId + '/knowledge-graph'
       const authHeader = {
         'Content-Type': 'application/json;charset=UTF-8',
-        Authorization: 'Bearer ' + this.token
+        Authorization: 'Bearer ' + token
       }
       axios
         .get(knowledgeGraphUrl, { headers: authHeader })
@@ -66,16 +69,16 @@ export default {
           console.log(graphResponse.data)
           if (graphResponse.data.graph) {
             this.graph = graphResponse.data.graph
-            this.processKnowledgeGraph()
+            this.processKnowledgeGraph(courseData)
           }
         })
         .catch((err) => {
           // Handle errors
           console.error(err)
-          this.processKnowledgeGraph()
+          this.processKnowledgeGraph(courseData)
         })
     },
-    processKnowledgeGraph() {
+    processKnowledgeGraph(courseData) {
       // console.log(graphResponse);
       if (!this.diagramLoaded && this.graph) {
         let diagram = null
@@ -119,7 +122,7 @@ export default {
             if (!this.viewOnly) {
               const knowledgeGraphTopic = elementRegistry.filter((element) => element.type === 'verDatAs:Topic')[0]
               const properties = {}
-              properties['objectId'] = this.courseData['object_id']
+              properties['objectId'] = courseData['object_id']
               modeling.updateProperties(knowledgeGraphTopic, properties)
 
               // Listen to selection changes and show propertiesPanel, inputs and listen for input changes
@@ -272,13 +275,13 @@ export default {
           let totalWidth = 0
 
           // Reduce list of modules to those that are currently set online
-          // courseData.modules has to be overwritten, as it is used for size calculation, too
+          let filteredModules = []
           if (this.courseData.modules && this.courseData.modules.length > 0) {
-            this.courseData.modules = this.courseData.modules.filter((m) => m.offline === '0')
+            filteredModules = this.courseData.modules.filter((m) => m.offline === '0')
           }
 
           // Iterate remaining modules
-          this.courseData.modules?.forEach((module, moduleIndex) => {
+          filteredModules?.forEach((module, moduleIndex) => {
             const chapterCount = module?.chapters?.length || 0
             // Calculate the entire width of all chapters of the module
             const totalChapterWidth = chapterCount * chapterWidth + (chapterCount - 1) * chapterOffset
@@ -400,7 +403,7 @@ export default {
               }
             })
             // Draw topic
-            if (moduleIndex === this.courseData.modules.length - 1) {
+            if (moduleIndex === filteredModules.length - 1) {
               // Move topic
               // TODO: This somehow does not move the label of the topic
               modeling.moveElements([knowledgeGraphTopic], {
