@@ -29,4 +29,4 @@ COPY --from=composer /usr/bin/composer /usr/bin/composer
 COPY --from=build /plugin /app
 
 WORKDIR /app
-RUN composer install
+# RUN composer install
