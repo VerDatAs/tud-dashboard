@@ -1,5 +1,6 @@
 <script>
 import axios from 'axios'
+import {Base64} from 'js-base64'
 import {
   centerCanvas,
   excludedTypeNames,
@@ -56,7 +57,7 @@ export default {
       // yes? -> initialize modeler with the resulting diagram
       // example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
       // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
-      const encodedId = btoa(objectId)
+      const encodedId = Base64.encodeURI(objectId)
       const knowledgeGraphUrl = backendURL + '/api/v1/courses/' + encodedId + '/knowledge-graph'
       const authHeader = {
         'Content-Type': 'application/json;charset=UTF-8',
@@ -465,7 +466,7 @@ export default {
       if (knowledgeGraphTopic?.businessObject?.objectId && knowledgeGraphTopic.businessObject.objectId !== '') {
         // example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
         // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
-        const encodedId = btoa(knowledgeGraphTopic.businessObject.objectId)
+        const encodedId = Base64.encodeURI(knowledgeGraphTopic.businessObject.objectId)
         const url = this.backendURL + '/api/v1/courses/' + encodedId + '/knowledge-graph'
 
         const authHeader = {

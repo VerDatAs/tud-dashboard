@@ -18,6 +18,7 @@
     "ids": "^1.0.0",
     "inherits": "^2.0.4",
     "inherits-browser": "^0.1.0",
+    "js-base64": "^3.7.5",
     "min-dash": "^4.0.0",
     "min-dom": "^4.1.0",
     "moddle": "^6.2.1",
