@@ -84,8 +84,8 @@ class ilVerDatAsDshPlugin extends ilPageComponentPlugin
      */
     public function isValidParentType(/*string*/ $a_type) : bool
     {
-        // Allow in all parent types
-        return true;
+        // Allow for customizing course page (cont), but not for content page (copa) and learning module (lm)
+        return $a_type === 'cont';
     }
 
 
