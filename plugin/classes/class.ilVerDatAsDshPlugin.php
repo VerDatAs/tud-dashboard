@@ -85,7 +85,19 @@ class ilVerDatAsDshPlugin extends ilPageComponentPlugin
     public function isValidParentType(/*string*/ $a_type) : bool
     {
         // Allow for customizing course page (cont), but not for content page (copa) and learning module (lm)
-        return $a_type === 'cont';
+        if ($a_type !== 'cont') {
+            return false;
+        }
+        // Check, whether a VerDatAsDsh is already included on the course page
+        include_once('./Services/Tree/classes/class.ilTree.php');
+        include_once('./Services/Container/classes/class.ilContainerPage.php');
+        $tree = new \ilTree(1);
+        $courseNode = $tree->getNodeData($this->getCurrentRefId());
+        $containerPage = new \ilContainerPage($courseNode['obj_id']);
+        $containerPageXML = $containerPage->getXMLContent();
+        $pluginString = '<Plugged PluginName="VerDatAsDsh"';
+        $pluginAlreadyIncluded = str_contains($containerPageXML, $pluginString);
+        return !$pluginAlreadyIncluded;
     }
 
 
