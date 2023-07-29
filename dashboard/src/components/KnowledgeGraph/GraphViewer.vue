@@ -13,7 +13,7 @@ import Viewer from '@/util/KnowledgeGraph/Viewer'
 
 export default {
   data: () => ({
-    graph: initialModel
+    graph: ''
   }),
   props: {
     backendURL: String,
@@ -77,6 +77,7 @@ export default {
         .catch((err) => {
           // Handle errors
           console.error(err)
+          this.graph = initialModel(encodedId)
           this.processKnowledgeGraph(courseData)
         })
     },
@@ -207,12 +208,15 @@ export default {
     },
     redrawKnowledgeGraph() {
       console.log('redrawKnowledgeGraph', this.courseData)
-      if (!this.courseData || !this.courseData['ref_id']) {
+      if (!this.courseData || !this.courseData['ref_id'] || !this.courseData['object_id']) {
         return
       }
 
+      const objectId = this.courseData['object_id']
+      const encodedId = Base64.encodeURI(objectId)
+
       // First, initialize modeler
-      this.loadInitialModel(this.diagram).then(() => {
+      this.loadInitialModel(this.diagram, encodedId).then(() => {
         // Replace objectId of topic
         const canvas = this.diagram.get('canvas')
         const moddle = this.diagram.get('moddle')
@@ -429,9 +433,9 @@ export default {
         }
       }, 500)
     },
-    loadInitialModel(underlyingDiagram) {
+    loadInitialModel(underlyingDiagram, encodedId) {
       // Import initial diagram into the modeler
-      return underlyingDiagram.importXML(initialModel, 'RootGraph_1').catch(function (err) {
+      return underlyingDiagram.importXML(initialModel(encodedId), 'RootGraph_1').catch(function (err) {
         if (err) {
           return console.error('Could not import VerDatAs board', err)
         }
