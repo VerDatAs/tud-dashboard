@@ -498,8 +498,8 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
 
         $customHeader = "<div class='ilFormHeader'><h2 class='ilHeader'>Create VerDatAs Dashboard</h2></div>";
         $creationHint = "<p class='alert alert-info'>You are about to include a dashboard into your course. Press <strong>[Save]</strong> to proceed, or <strong>[Cancel]</strong> to abort.</p>";
-        $previewHeader = "<h3>Scaled Preview:</h3>";
-        $previewImage = "<div style='background: #fff; padding: 10px; margin-bottom: 10px;'><img src='" . $this->getPlugin()->getDirectory() . "/templates/assets/preview.jpg" . "' width='800'></div>";
+        $previewHeader = "<h3>Preview (Scaled):</h3>";
+        $previewImage = "<div style='background: #fff; padding: 10px; margin-bottom: 10px;'><img src='" . $this->getPlugin()->getDirectory() . "/templates/assets/preview.jpg" . "' width='800' style='max-width: 100%;'></div>";
 
         self::output()->output($customHeader . $creationHint . $previewHeader . $previewImage . $form->getHTML());
     }
