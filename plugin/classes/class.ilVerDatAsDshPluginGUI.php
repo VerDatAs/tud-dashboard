@@ -496,7 +496,12 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
         $form->addCommandButton('cancel', $this->lng->txt('cancel'));
         $form->setFormAction($this->dic->ctrl()->getFormAction($this, 'create'));
 
-        self::output()->output($form);
+        $customHeader = "<div class='ilFormHeader'><h2 class='ilHeader'>Create VerDatAs Dashboard</h2></div>";
+        $creationHint = "<p class='alert alert-info'>You are about to include a dashboard into your course. Press <strong>[Save]</strong> to proceed, or <strong>[Cancel]</strong> to abort.</p>";
+        $previewHeader = "<h3>Scaled Preview:</h3>";
+        $previewImage = "<div style='background: #fff; padding: 10px; margin-bottom: 10px;'><img src='" . $this->getPlugin()->getDirectory() . "/templates/assets/preview.jpg" . "' width='800'></div>";
+
+        self::output()->output($customHeader . $creationHint . $previewHeader . $previewImage . $form->getHTML());
     }
 
     /**
@@ -529,22 +534,6 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
     protected function getForm($a_create = false) : ilPropertyFormGUI
     {
         $form = new ilPropertyFormGUI();
-        $form->setTitle('Test Form');
-        $section = new ilFormSectionHeaderGUI();
-        $section->setTitle('Test Section');
-        $form->addItem($section);
-        // example item
-        $item = new ilRadioGroupInputGUI('Type', 'type_id');
-        $item->setRequired(true);
-        $option = new ilRadioOption('A', '1234', 'Description 1234');
-        $item->addOption($option);
-        $option = new ilRadioOption('B', '9876', 'Description 9876');
-        $item->addOption($option);
-        $form->addItem($item);
-
-        // TODO: Implement getForm
-        // TODO: Use seperate class
-
         return $form;
     }
 
