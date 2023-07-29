@@ -1,6 +1,6 @@
 <script>
 import axios from 'axios'
-import {Base64} from 'js-base64'
+import { Base64 } from 'js-base64'
 
 export default {
   data: () => ({
@@ -44,10 +44,9 @@ export default {
       } catch (e) {
         console.log(e)
         const msg = e.message
-        this.errorResponse =
-          'The features could not be loaded. The displayed features are just for demo purposes.'
+        this.errorResponse = 'The features could not be loaded. The displayed features are just for demo purposes.'
         if (msg) {
-          this.errorResponse += (' ' + msg)
+          this.errorResponse += ' ' + msg
         }
         // prototype features
         // TODO: Remove as soon as loading features does work
@@ -86,7 +85,7 @@ export default {
         const msg = e.message
         this.errorResponse = 'The course features could not be retrieved.'
         if (msg) {
-          this.errorResponse += (' ' + msg)
+          this.errorResponse += ' ' + msg
         }
       }
     },
@@ -129,7 +128,7 @@ export default {
         const msg = e.message
         this.errorResponse = 'The selected course features could not be saved.'
         if (msg) {
-          this.errorResponse += (' ' + msg)
+          this.errorResponse += ' ' + msg
         }
       }
     },

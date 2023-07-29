@@ -23,6 +23,7 @@ export default {
       diagramLoaded: false,
       currentView: 'tileView',
       viewOnly: true,
+      previewMode: false,
       path: './Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates' // standard path
     }
   },
@@ -67,6 +68,12 @@ export default {
       if (!this.viewOnly) {
         this.setCurrentView('tileView')
       }
+    },
+    setPreviewMode(isPreviewMode) {
+      this.previewMode = isPreviewMode
+      if (this.previewMode) {
+        this.setCurrentView('tileView')
+      }
     }
   }
 }
@@ -75,7 +82,12 @@ export default {
 <template>
   <div id="verdatas-dashboard">
     <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
-    <TileView :currentView="currentView" :viewOnly="viewOnly" @setCurrentView="setCurrentView" />
+    <TileView
+      :currentView="currentView"
+      :viewOnly="viewOnly"
+      :previewMode="previewMode"
+      @setCurrentView="setCurrentView"
+    />
     <ModuleSelection
       v-if="currentView === 'moduleSelection'"
       :backendURL="backendURL"
@@ -104,6 +116,7 @@ export default {
       @setDiagram="setDiagram"
       @setToken="setToken"
       @updateViewOnly="updateViewOnly"
+      @setPreviewMode="setPreviewMode"
     />
   </div>
 </template>

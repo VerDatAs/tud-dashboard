@@ -2,7 +2,8 @@
 export default {
   props: {
     currentView: String,
-    viewOnly: Boolean
+    viewOnly: Boolean,
+    previewMode: Boolean
   },
   methods: {
     setCurrentView(viewName) {
@@ -16,29 +17,42 @@ export default {
 
 <template>
   <div id="tile-view" class="rasterBackground" v-if="currentView === 'tileView' && !viewOnly">
+    <div style="position: absolute; top: 10px; left: 10px" v-if="previewMode">
+      Note: <span style="font-style: italic">As you are in edit mode, this is just a preview.</span>
+    </div>
     <div class="row row-flex row-flex-wrap tile-row">
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 tile-col">
         <div class="flex-col flex-grow tile-flex-col">
-          <button class="btn btn-default tile-btn" @click="setCurrentView('knowledgeStructure')">
+          <button
+            class="btn btn-default tile-btn"
+            @click="setCurrentView('knowledgeStructure')"
+            :disabled="previewMode"
+          >
             Knowledge structure
           </button>
         </div>
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 tile-col">
         <div class="flex-col flex-grow tile-flex-col">
-          <button class="btn btn-default tile-btn" @click="setCurrentView('moduleSelection')">Choose modules</button>
+          <button class="btn btn-default tile-btn" @click="setCurrentView('moduleSelection')" :disabled="previewMode">
+            Choose modules
+          </button>
         </div>
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 tile-col">
         <div class="flex-col flex-grow tile-flex-col">
-          <button class="btn btn-default tile-btn" @click="setCurrentView('learningPathManager')">
+          <button
+            class="btn btn-default tile-btn"
+            @click="setCurrentView('learningPathManager')"
+            :disabled="previewMode"
+          >
             Learning paths
           </button>
         </div>
       </div>
       <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 tile-col">
         <div class="flex-col flex-grow tile-flex-col">
-          <button class="btn btn-default tile-btn">Settings</button>
+          <button class="btn btn-default tile-btn" :disabled="previewMode">Settings</button>
         </div>
       </div>
     </div>

@@ -83,6 +83,9 @@ export default {
     updateViewOnly(viewOnly) {
       this.$emit('updateViewOnly', viewOnly)
     },
+    setPreviewMode(isPreviewMode) {
+      this.$emit('setPreviewMode', isPreviewMode)
+    },
     changeInput(parameterName, newValue) {
       this.$refs.graphViewer.changeInput(parameterName, newValue)
     }
@@ -119,6 +122,7 @@ export default {
       @setToken="setToken"
       @updateMetamodel="updateMetamodel"
       @updateViewOnly="updateViewOnly"
+      @setPreviewMode="setPreviewMode"
     />
     <PropertiesPanel
       :diagram="diagram"

@@ -414,10 +414,6 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
             // Add templatePath variable to specify the current path
             $templatePath = $this->getPlugin()->getDirectory() . '/templates';
             $tpl->setVariable('TEMPLATE_PATH', $templatePath);
-            // This allows to hide the buttons if the user cannot edit the knowledge structure
-            if ($canViewOnly) {
-                $tpl->setVariable('VIEW_ONLY', 'hidden');
-            }
 
             // TODO: Calling methods directly does not work
             // Current workaround: Use CustomEvent to send the required data to the code in Vue
@@ -430,7 +426,8 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
               "courseNode": ' . json_encode($courseNode) .',
               "token": ' . json_encode($token) .',
               "backendURL": ' . json_encode($backendURL) .',
-              "canViewOnly": ' . json_encode($canViewOnly) .'
+              "canViewOnly": ' . json_encode($canViewOnly) .',
+              "previewMode": ' . json_encode($a_mode === "edit") .'
             }';
 //            $initGraphData = array(
 //                courseNode => json_encode($courseNode),

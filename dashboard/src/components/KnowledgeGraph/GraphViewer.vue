@@ -1,6 +1,6 @@
 <script>
 import axios from 'axios'
-import {Base64} from 'js-base64'
+import { Base64 } from 'js-base64'
 import {
   centerCanvas,
   excludedTypeNames,
@@ -40,6 +40,7 @@ export default {
         const courseData = detail.courseNode
         this.$emit('setCourseData', courseData)
         this.$emit('updateViewOnly', detail.canViewOnly)
+        this.$emit('setPreviewMode', detail.previewMode)
         if (courseData?.ref_id) {
           this.retrieveKnowledgeGraph(courseData, backendURL, token)
         } else {
