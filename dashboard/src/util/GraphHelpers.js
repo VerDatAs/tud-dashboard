@@ -22,7 +22,7 @@ export const excludedTypeNames = [
 export const nonSelectableElements = ['verDatAs:KnowledgeGraph', 'verDatAs:SequenceFlow', 'label']
 export const initialModel = (courseId) =>
   '<?xml version="1.0" encoding="UTF-8"?>\n' +
-  '<verDatAs:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:verDatAs="http://some-company/schema/verDatAs" xmlns:verDatAsDi="http://some-company/schema/verDatAsDi" id="sample-diagram">\n' +
+  '<verDatAs:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:verDatAs="http://verdatas.de/schema/verDatAs" xmlns:verDatAsDi="http://verdatas.de/schema/verDatAsDi" id="verdatas-diagram">\n' +
   '  <verDatAs:knowledgeGraph id="Graph_' + courseId + '">\n' +
   '    <verDatAs:topic id="Topic_1" name="Topic" />\n' +
   '  </verDatAs:knowledgeGraph>\n' +

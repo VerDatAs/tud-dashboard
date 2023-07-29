@@ -1,6 +1,6 @@
 {
   "name": "VerDatAs",
-  "uri": "http://some-company/schema/verDatAs",
+  "uri": "http://verdatas.de/schema/verDatAs",
   "prefix": "verDatAs",
   "xml": {
     "tagAlias": "lowerCase"
