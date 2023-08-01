@@ -260,7 +260,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                 ChromePhp::log('Course Node', $courseNode);
                 $courseNode['object_id'] = $this->getObjectPermaLink('crs', $courseId, $courseNode['obj_id']);
                 // Currently supported module types by VerDatAs
-                $moduleTypesArray = array('lm', 'cmix', 'tst');
+                $moduleTypesArray = array('lm', 'cmix', 'sahs', 'tst');
                 // Sort learning modules by their titles
                 $subNodes = $tree->getSubTree($courseNode);
                 usort($subNodes, function($a, $b) {
@@ -388,6 +388,38 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                                 $modules[] = $subNode;
                             } catch (Exception $e) {
                                 ChromePhp::log('error', $e);
+                            }
+                        }
+                        else if ($subNode['type'] === 'sahs') {
+                            $sahsModule = new \ilObjSAHSLearningModule($subNode['ref_id']);
+                            $subType = $sahsModule->getSubType();
+                            // TODO: Currently, only SCORM2004 modules are supported
+                            if ($subType === 'scorm2004') {
+                                include_once("./Modules/Scorm2004/classes/class.ilObjSCORM2004LearningModule.php");
+                                $scormModule = new \ilObjSCORM2004LearningModule($subNode['ref_id']);
+                                // Hint: $scormModule cannot be printed in console
+                                $scormTree = $scormModule->getTree();
+                                ChromePhp::log('scormTree', $scormTree);
+
+                                // TODO: For the moment, I did not manage to receive this data from the object itself
+                                // Thus, the database is used.
+                                // These tables might also be interesting: cp_node, cp_dependency
+                                $query = 'SELECT * FROM cp_package WHERE obj_id=' . $scormTree->tree_id;
+                                $res = $this->db->query($query);
+                                if ($row = $this->db->fetchAssoc($res)) {
+                                    $scormData = json_decode($row['jsdata'], true);
+                                    ChromePhp::log('scormData', $scormData);
+                                    if ($scormData['item']) {
+                                        $scormItem = $scormData['item'];
+                                        $subNode['title'] = $scormItem['title'];
+                                        $lmChapters = array();
+                                        foreach ($scormItem['item'] as &$value) {
+                                            $lmChapters[] = $value;
+                                        }
+                                        $subNode['chapters'] = $lmChapters;
+                                    }
+                                }
+                                $modules[] = $subNode;
                             }
                         }
                         else if ($subNode['type'] === 'tst') {
