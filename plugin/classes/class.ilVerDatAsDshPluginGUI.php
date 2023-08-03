@@ -233,18 +233,29 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                         'verdatas1909'
                     );
                     $courseNode = $this->api->course->getData($courseId);
-//                    ChromePhp::log('courseData', $courseNode);
+                    ChromePhp::log('courseData', $courseNode);
                     $getIliasObjectTypes = $this->api->role->getIliasObjectTypes();
-//                    ChromePhp::log('getIliasObjectTypes', $getIliasObjectTypes);
+                    ChromePhp::log('getIliasObjectTypes', $getIliasObjectTypes);
                     $courseSubObjects = $this->api->course->getSubObjects($courseId);
-//                    ChromePhp::log('courseSubObjects', $courseSubObjects);
+                    ChromePhp::log('courseSubObjects', $courseSubObjects);
                     foreach ($courseSubObjects as $subObject) {
                         $parsedSubObject = (object) $subObject;
+                        if ($parsedSubObject->type === 'lm') {
+                            // example result: {2: '1.2', 3: '1.2.3', 4: '1.2.4', 5: '1.2.5'}
+                            $treeStructure = $this->api->iliasLearningModule->getTreeStructure($parsedSubObject->ref_id);
+                            ChromePhp::log('treeStructure', $treeStructure);
+                            // example result: 3: {date: '2023-07-28 09:05:50', id: '3', lang: '-', user: '6'}, ...
+                            $allPages = $this->api->iliasLearningModule->getAllPages($parsedSubObject->ref_id);
+                            ChromePhp::log('allPages', $allPages);
+                            // example result: <PageObject><PageContent PCID="b2a70d981916bb37511049d6cb37a025"><Paragraph Language="en" Characteristic="Standard">Test1234</Paragraph></PageContent><PageContent PCID="5c1be39c5ee3119a858fbc7f199e8132"><Question QRef="il__qst_1"/></PageContent></PageObject>
+                            $pageDetail = $this->api->iliasLearningModule->getPageContent(5, "xml");
+                            ChromePhp::log('pageDetail', $pageDetail);
+                        }
                         if ($parsedSubObject->parent !== '1') {
                             $filteredSubObjects[] = $parsedSubObject->child;
                         }
                     }
-//                    ChromePhp::log('filteredSubObjects', $filteredSubObjects);
+                    ChromePhp::log('filteredSubObjects', $filteredSubObjects);
                 } catch (Exception $e) {
                     ChromePhp::log('error', $e);
                 }
