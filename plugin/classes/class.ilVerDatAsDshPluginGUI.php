@@ -410,11 +410,27 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                                     $scormData = json_decode($row['jsdata'], true);
                                     ChromePhp::log('scormData', $scormData);
                                     if ($scormData['item']) {
+                                        // SCORM module attributes
                                         $scormItem = $scormData['item'];
                                         $subNode['title'] = $scormItem['title'];
+                                        // example: "il_0_sahs_28116"
+                                        $subNode['object_id'] = $scormItem['id'];
                                         $lmChapters = array();
                                         foreach ($scormItem['item'] as &$value) {
-                                            $lmChapters[] = $value;
+                                            // SCORM chapter attributes
+                                            // Do only consider IDs similar to "il_0_chap_297", but no assets ("il_0_ass_444")
+                                            if (str_contains($value['id'], 'chap')) {
+                                                $value['object_id'] = $value['id'];
+                                                $pages = array();
+                                                // SCORM page attributes
+                                                // "il_0_sco_35"
+                                                foreach ($value['item'] as &$page_value) {
+                                                    $page_value['object_id'] = $page_value['id'];
+                                                    $pages[] = $page_value;
+                                                }
+                                                $value['pages'] = $pages;
+                                                $lmChapters[] = $value;
+                                            }
                                         }
                                         $subNode['chapters'] = $lmChapters;
                                     }
