@@ -248,8 +248,12 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                             $allPages = $this->api->iliasLearningModule->getAllPages($parsedSubObject->ref_id);
                             ChromePhp::log('allPages', $allPages);
                             // example result: <PageObject><PageContent PCID="b2a70d981916bb37511049d6cb37a025"><Paragraph Language="en" Characteristic="Standard">Test1234</Paragraph></PageContent><PageContent PCID="5c1be39c5ee3119a858fbc7f199e8132"><Question QRef="il__qst_1"/></PageContent></PageObject>
+                            // the "html" option described in the API does currently deliver an empty result
                             $pageDetail = $this->api->iliasLearningModule->getPageContent(5, "xml");
                             ChromePhp::log('pageDetail', $pageDetail);
+                            // TODO: Currently, this method cannot be called, as it will load the page infinitely
+                            // $allData = $this->api->iliasLearningModule->readAllData($parsedSubObject->ref_id);
+                            // ChromePhp::log('allData', $allData);
                         }
                         if ($parsedSubObject->parent !== '1') {
                             $filteredSubObjects[] = $parsedSubObject->child;
