@@ -350,17 +350,18 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                                         if ($chapterFound['pages']) {
                                             $pages = $chapterFound['pages'];
                                         }
-                                        if ($page['questionsXhfp']) {
-                                            $page['interactiveTasks'] = $page['questionsXhfp'];
+                                        if ($page['questions']) {
+                                            $page['interactiveTasks'] = $page['questions'];
                                         }
+
                                         $pages[] = $page;
                                         $chapterFound['pages'] = $pages;
                                         // Also hold the interactive tasks of pages in the chapter
-                                        if ($page['questionsXhfp']) {
+                                        if ($page['questions']) {
                                             if (!$chapterFound['interactiveTasks']) {
-                                                $chapterFound['interactiveTasks'] = $page['questionsXhfp'];
+                                                $chapterFound['interactiveTasks'] = $page['questions'];
                                             } else {
-                                                $chapterFound['interactiveTasks'] = array_merge($chapterFound['interactiveTasks'], $page['questionsXhfp']);
+                                                $chapterFound['interactiveTasks'] = array_merge($chapterFound['interactiveTasks'], $page['questions']);
                                             }
                                         }
                                         // write back chapter found
@@ -537,11 +538,37 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
             }
         }
 
+        $iliasQuestionsAsXML = count($questionIds) > 0 ? $pool->questionsToXML($questionIds) : "";
+        $iliasQuestions = [];
+
+        if ($iliasQuestionsAsXML !== "") {
+            $xml = simplexml_load_string($iliasQuestionsAsXML);
+            foreach($xml->item as $xmlItem)
+            {
+                $questionObject = array();
+                $questionObject['content_id'] = (string)$xmlItem->attributes()->ident;
+                // retrieve question type from metadata
+                $fieldLabel = (string)$xmlItem->itemmetadata->qtimetadata->qtimetadatafield[1]->fieldlabel;
+                $questionType = $fieldLabel == 'QUESTIONTYPE' ? (string)$xmlItem->itemmetadata->qtimetadata->qtimetadatafield[1]->fieldentry : 'Unknown';
+                $questionObject['name'] = $questionType;
+                $questionObject['title'] = (string)$xmlItem->attributes()->title;
+                // retrieve ID as an int from the content_id, e.g., "il_0_qst_3"
+                $iliasQuestionId = count(explode("_", $questionObject['content_id'])) > 3 ? explode("_", $questionObject['content_id'])[3] : -1;
+                // for the moment, use "ilq" for ILIAS questions
+                $questionObject['object_id'] = $this->getObjectPermaLink('ilq', $learningModuleRefId, $iliasQuestionId, $pageObj->getId());
+                $questionObject['page_object_id'] = $pageObjectId;
+                $iliasQuestions[] = $questionObject;
+            }
+        }
+
+        // TODO: Remove unused return parameters
         return [
             "xmlContent" => $xmlContent,
             "multimediaXml" => $pageObj->getMultimediaXML(),
             "questionsXml" => count($questionIds) > 0 ? $pool->questionsToXML($questionIds) : "",
-            "questionsXhfp" => $questionsXhfp
+            "iliasQuestions" => $iliasQuestions,
+            "questionsXhfp" => $questionsXhfp,
+            "questions" => array_merge($iliasQuestions, $questionsXhfp)
         ];
     }
 
@@ -621,6 +648,9 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
             if ($objectType == 'h5p') {
                 $stringIds .= '&h5p_object_id=' . $objectId;
             }
+            if ($objectType == 'ilq') {
+                $stringIds .= '&ilq_object_id=' . $objectId;
+            }
             $stringIds .= '&obj_id_lrs=' . $objId;
         }
 
@@ -639,6 +669,11 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                 $reference = $objectId . '_' . $referenceId;
                 break;
             case 'h5p':
+                // TODO: Dirty fix for setting the URL to the learning module
+                $objectType = 'pg';
+                $reference = $pageId . '_' . $referenceId;
+                break;
+            case 'ilq':
                 // TODO: Dirty fix for setting the URL to the learning module
                 $objectType = 'pg';
                 $reference = $pageId . '_' . $referenceId;
