@@ -143,16 +143,19 @@ export default {
                 if (element?.businessObject?.objectId) {
                   // Hold objectId's locally for demonstration purposes
                   const objectId = element.businessObject.objectId
-                  let visitedObjects = []
-                  if (localStorage.getItem('visitedObjects')) {
-                    visitedObjects = JSON.parse(localStorage.getItem('visitedObjects'))
+                  // Check string, whether it contains a valid URL
+                  if (objectId.includes('http://') || objectId.includes('https://')) {
+                    let visitedObjects = []
+                    if (localStorage.getItem('visitedObjects')) {
+                      visitedObjects = JSON.parse(localStorage.getItem('visitedObjects'))
+                    }
+                    if (!visitedObjects.includes(objectId)) {
+                      visitedObjects.push(objectId)
+                    }
+                    localStorage.setItem('visitedObjects', JSON.stringify(visitedObjects))
+                    // Open on click
+                    window.open(element.businessObject.objectId, '_self')
                   }
-                  if (!visitedObjects.includes(objectId)) {
-                    visitedObjects.push(objectId)
-                  }
-                  localStorage.setItem('visitedObjects', JSON.stringify(visitedObjects))
-                  // Open on click
-                  window.open(element.businessObject.objectId, '_self')
                 }
               })
               // Add markers for highlighting the visitedObjects
