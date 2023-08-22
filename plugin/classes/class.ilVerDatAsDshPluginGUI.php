@@ -459,7 +459,15 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                             $tests[] = $subNode;
                         }
                         else if ($subNode['type'] === 'cmix') {
-                            ChromePhp::log('Type cmix detected, but not yet taken into account.');
+                            require_once('./Modules/CmiXapi/classes/class.ilObjCmiXapi.php');
+                            $cmixObject = new \ilObjCmiXapi($subNode['ref_id']);
+                            $launchUrl = $cmixObject->getLaunchUrl();
+                            $launchParameters = $cmixObject->getLaunchParameters();
+                            $launchMethod = $cmixObject->getLaunchMethod(); // e.g., newWin
+                            $launchMode = $cmixObject->getLaunchMode(); // e.g., Normal
+                            $privacyIdent = $cmixObject->getPrivacyIdent(); // e.g., 5
+                            $xmlManifest = $cmixObject->getXmlManifest(); // full xml
+                            ChromePhp::log('cmix', $subNode, $launchUrl);
                         }
                     }
                     // TODO: When reworking, this might be moved a few lines down
