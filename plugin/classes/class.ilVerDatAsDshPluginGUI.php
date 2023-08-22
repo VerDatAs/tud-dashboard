@@ -230,36 +230,85 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                 try {
                     $this->api->login(
                         'root',
-                        'verdatas1909'
+                        'root'
                     );
+
+                    // Extend or adjust object by necessary attributes / values
                     $courseNode = $this->api->course->getData($courseId);
-                    ChromePhp::log('courseData', $courseNode);
-                    $getIliasObjectTypes = $this->api->role->getIliasObjectTypes();
-                    ChromePhp::log('getIliasObjectTypes', $getIliasObjectTypes);
+                    $courseNode['ref_id'] = $courseId;
+                    $courseNode['type'] = $this->api->course->getObjectType($courseId);
+                    $courseNode['offline'] = $courseNode['offline'] ? '1' : '0';
+                    $courseNode['object_id'] = $this->api->course->getLink($courseId);
+                    $courseNode['modules'] = [];
+
+                    // Iterate sub objects of the course
                     $courseSubObjects = $this->api->course->getSubObjects($courseId);
-                    ChromePhp::log('courseSubObjects', $courseSubObjects);
                     foreach ($courseSubObjects as $subObject) {
                         $parsedSubObject = (object) $subObject;
                         if ($parsedSubObject->type === 'lm') {
-                            // example result: {2: '1.2', 3: '1.2.3', 4: '1.2.4', 5: '1.2.5'}
-                            $treeStructure = $this->api->iliasLearningModule->getTreeStructure($parsedSubObject->ref_id);
-                            ChromePhp::log('treeStructure', $treeStructure);
-                            // example result: 3: {date: '2023-07-28 09:05:50', id: '3', lang: '-', user: '6'}, ...
-                            $allPages = $this->api->iliasLearningModule->getAllPages($parsedSubObject->ref_id);
-                            ChromePhp::log('allPages', $allPages);
-                            // example result: <PageObject><PageContent PCID="b2a70d981916bb37511049d6cb37a025"><Paragraph Language="en" Characteristic="Standard">Test1234</Paragraph></PageContent><PageContent PCID="5c1be39c5ee3119a858fbc7f199e8132"><Question QRef="il__qst_1"/></PageContent></PageObject>
-                            // the "html" option described in the API does currently deliver an empty result
-                            $pageDetail = $this->api->iliasLearningModule->getPageContent(5, "xml");
-                            ChromePhp::log('pageDetail', $pageDetail);
-                            // TODO: Currently, this method cannot be called, as it will load the page infinitely
-                            // $allData = $this->api->iliasLearningModule->readAllData($parsedSubObject->ref_id);
-                            // ChromePhp::log('allData', $allData);
-                        }
-                        if ($parsedSubObject->parent !== '1') {
-                            $filteredSubObjects[] = $parsedSubObject->child;
+                            // TODO (Kilian): $parsedSubObject['object_id'] = $this->api->iliasLearningModule->getLink($parsedSubObject->ref_id);
+                            $parsedSubObject->object_id = 'TODO';
+                            $parsedSubObject->chapters = [];
+
+                            // Currently, we just need getTOC, as it also holds information about the path, which is retrieved by getTreeStructure
+                            // example result: {2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, 7: {…}, 8: {…}, 9: {…}, 10: {…}, 11: {…}, 12: {…}, 13: {…}}
+                            $tocStructure = $this->api->iliasLearningModule->getTOC($parsedSubObject->ref_id);
+                            $tocStructureArray = json_decode(json_encode($tocStructure), true);
+                            // NOTE: This does only work, if the chapters are retrieved before the subsequent content
+                            // pages are retrieved, which should always be true, as the object_id increments on creation
+                            foreach ($tocStructureArray as $tocItem) {
+                                if ($tocItem['type'] == 'st') {
+                                    // TODO (Kilian): Link of the chapter has to be changed from lm_77 to something like st_2_77
+                                    $tocItem['object_id'] = $tocItem['link'];
+                                    if (!$tocItem['pages']) {
+                                        $tocItem['pages'] = [];
+                                    }
+                                    if (!$tocItem['interactiveTasks']) {
+                                        $tocItem['interactiveTasks'] = [];
+                                    }
+                                    $parsedSubObject->chapters[] = $tocItem;
+                                }
+                                else if ($tocItem['type'] == 'pg') {
+                                    // TODO (Kilian): Link of the page has to be changed from lm_77 to something like pg_3_77
+                                    $tocItem['object_id'] = $tocItem['link'];
+                                    $tocItem['interactiveTasks'] = [];
+                                    // TODO (Kilian): Objects of type 'plugged' (especially H5P) are relevant as well and should be added
+                                    $pageDetail = $this->api->iliasLearningModule->getPageContent($tocItem['obj_id'], 'json');
+                                    foreach ($pageDetail as $pageObject) {
+                                        $question = array();
+                                        // build question objects and add them to the structure
+                                        if ($pageObject->type == 'question') {
+                                            $question['name'] = $pageObject->sub_type;
+                                            $question['title'] = $pageObject->content['title'];
+                                            $question['object_id'] = $tocItem['link'] . '&ilq_object_id=' . $pageObject->content['question_id'];
+                                            $question['page_object_id'] = $tocItem['link'];
+                                            $tocItem['interactiveTasks'][] = $question;
+                                        } else if ($pageObject->type == 'plugged') {
+                                            $question['name'] = 'TODO: H5P';
+                                            $question['title'] = 'TODO: H5P';
+                                            $question['object_id'] = 'TODO: H5P';
+                                            $question['page_object_id'] = 'TODO: H5P';
+                                            $tocItem['interactiveTasks'][] = $question;
+                                        }
+                                    }
+                                    // retrieve the parent index from the path
+                                    $pathArray = explode('.', $tocItem['path']);
+                                    $parentIndex = $pathArray[count($pathArray) - 2];
+                                    // find according chapter in output format and add it to pages
+                                    $objIds = array_column($parsedSubObject->chapters, 'obj_id');
+                                    $chapterIndex = array_search($parentIndex, $objIds);
+                                    if (!$parsedSubObject->chapters[$chapterIndex]['pages']) {
+                                        $parsedSubObject->chapters[$chapterIndex]['pages'] = [];
+                                    }
+                                    $parsedSubObject->chapters[$chapterIndex]['pages'][] = $tocItem;
+                                    // add the interactiveTasks to the chapters as well
+                                    $parsedSubObject->chapters[$chapterIndex]['interactiveTasks'] = array_merge($parsedSubObject->chapters[$chapterIndex]['interactiveTasks'], $tocItem['interactiveTasks']);
+                                }
+                            }
+                            // write adjusted module to structure
+                            $courseNode['modules'][] = $parsedSubObject;
                         }
                     }
-                    ChromePhp::log('filteredSubObjects', $filteredSubObjects);
                 } catch (Exception $e) {
                     ChromePhp::log('error', $e);
                 }
