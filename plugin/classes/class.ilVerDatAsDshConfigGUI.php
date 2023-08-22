@@ -74,6 +74,7 @@ class ilVerDatAsDshConfigGUI extends ilPluginConfigGUI
 
         $this->writeBackendURL($form->getInput('backend_url'));
         $this->writeLrsTypeId($form->getInput('lrs_type_id'));
+        $this->writeUseApi($form->getInput('use_api'));
 
         $DIC->ctrl()->redirect($this, 'configure');
     }
@@ -114,6 +115,19 @@ class ilVerDatAsDshConfigGUI extends ilPluginConfigGUI
 
         $form->addItem($lrsTypeItem);
 
+        // Use API
+        $useApiItem = new ilRadioGroupInputGUI('Use API (if installed)', 'use_api');
+        $useApiItem->setRequired(true);
+
+        $optionTrue = new ilRadioOption('True', 1, '');
+        $optionFalse = new ilRadioOption('False', 0, '');
+        $useApiItem->addOption($optionTrue);
+        $useApiItem->addOption($optionFalse);
+
+        $useApiItem->setValue($this->readUseApi());
+
+        $form->addItem($useApiItem);
+
         return $form;
     }
 
@@ -139,5 +153,17 @@ class ilVerDatAsDshConfigGUI extends ilPluginConfigGUI
     {
         $settings = new ilSetting(ilVerDatAsDshPlugin::PLUGIN_ID);
         $settings->set('lrs_type_id', $lrsTypeId);
+    }
+
+    protected function readUseApi()
+    {
+        $settings = new ilSetting(ilVerDatAsDshPlugin::PLUGIN_ID);
+        return $settings->get('use_api', 0);
+    }
+
+    protected function writeUseApi($useApi)
+    {
+        $settings = new ilSetting(ilVerDatAsDshPlugin::PLUGIN_ID);
+        $settings->set('use_api', $useApi);
     }
 }

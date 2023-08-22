@@ -131,7 +131,6 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
 //            file_put_contents('console.log', '-----', FILE_APPEND);
             // API specific variable
             $filteredSubObjects = [];
-            $useAPI = false;
             $courseId = $refId = $this->pl->getCurrentRefId(); // $_GET['ref_id']; (this does not always work)
             // https://stackoverflow.com/a/29147028/3623608
             $courseNode = (object) [];
@@ -164,6 +163,11 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
             }
             $lrsTypeId = $settings->get('lrs_type_id', 0);
             $backendURL = $settings->get('backend_url', 0);
+            $useAPI = $settings->get('use_api', 0) == 1 ? true : false;
+            // check if plugin is installed
+            if ($useAPI && !ilPluginAdmin::isPluginActive('xapi')) {
+                $useAPI = false;
+            }
             if (!$lrsTypeId || !$backendURL) {
                 return '';
             }
