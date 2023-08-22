@@ -237,6 +237,27 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                         'root'
                     );
 
+                    // Try to use vAPI to send examplary statement
+//                     $statement = array();
+//                     $statement['actor.objectType'] = 'Agent';
+//                     $statement['actor.account.homePage'] = 'http://example.com';
+//                     $statement['actor.account.name'] = '333@f269323f-fa99-4102-81fa-2e6ee79d13e8.ilias';
+//                     $statement['verb.id'] = 'http://adlnet.gov/expapi/verbs/attempted';
+//                     $statement['result.score.raw'] = 0;
+//                     $statement['result.score.min'] = 0;
+//                     $statement['result.score.max'] = 1;
+//                     $extensions = array();
+//                     $extensions['context.extensions'] = 'updateStatus';
+//                     $statement['context.extensions'] = $extensions;
+//
+//                     $privacyProperties = array();
+//                     $privacyProperties['anonymization_grade'] = 'pseudonymisised_foreign_platform_encrypted';
+//                     $privacyProperties['sensitivity'] = 'no_personal_data';
+//                     $privacyProperties['consent'] = 'false';
+//
+//                     $statementResult = $this->api->learningRecordStore->setData($lrsTypeId, $statement, $privacyProperties);
+//                     ChromePhp::log('statementResult', $statementResult);
+
                     // Extend or adjust object by necessary attributes / values
                     $courseNode = $this->api->course->getData($courseId);
                     $courseNode['ref_id'] = $courseId;
