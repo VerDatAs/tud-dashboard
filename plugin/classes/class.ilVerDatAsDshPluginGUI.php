@@ -536,11 +536,72 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                             require_once('./Modules/CmiXapi/classes/class.ilObjCmiXapi.php');
                             $cmixObject = new \ilObjCmiXapi($subNode['ref_id']);
                             $launchUrl = $cmixObject->getLaunchUrl();
-                            $launchParameters = $cmixObject->getLaunchParameters();
-                            $launchMethod = $cmixObject->getLaunchMethod(); // e.g., newWin
-                            $launchMode = $cmixObject->getLaunchMode(); // e.g., Normal
-                            $privacyIdent = $cmixObject->getPrivacyIdent(); // e.g., 5
-                            $xmlManifest = $cmixObject->getXmlManifest(); // full xml
+                            // $launchParameters = $cmixObject->getLaunchParameters();
+                            // $launchMethod = $cmixObject->getLaunchMethod(); // e.g., newWin
+                            // $launchMode = $cmixObject->getLaunchMode(); // e.g., Normal
+                            // $privacyIdent = $cmixObject->getPrivacyIdent(); // e.g., 5
+                            // $xmlManifest = $cmixObject->getXmlManifest(); // full xml
+
+                            // TODO: Bundle requests for multiple cmix modules
+                            // get typo3 server URL to send request to
+                            $startExplodeIndex = (str_contains($launchUrl, 'http://') || str_contains($launchUrl, 'https://')) ? 3 : 1;
+                            $slugInputExplode = explode('/', $launchUrl);
+                            $startSlug = '/' . $slugInputExplode[$startExplodeIndex];
+                            $startSlugIndex = strpos($launchUrl, $startSlug);
+                            $typo3ServerUrl = substr($launchUrl, 0, $startSlugIndex);
+                            // prevent crash when typo3 is unreachable
+                            try {
+                                // make a request to the VerDatAs-Backend to retrieve the user token, as we need the user ID
+                                $typo3Request = new ilVerDatAsDshHttpRequest(
+                                    $typo3ServerUrl
+                                );
+                                $typo3ResponseBody = $typo3Request->sendPost('/api/module/structure', [array('slug' => $launchUrl)]);
+
+                                // decode JWT Token
+                                // https://www.converticacommerce.com/support-maintenance/security/php-one-liner-decode-jwt-json-web-tokens/
+                                $decodedBody = json_decode($typo3ResponseBody);
+                                // for the moment, only consider having one input slug
+                                if (count($decodedBody) == 1) {
+                                    // retrieve first element
+                                    $learningModule = array_pop(array_reverse($decodedBody));
+                                    $subNode['object_id'] = $typo3ServerUrl . $learningModule->slug;
+                                    $subNode['chapters'] = [];
+
+                                    foreach ($learningModule->chapters as $chapter) {
+                                        $cmi5Chapter = array(
+                                            'title' => $chapter->title,
+                                            'object_id' => $typo3ServerUrl . $chapter->slug,
+                                            'pages' => [],
+                                            'interactiveTasks' => []
+                                        );
+                                        foreach ($chapter->pages as $page) {
+                                            $cmi5Page = array(
+                                                'title' => $page->title,
+                                                'object_id' => $typo3ServerUrl . $page->slug,
+                                                'interactiveTasks' => []
+                                            );
+                                            foreach ($page->content as $content) {
+                                                if ($content->tx_h5p_content) {
+                                                    $h5pContent = array_pop(array_reverse($content->tx_h5p_content));
+                                                    $cmi5H5pContent = array(
+                                                        'title' => $h5pContent->title,
+                                                        // TODO: This has later be adjusted, as the h5p slug is different from the ID within the HTML
+                                                        'object_id' => $typo3ServerUrl . $page->slug . '#' . $h5pContent->slug,
+                                                        'type' => $h5pContent->library
+                                                     );
+                                                    $cmi5Page['interactiveTasks'][] = $cmi5H5pContent;
+                                                    $$cmi5Chapter['interactiveTasks'][] = $cmi5H5pContent;
+                                                }
+                                            }
+                                            $cmi5Chapter['pages'][] = $cmi5Page;
+                                        }
+                                        $subNode['chapters'][] = $cmi5Chapter;
+                                    }
+                                    $modules[] = $subNode;
+                                }
+                            } catch (Exception $e) {
+                                file_put_contents('console.log', "An error occurred \n", FILE_APPEND);
+                            }
                             ChromePhp::log('cmix', $subNode, $launchUrl);
                         }
                     }
