@@ -585,8 +585,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                                                     $h5pContent = array_pop(array_reverse($content->tx_h5p_content));
                                                     $cmi5H5pContent = array(
                                                         'title' => $h5pContent->title,
-                                                        // TODO: This has later be adjusted, as the h5p slug is different from the ID within the HTML
-                                                        'object_id' => $typo3ServerUrl . $page->slug . '#' . $h5pContent->slug,
+                                                        'object_id' => $typo3ServerUrl . $h5pContent->iframeSlug,
                                                         'type' => $h5pContent->library
                                                      );
                                                     $cmi5Page['interactiveTasks'][] = $cmi5H5pContent;
