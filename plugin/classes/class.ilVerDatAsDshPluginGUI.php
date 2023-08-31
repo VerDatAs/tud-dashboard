@@ -82,13 +82,17 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
      */
     public function edit() : void
     {
-//        $form = $this->getForm();
-//
-//        // self::addCreationButton($form);
-//        // $lng = $this->lng;
-//        // $form->addCommandButton("create_plug", $lng->txt("save"));
-//
-//        self::output()->output($form);
+        $form = $this->getForm(true);
+
+        $form->addCommandButton('cancel', $this->lng->txt('cancel'));
+        $form->setFormAction($this->dic->ctrl()->getFormAction($this, 'edit'));
+
+        $customHeader = "<div class='ilFormHeader'><h2 class='ilHeader'>Edit VerDatAs Dashboard</h2></div>";
+        $creationHint = "<p class='alert alert-info'>Currently, there are no options to edit the VerDatAs dashboard. Press <strong>[Cancel]</strong> to return and use the delete function to remove it.</p>";
+        $previewHeader = "<h3>Preview (Scaled):</h3>";
+        $previewImage = "<div style='background: #fff; padding: 10px; margin-bottom: 10px;'><img src='" . $this->getPlugin()->getDirectory() . "/templates/assets/preview.jpg" . "' width='800' style='max-width: 100%;'></div>";
+
+        self::output()->output($customHeader . $creationHint . $previewHeader . $previewImage . $form->getHTML());
     }
 
     /**
@@ -725,8 +729,8 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
         $form->addCommandButton('cancel', $this->lng->txt('cancel'));
         $form->setFormAction($this->dic->ctrl()->getFormAction($this, 'create'));
 
-        $customHeader = "<div class='ilFormHeader'><h2 class='ilHeader'>Create VerDatAs Dashboard</h2></div>";
-        $creationHint = "<p class='alert alert-info'>You are about to include a dashboard into your course. Press <strong>[Save]</strong> to proceed, or <strong>[Cancel]</strong> to abort.</p>";
+        $customHeader = "<div class='ilFormHeader'><h2 class='ilHeader'>Include VerDatAs Dashboard</h2></div>";
+        $creationHint = "<p class='alert alert-info'>You are about to include the VerDatAs dashboard into your course. Press <strong>[Save]</strong> to proceed, or <strong>[Cancel]</strong> to abort.</p>";
         $previewHeader = "<h3>Preview (Scaled):</h3>";
         $previewImage = "<div style='background: #fff; padding: 10px; margin-bottom: 10px;'><img src='" . $this->getPlugin()->getDirectory() . "/templates/assets/preview.jpg" . "' width='800' style='max-width: 100%;'></div>";
 
