@@ -1,16 +1,12 @@
 <?php
 
-require_once __DIR__ . "/../vendor/autoload.php";
-
-use ILIAS\DI\Container;
-use srag\DevTools\VerDatAsDsh\DevToolsCtrl;
-
 use GuzzleHttp\Client as HttpClient;
 
 /**
  * Class ilVerDatAsDshHttpRequest
  *
  * @author Tommy Kubica <tommy.kubica@tu-dresden.de>
+ * @ilCtrl_isCalledBy ilVerDatAsDshHttpRequest: ilVerDatAsDshPluginGUI
  */
 class ilVerDatAsDshHttpRequest
 {
