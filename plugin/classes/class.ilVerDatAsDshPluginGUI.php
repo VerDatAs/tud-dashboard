@@ -29,6 +29,8 @@ include_once __DIR__ . "/ChromePhp.php";
 class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
 {
     const PLUGIN_CLASS_NAME = self::class;
+    const GET_PARAM_REF_ID = "ref_id";
+    const GET_PARAM_TARGET = "target";
     const CMD_INSERT = "insert";
     const CMD_CREATE = "create";
     const CMD_SAVE = "save";
@@ -39,6 +41,8 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
     private \ILIAS\DI\Container $dic;
     private ilDBInterface $db;
     protected ilGlobalTemplateInterface $tpl;
+    private static ?int $current_ref_id = null;
+
     public function __construct()
     {
         global $DIC;
@@ -135,7 +139,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
 //            file_put_contents('console.log', '-----', FILE_APPEND);
             // API specific variable
             $filteredSubObjects = [];
-            $courseId = $refId = $_GET['ref_id']; // $this->pl->getCurrentRefId(); // $_GET['ref_id']; (this does not always work)
+            $courseId = $refId = $this->getCurrentRefId(); // $_GET['ref_id']; (this does not always work)
             // https://stackoverflow.com/a/29147028/3623608
             $courseNode = (object) [];
             $modules = [];
@@ -289,6 +293,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                                 if ($tocItem['type'] == 'st') {
                                     // TODO (Kilian): Link of the chapter has to be changed from lm_77 to something like st_2_77
                                     $tocItem['object_id'] = $tocItem['link'];
+                                    // https://stackoverflow.com/a/74312924
                                     if (!($tocItem['pages'] ?? false)) {
                                         $tocItem['pages'] = [];
                                     }
@@ -339,7 +344,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                         }
                     }
                 } catch (Exception $e) {
-//                    ChromePhp::log('error', $e);
+                    ChromePhp::log('error', $e);
                 }
             } // Do not use the API
             else {
@@ -350,7 +355,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                 $tree = new \ilTree(1);
                 // type: "crs", ref_id -> use for loading knowledge_structure
                 $courseNode = $tree->getNodeData($courseId);
-//                ChromePhp::log('Course Node', $courseNode);
+                ChromePhp::log('Course Node', $courseNode);
                 $courseNode['object_id'] = $this->getObjectPermaLink('crs', $courseId, $courseNode['obj_id']);
                 // Currently supported module types by VerDatAs
                 $moduleTypesArray = array('lm', 'cmix', 'sahs', 'tst');
@@ -369,7 +374,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
 //                        ChromePhp::log($subNode);
                         // For learning module ILIAS retrieve the inner structure (chapters, tasks) as well
                         if ($subNode['type'] === 'lm') {
-                            //try {
+                            try {
                                 // Use code from Sebastian Heiden's extension of the REST plugin
                                 // https://github.com/spyfly/Ilias.RESTPlugin/blob/feature/sr-app-routes/RESTController/extensions/learning_module_v1/models/ILIASAppModel.php#L107
                                 $learningModule = new \ilObjLearningModule($subNode['ref_id']);
@@ -425,7 +430,6 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                                         $chapterFound = $lmChapters[$foundKey];
                                         $pages = array();
                                         // $pages already exists
-                                        // https://stackoverflow.com/a/74312924
                                         if ($chapterFound['pages'] ?? false) {
                                             $pages = $chapterFound['pages'];
                                         }
@@ -481,9 +485,9 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                                 // $subNode['content'] = $lmContent;
                                 $subNode['chapters'] = $lmChapters;
                                 $modules[] = $subNode;
-//                            } catch (Exception $e) {
-////                                ChromePhp::log('error', $e);
-//                            }
+                            } catch (Exception $e) {
+                                ChromePhp::log('error', $e);
+                            }
                         }
                         else if ($subNode['type'] === 'sahs') {
                             $sahsModule = new \ilObjSAHSLearningModule($subNode['ref_id']);
@@ -647,10 +651,6 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
 //                canViewOnly => $canViewOnly
 //            );
             $this->dic->ui()->mainTemplate()->addOnLoadCode('document.dispatchEvent(new CustomEvent("init-graph", { "detail": ' . $initGraphData . '  }))');
-
-            // This may be required due to ILIAS 8?
-            // $tpl->parseCurrentBlock();
-
             return $tpl->get();
         }
         return '';
@@ -794,5 +794,26 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
 
         // Hint: The implementation of ilLink::_getLink was used, as it does only allow adding int as $reference
         return ILIAS_HTTP_PATH . '/' . IL_INTERNAL_LINK_SCRIPT . '?target=' . $objectType . '_' . $reference . '&client_id=' . CLIENT_ID . $stringIds;
+    }
+
+    /**
+     * @return int
+     * Example retrieved by https://github.com/fluxfw/SrFileObjectTypeIcons/blob/main/classes/class.ilSrFileObjectTypeIconsUIHookGUI.php
+     */
+    public function getCurrentRefId() : int
+    {
+        if (self::$current_ref_id === null) {
+            self::$current_ref_id = filter_input(INPUT_GET, self::GET_PARAM_REF_ID);
+
+            if (self::$current_ref_id === null) {
+                $param_target = filter_input(INPUT_GET, self::GET_PARAM_TARGET);
+
+                self::$current_ref_id = explode("_", $param_target)[1];
+            }
+
+            self::$current_ref_id = intval(self::$current_ref_id);
+        }
+
+        return self::$current_ref_id;
     }
 }
