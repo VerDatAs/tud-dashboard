@@ -20,7 +20,7 @@ COPY ./plugin /plugin
 WORKDIR /
 
 RUN cp -r dashboard/dist/assets/* plugin/templates/assets/
-RUN cp dashboard/dist/dashboard.html plugin/templates/
+RUN cp dashboard/dist/tpl.content.html plugin/templates/
 RUN cp dashboard/dist/logo.jpeg plugin/templates/
 
 FROM php:8.2.4-zts-alpine3.16
