@@ -1,4 +1,5 @@
 <script>
+import { markRaw } from 'vue'
 import VueMultiselect from 'vue-multiselect'
 import BasicTypes from './BasicTypes.vue'
 import { basicTypes, customTypes, excludedParameters, nonSelectableElements } from '@/util/GraphHelpers'
@@ -130,7 +131,9 @@ export default {
     },
     // Update the priorKnowledge multiselect value
     updateSelectedPriorKnowledge(selectedElements, parameterName) {
-      this.priorKnowledgeValue = selectedElements
+      // markRaw is necessary at this point
+      // related issue: https://github.com/vuejs/core/issues/3024
+      this.priorKnowledgeValue = markRaw(selectedElements)
       // TODO: Updating only works with businessObjects, e.g.,
       // const element = this.diagram.get('moddle').create('verDatAs:InteractiveTask')
       // const element = this.diagram.get('elementRegistry').find((element) => element.id === 'InteractiveTask_0k3e3zy').businessObject
@@ -243,7 +246,7 @@ export default {
                 </div>
                 <div class="col-xs-12">
                   <ul
-                    class="fs-5 mt-2 ps-5"
+                    class="mt-2 ps-5"
                     v-if="
                       elementSelected &&
                       elementSelected.businessObject &&
@@ -262,7 +265,7 @@ export default {
               </template>
             </template>
             <div class="col-xs-12" v-if="!basicTypes.includes(parameter.type) && !customTypes.includes(parameter.type)">
-              <p class="alert alert-info py-3 mb-2 fs-5">The parameter {{ parameter.name }} will be supported soon.</p>
+              <p class="alert alert-info py-3 mb-2">The parameter {{ parameter.name }} will be supported soon.</p>
             </div>
           </div>
         </div>
