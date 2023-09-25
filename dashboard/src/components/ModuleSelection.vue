@@ -18,6 +18,11 @@ export default {
     token: String,
     diagram: Object
   },
+  computed: {
+    objectId() {
+      return this.courseData?.attributes?.find((attr) => attr.key === 'objectId')?.value
+    }
+  },
   mounted() {
     this.initializeModuleSelection()
   },
@@ -54,15 +59,14 @@ export default {
       }
     },
     async loadCourseFeatures() {
-      const objectId = this.courseData['object_id']
-      if (!objectId) {
+      if (!this.objectId) {
         this.errorResponse = 'The ID of the course could not be retrieved.'
         return
       }
 
       // example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
       // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
-      const encodedId = Base64.encodeURI(objectId)
+      const encodedId = Base64.encodeURI(this.objectId)
       const courseFeaturesURL = this.backendURL + '/api/v1/courses/' + encodedId + '/features'
 
       const authHeader = {
@@ -91,15 +95,14 @@ export default {
     },
     async selectCourseFeatures() {
       this.errorResponse = ''
-      const objectId = this.courseData['object_id']
-      if (!objectId) {
+      if (!this.objectId) {
         this.errorResponse = 'The ID of the course could not be retrieved.'
         return
       }
 
       // example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
       // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
-      const encodedId = Base64.encodeURI(objectId)
+      const encodedId = Base64.encodeURI(this.objectId)
       const courseFeaturesURL = this.backendURL + '/api/v1/courses/' + encodedId + '/features'
 
       const authHeader = {
