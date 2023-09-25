@@ -125,5 +125,7 @@ export default {
 #verdatas-dashboard {
   position: relative;
   height: 600px;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 </style>

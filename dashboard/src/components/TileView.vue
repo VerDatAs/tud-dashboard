@@ -61,7 +61,7 @@ export default {
 
 <style scoped>
 #tile-view {
-  z-index: 999;
+  z-index: 110;
   position: absolute;
   top: 15px;
   left: 15px;

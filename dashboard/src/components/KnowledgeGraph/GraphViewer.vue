@@ -525,7 +525,7 @@ export default {
 <style scoped>
 #graph-viewer {
   height: 100%;
-  z-index: 997; /* z-index: 1001; */
+  z-index: 105;
 }
 .rasterBackground {
   background-color: #fff;

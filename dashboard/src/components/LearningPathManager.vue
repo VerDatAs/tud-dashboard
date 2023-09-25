@@ -219,7 +219,7 @@ export default {
 
 <style scoped>
 #learning-path-manager {
-  z-index: 999;
+  z-index: 115;
   position: absolute;
   top: 15px;
   left: 15px;
