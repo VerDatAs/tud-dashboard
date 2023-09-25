@@ -131,21 +131,11 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
 
     public function getElementHTML(string $a_mode, array $a_properties, string $a_plugin_version): string
     {
-        // Check, whether the element is in the edit or presentation-mode and whether an VerDatAsDsh-Element exist
+        // Check whether the element is displayed in the edit or presentation mode
         if (in_array($a_mode, ['edit', 'presentation'])) {
-            // TODO: Remove, if fully debugged
-//            file_put_contents('console.log', print_r($_SESSION['userIdent'] . "\n", true), FILE_APPEND);
-//            file_put_contents('console.log', print_r($_SESSION['jwt'] . "\n", true), FILE_APPEND);
-//            file_put_contents('console.log', '-----', FILE_APPEND);
-            // API specific variable
-            $filteredSubObjects = [];
-            $courseId = $refId = $this->getCurrentRefId(); // $_GET['ref_id']; (this does not always work)
-            // https://stackoverflow.com/a/29147028/3623608
-            $courseNode = (object) [];
-            $modules = [];
-            $interactiveTasks = [];
-            $tests = [];
-            // Check, whether the current user should be able to edit the knowledge_structure or just view it
+            // Note: $_GET['ref_id'] does not always work
+            $courseId = $refId = $this->getCurrentRefId();
+            // Check whether the current user should be able to edit the knowledge_structure or just view it
             $hasReadAccess = $this->dic->access()->checkAccessOfUser(
                 $this->dic->user()->getId(),
                 'read', 'read',
@@ -160,35 +150,29 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
             if (!$hasReadAccess && !$hasWriteAccess) {
                 return '';
             }
-            // Check, whether the user is a student (read only) or a lecturer (both read and write)
+            // Check whether the user is a student (read only) or a lecturer (both read and write)
             $canViewOnly = $hasReadAccess && !$hasWriteAccess;
 
-            // BEGIN: Retrieve token (similar to Chatbot-Plugin)
+            // BEGIN: Retrieve token (similar to chatbot plugin)
             // Retrieve settings of the plugin
             $settings = new ilSetting(ilVerDatAsDshPlugin::PLUGIN_ID);
-            if (!$settings) {
-                return '';
-            }
             $lrsTypeId = $settings->get('lrs_type_id', 0);
             $backendURL = $settings->get('backend_url', 0);
-            $useAPI = $settings->get('use_api', 0) == 1 ? true : false;
-            // check if plugin is installed
+            $useAPI = $settings->get('use_api', 0) == 1;
+            // Check whether the plugin is installed
             if ($useAPI && !ilPluginAdmin::isPluginActive('xapi')) {
                 $useAPI = false;
             }
             if (!$lrsTypeId || !$backendURL) {
                 return '';
             }
-            $lrsType = $lrsTypeId ? new ilCmiXapiLrsType($lrsTypeId) : null;
-            if (!$lrsType) {
-                return '';
-            }
+            $lrsType = new ilCmiXapiLrsType($lrsTypeId);
 
             // Distinction between ILIAS version 6 and 7 is made
             $nameMode = isset(array_flip(get_class_methods($lrsType))['getPrivacyName']) ? $lrsType->getPrivacyIdent() : $lrsType->getUserIdent();
             $userIdent = ilCmiXapiUser::getIdent($nameMode, $this->dic->user());
 
-            // Check if an expireDate is set and if so, whether it is exceeded
+            // Check whether an expireDate has been set and, if so, whether it has been exceeded
             if (!empty($_SESSION['expireDate'])) {
                 if ($_SERVER['REQUEST_TIME'] > $_SESSION['expireDate']) {
                     $_SESSION['userIdent'] = null;
@@ -198,7 +182,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
             }
 
             // At least one session variable is not set
-            // As the session terminates on logout, it is not required to check the userIdent for a new logged in user
+            // As the session terminates on logout, it is not required to check the userIdent for a new logged-in user
             if (empty($_SESSION['userIdent']) || empty($_SESSION['jwt'])) {
                 // Prevent crash when backend is unreachable
                 try {
@@ -206,7 +190,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                     $verDatAsBackendRequest = new ilVerDatAsDshHttpRequest(
                         $backendURL
                     );
-                    $responseBody = $verDatAsBackendRequest->sendPost('/api/v1/auth/login', array('actorAccountName' => $userIdent));
+                    $responseBody = $verDatAsBackendRequest->sendPost('/api/v1/auth/login', ['actorAccountName' => $userIdent]);
 
                     // Decode JWT Token
                     // https://www.converticacommerce.com/support-maintenance/security/php-one-liner-decode-jwt-json-web-tokens/
@@ -228,13 +212,17 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
             }
 
             // Do not show dashboard when backend cannot be accessed
-            if (!$token) {
+            if (!($token ?? false)) {
                 return '';
             }
             // END: Retrieve token
 
-            // TODO: Do we really need the API to just retrieve the elements?
-            // For now, it would be "overkill" to use the API just to retrieve the elements of a course
+            // Hold variables to retrieve the course structure
+            $lcoObject = [];
+            $lcoModules = [];
+            $lcoTests = [];
+
+            // For now, the API does only support retrieving ILIAS learning modules
             if ($useAPI) {
                 $apiFile = "./Customizing/global/plugins/Services/EventHandling/EventHook/Api/classes/IliasAPIControl/IliasAPIControl.php";
                 require_once($apiFile);
@@ -245,108 +233,60 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                         'root'
                     );
 
-                    // Try to use vAPI to send examplary statement
-//                     $statement = array();
-//                     $statement['actor.objectType'] = 'Agent';
-//                     $statement['actor.account.homePage'] = 'http://example.com';
-//                     $statement['actor.account.name'] = '333@f269323f-fa99-4102-81fa-2e6ee79d13e8.ilias';
-//                     $statement['verb.id'] = 'http://adlnet.gov/expapi/verbs/attempted';
-//                     $statement['result.score.raw'] = 0;
-//                     $statement['result.score.min'] = 0;
-//                     $statement['result.score.max'] = 1;
-//                     $extensions = array();
-//                     $extensions['context.extensions'] = 'updateStatus';
-//                     $statement['context.extensions'] = $extensions;
-//
-//                     $privacyProperties = array();
-//                     $privacyProperties['anonymization_grade'] = 'pseudonymisised_foreign_platform_encrypted';
-//                     $privacyProperties['sensitivity'] = 'no_personal_data';
-//                     $privacyProperties['consent'] = 'false';
-//
-//                     $statementResult = $this->api->learningRecordStore->setData($lrsTypeId, $statement, $privacyProperties);
-//                     ChromePhp::log('statementResult', $statementResult);
-
                     // Extend or adjust object by necessary attributes / values
                     $courseNode = $this->api->course->getData($courseId);
-                    $courseNode['ref_id'] = $courseId;
-                    $courseNode['type'] = $this->api->course->getObjectType($courseId);
-                    $courseNode['offline'] = $courseNode['offline'] ? '1' : '0';
-                    $courseNode['object_id'] = $this->api->course->getLink($courseId);
-                    $courseNode['modules'] = [];
+                    ChromePhp::log('Course Node', $courseNode);
+                    $lcoObject['lcoType'] = 'ILIAS_COURSE';
+                    $lcoObject['attributes'] = [
+                        $this->getAttributeArray('objectId', $this->api->course->getLink($courseId)),
+                        $this->getAttributeArray('title', $courseNode['title']),
+                        $this->getAttributeArray('description', $courseNode['description'])
+                    ];
+                    // Currently supported module types of the knowledge structure (by vAPI)
+                    // TODO: Add other types as well (or use functionality without vAPI to retrieve the information)
+                    $moduleTypesArray = ['lm'];
 
-                    // Iterate sub objects of the course
-                    $courseSubObjects = $this->api->course->getSubObjects($courseId);
-                    foreach ($courseSubObjects as $subObject) {
-                        $parsedSubObject = (object) $subObject;
-                        if ($parsedSubObject->type === 'lm') {
-                            // TODO (Kilian): $parsedSubObject['object_id'] = $this->api->iliasLearningModule->getLink($parsedSubObject->ref_id);
-                            $parsedSubObject->object_id = 'TODO';
-                            $parsedSubObject->chapters = [];
-
-                            // Currently, we just need getTOC, as it also holds information about the path, which is retrieved by getTreeStructure
-                            // example result: {2: {…}, 3: {…}, 4: {…}, 5: {…}, 6: {…}, 7: {…}, 8: {…}, 9: {…}, 10: {…}, 11: {…}, 12: {…}, 13: {…}}
-                            $tocStructure = $this->api->iliasLearningModule->getTOC($parsedSubObject->ref_id);
-                            $tocStructureArray = json_decode(json_encode($tocStructure), true);
-                            // NOTE: This does only work, if the chapters are retrieved before the subsequent content
-                            // pages are retrieved, which should always be true, as the object_id increments on creation
-                            foreach ($tocStructureArray as $tocItem) {
-                                if ($tocItem['type'] == 'st') {
-                                    // TODO (Kilian): Link of the chapter has to be changed from lm_77 to something like st_2_77
-                                    $tocItem['object_id'] = $tocItem['link'];
-                                    // https://stackoverflow.com/a/74312924
-                                    if (!($tocItem['pages'] ?? false)) {
-                                        $tocItem['pages'] = [];
-                                    }
-                                    if (!($tocItem['interactiveTasks'] ?? false)) {
-                                        $tocItem['interactiveTasks'] = [];
-                                    }
-                                    $parsedSubObject->chapters[] = $tocItem;
-                                }
-                                else if ($tocItem['type'] == 'pg') {
-                                    // TODO (Kilian): Link of the page has to be changed from lm_77 to something like pg_3_77
-                                    $tocItem['object_id'] = $tocItem['link'];
-                                    $tocItem['interactiveTasks'] = [];
-                                    // TODO (Kilian): Objects of type 'plugged' (especially H5P) are relevant as well and should be added
-                                    $pageDetail = $this->api->iliasLearningModule->getPageContent($tocItem['obj_id'], 'json');
-                                    foreach ($pageDetail as $pageObject) {
-                                        $question = array();
-                                        // build question objects and add them to the structure
-                                        if ($pageObject->type == 'question') {
-                                            $question['name'] = $pageObject->sub_type;
-                                            $question['title'] = $pageObject->content['title'];
-                                            $question['object_id'] = $tocItem['link'] . '&ilq_object_id=' . $pageObject->content['question_id'];
-                                            $question['page_object_id'] = $tocItem['link'];
-                                            $tocItem['interactiveTasks'][] = $question;
-                                        } else if ($pageObject->type == 'plugged') {
-                                            $question['name'] = 'TODO: H5P';
-                                            $question['title'] = 'TODO: H5P';
-                                            $question['object_id'] = 'TODO: H5P';
-                                            $question['page_object_id'] = 'TODO: H5P';
-                                            $tocItem['interactiveTasks'][] = $question;
-                                        }
-                                    }
-                                    // retrieve the parent index from the path
-                                    $pathArray = explode('.', $tocItem['path']);
-                                    $parentIndex = $pathArray[count($pathArray) - 2];
-                                    // find according chapter in output format and add it to pages
-                                    $objIds = array_column($parsedSubObject->chapters, 'obj_id');
-                                    $chapterIndex = array_search($parentIndex, $objIds);
-                                    if (!($parsedSubObject->chapters[$chapterIndex]['pages'] ?? false)) {
-                                        $parsedSubObject->chapters[$chapterIndex]['pages'] = [];
-                                    }
-                                    $parsedSubObject->chapters[$chapterIndex]['pages'][] = $tocItem;
-                                    // add the interactiveTasks to the chapters as well
-                                    $parsedSubObject->chapters[$chapterIndex]['interactiveTasks'] = array_merge($parsedSubObject->chapters[$chapterIndex]['interactiveTasks'], $tocItem['interactiveTasks']);
-                                }
-                            }
-                            // write adjusted module to structure
-                            $courseNode['modules'][] = $parsedSubObject;
+                    // Sort sub nodes by their titles
+                    // "->" is used to call a method, or access a property, on the object of a class
+                    // "['prop']" is used to access a key of an array
+                    $subNodes = $this->api->course->getSubObjects($courseId);
+                    usort($subNodes, function($a, $b) {
+                        return strcmp($a['title'], $b['title']);
+                    });
+                    foreach ($subNodes as $subNode) {
+                        // Check if the type is within the list of supported module types
+                        // If it is not in the list, continue
+                        if (!in_array($subNode['type'], $moduleTypesArray)) {
+                            continue;
                         }
+                        $lcoModule = [
+                            'lcoType' => 'ILIAS_MODULE'
+                        ];
+                        $lcoChapters = [];
+
+                        // Learning Module ILIAS
+                        if ($subNode['type'] === 'lm') {
+                            $learningModule = $this->api->iliasLearningModule->getModuleContent($subNode['ref_id']);
+                            ChromePhp::log($learningModule);
+                            $lcoModule['attributes'] = [
+                                $this->getAttributeArray('objectId', $learningModule['link']),
+                                $this->getAttributeArray('title', $subNode['title']),
+                                $this->getAttributeArray('description', $subNode['description']),
+                                $this->getAttributeArray('offline', $subNode['offline'] == '1')
+                            ];
+                            $lmTreeContent = $learningModule['children'];
+
+                            // TODO: In the following, a similar function is used for both vAPI and not vAPI. Write a method that is able to support both.
+                            // TODO: As the parent is currently not included, wait for adjustments in the vAPI
+                        }
+                        $lcoModule['attributes'][] = $this->getAttributeArray('chapters', $lcoChapters);
+                        $lcoModules[] = $lcoModule;
                     }
                 } catch (Exception $e) {
                     ChromePhp::log('error', $e);
                 }
-            } // Do not use the API
+            }
+            // Do not use the API
             else {
                 ChromePhp::log('Else (not using API)');
                 include_once('./Services/Tree/classes/class.ilTree.php');
@@ -356,195 +296,202 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                 // type: "crs", ref_id -> use for loading knowledge_structure
                 $courseNode = $tree->getNodeData($courseId);
                 ChromePhp::log('Course Node', $courseNode);
-                $courseNode['object_id'] = $this->getObjectPermaLink('crs', $courseId, $courseNode['obj_id']);
-                // Currently supported module types by VerDatAs
-                $moduleTypesArray = array('lm', 'cmix', 'sahs', 'tst');
-                // Sort learning modules by their titles
+                $lcoObject['lcoType'] = 'ILIAS_COURSE';
+                $lcoObject['attributes'] = [
+                    $this->getAttributeArray('objectId', $this->getObjectPermaLink('crs', $courseId, $courseNode['obj_id'])),
+                    $this->getAttributeArray('title', $courseNode['title']),
+                    $this->getAttributeArray('description', $courseNode['description'])
+                ];
+                // Currently supported module types of the knowledge structure
+                $moduleTypesArray = ['lm', 'sahs', 'cmix', 'tst'];
+                // Sort sub nodes by their titles
+                // "->" is used to call a method, or access a property, on the object of a class
+                // "['prop']" is used to access a key of an array
                 $subNodes = $tree->getSubTree($courseNode);
                 usort($subNodes, function($a, $b) {
-                    // https://www.php.net/manual/en/function.usort.php
-                    // "->" is used to call a method, or access a property, on the object of a class
-                    // "['prop']" is used to access a key of an array (?)
-                    // In this case, the "->" notation does not work
                     return strcmp($a['title'], $b['title']);
                 });
                 foreach ($subNodes as $subNode) {
-                    // Check if the type is a module
-                    if (in_array($subNode['type'], $moduleTypesArray)) {
-//                        ChromePhp::log($subNode);
-                        // For learning module ILIAS retrieve the inner structure (chapters, tasks) as well
-                        if ($subNode['type'] === 'lm') {
-                            try {
-                                // Use code from Sebastian Heiden's extension of the REST plugin
-                                // https://github.com/spyfly/Ilias.RESTPlugin/blob/feature/sr-app-routes/RESTController/extensions/learning_module_v1/models/ILIASAppModel.php#L107
-                                $learningModule = new \ilObjLearningModule($subNode['ref_id']);
-                                $learningModuleObject = \ilObjectFactory::getInstanceByRefId($subNode['ref_id']);
-                                $subNode['object_id'] = $this->getObjectPermaLink('lm', $subNode['ref_id'], $learningModule->getId());
-                                $lmTree = $learningModule->getTree();
-//                                ChromePhp::log('lmTree', $lmTree);
-                                $lmTreeContent = $lmTree->getSubTree($lmTree->getNodeData($lmTree->readRootId()));
-//                                ChromePhp::log('lmTreeContent', $lmTreeContent);
-                                $lmContent = array();
-                                $lmChapters = array();
-                                $lmSubChapters = array();
-                                $lmPages = array();
-                                // iterate tree and hold objects
-                                foreach ($lmTreeContent as $lmObj) {
-                                    if ($lmObj['type'] == 'du') {
-                                        continue;
-                                    }
+                    // Check if the type is within the list of supported module types
+                    // If it is not in the list, continue
+                    if (!in_array($subNode['type'], $moduleTypesArray)) {
+                        continue;
+                    }
+                    $lcoModule = [
+                        'lcoType' => 'ILIAS_MODULE'
+                    ];
+                    $lcoChapters = [];
 
-                                    $objDetails = [
-                                        "title" => $lmObj['title'],
-                                        "type" => $lmObj['type'],
-                                        "parent" => $lmObj['parent'],
-                                        "obj_id" => $lmObj['obj_id']
-                                    ];
-                                    // TODO: This is necessary to retrieve the details of the page
-                                    if ($lmObj['type'] == 'pg') {
-                                        $lmPage = new \ilLMPage($lmObj['obj_id']);
-                                        $objDetails['object_id'] = $this->getObjectPermaLink('pg', $subNode['ref_id'], $lmPage->getId());
-                                        $objDetails = array_merge($objDetails, $this->getPageDetails($lmPage, $subNode['ref_id'], $objDetails['object_id']));
-                                        $lmPages[] = $objDetails;
-                                    }
+                    // Learning Module ILIAS
+                    if ($subNode['type'] === 'lm') {
+                        try {
+                            // Use code from Sebastian Heiden's extension of the REST plugin
+                            // https://github.com/spyfly/Ilias.RESTPlugin/blob/feature/sr-app-routes/RESTController/extensions/learning_module_v1/models/ILIASAppModel.php#L107
+                            $learningModule = new \ilObjLearningModule($subNode['ref_id']);
+                            $learningModuleObject = \ilObjectFactory::getInstanceByRefId($subNode['ref_id']);
+                            $lcoModule['attributes'] = [
+                                $this->getAttributeArray('objectId', $this->getObjectPermaLink('lm', $subNode['ref_id'], $learningModule->getId())),
+                                $this->getAttributeArray('title', $subNode['title']),
+                                $this->getAttributeArray('description', $subNode['description']),
+                                $this->getAttributeArray('offline', $subNode['offline'] == '1')
+                            ];
+                            // Retrieve structure of learning module
+                            $lmTree = $learningModule->getTree();
+                            $lmTreeContent = $lmTree->getSubTree($lmTree->getNodeData($lmTree->readRootId()));
 
-                                    if ($lmObj['type'] == 'st') {
-                                        // $lmStructureObject = new \ilStructureObject($learningModule, $lmObj['obj_id']);
-                                        // $lmStructureObject->getId() should be equivalent to $lmObj['obj_id']
-                                        $objDetails['object_id'] = $this->getObjectPermaLink('st', $subNode['ref_id'], $lmObj['obj_id']);
-                                        // for chapters within modules, the parent ID is '1'
-                                        if ($lmObj['parent'] == '1') {
-                                            $lmChapters[] = $objDetails;
-                                        } else {
-                                            $lmSubChapters[] = $objDetails;
-                                        }
-                                    }
+                            // Note: As the tree contains both pages and (sub) chapters, we want to store each of them
+                            // Helper variables
+                            $lmChapters = [];
+                            $lmSubChapters = [];
+                            $lmPages = [];
 
-                                    $lmContent[] = $objDetails;
+                            // foreach is faster than using multiple array_filter functions
+                            foreach ($lmTreeContent as $lmObj) {
+                                if ($lmObj['type'] == 'pg') {
+                                    $lmPages[] = $lmObj;
                                 }
-                                // iterate pages and put them as attributes of the chapters or sub-chapters
-                                foreach ($lmPages as $page) {
-                                    $foundKey = array_search($page['parent'], array_column($lmChapters, 'obj_id'));
-                                    $foundSubChapterKey = array_search($page['parent'], array_column($lmSubChapters, 'obj_id'));
-                                    if ($foundKey !== false) {
-                                        $chapterFound = $lmChapters[$foundKey];
-                                        $pages = array();
-                                        // $pages already exists
-                                        if ($chapterFound['pages'] ?? false) {
-                                            $pages = $chapterFound['pages'];
-                                        }
-                                        if ($page['questions'] ?? false) {
-                                            $page['interactiveTasks'] = $page['questions'];
-                                        }
-
-                                        $pages[] = $page;
-                                        $chapterFound['pages'] = $pages;
-                                        // Also hold the interactive tasks of pages in the chapter
-                                        if ($page['questions'] ?? false) {
-                                            if (!($chapterFound['interactiveTasks'] ?? false)) {
-                                                $chapterFound['interactiveTasks'] = $page['questions'];
-                                            } else {
-                                                $chapterFound['interactiveTasks'] = array_merge($chapterFound['interactiveTasks'], $page['questions']);
-                                            }
-                                        }
-                                        // write back chapter found
-                                        $lmChapters[$foundKey] = $chapterFound;
+                                else if ($lmObj['type'] == 'st') {
+                                    if ($lmObj['parent'] == '1') {
+                                        $lmChapters[] = $lmObj;
                                     } else {
-                                        if ($foundSubChapterKey !== false) {
-                                            $subChapterFound = $lmSubChapters[$foundSubChapterKey];
-                                            $pages = array();
-                                            // $pages already exists
-                                            if ($subChapterFound['pages'] ?? false) {
-                                                $pages = $subChapterFound['pages'];
-                                            }
-                                            $pages[] = $page;
-                                            $subChapterFound['pages'] = $pages;
-                                            // write back chapter found
-                                            $lmSubChapters[$foundSubChapterKey] = $subChapterFound;
-                                            // TODO: Interactive tasks in sub chapters
-                                        }
+                                        $lmSubChapters[] = $lmObj;
                                     }
                                 }
-                                // iterate sub-chapters and put them as attributes of the chapters
-                                foreach ($lmSubChapters as $subChapter) {
-                                    $foundKey = array_search($subChapter['parent'], array_column($lmChapters, 'obj_id'));
-                                    if ($foundKey) {
-                                        $chapterFound = $lmChapters[$foundKey];
-                                        $subChapters = array();
-                                        // subChapters already exists
-                                        if ($chapterFound['subChapters'] ?? false) {
-                                            $subChapters = $chapterFound['subChapters'];
-                                        }
-                                        $subChapters[] = $subChapter;
-                                        $chapterFound['subChapters'] = $subChapters;
-                                        // write back chapter found
-                                        $lmChapters[$foundKey] = $chapterFound;
-                                    }
-                                }
-                                // TODO: 'content' is not yet used
-                                // $subNode['content'] = $lmContent;
-                                $subNode['chapters'] = $lmChapters;
-                                $modules[] = $subNode;
-                            } catch (Exception $e) {
-                                ChromePhp::log('error', $e);
                             }
+
+                            // Iterate chapters and hold all pages related to it
+                            foreach ($lmChapters as $lmChapter) {
+                                $lcoChapter = [
+                                    'lcoType' => 'ILIAS_CHAPTER',
+                                    'attributes' => [
+                                        $this->getAttributeArray('objectId', $this->getObjectPermaLink('st', $subNode['ref_id'], $lmChapter['obj_id'])),
+                                        $this->getAttributeArray('title', $lmChapter['title'])
+                                    ]
+                                ];
+                                $lcoContentPages = [];
+                                // Filter pages by their direct parent
+                                $chapterPages = array_filter($lmPages, function ($pg) use ($lmChapter) { return $pg['parent'] == $lmChapter['obj_id']; });
+                                // Find sub-chapters by their direct parent
+                                $subChaptersOfChapter = array_filter($lmSubChapters, function ($st) use ($lmChapter) { return $st['parent'] == $lmChapter['obj_id']; });
+                                // If sub-chapters exist, find pages having those sub-chapters as parent and add them to the list of chapter pages
+                                if (count($subChaptersOfChapter) > 0) {
+                                    foreach ($subChaptersOfChapter as $subChapter) {
+                                        $subChapterPages = array_filter($lmPages, function ($pg) use ($subChapter) { return $pg['parent'] == $subChapter['obj_id']; });
+                                        $chapterPages = array_merge($chapterPages, $subChapterPages);
+                                    }
+                                }
+                                // Iterate pages of the chapter
+                                foreach ($chapterPages as $chapterPage) {
+                                    $lmPage = new \ilLMPage($chapterPage['obj_id']);
+                                    $pageObjectId = $this->getObjectPermaLink('pg', $subNode['ref_id'], $lmPage->getId());
+                                    $pageDetails = $this->getPageDetails($lmPage, $subNode['ref_id'], $pageObjectId);
+                                    $lcoContentPage = [
+                                        'lcoType' => 'ILIAS_CONTENT_PAGE',
+                                        'attributes' => [
+                                            $this->getAttributeArray('objectId', $pageObjectId),
+                                            $this->getAttributeArray('title', $chapterPage['title']),
+                                            $this->getAttributeArray('content', $pageDetails['xmlContent'])
+                                        ]
+                                    ];
+                                    // Iterate questions of the page
+                                    $lcoInteractiveTasks = [];
+                                    foreach ($pageDetails['interactiveTasks'] as $pageQuestion) {
+                                        $lcoInteractiveTask = [
+                                            'lcoType' => 'ILIAS_INTERACTIVE_TASK',
+                                            'attributes' => [
+                                                $this->getAttributeArray('objectId', $pageQuestion['object_id']),
+                                                $this->getAttributeArray('title', $pageQuestion['title'])
+                                            ]
+                                        ];
+                                        $lcoInteractiveTasks[] = $lcoInteractiveTask;
+                                    }
+
+                                    $lcoContentPage['attributes'][] = $this->getAttributeArray('interactiveTasks', $lcoInteractiveTasks);
+                                    $lcoContentPages[] = $lcoContentPage;
+                                }
+
+                                $lcoChapter['attributes'][] = $this->getAttributeArray('contentPages', $lcoContentPages);
+                                $lcoChapters[] = $lcoChapter;
+                            }
+                        } catch (Exception $e) {
+                            ChromePhp::log('error', $e);
                         }
-                        else if ($subNode['type'] === 'sahs') {
+                    }
+                    // Learning Module SCORM
+                    else if ($subNode['type'] === 'sahs') {
+                        try {
                             $sahsModule = new \ilObjSAHSLearningModule($subNode['ref_id']);
                             $subType = $sahsModule->getSubType();
                             // TODO: Currently, only SCORM2004 modules are supported
                             if ($subType === 'scorm2004') {
                                 include_once("./Modules/Scorm2004/classes/class.ilObjSCORM2004LearningModule.php");
                                 $scormModule = new \ilObjSCORM2004LearningModule($subNode['ref_id']);
-                                // Hint: $scormModule cannot be printed in console
+                                // Hint: $scormModule cannot be printed in the console, but for the $scormTree it is possible
                                 $scormTree = $scormModule->getTree();
-//                                ChromePhp::log('scormTree', $scormTree);
-
+                                // ChromePhp::log('scormTree', $scormTree);
                                 // TODO: For the moment, I did not manage to receive this data from the object itself
-                                // Thus, the database is used.
-                                // These tables might also be interesting: cp_node, cp_dependency
+                                // Thus, the database is used (these tables might also be interesting: cp_node, cp_dependency)
                                 $query = 'SELECT * FROM cp_package WHERE obj_id=' . $scormTree->tree_id;
                                 $res = $this->db->query($query);
                                 if ($row = $this->db->fetchAssoc($res)) {
                                     $scormData = json_decode($row['jsdata'], true);
-//                                    ChromePhp::log('scormData', $scormData);
+                                    // ChromePhp::log('scormData', $scormData);
                                     if ($scormData['item'] ?? false) {
                                         // SCORM module attributes
                                         $scormItem = $scormData['item'];
-                                        $subNode['title'] = $scormItem['title'];
                                         // example: "il_0_sahs_28116"
-                                        $subNode['object_id'] = $scormItem['id'];
-                                        $lmChapters = array();
-                                        foreach ($scormItem['item'] as &$value) {
+                                        $lcoModule['attributes'] = [
+                                            $this->getAttributeArray('objectId', $scormItem['id']),
+                                            $this->getAttributeArray('title', $scormItem['title']),
+                                            $this->getAttributeArray('description', $subNode['description']),
+                                            $this->getAttributeArray('offline', $subNode['offline'] == '1')
+                                        ];
+                                        // Iterate SCORM chapters
+                                        foreach ($scormItem['item'] as $scormChapter) {
                                             // SCORM chapter attributes
                                             // Do only consider IDs similar to "il_0_chap_297", but no assets ("il_0_ass_444")
-                                            if (str_contains($value['id'], 'chap')) {
-                                                $value['object_id'] = $value['id'];
-                                                $pages = array();
+                                            // TODO: Replace by str_contains in PHP 8.x
+                                            if (strpos($scormChapter['id'], 'chap') !== false) {
+                                                $lcoChapter = [
+                                                    'lcoType' => 'ILIAS_CHAPTER',
+                                                    'attributes' => [
+                                                        $this->getAttributeArray('objectId', $scormChapter['id']),
+                                                        $this->getAttributeArray('title', $scormChapter['title'])
+                                                    ]
+                                                ];
+                                                $lcoContentPages = [];
                                                 // SCORM page attributes
                                                 // "il_0_sco_35"
-                                                foreach ($value['item'] as &$page_value) {
-                                                    $page_value['object_id'] = $page_value['id'];
-                                                    $pages[] = $page_value;
+                                                // Iterate SCORM chapter pages
+                                                foreach ($scormChapter['item'] as $scormPage) {
+                                                    $lcoContentPage = [
+                                                        'lcoType' => 'ILIAS_CONTENT_PAGE',
+                                                        'attributes' => [
+                                                            $this->getAttributeArray('objectId', $scormPage['id']),
+                                                            $this->getAttributeArray('title', $scormPage['title'])
+                                                        ]
+                                                    ];
+                                                    // TODO: Retrieve content and interactive task as well
+                                                    $lcoContentPages[] = $lcoContentPage;
                                                 }
-                                                $value['pages'] = $pages;
-                                                $lmChapters[] = $value;
+                                                $lcoChapter['attributes'][] = $this->getAttributeArray('contentPages', $lcoContentPages);
+                                                $lcoChapters[] = $lcoChapter;
                                             }
                                         }
-                                        $subNode['chapters'] = $lmChapters;
                                     }
                                 }
-                                $modules[] = $subNode;
                             }
+                        } catch (Exception $e) {
+                            ChromePhp::log('error', $e);
                         }
-                        else if ($subNode['type'] === 'tst') {
-                            $subNode['object_id'] = $this->getObjectPermaLink('tst', $subNode['ref_id'], $courseId);
-                            $tests[] = $subNode;
-                        }
-                        else if ($subNode['type'] === 'cmix') {
+                    }
+                    // xAPI/cmi5 (Typo3)
+                    else if ($subNode['type'] === 'cmix') {
+                        try {
                             require_once('./Modules/CmiXapi/classes/class.ilObjCmiXapi.php');
                             $cmixObject = new \ilObjCmiXapi($subNode['ref_id']);
                             $launchUrl = $cmixObject->getLaunchUrl();
+                            // The following methods might be interesting as well:
                             // $launchParameters = $cmixObject->getLaunchParameters();
                             // $launchMethod = $cmixObject->getLaunchMethod(); // e.g., newWin
                             // $launchMode = $cmixObject->getLaunchMode(); // e.g., Normal
@@ -552,76 +499,103 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                             // $xmlManifest = $cmixObject->getXmlManifest(); // full xml
 
                             // TODO: Bundle requests for multiple cmix modules
-                            // get typo3 server URL to send request to
-                            $startExplodeIndex = (str_contains($launchUrl, 'http://') || str_contains($launchUrl, 'https://')) ? 3 : 1;
+                            // Get typo3 server URL to send request to
+                            // TODO: Replace by str_contains in PHP 8.x
+                            $startExplodeIndex = ((strpos($launchUrl, 'http://') !== false) || (strpos($launchUrl, 'https://') !== false)) ? 3 : 1;
                             $slugInputExplode = explode('/', $launchUrl);
                             $startSlug = '/' . $slugInputExplode[$startExplodeIndex];
                             $startSlugIndex = strpos($launchUrl, $startSlug);
                             $typo3ServerUrl = substr($launchUrl, 0, $startSlugIndex);
-                            // prevent crash when typo3 is unreachable
-                            try {
-                                // make a request to the VerDatAs-Backend to retrieve the user token, as we need the user ID
-                                $typo3Request = new ilVerDatAsDshHttpRequest(
-                                    $typo3ServerUrl
-                                );
-                                $typo3ResponseBody = $typo3Request->sendPost('/api/module/structure', [array('slug' => $launchUrl)]);
 
-                                // decode JWT Token
-                                // https://www.converticacommerce.com/support-maintenance/security/php-one-liner-decode-jwt-json-web-tokens/
-                                $decodedBody = json_decode($typo3ResponseBody);
-                                // for the moment, only consider having one input slug
-                                if (count($decodedBody) == 1) {
-                                    // retrieve first element
-                                    $learningModule = array_pop(array_reverse($decodedBody));
-                                    $subNode['object_id'] = $typo3ServerUrl . $learningModule->slug;
-                                    $subNode['chapters'] = [];
+                            // Make a request to the Typo3 REST API to retrieve the structure of the module
+                            $typo3Request = new ilVerDatAsDshHttpRequest(
+                                $typo3ServerUrl
+                            );
+                            $typo3ResponseBody = $typo3Request->sendPost('/api/module/structure', [['slug' => $launchUrl]]);
 
-                                    foreach ($learningModule->chapters as $chapter) {
-                                        $cmi5Chapter = array(
-                                            'title' => $chapter->title,
-                                            'object_id' => $typo3ServerUrl . $chapter->slug,
-                                            'pages' => [],
-                                            'interactiveTasks' => []
-                                        );
-                                        foreach ($chapter->pages as $page) {
-                                            $cmi5Page = array(
-                                                'title' => $page->title,
-                                                'object_id' => $typo3ServerUrl . $page->slug,
-                                                'interactiveTasks' => []
-                                            );
-                                            foreach ($page->content as $content) {
-                                                if ($content->tx_h5p_content) {
-                                                    $h5pContent = array_pop(array_reverse($content->tx_h5p_content));
-                                                    $cmi5H5pContent = array(
-                                                        'title' => $h5pContent->title,
-                                                        'object_id' => $typo3ServerUrl . $h5pContent->iframeSlug,
-                                                        'type' => $h5pContent->library
-                                                    );
-                                                    $cmi5Page['interactiveTasks'][] = $cmi5H5pContent;
-                                                    $cmi5Chapter['interactiveTasks'][] = $cmi5H5pContent;
-                                                }
+                            // Decode JWT Token
+                            // https://www.converticacommerce.com/support-maintenance/security/php-one-liner-decode-jwt-json-web-tokens/
+                            $decodedBody = json_decode($typo3ResponseBody);
+                            // For the moment, only consider having one input slug
+                            if (count($decodedBody) == 1) {
+                                // Retrieve first element
+                                $learningModule = array_pop(array_reverse($decodedBody));
+                                $lcoModule['attributes'] = [
+                                    $this->getAttributeArray('objectId', $typo3ServerUrl . $learningModule->slug),
+                                    $this->getAttributeArray('title', $subNode['title']),
+                                    $this->getAttributeArray('description', $subNode['description']),
+                                    $this->getAttributeArray('offline', $subNode['offline'] == '1')
+                                ];
+
+                                // Iterate chapters
+                                foreach ($learningModule->chapters as $chapter) {
+                                    $lcoChapter = [
+                                        'lcoType' => 'ILIAS_CHAPTER',
+                                        'attributes' => [
+                                            $this->getAttributeArray('objectId', $typo3ServerUrl . $chapter->slug),
+                                            $this->getAttributeArray('title', $chapter->title)
+                                        ]
+                                    ];
+                                    $lcoContentPages = [];
+                                    foreach ($chapter->pages as $contentPage) {
+                                        $lcoContentPage = [
+                                            'lcoType' => 'ILIAS_CONTENT_PAGE',
+                                            'attributes' => [
+                                                $this->getAttributeArray('objectId', $typo3ServerUrl . $contentPage->slug),
+                                                $this->getAttributeArray('title', $contentPage->title)
+                                            ]
+                                        ];
+                                        $lcoInteractiveTasks = [];
+                                        // Iterate content to retrieve the interactive tasks
+                                        foreach ($contentPage->content as $content) {
+                                            if (!$content->tx_h5p_content) {
+                                                continue;
                                             }
-                                            $cmi5Chapter['pages'][] = $cmi5Page;
+                                            $h5pContent = array_pop(array_reverse($content->tx_h5p_content));
+                                            $lcoInteractiveTask = [
+                                                'lcoType' => 'ILIAS_INTERACTIVE_TASK',
+                                                'attributes' => [
+                                                    $this->getAttributeArray('objectId', $typo3ServerUrl . $h5pContent->iframeSlug),
+                                                    $this->getAttributeArray('title', $h5pContent->title),
+                                                    $this->getAttributeArray('questionType', $h5pContent->library)
+                                                ]
+                                            ];
+                                            $lcoInteractiveTasks[] = $lcoInteractiveTask;
                                         }
-                                        $subNode['chapters'][] = $cmi5Chapter;
+                                        $lcoContentPage['attributes'][] = $this->getAttributeArray('interactiveTasks', $lcoInteractiveTasks);
+                                        $lcoContentPages[] = $lcoContentPage;
                                     }
-                                    $modules[] = $subNode;
+                                    $lcoChapter['attributes'][] = $this->getAttributeArray('contentPages', $lcoContentPages);
+                                    $lcoChapters[] = $lcoChapter;
                                 }
-                            } catch (Exception $e) {
-                                file_put_contents('console.log', "An error occurred \n", FILE_APPEND);
                             }
-//                            ChromePhp::log('cmix', $subNode, $launchUrl);
+                        } catch (Exception $e) {
+                            file_put_contents('console.log', "An error occurred \n", FILE_APPEND);
                         }
                     }
-                    // TODO: When reworking, this might be moved a few lines down
-                    $courseNode['modules'] = $modules;
-                    $courseNode['tests'] = $tests;
+                    else if ($subNode['type'] === 'tst') {
+                        $lcoTest = [
+                            'lcoType' => 'ILIAS_TEST',
+                            'attributes' => [
+                                $this->getAttributeArray('objectId', $this->getObjectPermaLink('tst', $subNode['ref_id'], $courseId)),
+                                $this->getAttributeArray('title', $subNode['title']),
+                                $this->getAttributeArray('description', $subNode['description']),
+                                $this->getAttributeArray('offline', $subNode['offline'] == '1'),
+                            ]
+                        ];
+                        $lcoTests[] = $lcoTest;
+                    }
+                    // Do not push tests into the modules
+                    if ($subNode['type'] !== 'tst') {
+                        $lcoModule['attributes'][] = $this->getAttributeArray('chapters', $lcoChapters);
+                        $lcoModules[] = $lcoModule;
+                    }
                 }
-
-//                ChromePhp::log($modules);
-//                ChromePhp::log('-----');
-//                ChromePhp::log($interactiveTasks);
             }
+
+            $lcoObject['attributes'][] = $this->getAttributeArray('modules', $lcoModules);
+            $lcoObject['attributes'][] = $this->getAttributeArray('tests', $lcoTests);
+            ChromePhp::log('lcoObject', $lcoObject);
 
             // Add custom template, whose will load the JavaScript file
             $tpl = $this->getPlugin()->getTemplate('tpl.content.html');
@@ -638,7 +612,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
             // $this->dic->ui()->mainTemplate()->addOnLoadCode('init(' . json_encode($courseNode) . ', ' . json_encode($token) . ', ' . json_encode($backendURL) . ', ' . $canViewOnly . ');');
 
             $initGraphData = '{
-              "courseNode": ' . json_encode($courseNode) .',
+              "courseNode": ' . json_encode($lcoObject) .',
               "token": ' . json_encode($token) .',
               "backendURL": ' . json_encode($backendURL) .',
               "canViewOnly": ' . json_encode($canViewOnly) .',
@@ -683,7 +657,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
                 // TODO: The attribute "parameter" gets lost at this position, as the code crashes otherwise
                 // $row = $db->fetchAssoc($hset);
                 // https://stackoverflow.com/a/29147028/3623608
-                $h5pObject = array();
+                $h5pObject = [];
                 while ($row = $db->fetchAssoc($hset)) {
 //                    ChromePhp::log($row);
                     $h5pObject['name'] = $row['name'];
@@ -704,7 +678,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
             $xml = simplexml_load_string($iliasQuestionsAsXML);
             foreach($xml->item as $xmlItem)
             {
-                $questionObject = array();
+                $questionObject = [];
                 $questionObject['content_id'] = (string)$xmlItem->attributes()->ident;
                 // retrieve question type from metadata
                 $fieldLabel = (string)$xmlItem->itemmetadata->qtimetadata->qtimetadatafield[1]->fieldlabel;
@@ -727,7 +701,7 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
             "questionsXml" => count($questionIds) > 0 ? $pool->questionsToXML($questionIds) : "",
             "iliasQuestions" => $iliasQuestions,
             "questionsXhfp" => $questionsXhfp,
-            "questions" => array_merge($iliasQuestions, $questionsXhfp)
+            "interactiveTasks" => array_merge($iliasQuestions, $questionsXhfp)
         ];
     }
 
@@ -794,6 +768,13 @@ class ilVerDatAsDshPluginGUI extends ilPageComponentPluginGUI
 
         // Hint: The implementation of ilLink::_getLink was used, as it does only allow adding int as $reference
         return ILIAS_HTTP_PATH . '/' . IL_INTERNAL_LINK_SCRIPT . '?target=' . $objectType . '_' . $reference . '&client_id=' . CLIENT_ID . $stringIds;
+    }
+
+    private function getAttributeArray($attributeKey, $attributeValue) {
+        return [
+            'key' => $attributeKey,
+            'value' => $attributeValue
+        ];
     }
 
     /**
