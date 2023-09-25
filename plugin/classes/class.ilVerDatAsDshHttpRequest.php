@@ -16,7 +16,7 @@ class ilVerDatAsDshHttpRequest
     protected $base_uri;
 
     /**
-     * ilBotpressChatbotHttpRequest constructor.
+     * ilVerDatAsDshHttpRequest constructor.
      * @param $base_uri
      */
     public function __construct(string $base_uri)
