@@ -1,6 +1,0 @@
-plugin/local_development.sh
-plugin/composer.lock
-plugin/vendor
-.gitignore
-.gitlab.ci.yml
-Dockerfile

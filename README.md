@@ -1,16 +1,121 @@
 # VerDatAs Dashboard
 
-The dashboard contains:
+## Project Setup
 
-* an ILIAS plugin implemented as a page component (located in the `plugin` folder) and
-* an application realizing the actual dashboard functionality (located in the `dashboard` folder), whose build is moved as a template in the plugin.
+You can install and switch to the node version used in the project (specified in `.nvmrc`) by running:
 
-## Docker
-
-For the delivery of the plugin code with the built dashboard a Docker image is used. This image can be built by executing:
-
-```bash
-docker build -t docker.rn.inf.tu-dresden.de/verdatas/verdatas-dashboard:latest .
+```sh
+nvm use
 ```
 
-Within this image the code is located in the `/app` directory.
+Install the dependencies:
+
+```sh
+npm install
+```
+
+Compile and hot-reload for development:
+
+```sh
+npm run dev
+```
+
+Type-check, compile and minify for production:
+
+```sh
+npm run build
+```
+
+Lint with [ESLint](https://eslint.org/):
+
+```sh
+npm run lint
+```
+
+Format the code using Prettier:
+
+```sh
+npm run format
+```
+
+For developing locally, you can build the project and move the specific folders directly into your ilias directory, in which they are loaded in the volume (using the `docker-compose-plugin-dev.yml` setup of ilias). In case, the `VerDatAsDsh`-folder does not yet exist in the ilias `Customizing`-folder, adjust the `local_development.sh` script to your needs.
+
+```sh
+sh local_development.sh
+```
+
+## Information on the metamodel
+
+The metamodel is specified in the folder `src/util/KnowledgeGraph/moddle/resources`:
+
+* `verDatAs.json` for the general element and attributes definition as well as
+* `verDatAsDi.json` for the visual part.
+
+### Options for properties
+
+For the metamodel, the following options for properties can be distinguished:
+
+* `"isAbstract": true` allows to define inheritance.
+* `"isMany": true` allows nesting elements. The children contain the complete elements, i.e., tags as well as attributes.
+* `"isBody": true` allows nesting attributes within element tags.
+* `"isAttr": true` allows defining attributes in String format (similar to values of HTML attributes).
+
+### Options for creating elements
+
+The following objects have to be retrieved to execute the described functions.
+
+```js
+const canvas = this.diagram.get('canvas')
+const moddle = this.diagram.get('moddle')
+const modeling = this.diagram.get('modeling')
+const elementFactory = this.diagram.get('elementFactory')
+```
+
+Create elements as children of the `<verDatAs:knowledgeGraph />` and automatically add a graphical representation of them.
+
+```js
+const moduleType = 'verDatAs:Chapter'
+const modulePosition = { x: 100, y: 200 }
+const rootElement = canvas.getRootElement()
+const moduleShape = modeling.createShape(moduleType, modulePosition, rootElement)
+```
+
+Create graphical representations of elements and add them as children of other elements.
+
+```js
+const moduleDimensions = { width: 70, height: 70 }
+const moduleAttributes = { ...modulePosition, ...moduleDimensions, ...moduleType }
+const moduleShape = elementFactory.create('shape', moduleAttributes)
+canvas.addShape(moduleShape)
+
+// the Topic has defined a property "modules" with "isMany": true
+const existingModules = knowledgeGraphTopic.businessObject?.modules ?? []
+existingModules.push(moduleShape.businessObject)
+modeling.updateProperties(knowledgeGraphTopic, { modules: existingModules })
+```
+
+Create elements as children of other elements.
+
+```js
+// chapterShape was created using "elementFactory.createShape"
+const element = moddle.create('verDatAs:ContentPage', pageProperties)
+contentPages.push(element)
+chapterProperties['contentPages'] = contentPages
+modeling.updateProperties(chapterShape, chapterProperties)
+```
+
+Update properties that have defined a `"isMany": true` relation in combination with `"isBody": true`.
+
+```js
+const priorKnowledgeElements = []
+this.priorKnowledgeValue.forEach((elem) => {
+  const element = this.diagram.get('moddle').create('verDatAs:PriorKnowledge', {
+    elementId: elem.businessObject.id
+  })
+  priorKnowledgeElements.push(element)
+})
+const propertyToDefine = {}
+propertyToDefine['priorKnowledgeElements'] = priorKnowledgeElements
+// "elementToUpdate" is the element for whose the property should be defined
+this.diagram.get('modeling').updateProperties(elementToUpdate, propertyToDefine)
+```
