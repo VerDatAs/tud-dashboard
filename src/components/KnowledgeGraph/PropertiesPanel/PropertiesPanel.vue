@@ -37,9 +37,9 @@ export default {
           this.parametrizedElement?.businessObject?.priorKnowledgeElements?.map(
             (priorKnowledgeElement) => priorKnowledgeElement?.elementId
           ) ?? []
-        this.priorKnowledgeValue = this.allGraphElements.filter((element) =>
+        this.priorKnowledgeValue = markRaw(this.allGraphElements.filter((element) =>
           priorKnowledgeElements.includes(element.businessObject.objectId)
-        )
+        ))
         // load referencedTests
         const referencedTestElements =
           this.parametrizedElement?.businessObject?.referencedTests?.map(
