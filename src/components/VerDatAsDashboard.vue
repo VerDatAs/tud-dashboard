@@ -4,6 +4,8 @@ import LearningPathManager from './LearningPathManager.vue'
 import LoadingScreen from './LoadingScreen.vue'
 import ModuleSelection from './ModuleSelection.vue'
 import TileView from './TileView.vue'
+import { initialEvent } from '@/util/InitialEvent'
+import axios from 'axios';
 
 export default {
   name: 'VerDatAsDashboard',
@@ -24,13 +26,31 @@ export default {
       currentView: 'tileView',
       viewOnly: true,
       previewMode: false,
-      path: './Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates' // standard path
+      path: ''// TODO Niklas: Revert after integrating in ILIAS -> './Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates' // standard path
     }
   },
   created() {
     this.initDashboard()
+    // TODO Niklas: Remove after integrating in ILIAS
+    this.localInitialization()
   },
   methods: {
+    // Helper function to init the graph manually after 1 second
+    localInitialization() {
+      // We need a valid token to work with the backend routes
+      const authUrl = 'http://develop.verdatas.inf.tu-dresden.de:8062/api/v1/auth/login'
+      const request = {
+        "actorAccountName": "Robert",
+        "password": "trebor"
+      }
+      axios.post(authUrl, request).then((data) => {
+        let initEvent = initialEvent
+        initEvent.token = data.data.token
+        setTimeout(() => {
+          document.dispatchEvent(new CustomEvent("init-graph", { "detail": initEvent }))
+        }, 1000)
+      })
+    },
     initDashboard() {
       document.addEventListener('init-dashboard', (event) => {
         // https://github.com/vaadin/vaadin-upload/issues/138#issuecomment-266773430
@@ -121,11 +141,14 @@ export default {
   </div>
 </template>
 
+<!-- TODO Niklas: Remove max-width and margin: 0 auto after integrating in ILIAS and change margin-top back to 10px -->
 <style scoped>
 #verdatas-dashboard {
   position: relative;
   height: 600px;
-  margin-top: 10px;
+  max-width: 1170px;
+  margin: 0 auto;
+  margin-top: 25px;
   margin-bottom: 10px;
 }
 </style>
