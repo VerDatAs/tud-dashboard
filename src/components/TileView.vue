@@ -79,6 +79,12 @@ export default {
   height: 50%;
 }
 
+@media (max-width: 767.98px) {
+  .tile-col {
+    height: 25%;
+  }
+}
+
 .tile-flex-col {
   height: 100%;
   display: flex;

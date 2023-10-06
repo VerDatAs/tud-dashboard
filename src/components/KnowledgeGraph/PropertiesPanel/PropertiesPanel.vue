@@ -37,15 +37,15 @@ export default {
           this.parametrizedElement?.businessObject?.priorKnowledgeElements?.map(
             (priorKnowledgeElement) => priorKnowledgeElement?.elementId
           ) ?? []
-        this.priorKnowledgeValue = this.allGraphElements.filter((element) =>
+        this.priorKnowledgeValue = markRaw(this.allGraphElements.filter((element) =>
           priorKnowledgeElements.includes(element.businessObject.objectId)
-        )
+        ))
         // load referencedTests
         const referencedTestElements =
           this.parametrizedElement?.businessObject?.referencedTests?.map(
             (referencedTest) => referencedTest?.elementId
           ) ?? []
-        this.referencedTestValue = this.allTests.filter((element) => referencedTestElements.includes(element.objectId))
+        this.referencedTestValue = markRaw(this.allTests.filter((element) => referencedTestElements.includes(element.objectId)))
       }
     }
   },
@@ -149,7 +149,7 @@ export default {
     },
     // Update the referenced test multiselect value
     updateSelectedReferencedTest(selectedElements, parameterName) {
-      this.referencedTestValue = selectedElements
+      this.referencedTestValue = markRaw(selectedElements)
       const referencedTestElements = []
       this.referencedTestValue.forEach((elem) => {
         const element = this.diagram.get('moddle').create('verDatAs:ReferencedTest', {

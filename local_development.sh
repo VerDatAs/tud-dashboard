@@ -1,7 +1,5 @@
 #!/bin/sh
+npm i
 npm run build
-cp -r dist/assets/* ../plugin/templates/assets/
-cp dist/tpl.content.html ../plugin/templates/
-cp dist/logo.jpeg ../plugin/templates/
-cd ../plugin
-sh ./local_development.sh
+cp dist/assets/app.js ../ilias/Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates/assets/app.js
+cp dist/assets/index.css ../ilias/Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates/assets/index.css
