@@ -15,6 +15,10 @@ export default {
       if (viewName && viewName !== '') {
         this.$emit('setCurrentView', viewName)
         this.showNavigation = false;
+        document.getElementsByName('tab').forEach( (tab) => 
+           tab.classList.remove('active') 
+        )
+        document.getElementById(viewName).classList.add("active");
       }
     }
   }
@@ -30,19 +34,19 @@ export default {
       Note: <span style="font-style: italic">As you are in edit mode, this is just a preview.</span>
     </div>
     <div class="tabs">
-      <div class="tab"
+      <div name="tab" id="knowledgeStructure" class="tab active"
             @click="setCurrentView('knowledgeStructure')"
             :disabled="previewMode"
           >
           <font-awesome-icon class="icon" icon="sitemap" size="lg"/>
             Knowledge structure
       </div>
-      <div class="tab" @click="setCurrentView('moduleSelection')" :disabled="previewMode">
+      <div name="tab" id="moduleSelection" class="tab" @click="setCurrentView('moduleSelection')" :disabled="previewMode">
             <font-awesome-icon class="icon" icon="folder" size="lg"/>
             Choose modules
 
       </div>
-      <div class="tab"
+      <div name="tab" id="learningPathManager" class="tab"
             @click="setCurrentView('learningPathManager')"
             :disabled="previewMode"
           >
@@ -50,7 +54,7 @@ export default {
             Learning paths
 
       </div>
-      <div class="tab" :disabled="previewMode">
+      <div name="tab" id="settings" class="tab" :disabled="previewMode">
             <font-awesome-icon class="icon" icon="gear" size="lg"/>
             Settings
       </div>
@@ -67,6 +71,9 @@ export default {
   cursor: pointer;
   display: block;
   margin-bottom: 7px;
+}
+.active {
+  background:#a5a4a4;
 }
 #navigation-view {
   z-index: 120;
