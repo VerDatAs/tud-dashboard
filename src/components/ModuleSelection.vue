@@ -147,7 +147,6 @@ export default {
 <template>
   <div id="module-selection">
     <div class="container py-4" style="max-width: 100%">
-      <button class="btn btn-primary" @click="setCurrentView('tileView')">Back</button>
       <button class="btn btn-primary ms-2" @click="initializeModuleSelection()">Reload</button>
       <hr />
       <template v-if="errorResponse !== ''">

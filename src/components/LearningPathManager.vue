@@ -134,7 +134,6 @@ export default {
 <template>
   <div id="learning-path-manager">
     <div class="container py-4" style="max-width: 100%">
-      <button class="btn btn-primary" @click="setCurrentView('tileView')">Back</button>
       <button class="btn btn-primary ms-2" @click="saveXML">Download</button>
       <hr />
       <h2>

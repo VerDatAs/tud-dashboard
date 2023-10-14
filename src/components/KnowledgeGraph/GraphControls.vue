@@ -21,31 +21,40 @@ export default {
     },
     centerCanvas() {
       this.$emit('centerCanvas', true)
+    },
+    maximizeView() {
+      console.log('TODO: implment maximize function')
     }
   }
 }
 </script>
 
 <template>
-  <div id="graph-controls" v-if="currentView !== 'tileView'">
-    <button type="button" class="btn btn-secondary" @click="setCurrentView('tileView')">Settings</button>
-    <button type="button" class="btn btn-secondary" @click="redrawKnowledgeGraph()">Redraw</button>
-    <button type="button" class="btn btn-secondary" @click="saveKnowledgeGraph()">Save Graph</button>
-    <button type="button" class="btn btn-secondary" @click="saveXML()">Download</button>
-    <button type="button" class="btn btn-secondary" @click="centerCanvas()">Center</button>
+  <div id="maximize">
+    <font-awesome-icon class="icon" icon="maximize" size="xl" @click="maximizeView()"/> 
+  </div>
+  <div id="controls">
+    <font-awesome-icon class="icon" icon="refresh" size="xl" @click="redrawKnowledgeGraph()"/>
+    <font-awesome-icon class="icon" icon="floppy-disk" size="xl"  @click="saveKnowledgeGraph()"/>
   </div>
 </template>
 
 <style scoped>
-#graph-controls {
+#controls {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  bottom: 2px;
+  right: 2px;
   z-index: 110;
 }
-.btn {
+#maximize{
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  z-index: 110;
+}
+.icon {
+  cursor: pointer;
   display: block;
   margin-bottom: 7px;
-  width: 80px;
 }
 </style>

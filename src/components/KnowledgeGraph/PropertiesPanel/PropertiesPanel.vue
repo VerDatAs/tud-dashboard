@@ -63,9 +63,6 @@ export default {
     }
   },
   methods: {
-    closeTileView() {
-      this.$emit('closeTileView', true)
-    },
     /**
      * Retrieve and return parameter names of a given type definition
      * @param typeDefinition a type definition from the metamodel
