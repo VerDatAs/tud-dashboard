@@ -54,7 +54,7 @@ export default {
             Learning paths
 
       </div>
-      <div name="tab" id="settings" class="tab" :disabled="previewMode">
+      <div name="tab" id="settings" class="tab" :disabled="previewMode" @click="setCurrentView('settings')">
             <font-awesome-icon class="icon" icon="gear" size="lg"/>
             Settings
       </div>

@@ -121,11 +121,6 @@ export default {
 
         pom.click()
       })
-    },
-    setCurrentView(viewName) {
-      if (viewName && viewName !== '') {
-        this.$emit('setCurrentView', viewName)
-      }
     }
   }
 }

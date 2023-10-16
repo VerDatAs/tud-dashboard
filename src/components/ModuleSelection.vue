@@ -134,11 +134,6 @@ export default {
           this.errorResponse += ' ' + msg
         }
       }
-    },
-    setCurrentView(viewName) {
-      if (viewName && viewName !== '') {
-        this.$emit('setCurrentView', viewName)
-      }
     }
   }
 }
