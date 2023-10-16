@@ -174,10 +174,10 @@ export default {
 #module-selection {
   z-index: 115;
   position: absolute;
-  top: 15px;
-  left: 15px;
-  height: calc(100% - 30px);
-  width: calc(100% - 30px);
+  top: 15%;
+  left: 15%;
+  height: calc(100% - 30%);
+  width: calc(100% - 30%);
   background: #eee;
   border: 1px solid #ccc;
   overflow-y: scroll;

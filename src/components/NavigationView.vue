@@ -29,7 +29,7 @@ export default {
   <div id="menu">
     <font-awesome-icon icon="bars" size="xl" @click="showNavigation = !showNavigation"/> 
   </div>
-  <div id="navigation-view" class="flex-column" v-show="showNavigation">
+  <div id="navigation-view" v-show="showNavigation">
     <div style="position: absolute; top: 10px; left: 10px" v-if="previewMode">
       Note: <span style="font-style: italic">As you are in edit mode, this is just a preview.</span>
     </div>
@@ -66,14 +66,18 @@ export default {
 .tabs {
   margin-top: 15%;
   margin-left: 5%;
-}
+}   
 .tab {
   cursor: pointer;
   display: block;
-  margin-bottom: 7px;
+  padding: 5% 0 5% 5%;
+  width: 95%;
+}
+.tab:hover {
+    background:#c9c7c7;
 }
 .active {
-  background:#a5a4a4;
+  background:#c9c7c7;
 }
 #navigation-view {
   z-index: 120;
@@ -87,11 +91,12 @@ export default {
 #menu{
   cursor: pointer;
   position: absolute;
-  top: 2px;
-  left: 2px;
+  top: 1%;
+  left: 1%;
   z-index: 130;
 }
 .icon {
   width: 10%;
+  margin-right: 2%;
 }
 </style>
