@@ -7,6 +7,13 @@ import NavigationView from './NavigationView.vue'
 import Settings from './Settings.vue'
 import { initialEvent } from '@/util/InitialEvent'
 import axios from 'axios';
+import { centerCanvas } from '@/util/GraphHelpers'
+
+import { ref } from 'vue'
+import { useFullscreen } from '@vueuse/core'
+
+const el = ref(null)
+const { toggle } = useFullscreen(el)
 
 export default {
   name: 'VerDatAsDashboard',
@@ -28,7 +35,8 @@ export default {
       currentView: 'knowledgeStructure',
       viewOnly: true,
       previewMode: false,
-      path: ''// TODO Niklas: Revert after integrating in ILIAS -> './Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates' // standard path
+      path: '',// TODO Niklas: Revert after integrating in ILIAS -> './Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates' // standard path
+      toggle: toggle
     }
   },
   created() {
@@ -96,13 +104,27 @@ export default {
       if (this.previewMode) {
         this.setCurrentView('knowledgeStructure')
       }
+    },
+    toggleView() {
+      this.toggle()
+      const view = document.getElementById("verdatas-dashboard")
+      if (view.classList.contains('dashboard')) {
+        view.classList.remove('dashboard')
+        view.classList.add('maximize')
+      } else {
+        view.classList.add('dashboard')
+        view.classList.remove('maximize')
+      }
+
+      const canvas = this.diagram.get('canvas')
+      centerCanvas(canvas)
     }
   }
 }
 </script>
 
 <template>
-  <div id="verdatas-dashboard">
+  <div ref="el" id="verdatas-dashboard" class="dashboard">
     <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
     <KnowledgeGraph
       :backendURL="backendURL"
@@ -120,6 +142,7 @@ export default {
       @setToken="setToken"
       @updateViewOnly="updateViewOnly"
       @setPreviewMode="setPreviewMode"
+      @toggleView="toggleView"
     />
     <NavigationView
       :currentView="currentView"
@@ -146,12 +169,19 @@ export default {
 
 <!-- TODO Niklas: Remove max-width and margin: 0 auto after integrating in ILIAS and change margin-top back to 10px -->
 <style scoped>
-#verdatas-dashboard {
+
+.dashboard {
   position: relative;
   height: 600px;
   max-width: 1170px;
   margin: 0 auto;
   margin-top: 25px;
   margin-bottom: 10px;
+}
+.maximize {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  margin: 0 auto;
 }
 </style>

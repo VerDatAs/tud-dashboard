@@ -22,8 +22,8 @@ export default {
     centerCanvas() {
       this.$emit('centerCanvas', true)
     },
-    maximizeView() {
-      console.log('TODO: implment maximize function')
+    toggleView() {
+      this.$emit('toggleView')
     }
   }
 }
@@ -31,7 +31,7 @@ export default {
 
 <template>
   <div id="maximize">
-    <font-awesome-icon class="icon" icon="maximize" size="xl" @click="maximizeView()"/> 
+    <font-awesome-icon class="icon" icon="maximize" size="xl" @click="toggleView()"/> 
   </div>
   <div id="controls">
     <font-awesome-icon class="icon" icon="refresh" size="xl" @click="redrawKnowledgeGraph()"/>

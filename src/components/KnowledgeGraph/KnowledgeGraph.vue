@@ -16,7 +16,7 @@ export default {
     // on the proxy target but the proxy did not return its actual value (expected '[object Array]' but got '[object Array]')
     // Further information: https://stackoverflow.com/a/70648940/3623608
     elementSelected: null,
-    metamodel: null
+    metamodel: null,
   }),
   props: {
     backendURL: String,
@@ -88,6 +88,9 @@ export default {
     },
     changeInput(parameterName, newValue) {
       this.$refs.graphViewer.changeInput(parameterName, newValue)
+    },
+    toggleView() {
+      this.$emit('toggleView')
     }
   }
 }
@@ -103,6 +106,7 @@ export default {
       @redrawKnowledgeGraph="redrawKnowledgeGraph"
       @saveKnowledgeGraph="saveKnowledgeGraph"
       @centerCanvas="centerCanvas"
+      @toggleView="toggleView"
       v-if="!viewOnly"
     />
     <GraphViewer
