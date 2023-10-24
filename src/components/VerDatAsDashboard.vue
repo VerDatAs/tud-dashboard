@@ -124,32 +124,35 @@ export default {
 </script>
 
 <template>
-  <div ref="el" id="verdatas-dashboard" class="dashboard">
-    <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
-    <KnowledgeGraph
-      :backendURL="backendURL"
-      :courseData="courseData"
-      :token="token"
-      :currentView="currentView"
-      :diagram="diagram"
-      :diagramLoaded="diagramLoaded"
-      :viewOnly="viewOnly"
-      @loadedDiagram="changeDiagramLoaded"
-      @setBackendURL="setBackendURL"
-      @setCourseData="setCourseData"
-      @setCurrentView="setCurrentView"
-      @setDiagram="setDiagram"
-      @setToken="setToken"
-      @updateViewOnly="updateViewOnly"
-      @setPreviewMode="setPreviewMode"
-      @toggleView="toggleView"
-    />
+  <div class="main">
     <NavigationView
       :currentView="currentView"
       :viewOnly="viewOnly"
       :previewMode="previewMode"
       @setCurrentView="setCurrentView"
     />
+    <div ref="el" id="verdatas-dashboard" class="dashboard">
+      <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
+      <KnowledgeGraph
+        v-if="currentView === 'knowledgeStructure'"
+        :backendURL="backendURL"
+        :courseData="courseData"
+        :token="token"
+        :currentView="currentView"
+        :diagram="diagram"
+        :diagramLoaded="diagramLoaded"
+        :viewOnly="viewOnly"
+        @loadedDiagram="changeDiagramLoaded"
+        @setBackendURL="setBackendURL"
+        @setCourseData="setCourseData"
+        @setCurrentView="setCurrentView"
+        @setDiagram="setDiagram"
+        @setToken="setToken"
+        @updateViewOnly="updateViewOnly"
+        @setPreviewMode="setPreviewMode"
+        @toggleView="toggleView"
+      />
+    </div>
     <ModuleSelection
       v-if="currentView === 'moduleSelection'"
       :backendURL="backendURL"
@@ -169,7 +172,12 @@ export default {
 
 <!-- TODO Niklas: Remove max-width and margin: 0 auto after integrating in ILIAS and change margin-top back to 10px -->
 <style scoped>
-
+.main {
+  position: relative;
+  height: 600px;
+  max-width: 1170px;
+  margin: 0 auto;
+}
 .dashboard {
   position: relative;
   height: 600px;

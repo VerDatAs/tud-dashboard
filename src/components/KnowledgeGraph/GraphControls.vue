@@ -36,7 +36,6 @@ export default {
   <div id="controls">
     <font-awesome-icon class="icon" icon="refresh" size="xl" @click="redrawKnowledgeGraph()"/>
     <font-awesome-icon class="icon" icon="floppy-disk" size="xl"  @click="saveKnowledgeGraph()"/>
-    <font-awesome-icon class="icon" icon="gear" size="xl"/>
   </div>
 </template>
 
