@@ -7,13 +7,6 @@ import NavigationView from './NavigationView.vue'
 import Settings from './Settings.vue'
 import { initialEvent } from '@/util/InitialEvent'
 import axios from 'axios';
-import { centerCanvas } from '@/util/GraphHelpers'
-
-import { ref } from 'vue'
-import { useFullscreen } from '@vueuse/core'
-
-const el = ref(null)
-const { toggle } = useFullscreen(el)
 
 export default {
   name: 'VerDatAsDashboard',
@@ -36,7 +29,6 @@ export default {
       viewOnly: true,
       previewMode: false,
       path: '',// TODO Niklas: Revert after integrating in ILIAS -> './Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates' // standard path
-      toggle: toggle
     }
   },
   created() {
@@ -104,92 +96,49 @@ export default {
       if (this.previewMode) {
         this.setCurrentView('knowledgeStructure')
       }
-    },
-    toggleView() {
-      this.toggle()
-      const view = document.getElementById("verdatas-dashboard")
-      if (view.classList.contains('dashboard')) {
-        view.classList.remove('dashboard')
-        view.classList.add('maximize')
-      } else {
-        view.classList.add('dashboard')
-        view.classList.remove('maximize')
-      }
-
-      const canvas = this.diagram.get('canvas')
-      centerCanvas(canvas)
     }
   }
 }
 </script>
 
 <template>
-  <div class="main">
+  <div id="verdatas-dashboard">
     <NavigationView
-      :currentView="currentView"
-      :viewOnly="viewOnly"
-      :previewMode="previewMode"
       @setCurrentView="setCurrentView"
     />
-    <div ref="el" id="verdatas-dashboard" class="dashboard">
-      <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
-      <KnowledgeGraph
-        v-if="currentView === 'knowledgeStructure'"
-        :backendURL="backendURL"
-        :courseData="courseData"
-        :token="token"
-        :currentView="currentView"
-        :diagram="diagram"
-        :diagramLoaded="diagramLoaded"
-        :viewOnly="viewOnly"
-        @loadedDiagram="changeDiagramLoaded"
-        @setBackendURL="setBackendURL"
-        @setCourseData="setCourseData"
-        @setCurrentView="setCurrentView"
-        @setDiagram="setDiagram"
-        @setToken="setToken"
-        @updateViewOnly="updateViewOnly"
-        @setPreviewMode="setPreviewMode"
-        @toggleView="toggleView"
-      />
-    </div>
-    <ModuleSelection
-      v-if="currentView === 'moduleSelection'"
+    <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
+    <KnowledgeGraph
+      v-if="currentView === 'knowledgeStructure'"
       :backendURL="backendURL"
       :courseData="courseData"
-      :diagram="diagram"
       :token="token"
-    />
-    <LearningPathManager
-      v-if="currentView === 'learningPathManager'"
+      :currentView="currentView"
       :diagram="diagram"
+      :diagramLoaded="diagramLoaded"
+      :viewOnly="viewOnly"
+      @loadedDiagram="changeDiagramLoaded"
+      @setBackendURL="setBackendURL"
+      @setCourseData="setCourseData"
+      @setCurrentView="setCurrentView"
+      @setDiagram="setDiagram"
+      @setToken="setToken"
+      @updateViewOnly="updateViewOnly"
+      @setPreviewMode="setPreviewMode"
     />
-    <Settings
-      v-if="currentView === 'settings'"
-    />
+    <ModuleSelection v-if="currentView === 'moduleSelection'"/>
+    <LearningPathManager v-if="currentView === 'learningPathManager'"/>
+    <Settings v-if="currentView === 'settings'"/>
   </div>
 </template>
 
 <!-- TODO Niklas: Remove max-width and margin: 0 auto after integrating in ILIAS and change margin-top back to 10px -->
 <style scoped>
-.main {
-  position: relative;
-  height: 600px;
-  max-width: 1170px;
-  margin: 0 auto;
-}
-.dashboard {
+#verdatas-dashboard {
   position: relative;
   height: 600px;
   max-width: 1170px;
   margin: 0 auto;
   margin-top: 25px;
   margin-bottom: 10px;
-}
-.maximize {
-  position: relative;
-  height: 100vh;
-  width: 100vw;
-  margin: 0 auto;
 }
 </style>

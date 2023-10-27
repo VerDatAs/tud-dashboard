@@ -23,7 +23,6 @@ export default {
     diagram: Object,
     diagramLoaded: Boolean,
     courseData: Object,
-    currentView: String,
     token: String,
     viewOnly: Boolean
   },
@@ -47,19 +46,9 @@ export default {
         this.$emit('setCourseData', courseData)
       }
     },
-    setCurrentView(viewName) {
-      if (viewName && viewName !== '') {
-        this.$emit('setCurrentView', viewName)
-      }
-    },
     setToken(token) {
       if (token && token !== '') {
         this.$emit('setToken', token)
-      }
-    },
-    saveXML(value) {
-      if (value) {
-        this.$refs.graphViewer.saveXML()
       }
     },
     redrawKnowledgeGraph(value) {
@@ -70,11 +59,6 @@ export default {
     saveKnowledgeGraph(value) {
       if (value) {
         this.$refs.graphViewer.saveKnowledgeGraph()
-      }
-    },
-    centerCanvas(value) {
-      if (value) {
-        this.$refs.graphViewer.centerCanvas()
       }
     },
     updateMetamodel(metamodel) {
@@ -88,9 +72,6 @@ export default {
     },
     changeInput(parameterName, newValue) {
       this.$refs.graphViewer.changeInput(parameterName, newValue)
-    },
-    toggleView() {
-      this.$emit('toggleView')
     }
   }
 }
@@ -99,15 +80,9 @@ export default {
 <template>
   <div id="knowledge-graph">
     <GraphControls
-      :diagramLoaded="diagramLoaded"
-      :currentView="currentView"
-      @setCurrentView="setCurrentView"
-      @saveXML="saveXML"
+    v-if="!viewOnly"
       @redrawKnowledgeGraph="redrawKnowledgeGraph"
       @saveKnowledgeGraph="saveKnowledgeGraph"
-      @centerCanvas="centerCanvas"
-      @toggleView="toggleView"
-      v-if="!viewOnly"
     />
     <GraphViewer
       ref="graphViewer"

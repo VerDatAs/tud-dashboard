@@ -1,18 +1,3 @@
-<script>
-
-export default {
-  data: () => ({
-    }),
-  methods: {
-    setCurrentView(viewName) {
-      if (viewName && viewName !== '') {
-        this.$emit('setCurrentView', viewName)
-      }
-    }
-  }
-}
-</script>
-
 <template>
   <div id="learning-path-manager">
     <div class="container py-4" style="max-width: 100%">

@@ -2,11 +2,6 @@
 import { ref } from 'vue'
 
 export default {
-  props: {
-    currentView: String,
-    viewOnly: Boolean,
-    previewMode: Boolean
-  },
   data() {
     return {
       is_expanded: ref(localStorage.getItem("is_expanded") === "true")
