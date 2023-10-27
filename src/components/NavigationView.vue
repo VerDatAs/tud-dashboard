@@ -29,7 +29,7 @@ export default {
 <template>
   <aside :class="`${is_expanded ? 'is-expanded' : ''}`">
 		<div class="menu">
-			<div class="tab" @click="setCurrentView($event, 'knowledgeStructure')" title="Knowledge Structure">
+			<div class="tab active" @click="setCurrentView($event, 'knowledgeStructure')" title="Knowledge Structure">
 				<font-awesome-icon class="icon" icon="sitemap"/>  
 				<span class="text">Knowledge Structure</span>
 			</div>

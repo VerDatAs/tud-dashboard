@@ -17,6 +17,7 @@ export default {
     // Further information: https://stackoverflow.com/a/70648940/3623608
     elementSelected: null,
     metamodel: null,
+    isMaximized: false,
   }),
   props: {
     backendURL: String,
@@ -25,6 +26,13 @@ export default {
     courseData: Object,
     token: String,
     viewOnly: Boolean
+  },
+  created() {
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) {
+        this.isMaximized = false;
+      }
+    })
   },
   methods: {
     setDiagram(diagram) {
@@ -72,6 +80,34 @@ export default {
     },
     changeInput(parameterName, newValue) {
       this.$refs.graphViewer.changeInput(parameterName, newValue)
+    },
+    toggleView() {
+      const elem = document.getElementById('knowledge-graph')
+      if(!this.isMaximized) {
+        this.openFullscreen(elem)
+      } else {
+        this.closeFullscreen()
+      }
+      
+      this.isMaximized = !this.isMaximized
+    },
+    openFullscreen(elem) {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
+    },
+    closeFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) { /* Safari */
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) { /* IE11 */
+        document.msExitFullscreen();
+      }
     }
   }
 }
@@ -83,6 +119,7 @@ export default {
     v-if="!viewOnly"
       @redrawKnowledgeGraph="redrawKnowledgeGraph"
       @saveKnowledgeGraph="saveKnowledgeGraph"
+      @toggleView="toggleView"
     />
     <GraphViewer
       ref="graphViewer"

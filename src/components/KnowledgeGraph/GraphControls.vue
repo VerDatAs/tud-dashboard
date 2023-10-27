@@ -6,12 +6,18 @@ export default {
     },
     saveKnowledgeGraph() {
       this.$emit('saveKnowledgeGraph', true)
+    },
+    toggleView() {
+      this.$emit('toggleView')
     }
   }
 }
 </script>
 
 <template>
+  <div id="maximize">
+    <font-awesome-icon class="icon" icon="maximize" size="lg" @click="toggleView()" title="Enter Fullscreen"/> 
+  </div>
   <div id="controls">
     <font-awesome-icon class="icon" icon="floppy-disk" size="xl"  @click="saveKnowledgeGraph()" title="Save Graph"/>
     <font-awesome-icon class="icon" icon="refresh" size="xl" @click="redrawKnowledgeGraph()" title="Redraw Graph"/>
@@ -22,6 +28,12 @@ export default {
 #controls {
   position: absolute;
   bottom: 2px;
+  right: 2px;
+  z-index: 110;
+}
+#maximize{
+  position: absolute;
+  top: 2px;
   right: 2px;
   z-index: 110;
 }

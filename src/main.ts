@@ -6,9 +6,9 @@ import './assets/main.scss'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faRefresh, faFloppyDisk, faGear, faFolder, faBezierCurve, faSitemap, faAnglesRight } from '@fortawesome/free-solid-svg-icons'
+import { faRefresh, faFloppyDisk, faGear, faFolder, faBezierCurve, faSitemap, faAnglesRight, faMaximize } from '@fortawesome/free-solid-svg-icons'
 
-library.add(faRefresh, faFloppyDisk, faGear, faFolder, faBezierCurve, faSitemap, faAnglesRight)
+library.add(faRefresh, faFloppyDisk, faGear, faFolder, faBezierCurve, faSitemap, faAnglesRight, faMaximize)
 
 const app = createApp(App)
 
