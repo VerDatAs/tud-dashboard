@@ -4,7 +4,7 @@ import LearningPathManager from './LearningPathManager.vue'
 import LoadingScreen from './LoadingScreen.vue'
 import ModuleSelection from './ModuleSelection.vue'
 import NavigationView from './NavigationView.vue'
-import Settings from './Settings.vue'
+import Settings from './SettingsView.vue'
 import { initialEvent } from '@/util/InitialEvent'
 import axios from 'axios';
 
