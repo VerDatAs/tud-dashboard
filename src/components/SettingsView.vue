@@ -1,18 +1,3 @@
-<script>
-export default {
-  data: () => ({
-    test: null
-  }),
-  methods: {
-    setCurrentView(viewName) {
-      if (viewName && viewName !== '') {
-        this.$emit('setCurrentView', viewName)
-      }
-    }
-  }
-}
-</script>
-
 <template>
   <div id="settings">
     <div class="container py-4" style="max-width: 100%">
