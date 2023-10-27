@@ -9,9 +9,9 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 /* import font awesome icon component */
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 /* import specific icons */
-import { faMaximize, faBars, faRefresh, faFloppyDisk, faGear, faFolder, faBezierCurve, faSitemap } from '@fortawesome/free-solid-svg-icons'
+import { faMaximize, faBars, faRefresh, faFloppyDisk, faGear, faFolder, faBezierCurve, faSitemap, faAnglesRight } from '@fortawesome/free-solid-svg-icons'
 /* add icons to the library */
-library.add(faMaximize, faBars, faRefresh, faFloppyDisk, faGear, faFolder, faBezierCurve, faSitemap)
+library.add(faMaximize, faBars, faRefresh, faFloppyDisk, faGear, faFolder, faBezierCurve, faSitemap, faAnglesRight)
 
 const app = createApp(App)
 

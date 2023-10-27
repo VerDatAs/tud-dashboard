@@ -1,4 +1,6 @@
 <script>
+import { ref } from 'vue'
+
 export default {
   props: {
     currentView: String,
@@ -7,96 +9,170 @@ export default {
   },
   data() {
     return {
-      showNavigation: false,
+      is_expanded: ref(localStorage.getItem("is_expanded") === "true")
     }
   },  
   methods: {
-    setCurrentView(viewName) {
+    setCurrentView(evt, viewName) {
       if (viewName && viewName !== '') {
         this.$emit('setCurrentView', viewName)
-        this.showNavigation = false;
-        document.getElementsByName('tab').forEach( (tab) => 
-           tab.classList.remove('active') 
+        document.querySelectorAll('.tab').forEach( (tab) => {
+           tab.classList.remove('active')
+          }
         )
-        document.getElementById(viewName).classList.add("active");
+        evt.target.closest('.tab').classList.add('active');
       }
+    },
+    toggleMenu() {
+      this.is_expanded = !this.is_expanded
+	    localStorage.setItem("is_expanded", this.is_expanded)
     }
   }
 }
 </script>
 
 <template>
-  <div id="menu">
-    <font-awesome-icon icon="bars" size="xl" @click="showNavigation = !showNavigation"/> 
-  </div>
-  <div id="navigation-view" v-show="showNavigation">
-    <div style="position: absolute; top: 10px; left: 10px" v-if="previewMode">
-      Note: <span style="font-style: italic">As you are in edit mode, this is just a preview.</span>
-    </div>
-    <div class="tabs">
-      <div name="tab" id="knowledgeStructure" class="tab active"
-            @click="setCurrentView('knowledgeStructure')"
-            :disabled="previewMode"
-          >
-          <font-awesome-icon class="icon" icon="sitemap" size="lg"/>
-            Knowledge structure
-      </div>
-      <div name="tab" id="moduleSelection" class="tab" @click="setCurrentView('moduleSelection')" :disabled="previewMode">
-            <font-awesome-icon class="icon" icon="folder" size="lg"/>
-            Choose modules
+  <aside :class="`${is_expanded ? 'is-expanded' : ''}`">
+		<div class="menu">
+			<div class="tab" @click="setCurrentView($event, 'knowledgeStructure')">
+				<font-awesome-icon class="icon" icon="sitemap" title="Knowledge Structure"/>  
+				<span class="text">Knowledge Structure</span>
+			</div>
+			<div class="tab" @click="setCurrentView($event,'moduleSelection')">
+				<font-awesome-icon class="icon" icon="folder" title="Choose modules"/>
+				<span class="text">Choose modules</span>
+			</div>
+			<div class="tab" @click="setCurrentView($event,'learningPathManager')">
+        <font-awesome-icon class="icon" icon="bezier-curve" title="Learning paths"/>
+				<span class="text">Learning paths</span>
+			</div>
+			<div class="tab" @click="setCurrentView($event,'settings')">
+        <font-awesome-icon class="icon" icon="gear" title="Settings"/>
+				<span class="text">Settings</span>
+			</div>
+		</div>
 
-      </div>
-      <div name="tab" id="learningPathManager" class="tab"
-            @click="setCurrentView('learningPathManager')"
-            :disabled="previewMode"
-          >
-          <font-awesome-icon class="icon" icon="bezier-curve" size="lg"/>
-            Learning paths
-
-      </div>
-      <div name="tab" id="settings" class="tab" :disabled="previewMode" @click="setCurrentView('settings')">
-            <font-awesome-icon class="icon" icon="gear" size="lg"/>
-            Settings
-      </div>
-    </div>
-  </div>
+		<div class="flex"></div>
+		<div class="menu-toggle-wrap">
+			<div class="menu-toggle" @click="toggleMenu()">
+				<font-awesome-icon class="icon" icon="angles-right"/>
+			</div>
+		</div>
+	</aside>
 </template>
 
-<style scoped>
-.tabs {
-  margin-top: 15%;
-  margin-left: 5%;
-}   
-.tab {
-  cursor: pointer;
-  display: block;
-  padding: 5% 0 5% 5%;
-  width: 95%;
-}
-.tab:hover {
-    background:#c9c7c7;
-}
-.active {
-  background:#c9c7c7;
-}
-#navigation-view {
+<style lang="scss" scoped>
+aside {
   z-index: 120;
   position: absolute;
   top: 0;
   left: 0;
   height: 100%;
-  width: 20%;
-  background:#dfdddd;
-}
-#menu{
-  cursor: pointer;
-  position: absolute;
-  top: 1%;
-  left: 1%;
-  z-index: 130;
-}
-.icon {
-  width: 10%;
-  margin-right: 2%;
+  width: calc(1rem + 32px);
+	display: flex;
+	flex-direction: column;
+
+	background-color: #1e293b;
+	color: #f1f5f9;
+
+	overflow: hidden;
+	padding: 1rem;
+
+	transition: 0.2s ease-in-out;
+
+	.flex {
+		flex: 1 1 0%;
+	}
+
+  .menu-toggle-wrap {
+    cursor: pointer;
+		display: flex;
+		justify-content: flex-end;
+		margin-bottom: 1rem;
+
+		position: relative;
+		top: 0;
+		transition: 0.2s ease-in-out;
+
+		.menu-toggle {
+			transition: 0.2s ease-in-out;
+			.icon {
+				font-size: 1rem;
+				color: #f1f5f9;
+				transition: 0.2s ease-out;
+			}
+			
+			&:hover {
+				.icon {
+					color: #4ade80;
+					transform: translateX(0.5rem);
+				}
+			}
+		}
+	}
+
+  .tab .text {
+		opacity: 0;
+		transition: opacity 0.3s ease-in-out;
+	}
+
+  .menu {
+		margin: 0 -1rem;
+
+		.tab {
+      cursor: pointer;
+			display: flex;
+			align-items: center;
+      height: 45px;
+
+			transition: 0.2s ease-in-out;
+			padding: 0.5rem 0.9rem;
+
+			.icon {
+        width: 20px;
+        height: 20px;
+				color: #f1f5f9;
+				transition: 0.2s ease-in-out;
+			}
+			.text {
+				color: #f1f5f9;
+				transition: 0.2s ease-in-out;
+			}
+
+			&:hover {
+				background-color: #334155;
+
+				.icon, .text {
+					color: #4ade80;
+				}
+			}
+
+			&.active {
+				background-color: #334155;
+				border-right: 5px solid #4ade80;
+
+				.icon, .text {
+					color: #4ade80;
+				}
+			}
+		}
+	}
+
+  &.is-expanded {
+		width: 250px;
+    .menu-toggle {
+      transform: rotate(-180deg);
+    }
+
+    .tab .text {
+			opacity: 1;
+		}
+		
+		.tab {
+			.icon {
+				margin-right: 1rem;
+			}
+		}
+	}
 }
 </style>
