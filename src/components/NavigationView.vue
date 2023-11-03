@@ -67,8 +67,8 @@ aside {
   display: flex;
   flex-direction: column;
 
-  background-color: #1e293b;
-  color: #f1f5f9;
+  background-color: var(--dark);
+  color: var(--light);
 
   overflow: hidden;
   padding: 1rem;
@@ -93,13 +93,13 @@ aside {
 	  transition: 0.2s ease-in-out;
 	  .icon {
 	    font-size: 1rem;
-		color: #f1f5f9;
+		color: var(--light);
 		transition: 0.2s ease-out;
 	  }
 			
 	  &:hover {
 		.icon {
-		  color: #4ade80;
+		  color: var(--primary);
 		  transform: translateX(0.5rem);
 		}
 	  }
@@ -126,35 +126,35 @@ aside {
 	  .icon {
         width: 20px;
         height: 20px;
-		color: #f1f5f9;
+		color: var(--light);
 		transition: 0.2s ease-in-out;
 	  }
 	  .text {
-		color: #f1f5f9;
+		color: var(--light);
 		transition: 0.2s ease-in-out;
 	  }
 
 	  &:hover {
-		background-color: #334155;
+		background-color: var(--dark-alt);
 
 		.icon, .text {
-		  color: #4ade80;
+		  color: var(--primary);
 		}
 	  }
 
 	  &.active {
-		background-color: #334155;
-		border-right: 5px solid #4ade80;
+		background-color: var(--dark-alt);
+		border-right: 5px solid var(--primary);
 
 		.icon, .text {
-		  color: #4ade80;
+		  color: var(--primary);
 		}
 	  }
 	}
 }
 
   &.is-expanded {
-	  width: 250px;
+	  width: var(--sidebar-width);
     .menu-toggle {
       transform: rotate(-180deg);
     }
