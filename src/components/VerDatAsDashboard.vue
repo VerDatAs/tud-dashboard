@@ -88,7 +88,7 @@ export default {
     />
     <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
     <KnowledgeGraph
-      v-if="currentView === 'knowledgeStructure'"
+      v-show="currentView === 'knowledgeStructure'"
       :backendURL="backendURL"
       :courseData="courseData"
       :token="token"
