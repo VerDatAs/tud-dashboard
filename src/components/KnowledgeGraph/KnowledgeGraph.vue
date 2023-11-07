@@ -2,6 +2,7 @@
 import GraphControls from './GraphControls.vue'
 import GraphViewer from './GraphViewer.vue'
 import PropertiesPanel from './PropertiesPanel/PropertiesPanel.vue'
+import { centerCanvas } from '@/util/GraphHelpers'
 
 export default {
   name: 'KnowledgeGraph',
@@ -31,6 +32,7 @@ export default {
     document.addEventListener('fullscreenchange', () => {
       if (!document.fullscreenElement) {
         this.isMaximized = false;
+        this.centerCanvas()
       }
     })
   },
@@ -81,6 +83,11 @@ export default {
     changeInput(parameterName, newValue) {
       this.$refs.graphViewer.changeInput(parameterName, newValue)
     },
+    centerCanvas() {
+      const canvas = this.diagram.get('canvas')
+      console.log('Canvas', canvas)
+      centerCanvas(canvas)
+    },
     toggleView() {
       const elem = document.getElementById('knowledge-graph')
       if(!this.isMaximized) {
@@ -99,15 +106,22 @@ export default {
       } else if (elem.msRequestFullscreen) {
         elem.msRequestFullscreen();
       }
+      const canvas = this.diagram.get('canvas')
+      const point = {
+        x: window.outerWidth / 10,
+        y: window.outerHeight / 25,
+      }
+      canvas.zoom(1, point)
     },
     closeFullscreen() {
       if (document.exitFullscreen) {
         document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) { /* Safari */
+      } else if (document.webkitExitFullscreen) {
         document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) { /* IE11 */
+      } else if (document.msExitFullscreen) {
         document.msExitFullscreen();
       }
+      this.centerCanvas()
     }
   }
 }
