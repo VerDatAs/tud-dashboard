@@ -1,5 +1,7 @@
 #!/bin/sh
 npm i
 npm run build
-cp dist/assets/app.js ../ilias/Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates/assets/app.js
-cp dist/assets/index.css ../ilias/Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates/assets/index.css
+cp dist/assets/app.js ../verdatasdsh/templates/assets/app.js
+cp dist/assets/index.css ../verdatasdsh/templates/assets/index.css
+
+cd ../ilias-dev && sh reload_directories.sh

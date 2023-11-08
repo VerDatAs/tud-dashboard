@@ -41,7 +41,7 @@ export default {
   position: absolute;
   top: 20px;
   left: 20px;
-  z-index: 110;
+  z-index: 6;
 }
 .btn {
   display: block;
