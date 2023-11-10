@@ -85,7 +85,6 @@ export default {
     },
     centerCanvas() {
       const canvas = this.diagram.get('canvas')
-      console.log('Canvas', canvas)
       centerCanvas(canvas)
     },
     toggleView() {
@@ -106,12 +105,7 @@ export default {
       } else if (elem.msRequestFullscreen) {
         elem.msRequestFullscreen();
       }
-      const canvas = this.diagram.get('canvas')
-      const point = {
-        x: window.outerWidth / 10,
-        y: window.outerHeight / 25,
-      }
-      canvas.zoom(1, point)
+      this.centerCanvas()
     },
     closeFullscreen() {
       if (document.exitFullscreen) {
