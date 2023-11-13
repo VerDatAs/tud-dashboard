@@ -10,3 +10,13 @@ export const useDebuggerStore = defineStore('debugger', () => {
 
   return { debuggingMode, toggleDebuggingMode }
 })
+
+export const useAutosaveStore = defineStore('autosave', () => {
+  const autosaveMode = ref(false)
+
+  function toggleAutosaveMode() {
+    autosaveMode.value = !autosaveMode.value
+  }
+
+  return { autosaveMode, toggleAutosaveMode }
+})

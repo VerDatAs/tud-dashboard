@@ -9,11 +9,13 @@ import {
 } from '@/util/GraphHelpers'
 import ExtendedViewer from '@/util/KnowledgeGraph/ExtendedViewer'
 import Viewer from '@/util/KnowledgeGraph/Viewer'
+import { useAutosaveStore } from '@/stores/settings'
 
 export default {
   data: () => ({
     graph: '',
-    showEmptyMessage: false
+    showEmptyMessage: false,
+    autosave: useAutosaveStore()
   }),
   props: {
     backendURL: String,
@@ -524,6 +526,9 @@ export default {
     <div class="message-empty" v-if="showEmptyMessage">
       Please add learning content like modules, chapters and tests to see them visualized here!
     </div>
+    <div class="autosave">
+      <p class="message">{{ autosave.autosaveMode ? 'Auto-Save is On' : 'Auto-Save is Off' }}</p>
+    </div>
   </div>
 </template>
 
@@ -551,5 +556,17 @@ export default {
   margin-top: 15%;
   background: white;
   padding: 3%
+}
+.autosave {
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  bottom: 1%;
+}
+.message {
+  width: 15%;
+  background: white;
+  margin: auto;
+  padding: 1%;
 }
 </style>

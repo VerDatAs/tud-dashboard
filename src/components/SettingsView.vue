@@ -1,10 +1,11 @@
 <script>
-import { useDebuggerStore } from '@/stores/settings'
+import { useDebuggerStore, useAutosaveStore } from '@/stores/settings'
 
 export default {
   data() {
     return {
-      debugging: useDebuggerStore()
+      debugging: useDebuggerStore(),
+      autosave: useAutosaveStore()
     } 
   }
 }
@@ -15,7 +16,7 @@ export default {
     <div class="container py-4" style="max-width: 100%">
         <h1>Settings</h1>
         <div class="setting">
-            <input type="checkbox"/>
+            <input type="checkbox" v-model="autosave.autosaveMode" @click="autosave.toggleAutosaveMode()"/>
             Auto-Save
         </div>
         <div class="setting">
