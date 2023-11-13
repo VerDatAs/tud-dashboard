@@ -84,8 +84,10 @@ export default {
       this.$refs.graphViewer.changeInput(parameterName, newValue)
     },
     centerCanvas() {
-      const canvas = this.diagram.get('canvas')
-      centerCanvas(canvas)
+      const canvas = this.diagram?.get('canvas')
+      if(canvas) {
+        centerCanvas(canvas)
+      }
     },
     saveXML(value) {
       if (value) {

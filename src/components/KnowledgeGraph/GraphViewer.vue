@@ -5,7 +5,6 @@ import {
   centerCanvas,
   excludedTypeNames,
   getDefaultSize,
-  initialModel,
   nonSelectableElements
 } from '@/util/GraphHelpers'
 import ExtendedViewer from '@/util/KnowledgeGraph/ExtendedViewer'
@@ -13,7 +12,8 @@ import Viewer from '@/util/KnowledgeGraph/Viewer'
 
 export default {
   data: () => ({
-    graph: ''
+    graph: '',
+    showEmptyMessage: false
   }),
   props: {
     backendURL: String,
@@ -83,8 +83,9 @@ export default {
       .catch((err) => {
         // Handle errors
         console.error(err)
-        this.graph = initialModel(encodedId)
-        this.processKnowledgeGraph(courseData)
+        this.showEmptyMessage = true
+        // Set that the initial diagram was loaded once
+        this.$emit('loadedDiagram', true)
       })
     },
     // Handles the entire (Extended-)Viewer creation,
@@ -519,7 +520,11 @@ export default {
 </script>
 
 <template>
-  <div id="graph-viewer" class="rasterBackground" :class="viewOnly ? 'viewOnly' : ''"></div>
+  <div id="graph-viewer" class="rasterBackground" :class="viewOnly ? 'viewOnly' : ''">
+    <div class="message-empty" v-if="showEmptyMessage">
+      Please add learning content like modules, chapters and tests to see them visualized here!
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -539,5 +544,12 @@ export default {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDEwLjU4MyAxMC41ODMiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiA8Zz4KICA8cGF0aCBkPSJtMC4wMDEyMDgzIDEwLjU4M3YtMTAuNTgzIiBmaWxsPSIjODA4MDgwIiBzdHJva2U9IiNkZWRlZGUiIHN0cm9rZS13aWR0aD0iLjI2NyIvPgogIDxnIGZpbGw9Im5vbmUiPgogICA8cGF0aCBkPSJtMS4zMjUzZS00IC0wLjAwNDk1NzIgMTAuNTgzIDAuMDA5OTE0MyIgc3Ryb2tlPSIjZGVkZWRlIiBzdHJva2Utd2lkdGg9Ii4yNTQ2N3B4Ii8+CiAgIDxwYXRoIGQ9Im01LjIyNjMgMC4xMzIyOXYxMC40NTEiIHN0cm9rZT0iI2Y3ZjdmNyIgc3Ryb2tlLXdpZHRoPSIuMjY0NDVweCIvPgogICA8cGF0aCBkPSJtMC4xMzIyOSA1LjIyNTVoMTAuNDUxIiBzdHJva2U9IiNmN2Y3ZjciIHN0cm9rZS13aWR0aD0iLjI2NDg3cHgiLz4KICA8L2c+CiA8L2c+Cjwvc3ZnPgo=') !important;
   background-position: -1px -1px !important;
   overflow: hidden !important;
+}
+
+.message-empty {
+  text-align: center;
+  margin-top: 15%;
+  background: white;
+  padding: 3%
 }
 </style>
