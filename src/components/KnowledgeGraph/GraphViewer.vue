@@ -9,13 +9,12 @@ import {
 } from '@/util/GraphHelpers'
 import ExtendedViewer from '@/util/KnowledgeGraph/ExtendedViewer'
 import Viewer from '@/util/KnowledgeGraph/Viewer'
-import { useAutosaveStore } from '@/stores/settings'
 
 export default {
   data: () => ({
     graph: '',
     showEmptyMessage: false,
-    autosave: useAutosaveStore()
+    intervalHandle: null,
   }),
   props: {
     backendURL: String,
@@ -24,7 +23,8 @@ export default {
     diagram: Object,
     diagramLoaded: Boolean,
     elementSelected: Object,
-    viewOnly: Boolean
+    viewOnly: Boolean,
+    autosave: Boolean
   },
   computed: {
     objectId() {
@@ -33,6 +33,15 @@ export default {
   },
   created() {
     this.createGraphListener()
+  },
+  watch: {
+    autosave(newVal){
+      if(newVal) {
+        this.intervalHandle = setInterval(this.saveKnowledgeGraph, 5000);
+      } else {
+        clearInterval(this.intervalHandle);
+      }
+    }
   },
   methods: {
     createGraphListener() {
@@ -527,7 +536,7 @@ export default {
       <p class="empty-message">Please add learning content like modules, chapters and tests to see them visualized here!</p>
     </div>
     <div class="autosave">
-      <p class="autosave-message">{{ autosave.autosaveMode ? 'Auto-Save is On' : 'Auto-Save is Off' }}</p>
+      <p class="autosave-message">{{ autosave ? 'Auto-Save is On' : 'Auto-Save is Off' }}</p>
     </div>
   </div>
 </template>

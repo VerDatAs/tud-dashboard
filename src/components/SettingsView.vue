@@ -1,12 +1,24 @@
 <script>
-import { useDebuggerStore, useAutosaveStore } from '@/stores/settings'
+import { useDebuggerStore } from '@/stores/settings'
 
 export default {
   data() {
     return {
       debugging: useDebuggerStore(),
-      autosave: useAutosaveStore()
     } 
+  },
+  props: {
+    autosave: Boolean,
+  },
+  computed: {
+    autosavecmp: {
+      get: function() {
+        return this.autosave;
+      },
+      set: function(val) {
+        this.$emit('toggleAutosave')
+      },
+    }
   }
 }
 </script>
@@ -16,7 +28,7 @@ export default {
     <div class="container py-4" style="max-width: 100%">
         <h1>Settings</h1>
         <div class="setting">
-            <input type="checkbox" v-model="autosave.autosaveMode" @click="autosave.toggleAutosaveMode()"/>
+            <input type="checkbox" v-model="autosavecmp"/>
             Auto-Save
             <font-awesome-icon class="icon" icon="circle-info" size="md" title="This activates the Auto-Save function, which will save your changes when working with the Knowledge Structure every ... seconds."/>
         </div>

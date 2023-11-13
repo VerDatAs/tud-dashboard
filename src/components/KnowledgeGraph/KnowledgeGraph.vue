@@ -27,6 +27,7 @@ export default {
     courseData: Object,
     token: String,
     viewOnly: Boolean,
+    autosave: Boolean
   },
   created() {
     document.addEventListener('fullscreenchange', () => {
@@ -147,6 +148,7 @@ export default {
       :diagramLoaded="diagramLoaded"
       :elementSelected="elementSelected"
       :viewOnly="viewOnly"
+      :autosave="autosave"
       @loadedDiagram="changeDiagramLoaded"
       @selectedElement="selectedElement"
       @setBackendURL="setBackendURL"

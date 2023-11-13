@@ -27,6 +27,7 @@ export default {
       viewOnly: true,
       previewMode: false,
       path: './Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates',
+      autosave: false
     }
   },
   created() {
@@ -76,6 +77,9 @@ export default {
       if (this.previewMode) {
         this.setCurrentView('knowledgeStructure')
       }
+    },
+    toggleAutosave() {
+      this.autosave = !this.autosave
     }
   }
 }
@@ -96,6 +100,7 @@ export default {
       :diagram="diagram"
       :diagramLoaded="diagramLoaded"
       :viewOnly="viewOnly"
+      :autosave="autosave"
       @loadedDiagram="changeDiagramLoaded"
       @setBackendURL="setBackendURL"
       @setCourseData="setCourseData"
@@ -107,7 +112,11 @@ export default {
     />
     <ModuleSelection v-if="currentView === 'moduleSelection'"/>
     <LearningPathManager v-if="currentView === 'learningPathManager'"/>
-    <Settings v-if="currentView === 'settings'"/>
+    <Settings 
+      v-if="currentView === 'settings'" 
+      :autosave="autosave" 
+      @toggleAutosave="toggleAutosave"
+    />
   </div>
 </template>
 
