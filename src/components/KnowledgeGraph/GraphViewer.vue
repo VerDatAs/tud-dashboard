@@ -523,11 +523,11 @@ export default {
 
 <template>
   <div id="graph-viewer" class="rasterBackground" :class="viewOnly ? 'viewOnly' : ''">
-    <div class="message-empty" v-if="showEmptyMessage">
-      Please add learning content like modules, chapters and tests to see them visualized here!
+    <div class="empty" v-if="showEmptyMessage">
+      <p class="empty-message">Please add learning content like modules, chapters and tests to see them visualized here!</p>
     </div>
     <div class="autosave">
-      <p class="message">{{ autosave.autosaveMode ? 'Auto-Save is On' : 'Auto-Save is Off' }}</p>
+      <p class="autosave-message">{{ autosave.autosaveMode ? 'Auto-Save is On' : 'Auto-Save is Off' }}</p>
     </div>
   </div>
 </template>
@@ -551,11 +551,17 @@ export default {
   overflow: hidden !important;
 }
 
-.message-empty {
+.empty {
   text-align: center;
-  margin-top: 15%;
+  width: 100%;
+  position: absolute;
+  top: 20%;
+}
+.empty-message {
+  width: 75%;
   background: white;
-  padding: 3%
+  margin: auto;
+  padding: 3%;
 }
 .autosave {
   text-align: center;
@@ -563,7 +569,7 @@ export default {
   position: absolute;
   bottom: 1%;
 }
-.message {
+.autosave-message {
   width: 15%;
   background: white;
   margin: auto;
