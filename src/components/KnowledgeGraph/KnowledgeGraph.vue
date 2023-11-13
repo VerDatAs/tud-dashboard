@@ -26,7 +26,7 @@ export default {
     diagramLoaded: Boolean,
     courseData: Object,
     token: String,
-    viewOnly: Boolean
+    viewOnly: Boolean,
   },
   created() {
     document.addEventListener('fullscreenchange', () => {
@@ -87,6 +87,11 @@ export default {
       const canvas = this.diagram.get('canvas')
       centerCanvas(canvas)
     },
+    saveXML(value) {
+      if (value) {
+        this.$refs.graphViewer.saveXML()
+      }
+    },
     toggleView() {
       const elem = document.getElementById('knowledge-graph')
       if(!this.isMaximized) {
@@ -124,9 +129,10 @@ export default {
 <template>
   <div id="knowledge-graph">
     <GraphControls
-    v-if="!viewOnly"
+      v-if="!viewOnly"
       @redrawKnowledgeGraph="redrawKnowledgeGraph"
       @saveKnowledgeGraph="saveKnowledgeGraph"
+      @saveXML="saveXML"
       @toggleView="toggleView"
     />
     <GraphViewer
