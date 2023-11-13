@@ -20,6 +20,20 @@ export const excludedTypeNames = [
   'FlowNode'
 ]
 export const nonSelectableElements = ['verDatAs:KnowledgeGraph', 'verDatAs:SequenceFlow', 'label']
+export const initialModel = (courseId) =>
+  '<?xml version="1.0" encoding="UTF-8"?>\n' +
+  '<verDatAs:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:verDatAs="http://verdatas.de/schema/verDatAs" xmlns:verDatAsDi="http://verdatas.de/schema/verDatAsDi" id="verdatas-diagram">\n' +
+  '  <verDatAs:knowledgeGraph id="Graph_' + courseId + '">\n' +
+  '    <verDatAs:topic id="Topic_1" name="Topic" />\n' +
+  '  </verDatAs:knowledgeGraph>\n' +
+  '  <verDatAsDi:knowledgeGraphRoot id="RootGraph_1">\n' +
+  '    <verDatAsDi:graphPlane id="GraphPlane_1" graphElement="Graph_' + courseId + '">\n' +
+  '      <verDatAsDi:graphShape id="Topic_1_di" graphElement="Topic_1">\n' +
+  '        <dc:Bounds x="600" y="90" width="70" height="70" />\n' +
+  '      </verDatAsDi:graphShape>\n' +
+  '    </verDatAsDi:graphPlane>\n' +
+  '  </verDatAsDi:knowledgeGraphRoot>\n' +
+  '</verDatAs:definitions>'
 
 /**
  * Helper function to center the diagram and take into account all panels

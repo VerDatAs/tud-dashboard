@@ -5,6 +5,7 @@ import {
   centerCanvas,
   excludedTypeNames,
   getDefaultSize,
+  initialModel,
   nonSelectableElements
 } from '@/util/GraphHelpers'
 import ExtendedViewer from '@/util/KnowledgeGraph/ExtendedViewer'
