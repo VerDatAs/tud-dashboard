@@ -18,10 +18,12 @@ export default {
         <div class="setting">
             <input type="checkbox" v-model="autosave.autosaveMode" @click="autosave.toggleAutosaveMode()"/>
             Auto-Save
+            <font-awesome-icon class="icon" icon="circle-info" size="md" title="This activates the Auto-Save function, which will save your changes when working with the Knowledge Structure every ... seconds."/>
         </div>
         <div class="setting">
             <input type="checkbox" v-model="debugging.debuggingMode" @click="debugging.toggleDebuggingMode()"/>
             Debugging Mode
+            <font-awesome-icon class="icon" icon="circle-info" size="md" title="This actives the debugging mode which currently allows you to download and redraw the graph in the Knowledge Structure component."/>
         </div>
     </div>
   </div>
@@ -29,13 +31,14 @@ export default {
 
 <style scoped>
 #settings {
-  z-index: 115;
-  position: absolute;
-  top: 15%;
-  left: 15%;
-  height: calc(100% - 30%);
-  width: calc(100% - 30%);
-  background: #eee;
-  border: 1px solid #ccc;
+  margin-left: 5%;
 }
-</style>@/stores/settings
+
+.setting {
+  margin-top: 5px;
+}
+
+.icon {
+  cursor: pointer;
+}
+</style>
