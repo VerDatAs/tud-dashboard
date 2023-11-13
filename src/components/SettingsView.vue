@@ -1,14 +1,8 @@
 <script>
-import { useDebuggerStore } from '@/stores/settings'
-
 export default {
-  data() {
-    return {
-      debugging: useDebuggerStore(),
-    } 
-  },
   props: {
-    autosave: Boolean,
+    debugging: Boolean,
+    autosave: Boolean
   },
   computed: {
     autosavecmp: {
@@ -18,6 +12,14 @@ export default {
       set: function(val) {
         this.$emit('toggleAutosave')
       },
+    },
+    debuggercmp: {
+      get: function() {
+        return this.debugging;
+      },
+      set: function(val) {
+        this.$emit('toggleDebugging')
+      }
     }
   }
 }
@@ -33,7 +35,7 @@ export default {
             <font-awesome-icon class="icon" icon="circle-info" size="md" title="This activates the Auto-Save function, which will save your changes when working with the Knowledge Structure every ... seconds."/>
         </div>
         <div class="setting">
-            <input type="checkbox" v-model="debugging.debuggingMode" @click="debugging.toggleDebuggingMode()"/>
+            <input type="checkbox" v-model="debuggercmp"/>
             Debugging Mode
             <font-awesome-icon class="icon" icon="circle-info" size="md" title="This actives the debugging mode which currently allows you to download and redraw the graph in the Knowledge Structure component."/>
         </div>

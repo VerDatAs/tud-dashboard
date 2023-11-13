@@ -1,14 +1,8 @@
 <script>
-import { useDebuggerStore } from '@/stores/settings'
-
 export default {
-  data() {
-    return {
-      debugging: useDebuggerStore()
-    } 
-  },
   props: {
-    isMaximized: Boolean
+    isMaximized: Boolean,
+    debugging: Boolean
   },
   methods: {
     redrawKnowledgeGraph() {
@@ -32,8 +26,8 @@ export default {
     <font-awesome-icon class="icon" icon="maximize" size="lg" @click="toggleView()" :title="isMaximized ? 'Close Fullscreen' : 'Enter Fullscreen'"/> 
   </div>
   <div id="controls">
-    <font-awesome-icon v-if="debugging.debuggingMode" class="icon" icon="refresh" size="xl" @click="redrawKnowledgeGraph()" title="Redraw Graph"/>
-    <font-awesome-icon v-if="debugging.debuggingMode" class="icon" icon="download" size="xl" @click="saveXML()" title="Download Graph"/>
+    <font-awesome-icon v-if="debugging" class="icon" icon="refresh" size="xl" @click="redrawKnowledgeGraph()" title="Redraw Graph"/>
+    <font-awesome-icon v-if="debugging" class="icon" icon="download" size="xl" @click="saveXML()" title="Download Graph"/>
     <font-awesome-icon class="icon" icon="floppy-disk" size="xl"  @click="saveKnowledgeGraph()" title="Save Graph"/>   
   </div>
 </template>

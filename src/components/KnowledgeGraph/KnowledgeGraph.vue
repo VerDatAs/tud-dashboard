@@ -27,7 +27,8 @@ export default {
     courseData: Object,
     token: String,
     viewOnly: Boolean,
-    autosave: Boolean
+    autosave: Boolean,
+    debugging: Boolean
   },
   created() {
     document.addEventListener('fullscreenchange', () => {
@@ -134,6 +135,7 @@ export default {
     <GraphControls
       v-if="!viewOnly"
       :is-maximized="isMaximized"
+      :debugging="debugging"
       @redrawKnowledgeGraph="redrawKnowledgeGraph"
       @saveKnowledgeGraph="saveKnowledgeGraph"
       @saveXML="saveXML"
