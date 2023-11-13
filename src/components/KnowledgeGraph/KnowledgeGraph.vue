@@ -132,6 +132,7 @@ export default {
   <div id="knowledge-graph">
     <GraphControls
       v-if="!viewOnly"
+      :is-maximized="isMaximized"
       @redrawKnowledgeGraph="redrawKnowledgeGraph"
       @saveKnowledgeGraph="saveKnowledgeGraph"
       @saveXML="saveXML"

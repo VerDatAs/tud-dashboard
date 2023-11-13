@@ -7,6 +7,9 @@ export default {
       debugging: useDebuggerStore()
     } 
   },
+  props: {
+    isMaximized: Boolean
+  },
   methods: {
     redrawKnowledgeGraph() {
       this.$emit('redrawKnowledgeGraph', true)
@@ -19,9 +22,6 @@ export default {
     },
     toggleView() {
       this.$emit('toggleView')
-    },
-    test() {
-      this.$emit('saveXML', true)
     }
   }
 }
@@ -29,7 +29,7 @@ export default {
 
 <template>
   <div id="maximize">
-    <font-awesome-icon class="icon" icon="maximize" size="lg" @click="toggleView()" title="Enter Fullscreen"/> 
+    <font-awesome-icon class="icon" icon="maximize" size="lg" @click="toggleView()" :title="isMaximized ? 'Close Fullscreen' : 'Enter Fullscreen'"/> 
   </div>
   <div id="controls">
     <font-awesome-icon v-if="debugging.debuggingMode" class="icon" icon="refresh" size="xl" @click="redrawKnowledgeGraph()" title="Redraw Graph"/>
