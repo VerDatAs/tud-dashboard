@@ -27,7 +27,7 @@ export default {
       viewOnly: true,
       previewMode: false,
       path: './Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates',
-      autosave: false,
+      autosave: true,
       debugging: false
     }
   },

@@ -32,7 +32,7 @@ export default {
         <div class="setting">
             <input type="checkbox" v-model="autosavecmp"/>
             Auto-Save
-            <font-awesome-icon class="icon" icon="circle-info" size="md" title="This activates the Auto-Save function, which will save your changes when working with the Knowledge Structure every ... seconds."/>
+            <font-awesome-icon class="icon" icon="circle-info" size="md" title="This activates the Auto-Save function, which will save your changes when working with the Knowledge Structure."/>
         </div>
         <div class="setting">
             <input type="checkbox" v-model="debuggercmp"/>

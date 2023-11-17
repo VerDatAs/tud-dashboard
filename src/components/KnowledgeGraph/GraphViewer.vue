@@ -156,6 +156,18 @@ export default {
                 this.$emit('selectedElement', element)
               } else {
                 this.$emit('selectedElement', null)
+
+                if(this.autosave) {
+                  this.saveKnowledgeGraph()
+                  const loading = document.getElementById('loading')
+                  loading.style.display = 'block'
+                  const errorMessage = document.getElementById('autosave-message')
+                  errorMessage.style.display = 'none'
+                  setTimeout(function () {
+                    loading.style.display = 'none'
+                    errorMessage.style.display = 'block'
+                  }, 2800);
+                }
               }
             })
           } else {
@@ -537,7 +549,10 @@ export default {
       <p class="empty-message">Please add learning content like modules, chapters and tests to see them visualized here!</p>
     </div>
     <div class="autosave">
-      <p class="autosave-message">{{ autosave ? 'Auto-Save is On' : 'Auto-Save is Off' }}</p>
+      <p id="autosave-message" class="autosave-message">{{ autosave ? 'Auto-Save is On' : 'Auto-Save is Off' }}</p>
+      <p id="loading" class="loading" style="display: none;">
+      Saving<span>.</span><span>.</span><span>.</span>
+      </p>
     </div>
   </div>
 </template>
@@ -579,10 +594,28 @@ export default {
   position: absolute;
   bottom: 1%;
 }
-.autosave-message {
+.autosave p {
   width: 15%;
   background: white;
   margin: auto;
   padding: 1%;
+}
+
+@keyframes saving {
+    0% { opacity: .2; }
+    20% { opacity: 1; }
+    100% { opacity: .2; }
+}
+.loading span {
+    animation-name: saving;
+    animation-duration: 1.4s;
+    animation-iteration-count: 2;
+    animation-fill-mode: both;
+}
+.loading span:nth-child(2) {
+    animation-delay: .2s;
+}
+.loading span:nth-child(3) {
+    animation-delay: .4s;
 }
 </style>
