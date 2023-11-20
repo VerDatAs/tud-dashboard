@@ -472,10 +472,60 @@ export default {
       }
       const knowledgeGraphTopic = topics[0]
       if (knowledgeGraphTopic?.businessObject?.objectId && knowledgeGraphTopic.businessObject.objectId !== '') {
+        const topicBusinessObject = knowledgeGraphTopic.businessObject
         // example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
         // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
         const encodedId = Base64.encodeURI(knowledgeGraphTopic.businessObject.objectId)
         const url = this.backendURL + '/api/v1/courses/' + encodedId + '/knowledge-graph'
+
+        // TODO: Add other attributes that can be set by the editor
+        const supportedAttributeKeys = ['objectId', 'title', 'name', 'description', 'offline', 'content', 'processingTime'];
+        const nestedChildrenKeys = ['modules', 'chapters', 'contentPages', 'interactiveTasks'];
+
+        const childKeyToLcoType = {
+          'verDatAs:Topic': 'ILIAS_COURSE',
+          'verDatAs:Module': 'ILIAS_MODULE',
+          'verDatAs:Chapter': 'ILIAS_CHAPTER',
+          'verDatAs:ContentPage': 'ILIAS_CONTENT_PAGE',
+          'verDatAs:InteractiveTask': 'ILIAS_INTERACTIVE_TASK'
+        }
+
+        const attributeObject = (key, value) => {
+          return { key, value }
+        }
+
+        const iterateAttributes = (currentBusinessObject) => {
+          const lcoType = childKeyToLcoType[currentBusinessObject['$type']] ?? 'UNKNOWN'
+          const attributes = []
+          console.log('attributes of ' + lcoType, Object.keys(currentBusinessObject))
+          Object.keys(currentBusinessObject)?.forEach((attrKey) => {
+            console.log('iterate ' + lcoType + ' -> ' + attrKey)
+            if (supportedAttributeKeys.includes(attrKey)) {
+              // the title attribute was used as name in the diagram
+              const keyToPush = (attrKey === 'name') ? 'title' : attrKey
+              attributes.push(attributeObject(keyToPush, currentBusinessObject[attrKey]))
+            } else if (nestedChildrenKeys.includes(attrKey)) {
+              const attrObjects = []
+              // the children objects of a businessObject are automatically businessObjects again
+              currentBusinessObject[attrKey]?.forEach((childObject) => {
+                attrObjects.push(iterateAttributes(childObject))
+              })
+              attributes.push(attributeObject(attrKey, attrObjects))
+            }
+          })
+          // all drawn modules are not offline -> thus, set offline false
+          if (lcoType === 'ILIAS_MODULE') {
+            attributes.push(attributeObject('offline', false))
+          }
+          return {
+            lcoType,
+            attributes
+          }
+        }
+
+        const genericCourseFormat = iterateAttributes(topicBusinessObject)
+        console.log('1) Generic format as an object', genericCourseFormat)
+        console.log('2) Generic format as JSON', JSON.stringify(genericCourseFormat))
 
         const authHeader = {
           'Content-Type': 'application/json;charset=UTF-8',
