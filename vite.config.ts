@@ -17,19 +17,19 @@ export default defineConfig({
   //   minify: false,
   assetsInclude: ['**/*.xml'],
   build: {
+    lib: {
+      entry: fileURLToPath(new URL('./src/moodle.ts', import.meta.url)),
+      name: 'verdatas-dashboard-vue',
+      formats: ['umd'],
+    },
     rollupOptions: {
-      // Hint: Using "external" for TEMPLATE_PATH will break the app
-
-      // Define a custom name for the .html file
-      // https://stackoverflow.com/a/71359021
-      input: {
-        app: './index.html',
-      },
-
       // Avoid having varying names
       // Idea: Do not overwrite the .html file to avoid manipulating the code itself
       // https://github.com/vitejs/vite/issues/378#issuecomment-768816653
       output: {
+        globals: {
+          vue: 'Vue'
+        },
         entryFileNames: `assets/[name].js`,
         chunkFileNames: `assets/[name].js`,
         assetFileNames: `assets/[name].[ext]`
@@ -40,6 +40,9 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify('production')
   },
   // Define a custom name for the .html file and serve it
   // https://stackoverflow.com/a/71359021
