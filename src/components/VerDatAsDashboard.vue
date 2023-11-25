@@ -84,6 +84,7 @@ export default {
 <template>
   <div id="verdatas-dashboard">
     <NavigationView
+      v-if="!viewOnly"
       @setCurrentView="setCurrentView"
     />
     <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
