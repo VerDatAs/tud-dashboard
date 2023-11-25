@@ -11,13 +11,15 @@ import {
 import ExtendedViewer from '@/util/KnowledgeGraph/ExtendedViewer'
 import Viewer from '@/util/KnowledgeGraph/Viewer'
 import { useSettingStore } from '@/stores/settings'
+import { useGraphStore } from '@/stores/graph'
 
 export default {
   data: () => ({
     graph: '',
     showEmptyMessage: false,
     intervalHandle: null,
-    settings: useSettingStore()
+    settings: useSettingStore(),
+    graphStore: useGraphStore(),
   }),
   props: {
     backendURL: String,
@@ -87,9 +89,10 @@ export default {
       .catch((err) => {
         // Handle errors
         console.error(err)
+        const courseTitle = this.getAttributeValue(courseData, 'title')
+        this.graph = initialModel(encodedId, courseTitle)
+        this.processKnowledgeGraph(courseData)
         this.showEmptyMessage = true
-        // Set that the initial diagram was loaded once
-        this.$emit('loadedDiagram', true)
       })
     },
     // Handles the entire (Extended-)Viewer creation,
@@ -148,18 +151,8 @@ export default {
                 this.$emit('selectedElement', element)
               } else {
                 this.$emit('selectedElement', null)
-
-                if(this.settings.autosave) {
-                  this.saveKnowledgeGraph()
-                  const loading = document.getElementById('loading')
-                  loading.style.display = 'block'
-                  const errorMessage = document.getElementById('autosave-message')
-                  errorMessage.style.display = 'none'
-                  setTimeout(function () {
-                    loading.style.display = 'none'
-                    errorMessage.style.display = 'block'
-                  }, 2800);
-                }
+                //try to auto-save the graph after not selecting another graph element if activated in the settings
+                if(this.settings.autosave) this.saveKnowledgeGraph()
               }
             })
           } else {
@@ -448,6 +441,9 @@ export default {
             }
           })
 
+          //hide message on succsessful redraw
+          if(this.showEmptyMessage) this.showEmptyMessage = false
+
           // Center diagram in the final step
           centerCanvas(canvas)
         }
@@ -549,13 +545,37 @@ export default {
           Authorization: 'Bearer ' + this.token
         }
 
+        const graphs = this.graphStore.graphs
+        const courseData = this.courseData
+
         this.diagram.saveXML({ format: true }).then(function (result) {
+          console.log('Test', graphs)
+          const courseObjectId = courseData?.attributes?.find((attr) => attr.key === 'objectId')?.value
+          if(!graphs[courseObjectId]) graphs[courseObjectId] = ''
+          
+          const lastSavedGraphForCourse = graphs[courseObjectId]
+          //only save graph if something changed compared to the last saved graph
+          if(result.xml == lastSavedGraphForCourse) return
+
+          //save new graph to store
+          graphs[courseObjectId] = result.xml
+
           const request = {
             graph: result.xml,
             format: 'XML'
           }
+
           axios.put(url, request, { headers: authHeader }).then(() => {
             console.log('Save Graph')
+            //visual feedback for the user when graph is saved
+            const loading = document.getElementById('loading')
+            loading.style.display = 'block'
+            const errorMessage = document.getElementById('autosave-message')
+            errorMessage.style.display = 'none'
+            setTimeout(function () {
+              loading.style.display = 'none'
+              errorMessage.style.display = 'block'
+            }, 2800);
           })
         })
       } else {
@@ -587,10 +607,10 @@ export default {
 
 <template>
   <div id="graph-viewer" class="rasterBackground" :class="viewOnly ? 'viewOnly' : ''">
-    <div class="empty" v-if="showEmptyMessage">
+    <div v-if="!viewOnly && showEmptyMessage" class="empty">
       <p class="empty-message">Please add learning content like modules, chapters and tests to see them visualized here!</p>
     </div>
-    <div class="autosave">
+    <div v-if="!viewOnly" class="autosave">
       <p id="autosave-message" class="autosave-message">{{ settings.autosave ? 'Auto-Save is On' : 'Auto-Save is Off' }}</p>
       <p id="loading" class="loading" style="display: none;">
       Saving<span>.</span><span>.</span><span>.</span>
