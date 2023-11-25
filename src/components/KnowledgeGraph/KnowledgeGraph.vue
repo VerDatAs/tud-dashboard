@@ -26,9 +26,7 @@ export default {
     diagramLoaded: Boolean,
     courseData: Object,
     token: String,
-    viewOnly: Boolean,
-    autosave: Boolean,
-    debugging: Boolean
+    viewOnly: Boolean
   },
   created() {
     document.addEventListener('fullscreenchange', () => {
@@ -135,7 +133,6 @@ export default {
     <GraphControls
       v-if="!viewOnly"
       :is-maximized="isMaximized"
-      :debugging="debugging"
       @redrawKnowledgeGraph="redrawKnowledgeGraph"
       @saveKnowledgeGraph="saveKnowledgeGraph"
       @saveXML="saveXML"
@@ -150,7 +147,6 @@ export default {
       :diagramLoaded="diagramLoaded"
       :elementSelected="elementSelected"
       :viewOnly="viewOnly"
-      :autosave="autosave"
       @loadedDiagram="changeDiagramLoaded"
       @selectedElement="selectedElement"
       @setBackendURL="setBackendURL"

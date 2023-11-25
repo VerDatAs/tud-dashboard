@@ -10,12 +10,14 @@ import {
 } from '@/util/GraphHelpers'
 import ExtendedViewer from '@/util/KnowledgeGraph/ExtendedViewer'
 import Viewer from '@/util/KnowledgeGraph/Viewer'
+import { useSettingStore } from '@/stores/settings'
 
 export default {
   data: () => ({
     graph: '',
     showEmptyMessage: false,
     intervalHandle: null,
+    settings: useSettingStore()
   }),
   props: {
     backendURL: String,
@@ -24,8 +26,7 @@ export default {
     diagram: Object,
     diagramLoaded: Boolean,
     elementSelected: Object,
-    viewOnly: Boolean,
-    autosave: Boolean
+    viewOnly: Boolean
   },
   computed: {
     objectId() {
@@ -34,15 +35,6 @@ export default {
   },
   created() {
     this.createGraphListener()
-  },
-  watch: {
-    autosave(newVal){
-      if(newVal) {
-        this.intervalHandle = setInterval(this.saveKnowledgeGraph, 5000);
-      } else {
-        clearInterval(this.intervalHandle);
-      }
-    }
   },
   methods: {
     createGraphListener() {
@@ -157,7 +149,7 @@ export default {
               } else {
                 this.$emit('selectedElement', null)
 
-                if(this.autosave) {
+                if(this.settings.autosave) {
                   this.saveKnowledgeGraph()
                   const loading = document.getElementById('loading')
                   loading.style.display = 'block'
@@ -599,7 +591,7 @@ export default {
       <p class="empty-message">Please add learning content like modules, chapters and tests to see them visualized here!</p>
     </div>
     <div class="autosave">
-      <p id="autosave-message" class="autosave-message">{{ autosave ? 'Auto-Save is On' : 'Auto-Save is Off' }}</p>
+      <p id="autosave-message" class="autosave-message">{{ settings.autosave ? 'Auto-Save is On' : 'Auto-Save is Off' }}</p>
       <p id="loading" class="loading" style="display: none;">
       Saving<span>.</span><span>.</span><span>.</span>
       </p>
