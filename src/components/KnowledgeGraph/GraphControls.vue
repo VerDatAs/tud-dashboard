@@ -41,8 +41,8 @@ export default {
 }
 #maximize{
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 2px;
+  right: 2px;
   z-index: 6;
 }
 .icon {
