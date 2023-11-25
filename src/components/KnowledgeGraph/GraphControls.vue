@@ -37,13 +37,13 @@ export default {
   position: absolute;
   bottom: 2px;
   right: 2px;
-  z-index: 110;
+  z-index: 6;
 }
 #maximize{
   position: absolute;
-  top: 2px;
-  right: 2px;
-  z-index: 110;
+  top: 20px;
+  left: 20px;
+  z-index: 6;
 }
 .icon {
   cursor: pointer;

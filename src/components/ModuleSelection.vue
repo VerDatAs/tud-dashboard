@@ -82,7 +82,7 @@ export default {
 
 <style scoped>
 #module-selection {
-  z-index: 115;
+  z-index: 8;
   position: absolute;
   top: 15%;
   left: 15%;
