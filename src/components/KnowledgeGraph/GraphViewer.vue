@@ -54,6 +54,7 @@ export default {
           console.error('There was either no lcoType or no attributes value found in the parent object.')
         }
       })
+        document.dispatchEvent(new CustomEvent("graph-listener-up", { "detail": true }));
     },
     async retrieveKnowledgeGraph(courseData, backendURL, token) {
       if (!this.getObjectId(courseData)) {
