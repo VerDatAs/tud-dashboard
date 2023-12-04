@@ -22,9 +22,11 @@ export default defineConfig({
   assetsInclude: ['**/*.xml'],
   build: {
     lib: {
-      entry: fileURLToPath(new URL('./src/moodle.ts', import.meta.url)),
+      entry: process.env.BUILD_TARGET === 'MOODLE'
+        ? fileURLToPath(new URL('./src/moodle.ts', import.meta.url))
+        : fileURLToPath(new URL('./src/main.ts', import.meta.url)),
       name: 'verdatas-dashboard-vue',
-      formats: ['umd'],
+      formats: process.env.BUILD_TARGET === 'MOODLE' ? ['umd'] : ['es'],
     },
     rollupOptions: {
       // Avoid having varying names
@@ -56,3 +58,4 @@ export default defineConfig({
     // port: 8080
   }
 })
+

@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "vite",
+    "build:ilias": "BUILD_TARGET=ILIAS npm run build",
+    "build:moodle": "BUILD_TARGET=MOODLE npm run build",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
     "build-only": "vite build",
