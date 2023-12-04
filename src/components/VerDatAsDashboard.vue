@@ -31,6 +31,12 @@ export default {
     this.initDashboard()
   },
   methods: {
+    initDashboard() {
+      document.addEventListener('init-dashboard', (event) => {
+        // https://github.com/vaadin/vaadin-upload/issues/138#issuecomment-266773430
+        this.path = event.detail
+      })
+    },
     changeDiagramLoaded(diagramLoaded) {
       this.diagramLoaded = diagramLoaded
     },
