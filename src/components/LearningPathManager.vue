@@ -17,5 +17,5 @@
   width: calc(100% - 30%);
   background: #eee;
   border: 1px solid #ccc;
-  }
+}
 </style>

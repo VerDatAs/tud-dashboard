@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia';
+import { defineStore } from 'pinia'
 
 export const useSettingStore = defineStore({
   id: 'settings',
@@ -6,5 +6,5 @@ export const useSettingStore = defineStore({
     autosave: true as boolean,
     debugging: false as boolean
   }),
-  persist: true,
+  persist: true
 })

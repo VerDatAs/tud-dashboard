@@ -1,24 +1,20 @@
 <script>
-
 export default {
-  data: () => ({
-    }),
+  data: () => ({}),
   methods: {
     openTab(evt, tabname) {
-
-      const tabcontent = document.getElementsByClassName("tabcontent");
+      const tabcontent = document.getElementsByClassName('tabcontent')
       for (let i = 0; i < tabcontent.length; i++) {
-        tabcontent[i].style.display = "none";
+        tabcontent[i].style.display = 'none'
       }
 
-      const tablinks = document.getElementsByClassName("tablinks");
+      const tablinks = document.getElementsByClassName('tablinks')
       for (let i = 0; i < tablinks.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
+        tablinks[i].className = tablinks[i].className.replace(' active', '')
       }
 
-      document.getElementById(tabname).style.display = "block";
-      evt.target.className += " active";
-      
+      document.getElementById(tabname).style.display = 'block'
+      evt.target.className += ' active'
     },
     setCurrentView(viewName) {
       if (viewName && viewName !== '') {
@@ -40,41 +36,31 @@ export default {
       <div id="features" class="tabcontent" style="display: block">
         <h3>Features</h3>
         <div class="list">
-          <div>
-            Feature 1
-          </div>
-          <div>
-            Feature 2
-          </div>
-          <div>
-            Feature 3
-          </div>
-          <div>
-            ...
-          </div>
+          <div>Feature 1</div>
+          <div>Feature 2</div>
+          <div>Feature 3</div>
+          <div>...</div>
         </div>
-        </div>
+      </div>
 
       <div id="feedback" class="tabcontent">
         <h3>Feedback Types</h3>
         <div class="list">
           <div>
-            <input type="checkbox"/>
+            <input type="checkbox" />
             Feedback Type 1
           </div>
-        <div>
-            <input type="checkbox"/>
+          <div>
+            <input type="checkbox" />
             Feedback Type 2
           </div>
           <div>
-            <input type="checkbox"/>
+            <input type="checkbox" />
             Feedback Type 3
           </div>
-          <div>
-            ...
+          <div>...</div>
+          <button class="save">Save</button>
         </div>
-        <button class="save">Save</button>
-      </div>
       </div>
     </div>
   </div>
@@ -90,7 +76,7 @@ export default {
   width: calc(100% - 30%);
   background: #eee;
   border: 1px solid #ccc;
-  }
+}
 .tab {
   overflow: hidden;
 }

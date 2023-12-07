@@ -6,7 +6,7 @@ export default {
     settings: useSettingStore()
   }),
   props: {
-    isMaximized: Boolean,
+    isMaximized: Boolean
   },
   methods: {
     redrawKnowledgeGraph() {
@@ -27,12 +27,32 @@ export default {
 
 <template>
   <div id="maximize">
-    <font-awesome-icon class="icon" icon="maximize" size="lg" @click="toggleView()" :title="isMaximized ? 'Close Fullscreen' : 'Enter Fullscreen'"/> 
+    <font-awesome-icon
+      class="icon"
+      icon="maximize"
+      size="lg"
+      @click="toggleView()"
+      :title="isMaximized ? 'Close Fullscreen' : 'Enter Fullscreen'"
+    />
   </div>
   <div id="controls">
-    <font-awesome-icon v-if="settings.debugging" class="icon" icon="refresh" size="xl" @click="redrawKnowledgeGraph()" title="Redraw Graph"/>
-    <font-awesome-icon v-if="settings.debugging" class="icon" icon="download" size="xl" @click="saveXML()" title="Download Graph"/>
-    <font-awesome-icon class="icon" icon="floppy-disk" size="xl"  @click="saveKnowledgeGraph()" title="Save Graph"/>   
+    <font-awesome-icon
+      v-if="settings.debugging"
+      class="icon"
+      icon="refresh"
+      size="xl"
+      @click="redrawKnowledgeGraph()"
+      title="Redraw Graph"
+    />
+    <font-awesome-icon
+      v-if="settings.debugging"
+      class="icon"
+      icon="download"
+      size="xl"
+      @click="saveXML()"
+      title="Download Graph"
+    />
+    <font-awesome-icon class="icon" icon="floppy-disk" size="xl" @click="saveKnowledgeGraph()" title="Save Graph" />
   </div>
 </template>
 
@@ -43,7 +63,7 @@ export default {
   right: 2px;
   z-index: 6;
 }
-#maximize{
+#maximize {
   position: absolute;
   top: 2px;
   right: 2px;

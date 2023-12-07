@@ -1,9 +1,9 @@
-import { defineStore } from 'pinia';
+import { defineStore } from 'pinia'
 
 export const useGraphStore = defineStore({
   id: 'graph',
   state: () => ({
-    graphs: {} as object,
+    graphs: {} as object
   }),
-  persist: true,
+  persist: true
 })
