@@ -10,23 +10,12 @@ export default defineConfig({
       vue(),
       cssInjectedByJsPlugin()
   ],
-  // https://github.com/vitejs/vite/issues/11136#issuecomment-1333007321
-  // Disable minifying
-  // TODO: However, this does not solve the issue that functions cannot be called from PHP code
-  // esbuild: {
-  //   minifyIdentifiers: false,
-  //   minifySyntax: false
-  // },
-  // build: {
-  //   minify: false,
   assetsInclude: ['**/*.xml'],
   build: {
     lib: {
-      entry: process.env.BUILD_TARGET === 'MOODLE'
-        ? fileURLToPath(new URL('./src/moodle.ts', import.meta.url))
-        : fileURLToPath(new URL('./src/main.ts', import.meta.url)),
-      name: 'verdatas-dashboard-vue',
-      formats: process.env.BUILD_TARGET === 'MOODLE' ? ['umd'] : ['es'],
+      entry: fileURLToPath(new URL('./src/main.ts', import.meta.url)),
+      name: 'VerDatAsDashboard',
+      formats: ['umd'],
     },
     rollupOptions: {
       // Avoid having varying names
@@ -54,8 +43,7 @@ export default defineConfig({
   // Define a custom name for the .html file and serve it
   // https://stackoverflow.com/a/71359021
   server: {
-    open: '/index.html' // ,
-    // port: 8080
+    open: '/index.html'
   }
 })
 

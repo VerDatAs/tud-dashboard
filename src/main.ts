@@ -11,12 +11,18 @@ library.add(faRefresh, faFloppyDisk, faGear, faFolder, faBezierCurve, faSitemap,
 
 import './assets/main.scss'
 
-const app = createApp(App)
+export function init(initGraphData: Array<any>) {
+    const app = createApp(App)
 
-const pinia = createPinia()
-pinia.use(piniaPluginPersistedstate)
-app.use(pinia)
+    const pinia = createPinia()
+    pinia.use(piniaPluginPersistedstate)
+    app.use(pinia)
 
-app.component('font-awesome-icon', FontAwesomeIcon)
+    app.component('font-awesome-icon', FontAwesomeIcon)
 
-app.mount('#dashboardApp')
+    app.mount('#dashboardApp')
+
+    setTimeout(() => {
+        document.dispatchEvent(new CustomEvent("init-graph", { "detail": initGraphData }));
+    }, 1000);
+}
