@@ -32,6 +32,7 @@ export default {
     document.addEventListener('fullscreenchange', () => {
       if (!document.fullscreenElement) {
         this.isMaximized = false
+        document.getElementById('verdatas-dashboard').classList.remove('fullViewHeight')
         this.centerCanvas()
       }
     })
@@ -74,7 +75,7 @@ export default {
       }
     },
     toggleView() {
-      const elem = document.getElementById('knowledge-graph')
+      const elem = document.getElementById('dashboardApp')
       if (!this.isMaximized) {
         this.openFullscreen(elem)
       } else {
@@ -91,6 +92,7 @@ export default {
       } else if (elem.msRequestFullscreen) {
         elem.msRequestFullscreen()
       }
+      document.getElementById('verdatas-dashboard').classList.add('fullViewHeight')
       this.centerCanvas()
     },
     closeFullscreen() {
@@ -101,6 +103,7 @@ export default {
       } else if (document.msExitFullscreen) {
         document.msExitFullscreen()
       }
+      document.getElementById('verdatas-dashboard').classList.remove('fullViewHeight')
       this.centerCanvas()
     }
   }

@@ -51,7 +51,17 @@ export default {
       return this.initDashboardData?.previewMode ?? false
     }
   },
+  created() {
+    this.initDashboardApp()
+  },
   methods: {
+    initDashboardApp() {
+      // https://stackoverflow.com/a/69196265
+      // TODO: This will center the canvas on every resize. Improve if possible.
+      new ResizeObserver(() => {
+        this.$refs.knowledgeGraph.centerCanvas()
+      }).observe(document.getElementById('dashboardApp'))
+    },
     changeDiagramLoaded(diagramLoaded) {
       this.diagramLoaded = diagramLoaded
     },
@@ -72,6 +82,7 @@ export default {
     <NavigationView v-if="!canViewOnly" @setCurrentView="setCurrentView" />
     <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
     <KnowledgeGraph
+      ref="knowledgeGraph"
       v-show="currentView === 'knowledgeStructure'"
       :backendUrl="backendUrl"
       :courseNode="courseNode"
@@ -93,10 +104,11 @@ export default {
 <style scoped>
 #verdatas-dashboard {
   outline: none !important;
-  border: 1px solid #DDD;
+  border: 1px solid #ddd;
   border-radius: 3px;
   position: relative;
   height: 600px;
+  width: 100%;
   margin-bottom: 10px;
 }
 </style>

@@ -19,7 +19,7 @@ export default {
       this.$emit('saveXML', true)
     },
     toggleView() {
-      this.$emit('toggleView')
+      this.$emit('toggleView', true)
     }
   }
 }
@@ -52,7 +52,13 @@ export default {
       @click="saveXML()"
       title="Graph herunterladen"
     />
-    <font-awesome-icon class="icon" icon="floppy-disk" size="xl" @click="saveKnowledgeGraph()" title="Graph speichern" />
+    <font-awesome-icon
+      class="icon"
+      icon="floppy-disk"
+      size="xl"
+      @click="saveKnowledgeGraph()"
+      title="Graph speichern"
+    />
   </div>
 </template>
 
