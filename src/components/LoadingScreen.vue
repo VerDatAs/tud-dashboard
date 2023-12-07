@@ -22,7 +22,7 @@ export default {
 
 <style scoped>
 #loadingScreen {
-  z-index: 120;
+  z-index: 10;
   position: absolute;
   height: 100%;
   width: 100%;

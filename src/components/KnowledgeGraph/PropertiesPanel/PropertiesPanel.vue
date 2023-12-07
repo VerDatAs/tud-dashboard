@@ -22,12 +22,12 @@ export default {
     diagram: Object,
     elementSelected: Object,
     metamodel: Object,
-    viewOnly: Boolean
+    canViewOnly: Boolean
   },
   watch: {
     // whenever the selected element changes, do something
     elementSelected(newElementSelected, oldElementSelected) {
-      if (newElementSelected?.id && !this.viewOnly) {
+      if (newElementSelected?.id && !this.canViewOnly) {
         this.retrieveParameters(newElementSelected)
         // load priorKnowledgeElements
         // TODO: Redrawing the diagram will create new ID's and invalidate the parameters set
@@ -37,15 +37,17 @@ export default {
           this.parametrizedElement?.businessObject?.priorKnowledgeElements?.map(
             (priorKnowledgeElement) => priorKnowledgeElement?.elementId
           ) ?? []
-        this.priorKnowledgeValue = markRaw(this.allGraphElements.filter((element) =>
-          priorKnowledgeElements.includes(element.businessObject.objectId)
-        ))
+        this.priorKnowledgeValue = markRaw(
+          this.allGraphElements.filter((element) => priorKnowledgeElements.includes(element.businessObject.objectId))
+        )
         // load referencedTests
         const referencedTestElements =
           this.parametrizedElement?.businessObject?.referencedTests?.map(
             (referencedTest) => referencedTest?.elementId
           ) ?? []
-        this.referencedTestValue = markRaw(this.allTests.filter((element) => referencedTestElements.includes(element.objectId)))
+        this.referencedTestValue = markRaw(
+          this.allTests.filter((element) => referencedTestElements.includes(element.objectId))
+        )
       }
     }
   },
@@ -63,9 +65,6 @@ export default {
     }
   },
   methods: {
-    closeTileView() {
-      this.$emit('closeTileView', true)
-    },
     /**
      * Retrieve and return parameter names of a given type definition
      * @param typeDefinition a type definition from the metamodel
@@ -165,7 +164,7 @@ export default {
 </script>
 
 <template>
-  <div id="propertiesPanel" v-if="elementSelected && elementSelected.id && !viewOnly">
+  <div id="propertiesPanel" v-if="elementSelected && elementSelected.id && !canViewOnly">
     <!-- NOTE: Removed .row as we do not use Bootstrap within the editor template -->
     <div class="row">
       <div class="col-xs-12">
