@@ -2,6 +2,7 @@
 import GraphControls from './GraphControls.vue'
 import GraphViewer from './GraphViewer.vue'
 import PropertiesPanel from './PropertiesPanel/PropertiesPanel.vue'
+import { centerCanvas } from '@/util/GraphHelpers'
 
 export default {
   name: 'KnowledgeGraph',
@@ -16,16 +17,24 @@ export default {
     // on the proxy target but the proxy did not return its actual value (expected '[object Array]' but got '[object Array]')
     // Further information: https://stackoverflow.com/a/70648940/3623608
     elementSelected: null,
-    metamodel: null
+    metamodel: null,
+    isMaximized: false,
   }),
   props: {
     backendURL: String,
     diagram: Object,
     diagramLoaded: Boolean,
     courseData: Object,
-    currentView: String,
     token: String,
     viewOnly: Boolean
+  },
+  created() {
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) {
+        this.isMaximized = false;
+        this.centerCanvas()
+      }
+    })
   },
   methods: {
     setDiagram(diagram) {
@@ -47,19 +56,9 @@ export default {
         this.$emit('setCourseData', courseData)
       }
     },
-    setCurrentView(viewName) {
-      if (viewName && viewName !== '') {
-        this.$emit('setCurrentView', viewName)
-      }
-    },
     setToken(token) {
       if (token && token !== '') {
         this.$emit('setToken', token)
-      }
-    },
-    saveXML(value) {
-      if (value) {
-        this.$refs.graphViewer.saveXML()
       }
     },
     redrawKnowledgeGraph(value) {
@@ -70,11 +69,6 @@ export default {
     saveKnowledgeGraph(value) {
       if (value) {
         this.$refs.graphViewer.saveKnowledgeGraph()
-      }
-    },
-    centerCanvas(value) {
-      if (value) {
-        this.$refs.graphViewer.centerCanvas()
       }
     },
     updateMetamodel(metamodel) {
@@ -88,6 +82,47 @@ export default {
     },
     changeInput(parameterName, newValue) {
       this.$refs.graphViewer.changeInput(parameterName, newValue)
+    },
+    centerCanvas() {
+      const canvas = this.diagram?.get('canvas')
+      if(canvas) {
+        centerCanvas(canvas)
+      }
+    },
+    saveXML(value) {
+      if (value) {
+        this.$refs.graphViewer.saveXML()
+      }
+    },
+    toggleView() {
+      const elem = document.getElementById('knowledge-graph')
+      if(!this.isMaximized) {
+        this.openFullscreen(elem)
+      } else {
+        this.closeFullscreen()
+      }
+      
+      this.isMaximized = !this.isMaximized
+    },
+    openFullscreen(elem) {
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.webkitRequestFullscreen) {
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) {
+        elem.msRequestFullscreen();
+      }
+      this.centerCanvas()
+    },
+    closeFullscreen() {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+      this.centerCanvas()
     }
   }
 }
@@ -96,14 +131,12 @@ export default {
 <template>
   <div id="knowledge-graph">
     <GraphControls
-      :diagramLoaded="diagramLoaded"
-      :currentView="currentView"
-      @setCurrentView="setCurrentView"
-      @saveXML="saveXML"
+      v-if="!viewOnly"
+      :is-maximized="isMaximized"
       @redrawKnowledgeGraph="redrawKnowledgeGraph"
       @saveKnowledgeGraph="saveKnowledgeGraph"
-      @centerCanvas="centerCanvas"
-      v-if="!viewOnly"
+      @saveXML="saveXML"
+      @toggleView="toggleView"
     />
     <GraphViewer
       ref="graphViewer"

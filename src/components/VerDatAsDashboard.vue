@@ -3,7 +3,8 @@ import KnowledgeGraph from './KnowledgeGraph/KnowledgeGraph.vue'
 import LearningPathManager from './LearningPathManager.vue'
 import LoadingScreen from './LoadingScreen.vue'
 import ModuleSelection from './ModuleSelection.vue'
-import TileView from './TileView.vue'
+import NavigationView from './NavigationView.vue'
+import Settings from './SettingsView.vue'
 
 export default {
   name: 'VerDatAsDashboard',
@@ -12,7 +13,8 @@ export default {
     LearningPathManager,
     LoadingScreen,
     ModuleSelection,
-    TileView
+    NavigationView,
+    Settings
   },
   data() {
     return {
@@ -21,10 +23,10 @@ export default {
       token: '',
       diagram: null,
       diagramLoaded: false,
-      currentView: 'tileView',
+      currentView: 'knowledgeStructure',
       viewOnly: true,
       previewMode: false,
-      path: './Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates' // standard path
+      path: './Customizing/global/plugins/Services/COPage/PageComponent/VerDatAsDsh/templates',
     }
   },
   created() {
@@ -66,13 +68,13 @@ export default {
     updateViewOnly(viewOnly) {
       this.viewOnly = viewOnly
       if (!this.viewOnly) {
-        this.setCurrentView('tileView')
+        this.setCurrentView('knowledgeStructure')
       }
     },
     setPreviewMode(isPreviewMode) {
       this.previewMode = isPreviewMode
       if (this.previewMode) {
-        this.setCurrentView('tileView')
+        this.setCurrentView('knowledgeStructure')
       }
     }
   }
@@ -81,27 +83,13 @@ export default {
 
 <template>
   <div id="verdatas-dashboard">
+    <NavigationView
+      v-if="!viewOnly"
+      @setCurrentView="setCurrentView"
+    />
     <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
-    <TileView
-      :currentView="currentView"
-      :viewOnly="viewOnly"
-      :previewMode="previewMode"
-      @setCurrentView="setCurrentView"
-    />
-    <ModuleSelection
-      v-if="currentView === 'moduleSelection'"
-      :backendURL="backendURL"
-      :courseData="courseData"
-      :diagram="diagram"
-      :token="token"
-      @setCurrentView="setCurrentView"
-    />
-    <LearningPathManager
-      v-if="currentView === 'learningPathManager'"
-      :diagram="diagram"
-      @setCurrentView="setCurrentView"
-    />
     <KnowledgeGraph
+      v-show="currentView === 'knowledgeStructure'"
       :backendURL="backendURL"
       :courseData="courseData"
       :token="token"
@@ -118,6 +106,9 @@ export default {
       @updateViewOnly="updateViewOnly"
       @setPreviewMode="setPreviewMode"
     />
+    <ModuleSelection v-if="currentView === 'moduleSelection'"/>
+    <LearningPathManager v-if="currentView === 'learningPathManager'"/>
+    <Settings v-if="currentView === 'settings'"/>
   </div>
 </template>
 

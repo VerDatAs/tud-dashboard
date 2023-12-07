@@ -2,6 +2,15 @@
 @import 'vue-multiselect/dist/vue-multiselect.css';
 @import './utilities.css';
 
+// variables (currently used for sidebar component)
+:root {
+	--primary: #4ade80;
+	--dark: #1e293b;
+	--dark-alt: #334155;
+	--light: #f1f5f9;
+	--sidebar-width: 250px;
+}
+
 /*
  * Do not visually select labels
  * Selector retrieved from https://stackoverflow.com/a/59576781

@@ -10,10 +10,16 @@ import {
 } from '@/util/GraphHelpers'
 import ExtendedViewer from '@/util/KnowledgeGraph/ExtendedViewer'
 import Viewer from '@/util/KnowledgeGraph/Viewer'
+import { useSettingStore } from '@/stores/settings'
+import { useGraphStore } from '@/stores/graph'
 
 export default {
   data: () => ({
-    graph: ''
+    graph: '',
+    showEmptyMessage: false,
+    intervalHandle: null,
+    settings: useSettingStore(),
+    graphStore: useGraphStore(),
   }),
   props: {
     backendURL: String,
@@ -84,8 +90,10 @@ export default {
       .catch((err) => {
         // Handle errors
         console.error(err)
-        this.graph = initialModel(encodedId)
+        const courseTitle = this.getAttributeValue(courseData, 'title')
+        this.graph = initialModel(encodedId, courseTitle)
         this.processKnowledgeGraph(courseData)
+        this.showEmptyMessage = true
       })
     },
     // Handles the entire (Extended-)Viewer creation,
@@ -144,6 +152,8 @@ export default {
                 this.$emit('selectedElement', element)
               } else {
                 this.$emit('selectedElement', null)
+                //try to auto-save the graph after not selecting another graph element if activated in the settings
+                if(this.settings.autosave) this.saveKnowledgeGraph()
               }
             })
           } else {
@@ -432,6 +442,9 @@ export default {
             }
           })
 
+          //hide message on succsessful redraw
+          if(this.showEmptyMessage) this.showEmptyMessage = false
+
           // Center diagram in the final step
           centerCanvas(canvas)
         }
@@ -533,13 +546,37 @@ export default {
           Authorization: 'Bearer ' + this.token
         }
 
+        const graphs = this.graphStore.graphs
+        const courseData = this.courseData
+
         this.diagram.saveXML({ format: true }).then(function (result) {
+          console.log('Test', graphs)
+          const courseObjectId = courseData?.attributes?.find((attr) => attr.key === 'objectId')?.value
+          if(!graphs[courseObjectId]) graphs[courseObjectId] = ''
+          
+          const lastSavedGraphForCourse = graphs[courseObjectId]
+          //only save graph if something changed compared to the last saved graph
+          if(result.xml == lastSavedGraphForCourse) return
+
+          //save new graph to store
+          graphs[courseObjectId] = result.xml
+
           const request = {
             graph: result.xml,
             format: 'XML'
           }
+
           axios.put(url, request, { headers: authHeader }).then(() => {
             console.log('Save Graph')
+            //visual feedback for the user when graph is saved
+            const loading = document.getElementById('loading')
+            loading.style.display = 'block'
+            const errorMessage = document.getElementById('autosave-message')
+            errorMessage.style.display = 'none'
+            setTimeout(function () {
+              loading.style.display = 'none'
+              errorMessage.style.display = 'block'
+            }, 2800);
           })
         })
       } else {
@@ -570,7 +607,17 @@ export default {
 </script>
 
 <template>
-  <div id="graph-viewer" class="rasterBackground" :class="viewOnly ? 'viewOnly' : ''"></div>
+  <div id="graph-viewer" class="rasterBackground" :class="viewOnly ? 'viewOnly' : ''">
+    <div v-if="!viewOnly && showEmptyMessage" class="empty">
+      <p class="empty-message">Please add learning content like modules, chapters and tests to see them visualized here!</p>
+    </div>
+    <div v-if="!viewOnly" class="autosave">
+      <p id="autosave-message" class="autosave-message">{{ settings.autosave ? 'Auto-Save is On' : 'Auto-Save is Off' }}</p>
+      <p id="loading" class="loading" style="display: none;">
+      Saving<span>.</span><span>.</span><span>.</span>
+      </p>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -590,5 +637,48 @@ export default {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDEwLjU4MyAxMC41ODMiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiA8Zz4KICA8cGF0aCBkPSJtMC4wMDEyMDgzIDEwLjU4M3YtMTAuNTgzIiBmaWxsPSIjODA4MDgwIiBzdHJva2U9IiNkZWRlZGUiIHN0cm9rZS13aWR0aD0iLjI2NyIvPgogIDxnIGZpbGw9Im5vbmUiPgogICA8cGF0aCBkPSJtMS4zMjUzZS00IC0wLjAwNDk1NzIgMTAuNTgzIDAuMDA5OTE0MyIgc3Ryb2tlPSIjZGVkZWRlIiBzdHJva2Utd2lkdGg9Ii4yNTQ2N3B4Ii8+CiAgIDxwYXRoIGQ9Im01LjIyNjMgMC4xMzIyOXYxMC40NTEiIHN0cm9rZT0iI2Y3ZjdmNyIgc3Ryb2tlLXdpZHRoPSIuMjY0NDVweCIvPgogICA8cGF0aCBkPSJtMC4xMzIyOSA1LjIyNTVoMTAuNDUxIiBzdHJva2U9IiNmN2Y3ZjciIHN0cm9rZS13aWR0aD0iLjI2NDg3cHgiLz4KICA8L2c+CiA8L2c+Cjwvc3ZnPgo=') !important;
   background-position: -1px -1px !important;
   overflow: hidden !important;
+}
+
+.empty {
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  top: 20%;
+}
+.empty-message {
+  width: 75%;
+  background: white;
+  margin: auto;
+  padding: 3%;
+}
+.autosave {
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  bottom: 1%;
+}
+.autosave p {
+  width: 15%;
+  background: white;
+  margin: auto;
+  padding: 1%;
+}
+
+@keyframes saving {
+    0% { opacity: .2; }
+    20% { opacity: 1; }
+    100% { opacity: .2; }
+}
+.loading span {
+    animation-name: saving;
+    animation-duration: 1.4s;
+    animation-iteration-count: 2;
+    animation-fill-mode: both;
+}
+.loading span:nth-child(2) {
+    animation-delay: .2s;
+}
+.loading span:nth-child(3) {
+    animation-delay: .4s;
 }
 </style>
