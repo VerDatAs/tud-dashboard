@@ -2,10 +2,8 @@
 import { ref } from 'vue'
 
 export default {
-  data() {
-    return {
-      isExpanded: ref(localStorage.getItem('is_expanded') === 'true')
-    }
+  props: {
+    isExpanded: Boolean
   },
   methods: {
     setCurrentView(evt, viewName) {
@@ -18,8 +16,7 @@ export default {
       }
     },
     toggleMenu() {
-      this.isExpanded = !this.isExpanded
-      localStorage.setItem('is_expanded', this.isExpanded)
+      this.$emit('toggleNavigationExpanded', !this.isExpanded)
     }
   }
 }

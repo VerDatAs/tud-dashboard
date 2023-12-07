@@ -6,6 +6,7 @@ import ModuleSelection from '@/components/ModuleSelection.vue'
 import NavigationView from '@/components/NavigationView.vue'
 import Settings from '@/components/SettingsView.vue'
 import { DashboardData } from '@/types/dashboard-data'
+import { ref } from 'vue'
 
 export default {
   name: 'VerDatAsDashboard',
@@ -25,7 +26,8 @@ export default {
       diagramLoaded: false,
       currentView: 'knowledgeStructure',
       canViewOnly: true,
-      previewMode: false
+      previewMode: false,
+      isExpanded: ref(localStorage.getItem('is_expanded') === 'true')
     }
   },
   props: {
@@ -72,6 +74,14 @@ export default {
     },
     setDiagram(diagram) {
       this.diagram = diagram
+    },
+    toggleNavigationExpanded(value) {
+      this.isExpanded = value
+      localStorage.setItem('is_expanded', this.isExpanded + '')
+      // TODO: This somehow makes the height larger than expected
+      setTimeout(() => {
+        this.$refs.knowledgeGraph.centerCanvas()
+      }, 100)
     }
   }
 }
@@ -79,13 +89,19 @@ export default {
 
 <template>
   <div id="verdatas-dashboard">
-    <NavigationView v-if="!canViewOnly" @setCurrentView="setCurrentView" />
+    <NavigationView
+      v-if="!canViewOnly"
+      :isExpanded="isExpanded"
+      @setCurrentView="setCurrentView"
+      @toggleNavigationExpanded="toggleNavigationExpanded"
+    />
     <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
     <KnowledgeGraph
       ref="knowledgeGraph"
       v-show="currentView === 'knowledgeStructure'"
       :backendUrl="backendUrl"
       :courseNode="courseNode"
+      :isExpanded="isExpanded"
       :token="token"
       :currentView="currentView"
       :diagram="diagram"

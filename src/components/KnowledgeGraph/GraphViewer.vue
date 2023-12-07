@@ -655,7 +655,7 @@ export default {
 .autosave p {
   border: 1px solid #ddd;
   border-radius: 3px;
-  width: 15%;
+  width: 200px;
   background: white;
   margin: auto;
   padding: 1%;

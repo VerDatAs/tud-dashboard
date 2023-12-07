@@ -26,7 +26,8 @@ export default {
     diagramLoaded: Boolean,
     courseNode: Object,
     token: String,
-    canViewOnly: Boolean
+    canViewOnly: Boolean,
+    isExpanded: Boolean
   },
   created() {
     document.addEventListener('fullscreenchange', () => {
@@ -111,7 +112,7 @@ export default {
 </script>
 
 <template>
-  <div id="knowledge-graph">
+  <div id="knowledge-graph" :class="isExpanded ? 'margin-250' : ''">
     <GraphControls
       v-if="!canViewOnly"
       :is-maximized="isMaximized"
@@ -148,5 +149,9 @@ export default {
 #knowledge-graph {
   height: 100%;
   position: relative;
+}
+
+.margin-250 {
+  margin-left: 250px;
 }
 </style>
