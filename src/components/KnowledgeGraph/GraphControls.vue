@@ -1,15 +1,14 @@
 <script>
+import { useSettingStore } from '@/stores/settings'
+
 export default {
+  data: () => ({
+    settings: useSettingStore()
+  }),
   props: {
-    diagramLoaded: Boolean,
-    currentView: String
+    isMaximized: Boolean
   },
   methods: {
-    setCurrentView(viewName) {
-      if (viewName && viewName !== '') {
-        this.$emit('setCurrentView', viewName)
-      }
-    },
     redrawKnowledgeGraph() {
       this.$emit('redrawKnowledgeGraph', true)
     },
@@ -19,33 +18,59 @@ export default {
     saveXML() {
       this.$emit('saveXML', true)
     },
-    centerCanvas() {
-      this.$emit('centerCanvas', true)
+    toggleView() {
+      this.$emit('toggleView')
     }
   }
 }
 </script>
 
 <template>
-  <div id="graph-controls" v-if="currentView !== 'tileView'">
-    <button type="button" class="btn btn-secondary" @click="setCurrentView('tileView')">Settings</button>
-    <button type="button" class="btn btn-secondary" @click="redrawKnowledgeGraph()">Redraw</button>
-    <button type="button" class="btn btn-secondary" @click="saveKnowledgeGraph()">Save Graph</button>
-    <button type="button" class="btn btn-secondary" @click="saveXML()">Download</button>
-    <button type="button" class="btn btn-secondary" @click="centerCanvas()">Center</button>
+  <div id="maximize">
+    <font-awesome-icon
+      class="icon"
+      icon="maximize"
+      size="lg"
+      @click="toggleView()"
+      :title="isMaximized ? 'Close Fullscreen' : 'Enter Fullscreen'"
+    />
+  </div>
+  <div id="controls">
+    <font-awesome-icon
+      v-if="settings.debugging"
+      class="icon"
+      icon="refresh"
+      size="xl"
+      @click="redrawKnowledgeGraph()"
+      title="Redraw Graph"
+    />
+    <font-awesome-icon
+      v-if="settings.debugging"
+      class="icon"
+      icon="download"
+      size="xl"
+      @click="saveXML()"
+      title="Download Graph"
+    />
+    <font-awesome-icon class="icon" icon="floppy-disk" size="xl" @click="saveKnowledgeGraph()" title="Save Graph" />
   </div>
 </template>
 
 <style scoped>
-#graph-controls {
+#controls {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  bottom: 2px;
+  right: 2px;
   z-index: 6;
 }
-.btn {
-  display: block;
-  margin-bottom: 7px;
-  width: 80px;
+#maximize {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  z-index: 6;
+}
+.icon {
+  cursor: pointer;
+  margin-left: 5px;
 }
 </style>

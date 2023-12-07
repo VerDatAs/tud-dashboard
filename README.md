@@ -38,10 +38,12 @@ Format the code using Prettier:
 npm run format
 ```
 
-For developing locally, you can build the project and move the specific folders directly into your ilias directory, in which they are loaded in the volume (using the `docker-compose-plugin-dev.yml` setup of ilias). In case, the `VerDatAsDsh`-folder does not yet exist in the ilias `Customizing`-folder, adjust the `local_development.sh` script to your needs.
+For building and moving the files (either into ILIAS or Moodle), use the respective script.
 
 ```sh
-sh local_development.sh
+sh build_and_move_ilias.sh
+# vs.
+sh build_and_move_moodle.sh
 ```
 
 ## Information on the metamodel

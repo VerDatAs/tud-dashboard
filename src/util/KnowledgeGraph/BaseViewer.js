@@ -761,7 +761,7 @@ function addProjectLogo(container) {
   assignStyle(linkElement, LINK_STYLES, {
     position: 'absolute',
     bottom: '15px',
-    left: '15px',
+    left: '60px', // so the logo is not hidden by the new sidebar
     zIndex: '100'
   })
 
