@@ -1,7 +1,8 @@
 #!/bin/sh
 npm i
-npm run build
-cp dist/assets/app.js ../verdatasdsh/templates/assets/app.js
-cp dist/assets/index.css ../verdatasdsh/templates/assets/index.css
+npm run build:ilias
+cp dist/assets/main.js ../verdatasdsh/templates/assets/main.js
+cp dist/logo.jpeg ../verdatasdsh/templates/logo.jpeg
+cp dist/tpl.content.html ../verdatasdsh/templates/tpl.content.html
 
 cd ../ilias-dev && sh reload_directories.sh

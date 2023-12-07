@@ -9,5 +9,5 @@ export function init() {
 
   app.use(createPinia())
 
-  app.mount('#app')
+  app.mount('#dashboardApp')
 }
