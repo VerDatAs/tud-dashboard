@@ -93,9 +93,10 @@ export default {
 <style scoped>
 #verdatas-dashboard {
   outline: none !important;
+  border: 1px solid #DDD;
+  border-radius: 3px;
   position: relative;
   height: 600px;
-  margin-top: 10px;
   margin-bottom: 10px;
 }
 </style>

@@ -29,37 +29,37 @@ export default {
   <div id="module-selection">
     <div class="container py-4" style="max-width: 100%">
       <div class="tab">
-        <button class="tablinks active" @click="openTab($event, 'features')">Features</button>
-        <button class="tablinks" @click="openTab($event, 'feedback')">Feedback Types</button>
+        <button class="tablinks active" @click="openTab($event, 'features')">Funktionen</button>
+        <button class="tablinks" @click="openTab($event, 'feedback')">Feedback-Typen</button>
       </div>
 
       <div id="features" class="tabcontent" style="display: block">
-        <h3>Features</h3>
+        <h3>Funktionen</h3>
         <div class="list">
-          <div>Feature 1</div>
-          <div>Feature 2</div>
-          <div>Feature 3</div>
+          <div>Funktion 1</div>
+          <div>Funktion 2</div>
+          <div>Funktion 3</div>
           <div>...</div>
         </div>
       </div>
 
       <div id="feedback" class="tabcontent">
-        <h3>Feedback Types</h3>
+        <h3>Feedback-Typen</h3>
         <div class="list">
           <div>
             <input type="checkbox" />
-            Feedback Type 1
+            Feedback-Typ 1
           </div>
           <div>
             <input type="checkbox" />
-            Feedback Type 2
+            Feedback-Typ 2
           </div>
           <div>
             <input type="checkbox" />
-            Feedback Type 3
+            Feedback-Typ 3
           </div>
           <div>...</div>
-          <button class="save">Save</button>
+          <button class="save">Speichern</button>
         </div>
       </div>
     </div>

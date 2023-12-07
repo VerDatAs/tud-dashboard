@@ -218,9 +218,9 @@ export default {
               </template>
               <template v-if="parameter.type === 'verDatAs:ReferencedTest'">
                 <div class="col-xs-12">
-                  <label :for="parameter.name" class="control-label">{{
-                    elementSelected.type === 'verDatAs:Topic' ? 'finalTests' : parameter.name
-                  }}</label>
+                  <label :for="parameter.name" class="control-label">
+                    {{ elementSelected.type === 'verDatAs:Topic' ? 'finalTests' : parameter.name }}
+                  </label>
                 </div>
                 <div class="col-xs-12">
                   <!-- Options retrieved from https://vue-multiselect.js.org/#sub-custom-option-template -->
@@ -269,59 +269,6 @@ export default {
           </div>
         </div>
       </div>
-
-      <!-- TODO: This might be more dynamic in the future -->
-      <!-- However, for the moment, we want to allow having "custom" inputs -->
-      <!-- 'id', 'name', 'objectId', 'objectLink', 'priorKnowledgeElements', 'level',
-        'learningPathElements', 'selfRatingElements', 'modules', 'learningPaths',
-        'processingTime', 'structure', 'chapters', 'contentPages', 'interactiveTasks', 'concludeModule' -->
-      <!-- <input id="name" class="form-control" type="text" placeholder="name for graph (TODO)" style="display: none;" /> -->
-
-      <!-- text -->
-      <!--      <label id="objectIdLabel" for="objectId">objectId</label>-->
-      <!--      <input id="objectId" name="objectId" class="form-control" type="text" placeholder="ID (object.id)" style="display: none;" />-->
-
-      <!--      <label id="objectLinkLabel" for="objectLink">objectLink</label>-->
-      <!--      <input id="objectLink" name="objectLink" class="form-control" type="text" placeholder="Link (object.moreInfo)" style="display: none;" />-->
-
-      <!--      <hr>-->
-
-      <!--      &lt;!&ndash; number &ndash;&gt;-->
-      <!--      <label id="processingTimeLabel" for="processingTime">processingTime</label>-->
-      <!--      <input id="processingTime" name="processingTime" class="form-control" type="number" placeholder="processing time in s" style="display: none;" />-->
-
-      <!--      &lt;!&ndash; array &ndash;&gt;-->
-      <!--      <label id="selfRatingElementsLabel" for="selfRatingElements">selfRatingElements</label>-->
-      <!--      <input id="selfRatingElements" name="selfRatingElements" class="form-control" type="text" placeholder="['ID1', 'ID2']" style="display: none;" />-->
-
-      <!--      <label id="priorKnowledgeElementsLabel" for="priorKnowledgeElements">priorKnowledgeElements</label>-->
-      <!--      <input id="priorKnowledgeElements" name="priorKnowledgeElements" class="form-control" type="text" placeholder="['ID1', 'ID2']" style="display: none;" />-->
-
-      <!--      <label id="contentPagesLabel" for="contentPages">contentPages</label>-->
-      <!--      <input id="contentPages" name="contentPages" class="form-control" type="text" placeholder="['ID1', 'ID2']" style="display: none;" />-->
-
-      <!--      &lt;!&ndash; select (boolean, enum) &ndash;&gt;-->
-      <!--      <label id="levelLabel" for="level">level</label>-->
-      <!--      <select id="level" name="level" class="form-control" style="display: none;">-->
-      <!--        <option value="">&#45;&#45; level of difficulty &#45;&#45;</option>-->
-      <!--        <option value="beginner">beginner</option>-->
-      <!--        <option value="experienced">experienced</option>-->
-      <!--        <option value="expert">expert</option>-->
-      <!--      </select>-->
-
-      <!--      <label id="concludeModuleLabel" for="concludeModule">concludeModule</label>-->
-      <!--      <select id="concludeModule" name="concludeModule" class="form-control" style="display: none;">-->
-      <!--        <option value="">&#45;&#45; conclude module? &#45;&#45;</option>-->
-      <!--        <option value="true">true</option>-->
-      <!--        <option value="false">false</option>-->
-      <!--      </select>-->
-
-      <!--      &lt;!&ndash; other parameters: TODO &ndash;&gt;-->
-      <!--      <label id="structureLabel" for="structure">structure</label>-->
-      <!--      <input id="structure" name="structure" class="form-control" type="text" placeholder="TODO" style="display: none;" disabled />-->
-
-      <!--      <label id="learningPathsLabel" for="learningPaths">learningPaths</label>-->
-      <!--      <input id="learningPaths" name="learningPaths" class="form-control" type="text" placeholder="TODO" style="display: none;" disabled />-->
     </div>
   </div>
 </template>
@@ -329,14 +276,16 @@ export default {
 <style scoped>
 #propertiesPanel {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  height: calc(100% - 40px);
+  top: 45px;
+  right: 0;
+  height: calc(100% - 90px);
   width: 250px;
   padding: 10px;
-  color: #333333;
+  color: #333;
   background: #fafafa;
-  border: 1px solid #ccc;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
   overflow-x: hidden;

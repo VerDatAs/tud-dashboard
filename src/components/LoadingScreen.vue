@@ -15,7 +15,7 @@ export default {
         width="400"
         alt="VerDatAs logo containing both the icon itself as well as the text VerDatAs"
       />
-      <p>is loading ...</p>
+      <p>lädt ...</p>
     </div>
   </div>
 </template>
