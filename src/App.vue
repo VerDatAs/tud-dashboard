@@ -4,6 +4,7 @@ import LearningPathManager from '@/components/LearningPathManager.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import ModuleSelection from '@/components/ModuleSelection.vue'
 import NavigationView from '@/components/NavigationView.vue'
+import QueryView from '@/components/QueryView.vue'
 import Settings from '@/components/SettingsView.vue'
 import { DashboardData } from '@/types/dashboard-data'
 import { ref } from 'vue'
@@ -16,6 +17,7 @@ export default {
     LoadingScreen,
     ModuleSelection,
     NavigationView,
+    QueryView,
     Settings
   },
   data() {
@@ -113,6 +115,7 @@ export default {
     />
     <ModuleSelection v-if="currentView === 'moduleSelection'" />
     <LearningPathManager v-if="currentView === 'learningPathManager'" />
+    <QueryView v-if="currentView === 'query'" />
     <Settings v-if="currentView === 'settings'" />
   </div>
 </template>

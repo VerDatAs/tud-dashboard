@@ -15,7 +15,8 @@ import {
   faAnglesRight,
   faMaximize,
   faDownload,
-  faCircleInfo
+  faCircleInfo,
+  faMagnifyingGlass
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -28,10 +29,11 @@ library.add(
   faAnglesRight,
   faMaximize,
   faDownload,
-  faCircleInfo
+  faCircleInfo,
+  faMagnifyingGlass
 )
 
-import type { DashboardData } from '@/types/dashboard-data'
+import { DashboardData } from '@/types/dashboard-data'
 
 import './assets/main.scss'
 
@@ -53,7 +55,7 @@ function initDashboard(initDashboardData: DashboardData) {
 
 // Local development: Uncomment this lines and remove type from "import type ..."
 // TODO: Find a better solution for local development: https://stackoverflow.com/questions/70709987/how-to-load-environment-variables-from-env-file-using-vite
-// initDashboard(new DashboardData({}, '1234', 'http://develop.verdatas.inf.tu-dresden.de:8062'));
+initDashboard(new DashboardData({}, '1234', 'http://develop.verdatas.inf.tu-dresden.de:8062'));
 
 export function init(initDashboardData: DashboardData) {
   initDashboard(initDashboardData)

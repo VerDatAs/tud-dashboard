@@ -37,6 +37,10 @@ export default {
         <font-awesome-icon class="icon" icon="bezier-curve" />
         <span class="text">Lernpfade</span>
       </div>
+      <div class="tab" @click="setCurrentView($event, 'query')" title="Datenabfrage">
+        <font-awesome-icon class="icon" icon="magnifying-glass" />
+        <span class="text">Datenabfrage</span>
+      </div>
       <div class="tab" @click="setCurrentView($event, 'settings')" title="Einstellungen">
         <font-awesome-icon class="icon" icon="gear" />
         <span class="text">Einstellungen</span>
