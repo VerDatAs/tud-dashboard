@@ -266,16 +266,6 @@ export default {
         password: 'test123'
       }
 
-      /* if(input.operations.__contains__("$group") && (input.operations.__contains__("$max") || input.operations.__contains__("$min") || input.operations.__contains__("$sum") || input.operations.__contains__("$avg"))) {
-        const pipeline = [
-          {
-              $group: {
-                _id: input.operations("$group"),
-
-              }
-          } 
-        ]
-      } */
       
 
       axios
@@ -286,46 +276,22 @@ export default {
             })
         .then((result) => {
           console.log('Query result', result)
-          this.result = result.data
+
+          //TODO: make more pretty
+          let queryResult = result.data
+          if(queryResult['aggregate']) {
+            delete queryResult['aggregate'][0]['_id']
+            queryResult = queryResult['aggregate'][0]
+          } else {
+            delete queryResult['aggregate'];
+          }
+          this.result = queryResult
+
         })
         .catch((err) => {
           console.error(err)  
           this.result = err
         })
-
-      //axios.defaults.headers.get['Access-Control-Allow-Origin'] = '*'
-      //axios.defaults.headers.get['Authorization'] = 'Basic ' + btoa(username + ':' + password) // for POST requests
-
-      /* axios.interceptors.request.use(config => {
-        window.console.log(config);
-
-        config.paramsSerializer = params => {
-          // Qs is already included in the Axios package
-          return Qs.stringify(params, {
-            arrayFormat: "brackets",
-            encode: false
-          });
-        };
-
-        return config;
-      });
-
-      axios
-        .get(queryUrl,        
-            {
-              params: {
-                query: input
-              },
-              auth: auth
-            })
-        .then((result) => {
-          console.log('Query result', result)
-          this.result = result
-        })
-        .catch((err) => {
-          console.error(err)  
-          this.result = err
-        })*/
     },
     setQueryExample(index) {
       this.textareaInput = JSON.stringify(this.queryExamples[index].query, null, 2)
