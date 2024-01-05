@@ -16,7 +16,11 @@ import {
   faMaximize,
   faDownload,
   faCircleInfo,
-  faMagnifyingGlass
+  faMagnifyingGlass,
+  faCode,
+  faList,
+  faCircleXmark,
+  faCirclePlus
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -30,7 +34,11 @@ library.add(
   faMaximize,
   faDownload,
   faCircleInfo,
-  faMagnifyingGlass
+  faMagnifyingGlass,
+  faCode,
+  faList,
+  faCircleXmark,
+  faCirclePlus
 )
 
 import { DashboardData } from '@/types/dashboard-data'
