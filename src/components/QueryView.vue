@@ -9,14 +9,6 @@ import axios from 'axios'
 //add useful/better examples
 //possible extensions; autocomplete, standard deveiation as operator...
 
-//probably best to fetch all possible attributes from the mongoDB
-const attr = [  
-  { displayName: "timestamp", value: "timestamp"},
-  { displayName: "actor.name", value: "actor.name"},
-  { displayName: "verb", value: "verb"},
-  { displayName: "object", value: "object"},
-]
-
 const comp = [
   { displayName: "equal", value: "$eq"},
   { displayName: "not equal", value: "$ne"},
@@ -80,7 +72,7 @@ export default {
     operationBuilder: [{ selectedOperation: "" }],
     sortBuilder: [{ selectedAttribute: "", selectedDirection: "" }],
     textareaInput: null,
-    attributes: attr,
+    attributes: [],
     comparison: comp,
     selectedAttribute: null,
     selectedComparison: null,
@@ -119,24 +111,22 @@ export default {
 
       const backendUrl = 'http://127.0.0.1:8000' //this.backendUrl
 
-      const queryUrl = backendUrl + '/api/v1/statements'
-      const auth = { //is later changed to Bearer Authenifciation with this.token
+      const url = backendUrl + '/api/v1/attributes-statements'
+      const auth = { //is later changed to Bearer Authentication with this.token
         username: 'testuser',
         password: 'test123'
       }
 
-      //maybe add an endpoint in the api to fetch a single records and extract the colum headers or sth similar
-      //db.yourCollectionName.findOne();
-      /* axios
-        .get(queryUrl, { auth: auth })
+
+      axios
+        .get(url, { auth: auth })
         .then((result) => {
-          console.log('Query result', result)
-          this.attributes = result
+          console.log('Fetch attribute result', result)
+          this.attributes = result.data
         })
         .catch((err) => {
-          // Handle errors
           console.error(err)
-        }) */
+        })
 
     },
     queryBuilder() {
@@ -408,8 +398,8 @@ export default {
 
                     <select v-model="filterBuilder[index].selectedAttribute">
                         <option value="" disabled selected>Wähle ein Attribut aus</option>
-                        <option v-for="attribute in attributes" :key="attribute.Id" :value="attribute.value">
-                            {{attribute.displayName}}
+                        <option v-for="(attribute, index) in attributes" :key="index" :value="attribute.attribute">
+                            {{attribute.attribute}}
                         </option>
                     </select>
 
