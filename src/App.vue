@@ -20,13 +20,9 @@ export default {
   },
   data() {
     return {
-      courseNode: null,
-      token: '',
       diagram: null,
       diagramLoaded: false,
       currentView: 'knowledgeStructure',
-      canViewOnly: true,
-      previewMode: false,
       isExpanded: ref(localStorage.getItem('is_expanded') === 'true')
     }
   },
