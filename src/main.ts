@@ -20,7 +20,10 @@ import {
   faCode,
   faList,
   faCircleXmark,
-  faCirclePlus
+  faCirclePlus,
+  faChevronRight,
+  faChevronDown,
+  faShare
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -38,7 +41,10 @@ library.add(
   faCode,
   faList,
   faCircleXmark,
-  faCirclePlus
+  faCirclePlus,
+  faChevronRight,
+  faChevronDown,
+  faShare
 )
 
 import { DashboardData } from '@/types/dashboard-data'
@@ -63,7 +69,7 @@ function initDashboard(initDashboardData: DashboardData) {
 
 // Local development: Uncomment this lines and remove type from "import type ..."
 // TODO: Find a better solution for local development: https://stackoverflow.com/questions/70709987/how-to-load-environment-variables-from-env-file-using-vite
-initDashboard(new DashboardData({}, '1234', 'http://develop.verdatas.inf.tu-dresden.de:8062'));
+initDashboard(new DashboardData({}, '1234', 'http://develop.verdatas.inf.tu-dresden.de:8062'))
 
 export function init(initDashboardData: DashboardData) {
   initDashboard(initDashboardData)
