@@ -51,6 +51,9 @@ export default {
     },
     previewMode() {
       return this.initDashboardData?.previewMode ?? false
+    },
+    members() {
+      return this.initDashboardData?.members ?? []
     }
   },
   created() {
@@ -107,6 +110,7 @@ export default {
       :diagram="diagram"
       :diagramLoaded="diagramLoaded"
       :canViewOnly="canViewOnly"
+      :members="members"
       @loadedDiagram="changeDiagramLoaded"
       @setCurrentView="setCurrentView"
       @setDiagram="setDiagram"
