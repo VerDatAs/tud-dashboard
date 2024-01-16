@@ -3,8 +3,6 @@ import axios from 'axios'
 import { comparisonOperators, aggregationOperators, queryExamples, Connections } from '@/util/QueryHelpers'
 
 //Maybe transform eq and new to $in ?
-//erstmal beim builder nur bauen und dann eine Funktion zu Validerung von Builder/Code
-//--> dafür wäre aber die generelle Struktur nötig?
 //timestamp in code wie dargestllt bzw wie ein Hinweis?
 
 export default {
@@ -12,17 +10,16 @@ export default {
     comparisonOperators,
     aggregationOperators,
     queryExamples,
-    currentComparisonOperators: comparisonOperators,
     connections: Connections,
-    currenConnection: Connections.AND,
+    currentConnection: Connections.AND,
+    backendUrl: 'http://127.0.0.1:8000', //needs to be changed later
+    authUser: 'testuser', //later changed to Bearer Authorization with token
+    authPassword: 'test123',
     filterBuilder: [],
     operationBuilder: [],
     textareaInput: null,
     filterAttributes: [],
     operationAttributes: [],
-    selectedAttribute: null,
-    selectedComparison: null,
-    selectedValueFilter: null,
     queryGroup: '',
     queryLimit: '',
     querySkip: '',
@@ -31,38 +28,30 @@ export default {
     result: null,
     showAdvancedFilterOptions: false,
     errorMessages: [],
-    inputType: ['string'],
-    //inputStep: 'string',
     showCode: false,
     showQuery: false
   }),
-  props: {
-    backendUrl: String,
-    token: String
-  },
   created() {
     this.fetchSchema()
   },
   methods: {
     adjustInputOptions(attribute, index) {
-      this.currentComparisonOperators = comparisonOperators
+      this.filterBuilder[index].comparisonOperators = comparisonOperators
 
       if (attribute === '') this.inputType[index] = 'string'
 
       const attributeType = this.filterAttributes.find((element) => element.attribute === attribute).type
 
       if (attributeType === 'number') {
-        this.inputType[index] = 'number'
-        //this.inputStep = 'any'
+        this.filterBuilder[index].inputType = 'number'
       } else if (attribute === 'timestamp') {
-        this.inputType[index] = 'datetime-local'
-        this.currentComparisonOperators = comparisonOperators.filter(
+        this.filterBuilder[index].inputType = 'datetime-local'
+        this.filterBuilder[index].comparisonOperators = comparisonOperators.filter(
           (operator) => operator.value !== '$in' && operator.value !== '$nin'
         )
       } else {
-        this.inputType[index] = 'string'
-        //TODO: Determine if helpful or not
-        this.currentComparisonOperators = comparisonOperators.filter(
+        this.filterBuilder[index].inputType = 'string'
+        this.filterBuilder[index].comparisonOperators = comparisonOperators.filter(
           (operator) =>
             operator.value !== '$lt' &&
             operator.value !== '$lte' &&
@@ -70,26 +59,15 @@ export default {
             operator.value !== '$gte'
         )
       }
-      this.filterAttributes[index].selectedComparison = ''
-      this.filterAttributes[index].selectedValueFilter = null
-    },
-    userHints() {
-      filterBuilder[index].selectedComparison === '$in' || filterBuilder[index].selectedComparison === '$nin'
-        ? 'Bei diesem Operator muss eine Liste nach folgendem Schema angegeben werden: Tom, Tim, Thomas, ...'
-        : ''
+      this.filterBuilder[index].selectedComparison = ''
+      this.filterBuilder[index].selectedValueFilter = null
+      this.getSuggestions(this.filterBuilder[index])
     },
     fetchSchema() {
-      const backendUrl = 'http://127.0.0.1:8000' //this.backendUrl
-      const url = backendUrl + '/api/v1/attributes-statements'
-
-      //is later changed to Bearer Authentication with this.token
-      const auth = {
-        username: 'testuser',
-        password: 'test123'
-      }
+      const url = this.backendUrl + '/api/v1/statement/schema'
 
       axios
-        .get(url, { auth: auth })
+        .get(url, { auth: { username: this.authUser, password: this.authPassword } })
         .then((result) => {
           console.log('Fetch xAPI statements schema', result)
           this.filterAttributes = result.data
@@ -134,7 +112,7 @@ export default {
           return
         }
 
-        const connectionKey = this.currenConnection
+        const connectionKey = this.currentConnection
         if (!input.search[connectionKey]) input.search[connectionKey] = []
 
         if (filter.selectedComparison === '$in' || filter.selectedComparison === '$nin') {
@@ -274,18 +252,12 @@ export default {
         return
       }
 
-      const backendUrl = 'http://0.0.0.0:8000' //needs to be changed later http://0.0.0.0:8000
-      const queryUrl = backendUrl + '/api/v1/query-statements'
-      const auth = {
-        username: 'testuser',
-        password: 'test123'
-      }
-
+      const queryUrl = this.backendUrl + '/api/v1/statement/query'
       this.result = 'Searching...'
 
       axios
         .post(queryUrl, input, {
-          auth: auth
+          auth: { username: this.authUser, password: this.authPassword }
         })
         .then((result) => {
           console.log('Query result', result)
@@ -495,7 +467,7 @@ export default {
       this.operationBuilder.splice(index, 1)
     },
     addFilterBuilder(index, connection = Connections.AND) {
-      this.currenConnection = connection
+      this.currentConnection = connection
       this.filterBuilder.push({ selectedAttribute: '', selectedComparison: '' })
       if (this.filterBuilder.length > 1)
         document.getElementById('connection' + index).innerHTML = connection === Connections.AND ? 'AND' : 'OR'
@@ -503,6 +475,25 @@ export default {
     removeFilterBuilder(index) {
       this.filterBuilder.splice(index, 1)
       if (this.filterBuilder.length > 0) document.getElementById('connection' + (index - 1)).innerHTML = ''
+    },
+    getSuggestions(filter) {
+      if (this.getAttribute(filter.selectedAttribute)[0].type === 'number') return
+
+      const currentFilterValue = filter.selectedValueFilter ? filter.selectedValueFilter : ''
+      const url =
+        this.backendUrl + '/api/v1/statement/' + filter.selectedAttribute + '/suggestions?suggest=' + currentFilterValue
+
+      filter.attributeSuggestions = []
+
+      axios
+        .get(url, { auth: { username: this.authUser, password: this.authPassword } })
+        .then((result) => {
+          console.log('Fetch suggestions for xAPI statement attribute', result)
+          filter.attributeSuggestions = result.data
+        })
+        .catch((err) => {
+          console.error(err)
+        })
     }
   }
 }
@@ -539,7 +530,7 @@ export default {
         </div>
       </div>
 
-      <div v-show="!showCode" id="builder">
+      <form autocomplete="off" v-show="!showCode" id="builder" @submit.prevent="onSubmit">
         <h4>
           Filter
           <font-awesome-icon
@@ -569,29 +560,44 @@ export default {
 
             <select v-model="filterBuilder[index].selectedComparison">
               <option value="" disabled selected>Auswahl Vergleichsoperator</option>
-              <option v-for="(operator, index) in currentComparisonOperators" :key="index" :value="operator.value">
+              <option
+                v-for="(operator, index) in filterBuilder[index].comparisonOperators"
+                :key="index"
+                :value="operator.value"
+              >
                 {{ operator.displayName }}
               </option>
             </select>
 
             <input
-              class="textinput"
+              @keyup="getSuggestions(filterBuilder[index])"
               v-model="filterBuilder[index].selectedValueFilter"
+              :list="'suggestions' + index"
               :type="
                 filterBuilder[index].selectedComparison === '$in' || filterBuilder[index].selectedComparison === '$nin'
                   ? 'string'
-                  : inputType[index]
+                  : filterBuilder[index].inputType
               "
-              :step="inputType[index] === 'number' ? 'any' : ''"
-              :min="inputType[index] === 'number' ? 0 : ''"
+              :step="filterBuilder[index].inputType === 'number' ? 'any' : ''"
+              :min="filterBuilder[index].inputType === 'number' ? 0 : ''"
               placeholder="Eingabe Attributwert..."
             />
+
+            <datalist :id="'suggestions' + index">
+              <option
+                v-for="(suggestion, index) in filterBuilder[index].attributeSuggestions"
+                :key="index"
+                :value="suggestion"
+              >
+                {{ suggestion }}
+              </option>
+            </datalist>
 
             <div class="filterActions">
               <div
                 title="Filter hinzufügen"
                 v-show="index === filterBuilder.length - 1 && index !== 0"
-                @click="addFilterBuilder(index, currenConnection)"
+                @click="addFilterBuilder(index, currentConnection)"
               >
                 <font-awesome-icon class="icon" icon="circle-plus" size="lg" />
               </div>
@@ -752,12 +758,10 @@ export default {
               title="Setze aktuelle Query in Code Editor"
               @click="saveQueryToTextarea()"
             />
-          </div>
-          <div>
             <pre v-show="showQuery">{{ queryOutput }}</pre>
           </div>
         </div>
-      </div>
+      </form>
 
       <div id="result">
         <p>Ergebnis:</p>
@@ -817,7 +821,10 @@ export default {
 
 #share {
   cursor: pointer;
+  position: relative;
   float: right;
+  top: 5px;
+  right: 18px;
 }
 
 .builder {

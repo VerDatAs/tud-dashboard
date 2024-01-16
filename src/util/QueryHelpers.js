@@ -1,3 +1,4 @@
+//Currently supported comparison operators
 export const comparisonOperators = [
   { displayName: 'equal', value: '$eq' },
   { displayName: 'not equal', value: '$ne' },
@@ -9,6 +10,7 @@ export const comparisonOperators = [
   { displayName: 'not in', value: '$nin' }
 ]
 
+//Currently supported aggregation operations
 export const aggregationOperators = [
   { displayName: 'min', value: '$min' },
   { displayName: 'max', value: '$max' },
