@@ -241,8 +241,104 @@ export default {
       return operationObject
     },
     queryCode(input) {
+
       //hier irgendwann vielleicht Transformationen für den User damit nicht komplett die MongoDB Syntax hier genutzt werden muss
-      this.query(JSON.parse(input))
+
+      input = JSON.parse(input)
+
+      //Math Mode
+
+      const supportedOperations = ['add','subtract', 'divide', 'multiply']
+
+      let mathMode = false;
+
+      for(const operation of input.operations) {
+
+        const arithmeticOperation = Object.keys(operation)[0]
+        if(supportedOperations.indexOf(arithmeticOperation) !== -1) {
+
+            mathMode = true
+            let isDate = false
+
+            const mathObject = Object.values(operation)[0]
+
+            const requests = []
+            const queryUrl = this.backendUrl + '/api/v1/statement/query'
+
+            for(const query of mathObject) {
+
+                let input = {
+                    search: {},
+                    operations: []
+                }
+                console.log(query)
+
+                if('filter' in query && query.filter) {
+                    input.search = { ...query.filter }
+                }
+
+                if('select' in query && query.select && query.select === 'timestamp') {
+                    query.select = 'originalTimestamp'
+                    isDate = true
+                }
+
+                let operation = null
+                if('operation' in query && query.operation) {
+                    if(query.operation === '$count') {
+                        operation = { $count: "value"}
+                    } else {
+                        operation = { $group: { _id: '', value: { [query.operation]: '$' + query.select }}}
+                    }
+                    
+                } else {
+                    operation = { $project: { _id: '', value: '$' + query.select }}
+                }
+
+                input.operations.push(operation)
+
+                requests.push(axios.post(queryUrl, input, {
+                    auth: { username: this.authUser, password: this.authPassword }
+                }))
+            }
+
+            axios.all(requests)
+                .then(axios.spread((...results) => {
+
+                    //shoudl only have one statement per result
+                    console.log('Result', results)
+
+                    let res = null
+                    //immer das erste element in aggregate --> vlt mal noch Validerung etc.
+                    const operands = results.map((result) => result.data.aggregate[0].value)
+                    console.log(operands)
+                    switch(arithmeticOperation) {
+                        case 'add':
+                            res = operands.reduce((accumulator, currentValue) => accumulator + currentValue)
+                            break;
+                        case 'subtract':
+                            if(isDate) { 
+                                const date1 = new Date(operands[0]);
+                                const date2 = new Date(operands[1]);
+                                const diffTime = Math.abs(date2 - date1);
+                                res = diffTime + ' ms'
+                                break;
+                            }
+                            
+                            res = operands.reduce((accumulator, currentValue) => accumulator - currentValue)
+                            break;
+                        case 'divide':
+                            res = operands.reduce((accumulator, currentValue) => accumulator / currentValue)
+                            break;
+                        default:
+                            res = operands.reduce((accumulator, currentValue) => accumulator * currentValue)
+                    }
+
+                    this.result = res
+            }));
+        }
+      }
+
+      if(!mathMode) this.query(input)
     },
     query(input) {
       const validQuery = this.validateQuery(input)
@@ -265,8 +361,6 @@ export default {
           //TODO: make more pretty
           let queryResult = result.data
           if (queryResult['aggregate']) {
-            /*delete queryResult['aggregate'][0]['_id']
-            queryResult = queryResult['aggregate'][0]*/
             queryResult = queryResult['aggregate']
           } else {
             delete queryResult['aggregate']
@@ -371,7 +465,7 @@ export default {
         return false
       }
 
-      //theoretisch wenn man mongodb beherrscht und weiß wann in filter rein kommt kann ier alles geschrieben werden
+      //theoretisch wenn man mongodb beherrscht und weiß wann in filter rein kommt kann hier alles geschrieben werden
       if (Object.keys(query.search).length > 0) {
         this.validateFilters(query.search)
       }
