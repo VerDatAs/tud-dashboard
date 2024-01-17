@@ -321,7 +321,7 @@ export default {
           <hr>
           <div class="col-xs-12">
             <h6>
-              Kollaboration starten
+              Kollaboration starten ({{ selectedCollaborationMembers.length }} Nutzer)
             </h6>
           </div>
           <div class="form-group">

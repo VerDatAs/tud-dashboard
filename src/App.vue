@@ -20,13 +20,9 @@ export default {
   },
   data() {
     return {
-      courseNode: null,
-      token: '',
       diagram: null,
       diagramLoaded: false,
       currentView: 'knowledgeStructure',
-      canViewOnly: true,
-      previewMode: false,
       isExpanded: ref(localStorage.getItem('is_expanded') === 'true')
     }
   },
@@ -64,7 +60,7 @@ export default {
       // https://stackoverflow.com/a/69196265
       // TODO: This will center the canvas on every resize. Improve if possible.
       new ResizeObserver(() => {
-        this.$refs.knowledgeGraph.centerCanvas()
+        this.$refs.knowledgeGraph?.centerCanvas()
       }).observe(document.getElementById('dashboardApp'))
     },
     changeDiagramLoaded(diagramLoaded) {
@@ -83,7 +79,7 @@ export default {
       localStorage.setItem('is_expanded', this.isExpanded + '')
       // TODO: This somehow makes the height larger than expected
       setTimeout(() => {
-        this.$refs.knowledgeGraph.centerCanvas()
+        this.$refs.knowledgeGraph?.centerCanvas()
       }, 100)
     }
   }
