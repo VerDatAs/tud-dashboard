@@ -60,7 +60,15 @@ export default {
         this.filterBuilder[index].comparisonOperators = comparisonOperators.filter(
           (operator) => operator.value !== '$in' && operator.value !== '$nin'
         )
-      } else {
+      } else if (attributeType === 'boolean') {
+        this.filterBuilder[index].inputType = 'boolean'
+        this.filterBuilder[index].comparisonOperators = comparisonOperators.filter(
+          (operator) =>
+            operator.value === '$eq' ||
+            operator.value === '$ne'
+        )
+      } 
+      else {
         this.filterBuilder[index].inputType = 'string'
         this.filterBuilder[index].comparisonOperators = comparisonOperators.filter(
           (operator) =>
@@ -231,7 +239,9 @@ export default {
         filterValue = new Date(filterValue).toISOString().substring(0, 16)
       }
 
-      console.log(filterValue)
+      if(filter.inputType === 'boolean') {
+        filterValue = Boolean(filterValue)
+      }
 
       const filterObject = {
         [filter.selectedAttribute]: {
@@ -584,7 +594,7 @@ export default {
     getSuggestions(filter, index) {
 
       if (!filter.selectedAttribute) return
-      if (this.getAttribute(filter.selectedAttribute)[0].type === 'number') return
+      if (this.getAttribute(filter.selectedAttribute)[0].type === 'number' || this.getAttribute(filter.selectedAttribute)[0].type === 'boolean') return
 
       const currentFilterValue = filter.selectedValueFilter ? filter.selectedValueFilter : ''
       const url =
@@ -727,7 +737,15 @@ export default {
               </option>
             </select>
 
-            <div class="autocomplete">
+            <div v-if="filterBuilder[index].inputType === 'boolean'">
+              <select v-model="filterBuilder[index].selectedValueFilter">
+                <option value="" disabled selected>Auswahl Vergleichsoperator</option>
+                <option value="true">true</option>
+                <option value="false">false</option>
+              </select>
+            </div>
+
+            <div v-else class="autocomplete">
               <input
                 @keyup="getSuggestions(filterBuilder[index], index)"
                 @focus="getSuggestions(filterBuilder[index], index)"
