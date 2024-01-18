@@ -582,7 +582,8 @@ export default {
       this.filterBuilder.push({
         selectedAttribute: '',
         selectedComparison: '',
-        comparisonOperators: this.comparisonOperators
+        comparisonOperators: this.comparisonOperators,
+        suggestions: []
       })
       if (this.filterBuilder.length > 1)
         document.getElementById('filter-connection' + index).innerHTML = connection === Connections.AND ? 'AND' : 'OR'
@@ -591,7 +592,7 @@ export default {
       this.filterBuilder.splice(index, 1)
       if (this.filterBuilder.length > 0) document.getElementById('filter-connection' + (index - 1)).innerHTML = ''
     },
-    getSuggestions(filter, index) {
+    getSuggestions(filter) {
 
       if (!filter.selectedAttribute) return
       if (this.getAttribute(filter.selectedAttribute)[0].type === 'number' || this.getAttribute(filter.selectedAttribute)[0].type === 'boolean') return
@@ -600,47 +601,23 @@ export default {
       const url =
         this.backendUrl + '/api/v1/statement/' + filter.selectedAttribute + '/suggestions?suggest=' + currentFilterValue
 
+      filter.suggestions = []
+
       axios
         .get(url, { auth: { username: this.authUser, password: this.authPassword } })
         .then((result) => {
 
           console.log('Fetch suggestions for xAPI statement attribute', result)
-
-          const suggestions = result.data
-
-          if (suggestions.length > 0) {
-            document.getElementById("suggestions" + index).classList.remove('hide')
-            document.getElementById("suggestions" + index).innerHTML = ''
-          }
-
-          suggestions.forEach((suggestion) => {
-            const newDiv = document.createElement("div");
-            newDiv.innerHTML = suggestion
-            newDiv.style.cssText = `
-              padding: 10px;
-              cursor: pointer;
-              background-color: #fff;
-              border-bottom: 1px solid #d4d4d4;
-            `;
-            newDiv.addEventListener('mouseover', () => {
-              newDiv.style.backgroundColor = '#e9e9e9';
-            });
-
-            newDiv.addEventListener('mouseout', () => {
-              newDiv.style.backgroundColor = '#fff';
-            });
-            newDiv.addEventListener(('click'), () => {
-              filter.selectedValueFilter = suggestion
-              document.getElementById("suggestions" + index).classList.add('hide')
-            })
-
-            document.getElementById("suggestions" + index).appendChild(newDiv)
-          })
+          filter.suggestions = result.data
         })
 
         .catch((err) => {
           console.error(err)
         })
+    },
+    setSuggestion(filter, suggestion) {
+      filter.selectedValueFilter = suggestion
+      document.getElementById("suggestions" + this.filterBuilder.indexOf(filter)).classList.add('hide')
     },
     removeErrorMessage(event, index) {
       this.errorMessages.splice(index, 1)
@@ -747,8 +724,8 @@ export default {
 
             <div v-else class="autocomplete">
               <input
-                @keyup="getSuggestions(filterBuilder[index], index)"
-                @focus="getSuggestions(filterBuilder[index], index)"
+                @keyup="getSuggestions(filterBuilder[index])"
+                @focus="getSuggestions(filterBuilder[index])" 
                 v-model="filterBuilder[index].selectedValueFilter"
                 :type="
                   filterBuilder[index].selectedComparison === '$in' || filterBuilder[index].selectedComparison === '$nin'
@@ -760,7 +737,16 @@ export default {
                 placeholder="Eingabe Attributwert..."
               />
 
-              <div class="autocomplete-items hide" :id="'suggestions' + index"></div>
+              <div :class="filterBuilder[index].suggestions.length > 0 ? 'autocomplete-items' : 'autocomplete-items hide'" :id="'suggestions' + index">
+                <div 
+                  class="autocomplete-item"
+                  v-for="(suggestion, index) in filterBuilder[index].suggestions" 
+                  :key="index"
+                  @click="setSuggestion(builder, suggestion)"
+                >
+                {{ suggestion }}
+              </div>
+              </div>
             </div>
 
             <button
@@ -1116,6 +1102,17 @@ div[id^='filter-connection'] {
   border-top: none;
   left: 0;
   right: 0;
+}
+
+.autocomplete-item {
+  padding: 10px;
+  cursor: pointer;
+  background-color: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+.autocomplete-item :hover {
+  background-color: #fff;
 }
 
 .hide {
