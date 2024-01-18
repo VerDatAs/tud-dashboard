@@ -2,10 +2,8 @@
 import axios from 'axios'
 import { comparisonOperators, aggregationOperators, queryExamples, Connections } from '@/util/QueryHelpers'
 
-//Maybe transform eq and new to $in ?
-//timestamp in code wie dargestllt bzw wie ein Hinweis?
-
-//TODO: schönere tooltips
+//Maybe transform $eq and $neq to $in and $in ?
+//TODO: type boolean beachten
 
 export default {
   data: () => ({
@@ -36,6 +34,17 @@ export default {
   created() {
     this.fetchSchema()
   },
+  mounted() {
+
+    document.getElementById('query-view').addEventListener('click', () =>  {
+      const suggestionList = document.getElementsByClassName('autocomplete-items')
+      if(suggestionList.length > 0) {
+        for(const list of suggestionList) {
+          list.classList.add('hide')
+        }
+      } 
+    }) 
+  },
   methods: {
     adjustInputOptions(attribute, index) {
       this.filterBuilder[index].comparisonOperators = comparisonOperators
@@ -63,7 +72,6 @@ export default {
       }
       this.filterBuilder[index].selectedComparison = ''
       this.filterBuilder[index].selectedValueFilter = null
-      this.getSuggestions(this.filterBuilder[index])
     },
     fetchSchema() {
       const url = this.backendUrl + '/api/v1/statement/schema'
@@ -573,21 +581,53 @@ export default {
       this.filterBuilder.splice(index, 1)
       if (this.filterBuilder.length > 0) document.getElementById('filter-connection' + (index - 1)).innerHTML = ''
     },
-    getSuggestions(filter) {
+    getSuggestions(filter, index) {
+
+      if (!filter.selectedAttribute) return
       if (this.getAttribute(filter.selectedAttribute)[0].type === 'number') return
 
       const currentFilterValue = filter.selectedValueFilter ? filter.selectedValueFilter : ''
       const url =
         this.backendUrl + '/api/v1/statement/' + filter.selectedAttribute + '/suggestions?suggest=' + currentFilterValue
 
-      filter.attributeSuggestions = []
-
       axios
         .get(url, { auth: { username: this.authUser, password: this.authPassword } })
         .then((result) => {
+
           console.log('Fetch suggestions for xAPI statement attribute', result)
-          filter.attributeSuggestions = result.data
+
+          const suggestions = result.data
+
+          if (suggestions.length > 0) {
+            document.getElementById("suggestions" + index).classList.remove('hide')
+            document.getElementById("suggestions" + index).innerHTML = ''
+          }
+
+          suggestions.forEach((suggestion) => {
+            const newDiv = document.createElement("div");
+            newDiv.innerHTML = suggestion
+            newDiv.style.cssText = `
+              padding: 10px;
+              cursor: pointer;
+              background-color: #fff;
+              border-bottom: 1px solid #d4d4d4;
+            `;
+            newDiv.addEventListener('mouseover', () => {
+              newDiv.style.backgroundColor = '#e9e9e9';
+            });
+
+            newDiv.addEventListener('mouseout', () => {
+              newDiv.style.backgroundColor = '#fff';
+            });
+            newDiv.addEventListener(('click'), () => {
+              filter.selectedValueFilter = suggestion
+              document.getElementById("suggestions" + index).classList.add('hide')
+            })
+
+            document.getElementById("suggestions" + index).appendChild(newDiv)
+          })
         })
+
         .catch((err) => {
           console.error(err)
         })
@@ -631,7 +671,7 @@ export default {
 
       <div v-show="showCode" class="py-4">
         <textarea placeholder="Schreibe deine Suche hier rein..." v-model="textareaInput"></textarea>
-        <div class="py-4">
+        <div class="py-2">
           <label for="exampleSelect">Beispiele:</label>
           <select id="exampleSelect" v-model="currentQueryExample" @change="setQueryExample(currentQueryExample)">
             <option v-for="(example, index) in queryExamples" :key="index" :value="index">
@@ -687,29 +727,23 @@ export default {
               </option>
             </select>
 
-            <input
-              @keyup="getSuggestions(filterBuilder[index])"
-              v-model="filterBuilder[index].selectedValueFilter"
-              :list="'suggestions' + index"
-              :type="
-                filterBuilder[index].selectedComparison === '$in' || filterBuilder[index].selectedComparison === '$nin'
-                  ? 'string'
-                  : filterBuilder[index].inputType
-              "
-              :step="filterBuilder[index].inputType === 'number' ? 'any' : ''"
-              :min="filterBuilder[index].inputType === 'number' ? 0 : ''"
-              placeholder="Eingabe Attributwert..."
-            />
+            <div class="autocomplete">
+              <input
+                @keyup="getSuggestions(filterBuilder[index], index)"
+                @focus="getSuggestions(filterBuilder[index], index)"
+                v-model="filterBuilder[index].selectedValueFilter"
+                :type="
+                  filterBuilder[index].selectedComparison === '$in' || filterBuilder[index].selectedComparison === '$nin'
+                    ? 'string'
+                    : filterBuilder[index].inputType
+                "
+                :step="filterBuilder[index].inputType === 'number' ? 'any' : ''"
+                :min="filterBuilder[index].inputType === 'number' ? 0 : ''"
+                placeholder="Eingabe Attributwert..."
+              />
 
-            <datalist :id="'suggestions' + index">
-              <option
-                v-for="(suggestion, index) in filterBuilder[index].attributeSuggestions"
-                :key="index"
-                :value="suggestion"
-              >
-                {{ suggestion }}
-              </option>
-            </datalist>
+              <div class="autocomplete-items hide" :id="'suggestions' + index"></div>
+            </div>
 
             <button
               class="add-connection"
@@ -1051,4 +1085,23 @@ div[id^='filter-connection'] {
 .add-builder {
   display: inline-block;
 }
+
+.autocomplete {
+  position: relative;
+  display: inline-block;
+}
+
+.autocomplete-items {
+  z-index: 1;
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  border-top: none;
+  left: 0;
+  right: 0;
+}
+
+.hide {
+    display: none;
+}
+
 </style>
