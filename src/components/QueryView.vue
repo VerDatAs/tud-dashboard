@@ -5,6 +5,8 @@ import { comparisonOperators, aggregationOperators, queryExamples, Connections }
 //Maybe transform eq and new to $in ?
 //timestamp in code wie dargestllt bzw wie ein Hinweis?
 
+//TODO: schönere tooltips
+
 export default {
   data: () => ({
     comparisonOperators,
@@ -241,104 +243,101 @@ export default {
       return operationObject
     },
     queryCode(input) {
-
       //hier irgendwann vielleicht Transformationen für den User damit nicht komplett die MongoDB Syntax hier genutzt werden muss
 
       input = JSON.parse(input)
 
       //Math Mode
 
-      const supportedOperations = ['add','subtract', 'divide', 'multiply']
+      const supportedOperations = ['add', 'subtract', 'divide', 'multiply']
 
-      let mathMode = false;
+      let mathMode = false
 
-      for(const operation of input.operations) {
-
+      for (const operation of input.operations) {
         const arithmeticOperation = Object.keys(operation)[0]
-        if(supportedOperations.indexOf(arithmeticOperation) !== -1) {
+        if (supportedOperations.indexOf(arithmeticOperation) !== -1) {
+          mathMode = true
+          let isDate = false
 
-            mathMode = true
-            let isDate = false
+          const mathObject = Object.values(operation)[0]
 
-            const mathObject = Object.values(operation)[0]
+          const requests = []
+          const queryUrl = this.backendUrl + '/api/v1/statement/query'
 
-            const requests = []
-            const queryUrl = this.backendUrl + '/api/v1/statement/query'
+          for (const query of mathObject) {
+            let input = {
+              search: {},
+              operations: []
+            }
+            console.log(query)
 
-            for(const query of mathObject) {
-
-                let input = {
-                    search: {},
-                    operations: []
-                }
-                console.log(query)
-
-                if('filter' in query && query.filter) {
-                    input.search = { ...query.filter }
-                }
-
-                if('select' in query && query.select && query.select === 'timestamp') {
-                    query.select = 'originalTimestamp'
-                    isDate = true
-                }
-
-                let operation = null
-                if('operation' in query && query.operation) {
-                    if(query.operation === '$count') {
-                        operation = { $count: "value"}
-                    } else {
-                        operation = { $group: { _id: '', value: { [query.operation]: '$' + query.select }}}
-                    }
-                    
-                } else {
-                    operation = { $project: { _id: '', value: '$' + query.select }}
-                }
-
-                input.operations.push(operation)
-
-                requests.push(axios.post(queryUrl, input, {
-                    auth: { username: this.authUser, password: this.authPassword }
-                }))
+            if ('filter' in query && query.filter) {
+              input.search = { ...query.filter }
             }
 
-            axios.all(requests)
-                .then(axios.spread((...results) => {
+            if ('select' in query && query.select && query.select === 'timestamp') {
+              query.select = 'originalTimestamp'
+              isDate = true
+            }
 
-                    //shoudl only have one statement per result
-                    console.log('Result', results)
+            let operation = null
+            if ('operation' in query && query.operation) {
+              if (query.operation === '$count') {
+                operation = { $count: 'value' }
+              } else {
+                operation = { $group: { _id: '', value: { [query.operation]: '$' + query.select } } }
+              }
+            } else {
+              operation = { $project: { _id: '', value: '$' + query.select } }
+            }
 
-                    let res = null
-                    //immer das erste element in aggregate --> vlt mal noch Validerung etc.
-                    const operands = results.map((result) => result.data.aggregate[0].value)
-                    console.log(operands)
-                    switch(arithmeticOperation) {
-                        case 'add':
-                            res = operands.reduce((accumulator, currentValue) => accumulator + currentValue)
-                            break;
-                        case 'subtract':
-                            if(isDate) { 
-                                const date1 = new Date(operands[0]);
-                                const date2 = new Date(operands[1]);
-                                const diffTime = Math.abs(date2 - date1);
-                                res = diffTime + ' ms'
-                                break;
-                            }
-                            
-                            res = operands.reduce((accumulator, currentValue) => accumulator - currentValue)
-                            break;
-                        case 'divide':
-                            res = operands.reduce((accumulator, currentValue) => accumulator / currentValue)
-                            break;
-                        default:
-                            res = operands.reduce((accumulator, currentValue) => accumulator * currentValue)
-                    }
+            input.operations.push(operation)
 
-                    this.result = res
-            }));
+            requests.push(
+              axios.post(queryUrl, input, {
+                auth: { username: this.authUser, password: this.authPassword }
+              })
+            )
+          }
+
+          axios.all(requests).then(
+            axios.spread((...results) => {
+              //shoudl only have one statement per result
+              console.log('Result', results)
+
+              let res = null
+              //immer das erste element in aggregate --> vlt mal noch Validerung etc.
+              const operands = results.map((result) => result.data.aggregate[0].value)
+              console.log(operands)
+              switch (arithmeticOperation) {
+                case 'add':
+                  res = operands.reduce((accumulator, currentValue) => accumulator + currentValue)
+                  break
+                case 'subtract':
+                  if (isDate) {
+                    const date1 = new Date(operands[0])
+                    const date2 = new Date(operands[1])
+                    const diffTime = Math.abs(date2 - date1)
+                    res = diffTime + ' ms'
+                    break
+                  }
+
+                  res = operands.reduce((accumulator, currentValue) => accumulator - currentValue)
+                  break
+                case 'divide':
+                  res = operands.reduce((accumulator, currentValue) => accumulator / currentValue)
+                  break
+                default:
+                  res = operands.reduce((accumulator, currentValue) => accumulator * currentValue)
+              }
+
+              this.result = res
+            })
+          )
         }
       }
 
-      if(!mathMode) this.query(input)
+      if (!mathMode) this.query(input)
     },
     query(input) {
       const validQuery = this.validateQuery(input)
@@ -560,15 +559,19 @@ export default {
     removeOperationBuilder(index) {
       this.operationBuilder.splice(index, 1)
     },
-    addFilterBuilder(index, connection = Connections.AND) {
+    addFilterBuilder(index = 0, connection = Connections.AND) {
       this.currentConnection = connection
-      this.filterBuilder.push({ selectedAttribute: '', selectedComparison: '' })
+      this.filterBuilder.push({
+        selectedAttribute: '',
+        selectedComparison: '',
+        comparisonOperators: this.comparisonOperators
+      })
       if (this.filterBuilder.length > 1)
-        document.getElementById('connection' + index).innerHTML = connection === Connections.AND ? 'AND' : 'OR'
+        document.getElementById('filter-connection' + index).innerHTML = connection === Connections.AND ? 'AND' : 'OR'
     },
     removeFilterBuilder(index) {
       this.filterBuilder.splice(index, 1)
-      if (this.filterBuilder.length > 0) document.getElementById('connection' + (index - 1)).innerHTML = ''
+      if (this.filterBuilder.length > 0) document.getElementById('filter-connection' + (index - 1)).innerHTML = ''
     },
     getSuggestions(filter) {
       if (this.getAttribute(filter.selectedAttribute)[0].type === 'number') return
@@ -588,61 +591,82 @@ export default {
         .catch((err) => {
           console.error(err)
         })
+    },
+    removeErrorMessage(event, index) {
+      this.errorMessages.splice(index, 1)
+      event.target.closest('.error-message').remove()
     }
   }
 }
 </script>
 
 <template>
-  <div id="query">
-    <div id="queryContent" class="container py-4">
-      <h2>
-        {{ showCode ? 'Query Code' : 'Query Builder' }}
+  <div id="query-view">
+    <div id="query-view-content" class="container py-4">
+      <div id="query-view-header" class="py-2">
+        <h2 style="display: inline">
+          {{ showCode ? 'Query Code' : 'Query Builder' }}
+        </h2>
         <button
           @click="showCode = !showCode"
-          id="toggleQueryView"
+          class="float-right px-2"
           :title="showCode ? 'Wechsel zum Query Builder' : 'Wechsel zum Code Editor'"
         >
           <font-awesome-icon size="sm" :icon="showCode ? 'list' : 'code'" />
         </button>
-      </h2>
-
-      <div id="errorMessages">
-        <p v-for="(message, index) in errorMessages" :key="index">{{ message }}</p>
       </div>
 
-      <div v-show="showCode" id="code">
-        <textarea id="textareaCode" placeholder="Schreibe deine Suche hier rein..." v-model="textareaInput"></textarea>
-        <div>
+      <div v-show="errorMessages.length > 0" class="my-4">
+        <div v-for="(message, index) in errorMessages" :key="index" class="flex-center error-message py-2">
+          <span>{{ message }}</span>
+          <font-awesome-icon
+            class="icon"
+            size="sm"
+            icon="xmark"
+            @click="removeErrorMessage($event, index)"
+            style="margin-left: auto"
+          />
+        </div>
+      </div>
+
+      <div v-show="showCode" class="py-4">
+        <textarea placeholder="Schreibe deine Suche hier rein..." v-model="textareaInput"></textarea>
+        <div class="py-4">
           <label for="exampleSelect">Beispiele:</label>
           <select id="exampleSelect" v-model="currentQueryExample" @change="setQueryExample(currentQueryExample)">
             <option v-for="(example, index) in queryExamples" :key="index" :value="index">
               {{ example.name }}
             </option>
           </select>
-          <button title="Query xAPI statements" id="queryCodeButton" @click="queryCode(textareaInput)">Suche</button>
+          <button title="Absenden der erstellten Abfrage" class="float-right" @click="queryCode(textareaInput)">
+            Suche
+          </button>
         </div>
       </div>
 
-      <form autocomplete="off" v-show="!showCode" id="builder" @submit.prevent="onSubmit">
+      <form class="py-2" autocomplete="off" v-show="!showCode" @submit.prevent="onSubmit">
         <h4>
           Filter
           <font-awesome-icon
             class="icon"
             icon="circle-info"
             size="md"
-            title="Hier können Filter zum filtern der xAPI Statements hinzugefügt werden."
+            title="Hier können Filter zum Filtern von xAPI Statements hinzugefügt werden"
           />
         </h4>
 
-        <div title="Filter hinzufügen" v-show="filterBuilder.length === 0" @click="addFilterBuilder(index)">
-          <font-awesome-icon class="icon" icon="circle-plus" size="lg" />
+        <div
+          class="add-builder"
+          title="Filter hinzufügen"
+          v-show="filterBuilder.length === 0"
+          @click="addFilterBuilder()"
+        >
+          <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
         </div>
 
-        <div class="filter-builder" v-for="(builder, index) in filterBuilder" :key="index">
-          <div class="builder" :id="'filter' + index">
+        <div v-for="(builder, index) in filterBuilder" :key="index" :id="'filter' + index">
+          <div class="flex-center">
             <select
-              class="selectAttributes"
               v-model="filterBuilder[index].selectedAttribute"
               @change="adjustInputOptions(filterBuilder[index].selectedAttribute, index)"
             >
@@ -687,74 +711,78 @@ export default {
               </option>
             </datalist>
 
-            <div class="filterActions">
-              <div
-                title="Filter hinzufügen"
-                v-show="index === filterBuilder.length - 1 && index !== 0"
-                @click="addFilterBuilder(index, currentConnection)"
-              >
-                <font-awesome-icon class="icon" icon="circle-plus" size="lg" />
-              </div>
+            <button
+              class="add-connection"
+              v-show="index === 0 && filterBuilder.length === 1"
+              @click="addFilterBuilder(index)"
+              title="Filter durch AND-Verbindungen verknüpfen"
+            >
+              AND
+            </button>
+            <button
+              class="add-connection"
+              v-show="index === 0 && filterBuilder.length === 1"
+              @click="addFilterBuilder(index, connections.OR)"
+              title="Filter durch OR-Verbindungen verknüpfen"
+            >
+              OR
+            </button>
 
-              <button
-                v-show="index === 0 && filterBuilder.length === 1"
-                @click="addFilterBuilder(index)"
-                title="Filter durch AND-Verbindungen verknüpfen"
-              >
-                AND
-              </button>
-              <button
-                v-show="index === 0 && filterBuilder.length === 1"
-                @click="addFilterBuilder(index, connections.OR)"
-                title="Filter durch OR-Verbindungen verknüpfen"
-              >
-                OR
-              </button>
+            <div
+              title="Filter entfernen"
+              v-show="index === filterBuilder.length - 1"
+              @click="removeFilterBuilder(index)"
+            >
+              <font-awesome-icon class="icon" icon="circle-xmark" size="xl" />
+            </div>
 
-              <div
-                title="Filter entfernen"
-                v-show="index === filterBuilder.length - 1"
-                @click="removeFilterBuilder(index)"
-              >
-                <font-awesome-icon class="icon" icon="circle-xmark" size="lg" />
-              </div>
+            <div
+              title="Filter hinzufügen"
+              v-show="index === filterBuilder.length - 1 && index !== 0"
+              @click="addFilterBuilder(index, currentConnection)"
+            >
+              <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
             </div>
           </div>
-          <div>
-            {{
+          <div
+            class="py-1"
+            v-show="
               filterBuilder[index].selectedComparison === '$in' || filterBuilder[index].selectedComparison === '$nin'
-                ? 'Bei diesem Operator muss eine Liste nach folgendem Schema angegeben werden: Tom, Tim, Thomas, ...'
-                : ''
-            }}
+            "
+          >
+            Bei diesem Operator muss eine Liste nach folgendem Schema angegeben werden: Tom, Tim, Thomas, ...'
           </div>
-          <p class="filter-connection" :id="'connection' + index"></p>
+          <div class="py-1" :id="'filter-connection' + index"></div>
         </div>
 
-        <div>
-          <h6>
-            Weitere Filter Optionen
+        <div class="py-2">
+          <div class="flex-center">
+            <span style="font-weight: 600">Weitere Filter Optionen</span>
             <font-awesome-icon
               class="icon"
               :icon="showAdvancedFilterOptions ? 'chevron-down' : 'chevron-right'"
               size="md"
               :title="
                 showAdvancedFilterOptions
-                  ? 'Klicke hier um weitere Filter Optionen zu verstecken'
-                  : 'Klicke hier um weitere Filter Optionen zu öffnen'
+                  ? 'Klicke hier um weitere Filter Optionen zu schließen'
+                  : 'Klicke hier um weitere Filter Optionen anzuzeigen'
               "
               @click="showAdvancedFilterOptions = !showAdvancedFilterOptions"
             />
-          </h6>
+          </div>
 
-          <div id="advancedFilter" v-show="showAdvancedFilterOptions">
-            <div class="sort-builder">
-              <label for="sort-select">Sort:</label>
-              <select class="selectAttributes" id="sort-select" v-model="querySort.selectedAttribute">
-                <option value="" selected></option>
-                <option v-for="(attr, index) in filterAttributes" :key="index" :value="attr.attribute">
-                  {{ attr.attribute }}
-                </option>
-              </select>
+          <div v-show="showAdvancedFilterOptions">
+            <div class="flex-center py-2">
+              <div>
+                <label for="sort-select">Sort:</label>
+                <select id="sort-select" v-model="querySort.selectedAttribute">
+                  <option value="" selected></option>
+                  <option v-for="(attr, index) in filterAttributes" :key="index" :value="attr.attribute">
+                    {{ attr.attribute }}
+                  </option>
+                </select>
+              </div>
+
               <select v-model="querySort.selectedDirection">
                 <option value="" selected></option>
                 <option value="1">aufsteigend</option>
@@ -762,44 +790,55 @@ export default {
               </select>
             </div>
 
-            <div>
-              <label for="queryLimit">Limit:</label>
-              <input id="queryLimit" type="number" min="1" v-model="queryLimit" />
-              <label for="querySkip">Skip:</label>
-              <input id="querySkip" type="number" min="0" v-model="querySkip" />
+            <div class="flex-center py-2">
+              <div>
+                <label for="queryLimit">Limit:</label>
+                <input id="queryLimit" type="number" min="1" v-model="queryLimit" />
+              </div>
+              <div>
+                <label for="querySkip">Skip:</label>
+                <input id="querySkip" type="number" min="0" v-model="querySkip" />
+              </div>
             </div>
 
-            <label for="group-select">Group:</label>
-            <select class="selectAttributes" id="group-select" v-model="queryGroup">
-              <option value="" selected></option>
-              <option v-for="(attr, index) in filterAttributes" :key="index" :value="attr.attribute">
-                {{ attr.attribute }}
-              </option>
-            </select>
+            <div>
+              <label for="group-select">Group:</label>
+              <select id="group-select" v-model="queryGroup">
+                <option value="" selected></option>
+                <option v-for="(attr, index) in filterAttributes" :key="index" :value="attr.attribute">
+                  {{ attr.attribute }}
+                </option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <h4>
-          Operationen
-          <font-awesome-icon
-            class="icon"
-            icon="circle-info"
-            size="md"
-            title="Hier können verschieden Operationen zur Aggregation von Daten aus den xAPI Statements hinzugefügt werden."
-          />
-        </h4>
+        <div class="py-2">
+          <h4>
+            Operationen
+            <font-awesome-icon
+              class="icon"
+              icon="circle-info"
+              size="md"
+              title="Hier können verschieden Operationen zur Aggregation von Daten aus den xAPI Statements hinzugefügt werden."
+            />
+          </h4>
 
-        <div
-          id="addOperation"
-          title="Operation hinzufügen"
-          v-show="operationBuilder.length === 0"
-          @click="addOperationBuilder()"
-        >
-          <font-awesome-icon class="icon" icon="circle-plus" size="lg" />
-        </div>
+          <div
+            class="add-builder"
+            title="Operation hinzufügen"
+            v-show="operationBuilder.length === 0"
+            @click="addOperationBuilder()"
+          >
+            <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
+          </div>
 
-        <div class="operation-builder" v-for="(builder, index) in operationBuilder" :key="index">
-          <div class="builder" :id="'operation' + index">
+          <div
+            class="flex-center py-2"
+            v-for="(builder, index) in operationBuilder"
+            :key="index"
+            :id="'operation' + index"
+          >
             <select v-model="operationBuilder[index].selectedOperation">
               <option value="" disabled selected></option>
               <option v-for="(operation, index) in aggregationOperators" :key="index" :value="operation.value">
@@ -807,58 +846,63 @@ export default {
               </option>
             </select>
 
-            <select class="selectAttributes" v-model="operationBuilder[index].selectedAttribute">
+            <select v-model="operationBuilder[index].selectedAttribute">
               <option value="" disabled selected></option>
               <option v-for="(attribute, index) in operationAttributes" :key="index" :value="attribute.attribute">
                 {{ attribute.attribute }}
               </option>
             </select>
-            <div class="filterActions">
-              <div
-                title="Operation hinzufügen"
-                v-show="index === operationBuilder.length - 1"
-                @click="addOperationBuilder()"
-              >
-                <font-awesome-icon class="icon" icon="circle-plus" size="lg" />
-              </div>
 
-              <div title="Operation entfernen" @click="removeOperationBuilder(index)">
-                <font-awesome-icon class="icon" icon="circle-xmark" size="lg" />
-              </div>
+            <div title="Operation entfernen" @click="removeOperationBuilder(index)">
+              <font-awesome-icon class="icon" icon="circle-xmark" size="xl" />
+            </div>
+
+            <div
+              title="Operation hinzufügen"
+              v-show="index === operationBuilder.length - 1"
+              @click="addOperationBuilder()"
+            >
+              <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
             </div>
           </div>
         </div>
 
-        <div id="queryBuilder">
-          <button class="queryButton" title="Query xAPI statements" @click="queryBuilder()">Suche</button>
+        <div class="py-3">
+          <button title="Absenden der erstellten Abfrage" class="float-right" @click="queryBuilder()">Suche</button>
         </div>
-        <div>
-          <h6>
-            Query
+
+        <div class="py-2">
+          <div class="flex-center">
+            <span style="font-weight: 600">Query</span>
             <font-awesome-icon
               class="icon"
               :icon="showQuery ? 'chevron-down' : 'chevron-right'"
               size="md"
-              :title="showQuery ? 'Klicke hier um Query zu verstecken' : 'Klicke hier um Query zu anzuzeigen'"
+              :title="
+                showQuery
+                  ? 'Klicke hier um die aktuelle Abfrage zu verstecken'
+                  : 'Klicke hier um die aktuelle Abfrage anzuzeigen'
+              "
               @click="showQuery = !showQuery"
             />
-          </h6>
+          </div>
+
           <div>
             <font-awesome-icon
               v-show="showQuery"
               id="share"
               icon="share"
-              size="md"
-              title="Setze aktuelle Query in Code Editor"
+              size="lg"
+              title="Kopiere aktuelle Abfrage in den Code Editor"
               @click="saveQueryToTextarea()"
             />
-            <pre v-show="showQuery">{{ queryOutput }}</pre>
+            <pre id="current-query" v-show="showQuery">{{ queryOutput }}</pre>
           </div>
         </div>
       </form>
 
-      <div id="result">
-        <p>Ergebnis:</p>
+      <div id="result" class="py-2">
+        <h5>Ergebnis:</h5>
         <pre>{{ result }}</pre>
       </div>
     </div>
@@ -866,94 +910,145 @@ export default {
 </template>
 
 <style scoped>
-#query {
+* {
+  box-sizing: border-box;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: #c2c9d2;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+}
+
+label {
+  margin-right: 10px;
+}
+
+input {
+  padding: 10px;
+  border: solid 1px #e5e5e5;
+  box-shadow: 0 0 15px 4px rgba(0, 0, 0, 0.06);
+  border-radius: 5px;
+  height: 35px;
+}
+
+textarea {
+  width: 100%;
+  resize: vertical;
+  padding: 15px;
+  border-radius: 10px;
+  border: solid 1px #e5e5e5;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.06);
+  height: 200px;
+}
+
+input:hover,
+textarea:hover,
+input:focus,
+textarea:focus {
+  border-color: #c9c9c9;
+}
+
+select {
+  max-width: 250px;
+  padding: 5px;
+  border-radius: 5px;
+  height: 35px;
+  background-color: white;
+}
+
+button {
+  padding: 6px;
+  border: none;
+  background-color: var(--dark);
+  color: white;
+  font-weight: 600;
+  border-radius: 5px;
+  height: 35px;
+}
+
+#query-view {
   z-index: 8;
   position: absolute;
   top: 7%;
   left: 7%;
   height: calc(100% - 12%);
   width: calc(100% - 12%);
-  background: #eee;
-  border: 1px solid #ccc;
+  border-radius: 10px;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.06);
+  border: 1px solid grey;
   overflow: auto;
 }
 
-#queryContent {
+#query-view-content {
   max-width: 100%;
   height: 100%;
 }
 
-#code {
-  height: 60%;
-}
-
-#textareaCode {
-  height: 100%;
-  width: 100%;
-  resize: none;
-}
-
-#toggleQueryView {
-  float: right;
-}
-
-#queryCodeButton {
-  float: right;
-}
-
-#queryBuilder {
+#query-view-header {
+  display: inline;
   text-align: right;
 }
 
-#result {
-  margin-top: 5%;
-}
-
-#addOperation {
-  max-width: 30px;
+#current-query {
+  width: 100%;
 }
 
 #share {
   cursor: pointer;
   position: relative;
   float: right;
-  top: 5px;
-  right: 18px;
+  top: 20px;
+  right: 4px;
 }
 
-.builder {
-  white-space: nowrap;
+div[id^='filter-connection'] {
+  width: 75%;
+  font-weight: 900;
+  text-align: center;
 }
 
-.builder > * {
-  margin-right: 5px;
-  height: 23px;
+.error-message {
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgb(167, 163, 163);
+  background-color: #ffcccc;
 }
 
-.operation-builder {
-  margin-top: 10px;
-}
-
-.filterActions {
-  display: inline-block;
-  white-space: nowrap;
-}
-
-.filterActions > * {
-  height: 100%;
-  margin-right: 5px;
-  display: inline-block;
+.float-right {
+  float: right;
 }
 
 .icon {
   cursor: pointer;
+  color: var(--dark);
 }
 
-.filter-connection {
-  text-align: center;
+.flex-center {
+  display: flex;
+  align-items: center;
+  gap: 1%;
 }
 
-.selectAttributes {
-  width: 20%;
+.add-connection {
+  width: 45px;
+}
+
+.add-builder {
+  display: inline-block;
 }
 </style>

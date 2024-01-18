@@ -23,7 +23,8 @@ import {
   faCirclePlus,
   faChevronRight,
   faChevronDown,
-  faShare
+  faShare,
+  faXmark
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -40,6 +41,7 @@ library.add(
   faMagnifyingGlass,
   faCode,
   faList,
+  faXmark,
   faCircleXmark,
   faCirclePlus,
   faChevronRight,
@@ -78,98 +80,99 @@ const request = {
 axios.post(authUrl, request).then((data: any) => {
   const token = data.data?.token
   const courseNode = {
-    "lcoType": "ILIAS_COURSE",
-    "attributes": [
+    lcoType: 'ILIAS_COURSE',
+    attributes: [
       {
-        "key": "objectId",
-        "value": "http://localhost:8081/goto.php?target=crs_83&client_id=default&obj_id_lrs=309"
+        key: 'objectId',
+        value: 'http://localhost:8081/goto.php?target=crs_83&client_id=default&obj_id_lrs=309'
       },
       {
-        "key": "title",
-        "value": "VerDatAs Demonstrationskurs"
+        key: 'title',
+        value: 'VerDatAs Demonstrationskurs'
       },
       {
-        "key": "description",
-        "value": ""
+        key: 'description',
+        value: ''
       },
       {
-        "key": "modules",
-        "value": [
+        key: 'modules',
+        value: [
           {
-            "lcoType": "ILIAS_MODULE",
-            "attributes": [
+            lcoType: 'ILIAS_MODULE',
+            attributes: [
               {
-                "key": "objectId",
-                "value": "http://localhost:8081/goto.php?target=lm_84&client_id=default&obj_id_lrs=313"
+                key: 'objectId',
+                value: 'http://localhost:8081/goto.php?target=lm_84&client_id=default&obj_id_lrs=313'
               },
               {
-                "key": "title",
-                "value": "Testmodul 13 Nov"
+                key: 'title',
+                value: 'Testmodul 13 Nov'
               },
               {
-                "key": "description",
-                "value": ""
+                key: 'description',
+                value: ''
               },
               {
-                "key": "offline",
-                "value": false
+                key: 'offline',
+                value: false
               },
               {
-                "key": "chapters",
-                "value": [
+                key: 'chapters',
+                value: [
                   {
-                    "lcoType": "ILIAS_CHAPTER",
-                    "attributes": [
+                    lcoType: 'ILIAS_CHAPTER',
+                    attributes: [
                       {
-                        "key": "objectId",
-                        "value": "http://localhost:8081/goto.php?target=st_2_84&client_id=default&obj_id_lrs=313"
+                        key: 'objectId',
+                        value: 'http://localhost:8081/goto.php?target=st_2_84&client_id=default&obj_id_lrs=313'
                       },
                       {
-                        "key": "title",
-                        "value": "Kapitel 1"
+                        key: 'title',
+                        value: 'Kapitel 1'
                       },
                       {
-                        "key": "contentPages",
-                        "value": [
+                        key: 'contentPages',
+                        value: [
                           {
-                            "lcoType": "ILIAS_CONTENT_PAGE",
-                            "attributes": [
+                            lcoType: 'ILIAS_CONTENT_PAGE',
+                            attributes: [
                               {
-                                "key": "objectId",
-                                "value": "http://localhost:8081/goto.php?target=pg_3_84&client_id=default&obj_id_lrs=313"
+                                key: 'objectId',
+                                value: 'http://localhost:8081/goto.php?target=pg_3_84&client_id=default&obj_id_lrs=313'
                               },
                               {
-                                "key": "title",
-                                "value": "Inhaltsseite 1"
+                                key: 'title',
+                                value: 'Inhaltsseite 1'
                               },
                               {
-                                "key": "content",
-                                "value": "<PageObject><PageContent PCID=\"1510321342920596300\"><Paragraph Language=\"en\" Characteristic=\"Standard\">Inhalt der Inhaltsseite 1</Paragraph></PageContent></PageObject>"
+                                key: 'content',
+                                value:
+                                  '<PageObject><PageContent PCID="1510321342920596300"><Paragraph Language="en" Characteristic="Standard">Inhalt der Inhaltsseite 1</Paragraph></PageContent></PageObject>'
                               },
                               {
-                                "key": "interactiveTasks",
-                                "value": []
+                                key: 'interactiveTasks',
+                                value: []
                               }
                             ]
                           },
                           {
-                            "lcoType": "ILIAS_CONTENT_PAGE",
-                            "attributes": [
+                            lcoType: 'ILIAS_CONTENT_PAGE',
+                            attributes: [
                               {
-                                "key": "objectId",
-                                "value": "http://localhost:8081/goto.php?target=pg_4_84&client_id=default&obj_id_lrs=313"
+                                key: 'objectId',
+                                value: 'http://localhost:8081/goto.php?target=pg_4_84&client_id=default&obj_id_lrs=313'
                               },
                               {
-                                "key": "title",
-                                "value": "Inhaltsseite 2"
+                                key: 'title',
+                                value: 'Inhaltsseite 2'
                               },
                               {
-                                "key": "content",
-                                "value": "<PageObject></PageObject>"
+                                key: 'content',
+                                value: '<PageObject></PageObject>'
                               },
                               {
-                                "key": "interactiveTasks",
-                                "value": []
+                                key: 'interactiveTasks',
+                                value: []
                               }
                             ]
                           }
@@ -178,58 +181,58 @@ axios.post(authUrl, request).then((data: any) => {
                     ]
                   },
                   {
-                    "lcoType": "ILIAS_CHAPTER",
-                    "attributes": [
+                    lcoType: 'ILIAS_CHAPTER',
+                    attributes: [
                       {
-                        "key": "objectId",
-                        "value": "http://localhost:8081/goto.php?target=st_5_84&client_id=default&obj_id_lrs=313"
+                        key: 'objectId',
+                        value: 'http://localhost:8081/goto.php?target=st_5_84&client_id=default&obj_id_lrs=313'
                       },
                       {
-                        "key": "title",
-                        "value": "Kapitel 2"
+                        key: 'title',
+                        value: 'Kapitel 2'
                       },
                       {
-                        "key": "contentPages",
-                        "value": [
+                        key: 'contentPages',
+                        value: [
                           {
-                            "lcoType": "ILIAS_CONTENT_PAGE",
-                            "attributes": [
+                            lcoType: 'ILIAS_CONTENT_PAGE',
+                            attributes: [
                               {
-                                "key": "objectId",
-                                "value": "http://localhost:8081/goto.php?target=pg_6_84&client_id=default&obj_id_lrs=313"
+                                key: 'objectId',
+                                value: 'http://localhost:8081/goto.php?target=pg_6_84&client_id=default&obj_id_lrs=313'
                               },
                               {
-                                "key": "title",
-                                "value": "Inhaltsseite 3"
+                                key: 'title',
+                                value: 'Inhaltsseite 3'
                               },
                               {
-                                "key": "content",
-                                "value": "<PageObject></PageObject>"
+                                key: 'content',
+                                value: '<PageObject></PageObject>'
                               },
                               {
-                                "key": "interactiveTasks",
-                                "value": []
+                                key: 'interactiveTasks',
+                                value: []
                               }
                             ]
                           },
                           {
-                            "lcoType": "ILIAS_CONTENT_PAGE",
-                            "attributes": [
+                            lcoType: 'ILIAS_CONTENT_PAGE',
+                            attributes: [
                               {
-                                "key": "objectId",
-                                "value": "http://localhost:8081/goto.php?target=pg_7_84&client_id=default&obj_id_lrs=313"
+                                key: 'objectId',
+                                value: 'http://localhost:8081/goto.php?target=pg_7_84&client_id=default&obj_id_lrs=313'
                               },
                               {
-                                "key": "title",
-                                "value": "Inhaltsseite 4"
+                                key: 'title',
+                                value: 'Inhaltsseite 4'
                               },
                               {
-                                "key": "content",
-                                "value": "<PageObject></PageObject>"
+                                key: 'content',
+                                value: '<PageObject></PageObject>'
                               },
                               {
-                                "key": "interactiveTasks",
-                                "value": []
+                                key: 'interactiveTasks',
+                                value: []
                               }
                             ]
                           }
@@ -238,37 +241,37 @@ axios.post(authUrl, request).then((data: any) => {
                     ]
                   },
                   {
-                    "lcoType": "ILIAS_CHAPTER",
-                    "attributes": [
+                    lcoType: 'ILIAS_CHAPTER',
+                    attributes: [
                       {
-                        "key": "objectId",
-                        "value": "http://localhost:8081/goto.php?target=st_8_84&client_id=default&obj_id_lrs=313"
+                        key: 'objectId',
+                        value: 'http://localhost:8081/goto.php?target=st_8_84&client_id=default&obj_id_lrs=313'
                       },
                       {
-                        "key": "title",
-                        "value": "Kapitel 3"
+                        key: 'title',
+                        value: 'Kapitel 3'
                       },
                       {
-                        "key": "contentPages",
-                        "value": [
+                        key: 'contentPages',
+                        value: [
                           {
-                            "lcoType": "ILIAS_CONTENT_PAGE",
-                            "attributes": [
+                            lcoType: 'ILIAS_CONTENT_PAGE',
+                            attributes: [
                               {
-                                "key": "objectId",
-                                "value": "http://localhost:8081/goto.php?target=pg_9_84&client_id=default&obj_id_lrs=313"
+                                key: 'objectId',
+                                value: 'http://localhost:8081/goto.php?target=pg_9_84&client_id=default&obj_id_lrs=313'
                               },
                               {
-                                "key": "title",
-                                "value": "Inhaltsseite 5"
+                                key: 'title',
+                                value: 'Inhaltsseite 5'
                               },
                               {
-                                "key": "content",
-                                "value": "<PageObject></PageObject>"
+                                key: 'content',
+                                value: '<PageObject></PageObject>'
                               },
                               {
-                                "key": "interactiveTasks",
-                                "value": []
+                                key: 'interactiveTasks',
+                                value: []
                               }
                             ]
                           }
@@ -283,11 +286,11 @@ axios.post(authUrl, request).then((data: any) => {
         ]
       },
       {
-        "key": "tests",
-        "value": []
+        key: 'tests',
+        value: []
       }
     ]
-  };
+  }
   const dashboardData = new DashboardData(courseNode, token, backendUrl)
   dashboardData.previewMode = false
   dashboardData.canViewOnly = false

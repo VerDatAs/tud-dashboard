@@ -99,24 +99,36 @@ export const queryExamples = [
         {
           subtract: [
             {
-                filter: {
-                    $and: [
-                        {'actor.account.name': "3d6576141ffa1c88af0ebacd3b8575514cd9bc2fec14cacd4fb7f0f3bcd01287@f269323f-fa99-4102-81fa-2e6ee79d13e8.ilias"},
-                        {'verb.display.en-US': "completed"},
-                        {'object.id': "http://stars-project.com/goto.php?target=pg_579_185&client_id=default&h5p_object_id=6&obj_id_lrs=638"},
-                    ]
-                },
-                select: "timestamp"
+              filter: {
+                $and: [
+                  {
+                    'actor.account.name':
+                      '3d6576141ffa1c88af0ebacd3b8575514cd9bc2fec14cacd4fb7f0f3bcd01287@f269323f-fa99-4102-81fa-2e6ee79d13e8.ilias'
+                  },
+                  { 'verb.display.en-US': 'completed' },
+                  {
+                    'object.id':
+                      'http://stars-project.com/goto.php?target=pg_579_185&client_id=default&h5p_object_id=6&obj_id_lrs=638'
+                  }
+                ]
+              },
+              select: 'timestamp'
             },
             {
-                filter: {
-                    $and: [
-                        {'actor.account.name': "3d6576141ffa1c88af0ebacd3b8575514cd9bc2fec14cacd4fb7f0f3bcd01287@f269323f-fa99-4102-81fa-2e6ee79d13e8.ilias"},
-                        {'verb.display.en-US': "interacted"},
-                        {'object.id': "http://stars-project.com/goto.php?target=pg_579_185&client_id=default&h5p_object_id=6&obj_id_lrs=638"},
-                    ]
-                },
-                select: "timestamp"
+              filter: {
+                $and: [
+                  {
+                    'actor.account.name':
+                      '3d6576141ffa1c88af0ebacd3b8575514cd9bc2fec14cacd4fb7f0f3bcd01287@f269323f-fa99-4102-81fa-2e6ee79d13e8.ilias'
+                  },
+                  { 'verb.display.en-US': 'interacted' },
+                  {
+                    'object.id':
+                      'http://stars-project.com/goto.php?target=pg_579_185&client_id=default&h5p_object_id=6&obj_id_lrs=638'
+                  }
+                ]
+              },
+              select: 'timestamp'
             }
           ]
         }
@@ -131,32 +143,36 @@ export const queryExamples = [
         {
           multiply: [
             {
-                filter: {
-                    $and: [
-                        {'object.id': "http://stars-project.com/goto.php?target=pg_615_193&client_id=default&h5p_object_id=12&obj_id_lrs=646"},
-                    ]
-                },
-                operation: '$max',
-                select: "result.score.raw"
+              filter: {
+                $and: [
+                  {
+                    'object.id':
+                      'http://stars-project.com/goto.php?target=pg_615_193&client_id=default&h5p_object_id=12&obj_id_lrs=646'
+                  }
+                ]
+              },
+              operation: '$max',
+              select: 'result.score.raw'
             },
             {
-                filter: {
-                    $and: [
-                        {'object.id': "http://stars-project.com/goto.php?target=pg_591_185&client_id=default&h5p_object_id=5&obj_id_lrs=638"},
-                        {'result.score.raw': { '$exists': true, '$ne': null}}
-                    ]
-                },
-                operation: '',
-                select: "result.score.raw"
+              filter: {
+                $and: [
+                  {
+                    'object.id':
+                      'http://stars-project.com/goto.php?target=pg_591_185&client_id=default&h5p_object_id=5&obj_id_lrs=638'
+                  },
+                  { 'result.score.raw': { $exists: true, $ne: null } }
+                ]
+              },
+              operation: '',
+              select: 'result.score.raw'
             },
             {
-                filter: {
-                    $and: [
-                        {'verb.display.en-US': "answered"},
-                    ]
-                },
-                operation: '$count',
-                select: ""
+              filter: {
+                $and: [{ 'verb.display.en-US': 'answered' }]
+              },
+              operation: '$count',
+              select: ''
             }
           ]
         }
@@ -171,26 +187,32 @@ export const queryExamples = [
         {
           divide: [
             {
-                filter: {
-                    $and: [
-                        {'object.id': "http://stars-project.com/goto.php?target=pg_579_185&client_id=default&h5p_object_id=6&obj_id_lrs=638"},
-                        {'verb.display.en-US': "completed"},
-                    ]
-                },
-                operation: '$count',
+              filter: {
+                $and: [
+                  {
+                    'object.id':
+                      'http://stars-project.com/goto.php?target=pg_579_185&client_id=default&h5p_object_id=6&obj_id_lrs=638'
+                  },
+                  { 'verb.display.en-US': 'completed' }
+                ]
+              },
+              operation: '$count'
             },
             {
-                filter: {
-                    $and: [
-                        {'object.id': "http://stars-project.com/goto.php?target=pg_579_185&client_id=default&h5p_object_id=6&obj_id_lrs=638"},
-                        {'verb.display.en-US': "interacted"},
-                    ]
-                },
-                operation: '$count',
+              filter: {
+                $and: [
+                  {
+                    'object.id':
+                      'http://stars-project.com/goto.php?target=pg_579_185&client_id=default&h5p_object_id=6&obj_id_lrs=638'
+                  },
+                  { 'verb.display.en-US': 'interacted' }
+                ]
+              },
+              operation: '$count'
             }
           ]
         }
       ]
     }
-  },
+  }
 ]
