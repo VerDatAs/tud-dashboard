@@ -1,13 +1,13 @@
 //Currently supported comparison operators
 export const comparisonOperators = [
-  { displayName: 'equal', value: '$eq' },
-  { displayName: 'not equal', value: '$ne' },
-  { displayName: 'greater than', value: '$gt' },
-  { displayName: 'greater than or equal', value: '$gte' },
-  { displayName: 'less than', value: '$lt' },
-  { displayName: 'less than or equal', value: '$lte' },
-  { displayName: 'in', value: '$in' },
-  { displayName: 'not in', value: '$nin' }
+  { displayName: 'gleich (=)', value: '$eq' },
+  { displayName: 'nicht gleich (!=)', value: '$ne' },
+  { displayName: 'größer (>)', value: '$gt' },
+  { displayName: 'größer gleich (>=)', value: '$gte' },
+  { displayName: 'kleiner (<)', value: '$lt' },
+  { displayName: 'kleiner gleich (<=)', value: '$lte' },
+  { displayName: 'in ([])', value: '$in' },
+  { displayName: 'nicht in ([])', value: '$nin' }
 ]
 
 //Currently supported aggregation operations

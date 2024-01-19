@@ -595,6 +595,7 @@ export default {
     getSuggestions(filter) {
 
       if (!filter.selectedAttribute) return
+      if (filter.selectedAttribute === 'timestamp') return
       if (this.getAttribute(filter.selectedAttribute)[0].type === 'number' || this.getAttribute(filter.selectedAttribute)[0].type === 'boolean') return
 
       const currentFilterValue = filter.selectedValueFilter ? filter.selectedValueFilter : ''
@@ -638,6 +639,7 @@ export default {
           @click="showCode = !showCode"
           class="float-right px-2"
           :title="showCode ? 'Wechsel zum Query Builder' : 'Wechsel zum Code Editor'"
+          style="width: 40px;"
         >
           <font-awesome-icon size="sm" :icon="showCode ? 'list' : 'code'" />
         </button>
@@ -691,11 +693,11 @@ export default {
           <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
         </div>
 
-        <div v-for="(builder, index) in filterBuilder" :key="index" :id="'filter' + index">
+        <div v-for="(filter, index) in filterBuilder" :key="index" :id="'filter' + index">
           <div class="flex-center">
             <select
-              v-model="filterBuilder[index].selectedAttribute"
-              @change="adjustInputOptions(filterBuilder[index].selectedAttribute, index)"
+              v-model="filter.selectedAttribute"
+              @change="adjustInputOptions(filter.selectedAttribute, index)"
             >
               <option value="" disabled selected>Auswahl Attribut</option>
               <option v-for="(attribute, index) in filterAttributes" :key="index" :value="attribute.attribute">
@@ -703,10 +705,10 @@ export default {
               </option>
             </select>
 
-            <select v-model="filterBuilder[index].selectedComparison">
+            <select v-model="filter.selectedComparison">
               <option value="" disabled selected>Auswahl Vergleichsoperator</option>
               <option
-                v-for="(operator, index) in filterBuilder[index].comparisonOperators"
+                v-for="(operator, index) in filter.comparisonOperators"
                 :key="index"
                 :value="operator.value"
               >
@@ -714,9 +716,9 @@ export default {
               </option>
             </select>
 
-            <div v-if="filterBuilder[index].inputType === 'boolean'">
-              <select v-model="filterBuilder[index].selectedValueFilter">
-                <option value="" disabled selected>Auswahl Vergleichsoperator</option>
+            <div v-if="filter.inputType === 'boolean'">
+              <select v-model="filter.selectedValueFilter">
+                <option value="" disabled selected></option>
                 <option value="true">true</option>
                 <option value="false">false</option>
               </select>
@@ -724,25 +726,25 @@ export default {
 
             <div v-else class="autocomplete">
               <input
-                @keyup="getSuggestions(filterBuilder[index])"
-                @focus="getSuggestions(filterBuilder[index])" 
-                v-model="filterBuilder[index].selectedValueFilter"
+                @keyup="getSuggestions(filter)"
+                @focus="getSuggestions(filter)" 
+                v-model="filter.selectedValueFilter"
                 :type="
-                  filterBuilder[index].selectedComparison === '$in' || filterBuilder[index].selectedComparison === '$nin'
+                  filter.selectedComparison === '$in' || filter.selectedComparison === '$nin'
                     ? 'string'
-                    : filterBuilder[index].inputType
+                    : filter.inputType
                 "
-                :step="filterBuilder[index].inputType === 'number' ? 'any' : ''"
-                :min="filterBuilder[index].inputType === 'number' ? 0 : ''"
+                :step="filter.inputType === 'number' ? 'any' : ''"
+                :min="filter.inputType === 'number' ? 0 : ''"
                 placeholder="Eingabe Attributwert..."
               />
 
-              <div :class="filterBuilder[index].suggestions.length > 0 ? 'autocomplete-items' : 'autocomplete-items hide'" :id="'suggestions' + index">
+              <div :class="filter.suggestions.length > 0 ? 'autocomplete-items' : 'autocomplete-items hide'" :id="'suggestions' + index">
                 <div 
                   class="autocomplete-item"
-                  v-for="(suggestion, index) in filterBuilder[index].suggestions" 
+                  v-for="(suggestion, index) in filter.suggestions" 
                   :key="index"
-                  @click="setSuggestion(builder, suggestion)"
+                  @click="setSuggestion(filter, suggestion)"
                 >
                 {{ suggestion }}
               </div>
@@ -785,10 +787,10 @@ export default {
           <div
             class="py-1"
             v-show="
-              filterBuilder[index].selectedComparison === '$in' || filterBuilder[index].selectedComparison === '$nin'
+              filter.selectedComparison === '$in' || filter.selectedComparison === '$nin'
             "
           >
-            Bei diesem Operator muss eine Liste nach folgendem Schema angegeben werden: Tom, Tim, Thomas, ...'
+            Bei diesem Operator muss eine Liste nach folgendem Schema angegeben werden: Tom, Tim, Thomas, ...
           </div>
           <div class="py-1" :id="'filter-connection' + index"></div>
         </div>
@@ -873,18 +875,18 @@ export default {
 
           <div
             class="flex-center py-2"
-            v-for="(builder, index) in operationBuilder"
+            v-for="(operation, index) in operationBuilder"
             :key="index"
             :id="'operation' + index"
           >
-            <select v-model="operationBuilder[index].selectedOperation">
+            <select v-model="operation.selectedOperation">
               <option value="" disabled selected></option>
-              <option v-for="(operation, index) in aggregationOperators" :key="index" :value="operation.value">
-                {{ operation.displayName }}
+              <option v-for="(aggregation, index) in aggregationOperators" :key="index" :value="aggregation.value">
+                {{ aggregation.displayName }}
               </option>
             </select>
 
-            <select v-model="operationBuilder[index].selectedAttribute">
+            <select v-model="operation.selectedAttribute">
               <option value="" disabled selected></option>
               <option v-for="(attribute, index) in operationAttributes" :key="index" :value="attribute.attribute">
                 {{ attribute.attribute }}
@@ -1002,6 +1004,7 @@ textarea:focus {
 
 select {
   max-width: 250px;
+  min-width: 200px;
   padding: 5px;
   border-radius: 5px;
   height: 35px;
@@ -1101,7 +1104,7 @@ div[id^='filter-connection'] {
   border: 1px solid #d4d4d4;
   border-top: none;
   left: 0;
-  right: 0;
+  min-width: 100%;
 }
 
 .autocomplete-item {
