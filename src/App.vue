@@ -24,7 +24,7 @@ export default {
     return {
       diagram: null,
       diagramLoaded: false,
-      currentView: 'knowledgeStructure',
+      currentView: 'query',
       isExpanded: ref(localStorage.getItem('is_expanded') === 'true')
     }
   },
@@ -90,6 +90,7 @@ export default {
     <NavigationView
       v-if="!canViewOnly"
       :isExpanded="isExpanded"
+      :currentView="currentView"
       @setCurrentView="setCurrentView"
       @toggleNavigationExpanded="toggleNavigationExpanded"
     />
