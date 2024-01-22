@@ -4,6 +4,7 @@ import { markRaw } from 'vue'
 import VueMultiselect from 'vue-multiselect'
 import BasicTypes from './BasicTypes.vue'
 import { basicTypes, customTypes, excludedParameters, nonSelectableElements } from '@/util/GraphHelpers'
+import { useCollaborationsStore } from '@/stores/collaborations'
 
 export default {
   name: 'PropertiesPanel',
@@ -22,7 +23,10 @@ export default {
     collaborationUserName: '',
     collaborationUserPassword: '',
     collaborationMembers: [],
-    selectedCollaborationMembers: []
+    selectedCollaborationMembers: [],
+    startCollaborationInProgress: false,
+    collaborationStartSuccessfully: false,
+    collaborationStore: useCollaborationsStore()
   }),
   props: {
     backendUrl: String,
@@ -176,6 +180,7 @@ export default {
       if (!this.collaborationUserName || this.collaborationUserName === '' || !this.collaborationUserPassword || this.collaborationUserPassword === '') {
         return
       }
+      this.startCollaborationInProgress = true
       const url = this.backendUrl + '/api/v1/auth/login'
       const request = {
         actorAccountName: this.collaborationUserName,
@@ -205,6 +210,17 @@ export default {
         }
         axios.post(assistanceUrl, assistanceRequest, { headers: authHeader }).then((data) => {
           console.log('Started collaboration', data)
+          const startedAssistanceArray = data?.data?.assistance
+          startedAssistanceArray?.forEach((assistance) => {
+            if (assistance.aId) {
+              this.collaborationStore.collaborations.push(assistance.aId)
+            }
+          })
+          this.collaborationStartSuccessfully = true
+          setTimeout(() => {
+            this.startCollaborationInProgress = false
+            this.collaborationStartSuccessfully = false
+          }, 20000)
         });
       })
     }
@@ -350,7 +366,12 @@ export default {
           </div>
           <div class="form-group">
             <div class="col-xs-12">
-              <button class="btn btn-primary mt-2" type="button" @click="startCollaboration()">Bestätigen</button>
+              <div class="alert alert-success mb-0" v-if="collaborationStartSuccessfully">
+                Die Kollaboration wurde erfolgreich gestartet.
+              </div>
+            </div>
+            <div class="col-xs-12">
+              <button class="btn btn-primary mt-2" type="button" @click="startCollaboration()" :disabled="startCollaborationInProgress">Bestätigen</button>
             </div>
           </div>
         </div>
