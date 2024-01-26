@@ -29,21 +29,23 @@ export default {
     showAdvancedFilterOptions: false,
     errorMessages: [],
     showCode: false,
-    showQuery: false
+    showQuery: false,
+    showIntro: false,
+    introView: 'builder',
+    currentQueryExample: null
   }),
   created() {
     this.fetchSchema()
   },
   mounted() {
-
-    document.getElementById('query-view').addEventListener('click', () =>  {
+    document.getElementById('query-view').addEventListener('click', () => {
       const suggestionList = document.getElementsByClassName('autocomplete-items')
-      if(suggestionList.length > 0) {
-        for(const list of suggestionList) {
+      if (suggestionList.length > 0) {
+        for (const list of suggestionList) {
           list.classList.add('hide')
         }
-      } 
-    }) 
+      }
+    })
   },
   methods: {
     adjustInputOptions(attribute, index) {
@@ -63,12 +65,9 @@ export default {
       } else if (attributeType === 'boolean') {
         this.filterBuilder[index].inputType = 'boolean'
         this.filterBuilder[index].comparisonOperators = comparisonOperators.filter(
-          (operator) =>
-            operator.value === '$eq' ||
-            operator.value === '$ne'
+          (operator) => operator.value === '$eq' || operator.value === '$ne'
         )
-      } 
-      else {
+      } else {
         this.filterBuilder[index].inputType = 'string'
         this.filterBuilder[index].comparisonOperators = comparisonOperators.filter(
           (operator) =>
@@ -239,7 +238,7 @@ export default {
         filterValue = new Date(filterValue).toISOString().substring(0, 16)
       }
 
-      if(filter.inputType === 'boolean') {
+      if (filter.inputType === 'boolean') {
         filterValue = Boolean(filterValue)
       }
 
@@ -366,7 +365,7 @@ export default {
       }
 
       const queryUrl = this.backendUrl + '/api/v1/statement/query'
-      this.result = 'Searching...'
+      this.result = 'Suchen...'
 
       axios
         .post(queryUrl, input, {
@@ -409,19 +408,35 @@ export default {
         if (Array.isArray(value)) {
           for (const el of value) {
             if (typeof el !== attributeObject.type) {
-              this.errorMessages.push('Value ' + el + ' is not of the right type. Should be ' + attributeObject.type)
+              this.errorMessages.push(
+                'Eingabe ' +
+                  el +
+                  ' ist nicht vom richtigen Typ. Sollte ' +
+                  attributeObject.type +
+                  ' und nicht ' +
+                  typeof el +
+                  ' sein.'
+              )
               return false
             }
           }
           return true
         } else {
-          this.errorMessages.push('Value ' + value + ' is not of the right type. Should be a list.')
+          this.errorMessages.push('Eingabe ' + value + ' ist nicht vom richtigen Typ. Sollte eine List sein.')
           return false
         }
       }
 
       if (typeof value !== attributeObject.type) {
-        this.errorMessages.push('Value ' + value + ' is not of the right type. Should be ' + attributeObject.type)
+        this.errorMessages.push(
+          'Eingabe ' +
+            value +
+            ' ist nicht vom richtigen Typ. Sollte ' +
+            attributeObject.type +
+            ' und nicht ' +
+            typeof el +
+            ' sein.'
+        )
         return false
       }
 
@@ -435,7 +450,7 @@ export default {
 
         if (validConnections.indexOf(filterElement) > -1) {
           if (!Array.isArray(filter[filterElement])) {
-            this.errorMessages.push('The ' + filterElement + ' connection should be an array.')
+            this.errorMessages.push('Die ' + filterElement + ' Verknüpfung sollte eine List sein.')
             return
           }
 
@@ -445,7 +460,7 @@ export default {
         } else {
           let found = this.isValidAttribute(filterElement)
           if (!found) {
-            this.errorMessages.push('The value ' + filterElement + ' in the search object is not valid.')
+            this.errorMessages.push('Die Eingabe ' + filterElement + ' im search Feld is nicht korrekt.')
             return
           }
 
@@ -455,7 +470,7 @@ export default {
             comparisonOperator = Object.keys(filter[filterElement])[0]
             found = this.isValidComparisonOperator(comparisonOperator)
             if (!found) {
-              this.errorMessages.push('The used comparison operator ' + comparisonOperator + '  is not valid.')
+              this.errorMessages.push('Der verwendete Vergleichsoperator ' + comparisonOperator + '  ist nicht gültig.')
               return
             }
 
@@ -466,19 +481,19 @@ export default {
           if (!validValue) return
         }
       } else {
-        this.errorMessages.push('Element ' + filter + ' should only have one entry.')
+        this.errorMessages.push('Element ' + filter + ' sollte nur einen Eintrag haben.')
       }
     },
     validateQuery(query) {
       this.errorMessages = []
 
       if (typeof query.search !== 'object') {
-        this.errorMessages.push('The search key should be an object.')
+        this.errorMessages.push('Das search Feld sollte ein Objekt sein.')
         return false
       }
 
       if (!Array.isArray(query.operations)) {
-        this.errorMessages.push('The operation key should be a list.')
+        this.errorMessages.push('Das operations Feld sollte eine Liste sein.')
         return false
       }
 
@@ -494,17 +509,17 @@ export default {
             operation['$skip'] = Number(operation['$skip'])
           } else {
             this.errorMessages.push(
-              'The value ' + operation['$skip'] + ' of the $skip key should be a valid and positive number'
+              'Eingabe ' + operation['$skip'] + ' vom $skip Feld sollte gültig und eine positive Nummer sein'
             )
           }
         }
 
         if ('$limit' in operation) {
-          if (!isNaN(operation['$limit']) && operation['$limit'] >= 0) {
+          if (!isNaN(operation['$limit']) && operation['$limit'] >= 1) {
             operation['$limit'] = Number(operation['$limit'])
           } else {
             this.errorMessages.push(
-              'The value ' + operation['$limit'] + ' of the $limit key should be a valid and positive number'
+              'Eingabe ' + operation['$limit'] + ' vom $limit Feld sollte gültig und eine positive Nummer sein'
             )
           }
         }
@@ -515,9 +530,9 @@ export default {
             const idValue = groupObject['_id'].split('$')[1]
             const found = this.isValidAttribute(idValue)
             if (!found && groupObject['_id'] !== '')
-              this.errorMessages.push('The value ' + idValue + ' for the _id key in $group is not valid.')
+              this.errorMessages.push('Eingabe ' + idValue + ' für das _id Feld im $group Feld ist nicht gültig.')
           } else {
-            this.errorMessages.push('The _id key-value pair for the $group key is missing.')
+            this.errorMessages.push('Das _id Feld für das $group Feld fehlt.')
           }
 
           for (const element in groupObject) {
@@ -525,7 +540,7 @@ export default {
               const validKeys = this.aggregationOperators.map((element) => element.value)
 
               if (Object.keys(groupObject[element]).length > 1) {
-                this.errorMessages.push('The key ' + element + ' should only have one entry.')
+                this.errorMessages.push('Das Feld ' + element + ' sollte nur einen Eintrag haben.')
               } else {
                 const aggregationOperator = Object.keys(groupObject[element])[0]
 
@@ -534,11 +549,15 @@ export default {
                   const found = this.isValidAttribute(rawAttribute)
                   if (!found)
                     this.errorMessages.push(
-                      'The attribute ' + rawAttribute + ' used for the ' + aggregationOperator + ' key is not valid.'
+                      'Das Attribut ' +
+                        rawAttribute +
+                        ' benutzt für das ' +
+                        aggregationOperator +
+                        ' Feld is nicht gültig.'
                     )
                 } else {
                   this.errorMessages.push(
-                    'The key ' + Object.keys(groupObject[element])[0] + ' is not allowed in this context'
+                    'Das Feld ' + Object.keys(groupObject[element])[0] + ' ist in diesem Kontext nicht erlaubt.'
                   )
                 }
               }
@@ -552,11 +571,12 @@ export default {
 
           for (const sortElement in sortObject) {
             const found = this.isValidAttribute(sortElement)
-            if (!found)
-              this.errorMessages.push('The attribute ' + sortElement + ' used for the $sort key is not valid.')
+            if (!found) this.errorMessages.push('Das Attribut ' + sortElement + ' für das $sort Feld is nicht gültig.')
 
             if (sortObject[sortElement] !== 1 && sortObject[sortElement] !== -1) {
-              this.errorMessages.push('The value of the $sort key can only be 1 or -1, not ' + sortObject[sortElement])
+              this.errorMessages.push(
+                'Die Eingabe für das $sort Feld kann nur 1 oder -1, nicht ' + sortObject[sortElement] + ' sein.'
+              )
             }
           }
         }
@@ -593,10 +613,13 @@ export default {
       if (this.filterBuilder.length > 0) document.getElementById('filter-connection' + (index - 1)).innerHTML = ''
     },
     getSuggestions(filter) {
-
       if (!filter.selectedAttribute) return
       if (filter.selectedAttribute === 'timestamp') return
-      if (this.getAttribute(filter.selectedAttribute)[0].type === 'number' || this.getAttribute(filter.selectedAttribute)[0].type === 'boolean') return
+      if (
+        this.getAttribute(filter.selectedAttribute)[0].type === 'number' ||
+        this.getAttribute(filter.selectedAttribute)[0].type === 'boolean'
+      )
+        return
 
       const currentFilterValue = filter.selectedValueFilter ? filter.selectedValueFilter : ''
       const url =
@@ -607,7 +630,6 @@ export default {
       axios
         .get(url, { auth: { username: this.authUser, password: this.authPassword } })
         .then((result) => {
-
           console.log('Fetch suggestions for xAPI statement attribute', result)
           filter.suggestions = result.data
         })
@@ -618,11 +640,15 @@ export default {
     },
     setSuggestion(filter, suggestion) {
       filter.selectedValueFilter = suggestion
-      document.getElementById("suggestions" + this.filterBuilder.indexOf(filter)).classList.add('hide')
+      document.getElementById('suggestions' + this.filterBuilder.indexOf(filter)).classList.add('hide')
     },
     removeErrorMessage(event, index) {
       this.errorMessages.splice(index, 1)
       event.target.closest('.error-message').remove()
+    },
+    openIntro(viewName) {
+      this.showIntro = true
+      this.introView = viewName
     }
   }
 }
@@ -633,16 +659,149 @@ export default {
     <div id="query-view-content" class="container py-4">
       <div id="query-view-header" class="py-2">
         <h2 style="display: inline">
-          {{ showCode ? 'Query Code' : 'Query Builder' }}
+          {{ showCode ? 'Code Editor' : 'Query Builder' }}
+          <font-awesome-icon
+            class="icon"
+            size="sm"
+            icon="circle-info"
+            title="Klicke hier für eine Erklärung"
+            @click="openIntro(showCode ? 'code' : 'builder')"
+          />
         </h2>
         <button
           @click="showCode = !showCode"
           class="float-right px-2"
           :title="showCode ? 'Wechsel zum Query Builder' : 'Wechsel zum Code Editor'"
-          style="width: 40px;"
+          style="width: 40px"
         >
           <font-awesome-icon size="sm" :icon="showCode ? 'list' : 'code'" />
         </button>
+      </div>
+
+      <div v-if="showIntro" id="intro-backdrop">
+        <div id="intro">
+          <div id="intro-close">
+            <font-awesome-icon
+              id="intro-close-icon"
+              class="icon"
+              size="lg"
+              icon="xmark"
+              @click="showIntro = false"
+              style="padding: 10px"
+              title="Schließen"
+            />
+          </div>
+          <div id="intro-text">
+            <div v-if="introView === 'builder'">
+              Im Rahmen des Forschungsprojekts VerDatAs entwickelt und erprobt die TU Dresden ein tutoriellen
+              Assistenzsystems (TAS), um Lernende in ihrem individuellen Lernprozess zu unterstützen. Die Grundlage
+              dieses TAS bildet die Erfassung von Lernverlaufsdaten mittels xAPI Statements, die genutzt werden, um
+              Lernenden personalisierte Assistenzangebote zur Verfügung zu stellen. Diese Assistenzangebote sind oft
+              vordefiniert und damit hat der Lehrende keine Einsicht, welche Lernverlaufsdaten dafür verwendet werden.
+              Im Rahmen meiner Diplomarbeit wurde ein Konzept entwickelt, mit dem Lehrende in der Lage sein sollen,
+              solche Lernverlaufsdaten selbständig abzufragen und zu aggregieren. Auf Basis dieses Konzept wurde dieser
+              Prototyp erstellt.
+
+              <h3>Query Builder</h3>
+
+              Der <b>Query Builder</b> ist eine Ansicht für unerfahrene Nutzer bzw. um schnell Abfragen zu erstellen.
+              Hier können Abfragen einfach zusammengeklickt werden. Um zum <b>Code Editor</b> zu wechsel kann dieser
+              Button <button style="width: 40px"><font-awesome-icon size="sm" icon="code" /></button> geklickt werden.
+            </div>
+
+            <div v-if="introView === 'filter'">
+              <h5>Filter</h5>
+
+              Mithilfe des Plus Button <font-awesome-icon class="icon" icon="circle-plus" size="xl" /> unter der
+              <i>Filter</i> Überschrift kann ein Filter für die xAPI Statements hinzugefügt werden. Die Filter können
+              dazu genutzt werden um nur nach bestimmten Daten zu suchen bzw. Daten von der Suche auszuschließen. Ein
+              Filter besteht aus einem Attribut, einem Vergleichsoperator und einem Attributwert. Für die Attributwerte
+              gibt es teilweise Vorschläge damit das Filtern leichter ist. Außerdem gibt es die Möglichkeit mehrere
+              Filter anzulegen. Nach Anlegen des 1. Filters erscheinen zwei Buttons die genutzt werden können, um
+              weitere Filter anzulegen. Der <button>AND</button> Button wird alle weiteren Filter UND verknüpfen,
+              während der <button>OR</button> Button alle ODER verknüpft. Danach können weiter Filter über
+              <font-awesome-icon class="icon" icon="circle-plus" size="lg" /> hinzugefügt bzw. über
+              <font-awesome-icon class="icon" icon="circle-xmark" size="lg" /> wieder entfernt werden.
+            </div>
+
+            <div v-if="introView === 'options'">
+              <h6>Weiter Filteroptionen</h6>
+
+              Unter den angelegten Filtern gibt es auch noch weitere Filteroptionen die mit einem Klick auf
+              <font-awesome-icon class="icon" icon="chevron-right" size="md" /> aufgeklappt werden können. Hier kann das
+              Verhalten der Suche und wie die xAPI Statements gefiltert werden sollen noch weiter definiert werden.
+
+              <p>
+                <b>Sort:</b> Hier kann eine Attribut und die Richtung in welche sortiert werden soll ausgewählt werden.
+              </p>
+
+              <p>
+                <b>Limit:</b> Hiermit kann die Anzahl an xAPI Statements die geholt werden sollen beschränkt werden.
+              </p>
+
+              <p>
+                <b>Skip:</b> Mit dieser Option kann die Anzahl der xAPI Statements die übersprungen werden sollen
+                definiert werden. Ähnlich zum Wechseln zu einer neuen Seiten im Online-Shop können damit quasi die
+                nächsten 'Seite' an xAPI Statement geholt werden.
+              </p>
+
+              <p>
+                <b>Group:</b> Hier wird ein Attribut ausgewählt mit dem die xAPI Statements gruppiert werden. Das kann
+                unter anderem in Kombination mit den Operationen verwendet werden. Zum Beispiel könnte man so für jeden
+                Kurs (<i>object.id</i>) das höchste erzielte Ergebnis (<i>result.score.raw</i>) der Lernenden anzeigen
+                lassen.
+              </p>
+            </div>
+
+            <div v-if="introView === 'operations'">
+              <h5>Operationen</h5>
+
+              Mit einem Klick auf <font-awesome-icon icon="circle-plus" size="lg" /> unter der
+              <i>Operationen</i> Überschrift kann eine Operation für die xAPI Statements hinzugefügt werden. Eine
+              Operation besteht immer aus einem Attribut und der Operation die darauf ausgeführt werden soll. Vorher
+              angelegte Filter oder Filteroptionen schränken die xAPI Statements ein auf denen die Operationen
+              ausgeführt werden. Mit einem Klick auf <font-awesome-icon class="icon" icon="circle-xmark" size="lg" />
+              kann eine Operation wieder entfernt werden. Aktuell unterstützt der Prototyp folgende Operationen:
+
+              <p>
+                <b>max:</b> Findet den höchsten Wert für dieses Attribut in allen oder den gefilterten xAPI Statements.
+              </p>
+
+              <p>
+                <b>min:</b> Findet den niedrigsten Wert für dieses Attribut in allen oder den gefilterten xAPI
+                Statements.
+              </p>
+
+              <p>
+                <b>avg:</b> Berechnet den durchschnittlichen Wert für dieses Attribut in allen oder den gefilterten xAPI
+                Statements.
+              </p>
+
+              <p><b>sum:</b> Summiert alle Werte dieses Attributs in allen oder den gefilterten xAPI Statements.</p>
+            </div>
+
+            <div v-if="introView === 'query'">
+              <h6>Syntax</h6>
+
+              Mit einem Klick auf <font-awesome-icon icon="chevron-right" size="md" /> neben der
+              <b>Syntax</b> Überschrift kann die generierte Abfrage angezeigt werden können. Mit einem weiteren Klick
+              auf
+              <font-awesome-icon icon="share" size="md" />
+              wird diese Abfrage in den <b>Code Editor</b> kopiert und kann dort verwendet bzw. angepasst werden.
+            </div>
+
+            <div v-if="introView === 'code'">
+              <h3>Code Editor</h3>
+
+              Der <b>Code Editor</b> richtet sich an erfahrerene Nutzer, die sich schon etwas mit der Syntax der
+              Abfragesprache auskennen. Unter dem Textfeld, das zum Schreiben einer eigenen Abfrage genutzt werden kann,
+              befindet sich ein Dropdown-Menü mit vorgefertigten Beispielen die verwendet bzw. angepasst werden können.
+              Um zurück zum <b>Query Builder</b> zu kommen kann auf diesen Button
+              <button style="width: 40px"><font-awesome-icon size="sm" icon="list" /></button> in der oberen rechten
+              Ecke geklickt werden.
+            </div>
+          </div>
+        </div>
       </div>
 
       <div v-show="errorMessages.length > 0" class="my-4">
@@ -678,9 +837,10 @@ export default {
           Filter
           <font-awesome-icon
             class="icon"
+            size="sm"
             icon="circle-info"
-            size="md"
-            title="Hier können Filter zum Filtern von xAPI Statements hinzugefügt werden"
+            title="Klicke hier für eine Erklärung"
+            @click="openIntro('filter')"
           />
         </h4>
 
@@ -695,10 +855,7 @@ export default {
 
         <div v-for="(filter, index) in filterBuilder" :key="index" :id="'filter' + index">
           <div class="flex-center">
-            <select
-              v-model="filter.selectedAttribute"
-              @change="adjustInputOptions(filter.selectedAttribute, index)"
-            >
+            <select v-model="filter.selectedAttribute" @change="adjustInputOptions(filter.selectedAttribute, index)">
               <option value="" disabled selected>Auswahl Attribut</option>
               <option v-for="(attribute, index) in filterAttributes" :key="index" :value="attribute.attribute">
                 {{ attribute.attribute }}
@@ -707,11 +864,7 @@ export default {
 
             <select v-model="filter.selectedComparison">
               <option value="" disabled selected>Auswahl Vergleichsoperator</option>
-              <option
-                v-for="(operator, index) in filter.comparisonOperators"
-                :key="index"
-                :value="operator.value"
-              >
+              <option v-for="(operator, index) in filter.comparisonOperators" :key="index" :value="operator.value">
                 {{ operator.displayName }}
               </option>
             </select>
@@ -727,7 +880,7 @@ export default {
             <div v-else class="autocomplete">
               <input
                 @keyup="getSuggestions(filter)"
-                @focus="getSuggestions(filter)" 
+                @focus="getSuggestions(filter)"
                 v-model="filter.selectedValueFilter"
                 :type="
                   filter.selectedComparison === '$in' || filter.selectedComparison === '$nin'
@@ -739,15 +892,18 @@ export default {
                 placeholder="Eingabe Attributwert..."
               />
 
-              <div :class="filter.suggestions.length > 0 ? 'autocomplete-items' : 'autocomplete-items hide'" :id="'suggestions' + index">
-                <div 
+              <div
+                :class="filter.suggestions.length > 0 ? 'autocomplete-items' : 'autocomplete-items hide'"
+                :id="'suggestions' + index"
+              >
+                <div
                   class="autocomplete-item"
-                  v-for="(suggestion, index) in filter.suggestions" 
+                  v-for="(suggestion, index) in filter.suggestions"
                   :key="index"
                   @click="setSuggestion(filter, suggestion)"
                 >
-                {{ suggestion }}
-              </div>
+                  {{ suggestion }}
+                </div>
               </div>
             </div>
 
@@ -784,12 +940,7 @@ export default {
               <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
             </div>
           </div>
-          <div
-            class="py-1"
-            v-show="
-              filter.selectedComparison === '$in' || filter.selectedComparison === '$nin'
-            "
-          >
+          <div class="py-1" v-show="filter.selectedComparison === '$in' || filter.selectedComparison === '$nin'">
             Bei diesem Operator muss eine Liste nach folgendem Schema angegeben werden: Tom, Tim, Thomas, ...
           </div>
           <div class="py-1" :id="'filter-connection' + index"></div>
@@ -797,7 +948,17 @@ export default {
 
         <div class="py-2">
           <div class="flex-center">
-            <span style="font-weight: 600">Weitere Filter Optionen</span>
+            <div>
+              <span class="title-with-info">Weitere Filter Optionen</span>
+              <font-awesome-icon
+                class="icon"
+                size="sm"
+                icon="circle-info"
+                title="Klicke hier für eine Erklärung"
+                @click="openIntro('options')"
+              />
+            </div>
+
             <font-awesome-icon
               class="icon"
               :icon="showAdvancedFilterOptions ? 'chevron-down' : 'chevron-right'"
@@ -858,9 +1019,10 @@ export default {
             Operationen
             <font-awesome-icon
               class="icon"
+              size="sm"
               icon="circle-info"
-              size="md"
-              title="Hier können verschieden Operationen zur Aggregation von Daten aus den xAPI Statements hinzugefügt werden."
+              title="Klicke hier für eine Erklärung"
+              @click="openIntro('operations')"
             />
           </h4>
 
@@ -913,7 +1075,17 @@ export default {
 
         <div class="py-2">
           <div class="flex-center">
-            <span style="font-weight: 600">Query</span>
+            <div>
+              <span class="title-with-info">Syntax</span>
+              <font-awesome-icon
+                class="icon"
+                size="sm"
+                icon="circle-info"
+                title="Klicke hier für eine Erklärung"
+                @click="openIntro('query')"
+              />
+            </div>
+
             <font-awesome-icon
               class="icon"
               :icon="showQuery ? 'chevron-down' : 'chevron-right'"
@@ -1044,6 +1216,42 @@ button {
   text-align: right;
 }
 
+#intro-backdrop {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: grey;
+}
+
+#intro {
+  z-index: 8;
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  height: calc(100% - 20%);
+  width: calc(100% - 20%);
+  border-radius: 10px;
+  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.06);
+  border: 1px solid grey;
+  overflow: auto;
+  background-color: white;
+}
+
+#intro-text {
+  padding: 5%;
+}
+
+#intro-close {
+  text-align: right;
+  margin-right: 5%;
+}
+
+#intro-close-icon {
+  position: fixed;
+}
+
 #current-query {
   width: 100%;
 }
@@ -1093,6 +1301,11 @@ div[id^='filter-connection'] {
   display: inline-block;
 }
 
+.title-with-info {
+  font-weight: 600;
+  margin-right: 3px;
+}
+
 .autocomplete {
   position: relative;
   display: inline-block;
@@ -1119,7 +1332,6 @@ div[id^='filter-connection'] {
 }
 
 .hide {
-    display: none;
+  display: none;
 }
-
 </style>
