@@ -81,7 +81,7 @@ export default {
       this.filterBuilder[index].selectedValueFilter = null
     },
     fetchSchema() {
-      const url = this.backendUrl + '/api/v1/statement/schema'
+      const url = this.backendUrl + '/api/v2/statement/schema'
 
       axios
         .get(url, { auth: { username: this.authUser, password: this.authPassword } })
@@ -279,7 +279,7 @@ export default {
           const mathObject = Object.values(operation)[0]
 
           const requests = []
-          const queryUrl = this.backendUrl + '/api/v1/statement/query'
+          const queryUrl = this.backendUrl + '/api/v2/statement/query'
 
           for (const query of mathObject) {
             let input = {
@@ -364,7 +364,7 @@ export default {
         return
       }
 
-      const queryUrl = this.backendUrl + '/api/v1/statement/query'
+      const queryUrl = this.backendUrl + '/api/v2/statement/query'
       this.result = 'Suchen...'
 
       axios
@@ -623,7 +623,7 @@ export default {
 
       const currentFilterValue = filter.selectedValueFilter ? filter.selectedValueFilter : ''
       const url =
-        this.backendUrl + '/api/v1/statement/' + filter.selectedAttribute + '/suggestions?suggest=' + currentFilterValue
+        this.backendUrl + '/api/v2/statement/' + filter.selectedAttribute + '/suggestions?suggest=' + currentFilterValue
 
       filter.suggestions = []
 
