@@ -2,9 +2,6 @@
 import axios from 'axios'
 import { comparisonOperators, aggregationOperators, queryExamples, Connections } from '@/util/QueryHelpers'
 
-//Maybe transform $eq and $neq to $in and $in ?
-//TODO: type boolean beachten
-
 export default {
   data: () => ({
     comparisonOperators,
@@ -12,9 +9,9 @@ export default {
     queryExamples,
     connections: Connections,
     currentConnection: Connections.AND,
-    backendUrl: 'http://127.0.0.1:8000', //needs to be changed later
-    authUser: 'testuser', //later changed to Bearer Authorization with token
-    authPassword: 'test123',
+    //backendUrl: 'http://127.0.0.1:8000', //needs to be changed later
+    //authUser: 'testuser', //later changed to Bearer Authorization with token
+    //authPassword: 'test123',
     filterBuilder: [],
     operationBuilder: [],
     textareaInput: null,
@@ -34,6 +31,10 @@ export default {
     introView: 'builder',
     currentQueryExample: null
   }),
+  props: {
+    backendUrl: String,
+    token: String,
+  },
   created() {
     this.fetchSchema()
   },
@@ -83,8 +84,14 @@ export default {
     fetchSchema() {
       const url = this.backendUrl + '/api/v1/statement/schema'
 
+      const authHeader = {
+        'Content-Type': 'application/json;charset=UTF-8',
+        Authorization: 'Bearer ' + this.token
+      }
+
       axios
-        .get(url, { auth: { username: this.authUser, password: this.authPassword } })
+        //.get(url, { auth: { username: this.authUser, password: this.authPassword } })
+        .get(url, { headers: authHeader })
         .then((result) => {
           console.log('Fetch xAPI statements schema', result)
           this.filterAttributes = result.data
@@ -101,8 +108,6 @@ export default {
         })
     },
     queryBuilder() {
-      console.log('Filter Builder: ', this.filterBuilder)
-      console.log('Operation Builder: ', this.operationBuilder)
 
       this.result = null
       this.queryOutput = null
@@ -145,14 +150,11 @@ export default {
             selectedComparison: filter.selectedComparison,
             selectedValueFilter: convertedValue
           }
-          console.log(this.buildFilterQueryObject(adjustedFilter))
           input.search[connectionKey].push(this.buildFilterQueryObject(adjustedFilter))
         } else {
           input.search[connectionKey].push(this.buildFilterQueryObject(filter))
         }
       }
-
-      console.log(input.search)
 
       if (this.querySkip !== '') {
         const skipObject = {
@@ -229,7 +231,6 @@ export default {
     buildFilterQueryObject(filter) {
       let filterValue = filter.selectedValueFilter
 
-      console.log(filterValue)
       if (!Array.isArray(filterValue) && !isNaN(filterValue)) {
         filterValue = Number(filterValue)
       }
@@ -286,7 +287,6 @@ export default {
               search: {},
               operations: []
             }
-            console.log(query)
 
             if ('filter' in query && query.filter) {
               input.search = { ...query.filter }
@@ -310,22 +310,26 @@ export default {
 
             input.operations.push(operation)
 
+            const authHeader = {
+              'Content-Type': 'application/json;charset=UTF-8',
+              Authorization: 'Bearer ' + this.token
+            }
+
             requests.push(
-              axios.post(queryUrl, input, {
+              /* axios.post(queryUrl, input, {
                 auth: { username: this.authUser, password: this.authPassword }
-              })
+              }) */
+              axios.post(queryUrl, input, { headers: authHeader })
             )
           }
 
           axios.all(requests).then(
             axios.spread((...results) => {
               //shoudl only have one statement per result
-              console.log('Result', results)
 
               let res = null
               //immer das erste element in aggregate --> vlt mal noch Validerung etc.
               const operands = results.map((result) => result.data.aggregate[0].value)
-              console.log(operands)
               switch (arithmeticOperation) {
                 case 'add':
                   res = operands.reduce((accumulator, currentValue) => accumulator + currentValue)
@@ -367,10 +371,16 @@ export default {
       const queryUrl = this.backendUrl + '/api/v1/statement/query'
       this.result = 'Suchen...'
 
+      const authHeader = {
+        'Content-Type': 'application/json;charset=UTF-8',
+        Authorization: 'Bearer ' + this.token
+      }
+
       axios
-        .post(queryUrl, input, {
+        /* .post(queryUrl, input, {
           auth: { username: this.authUser, password: this.authPassword }
-        })
+        }) */
+        .post(queryUrl, input, { headers: authHeader })
         .then((result) => {
           console.log('Query result', result)
 
@@ -404,7 +414,6 @@ export default {
       //TODO: check special case if attribute = timestamp
 
       if (operator === '$in' || operator === '$nin') {
-        console.log('in')
         if (Array.isArray(value)) {
           for (const el of value) {
             if (typeof el !== attributeObject.type) {
@@ -443,7 +452,6 @@ export default {
       return true
     },
     validateFilters(filter) {
-      console.log(filter)
       if (Object.keys(filter).length === 1) {
         const filterElement = Object.keys(filter)[0]
         const validConnections = ['$and', '$or']
@@ -627,8 +635,14 @@ export default {
 
       filter.suggestions = []
 
+      const authHeader = {
+        'Content-Type': 'application/json;charset=UTF-8',
+        Authorization: 'Bearer ' + this.token
+      }
+
       axios
-        .get(url, { auth: { username: this.authUser, password: this.authPassword } })
+        //.get(url, { auth: { username: this.authUser, password: this.authPassword } })
+        .get(url, { headers: authHeader })
         .then((result) => {
           console.log('Fetch suggestions for xAPI statement attribute', result)
           filter.suggestions = result.data
@@ -699,7 +713,7 @@ export default {
               Lernenden personalisierte Assistenzangebote zur Verfügung zu stellen. Diese Assistenzangebote sind oft
               vordefiniert und damit hat der Lehrende keine Einsicht, welche Lernverlaufsdaten dafür verwendet werden.
               Im Rahmen meiner Diplomarbeit wurde ein Konzept entwickelt, mit dem Lehrende in der Lage sein sollen,
-              solche Lernverlaufsdaten selbständig abzufragen und zu aggregieren. Auf Basis dieses Konzept wurde dieser
+              solche Lernverlaufsdaten selbständig abzufragen und zu aggregieren. Auf Basis dieses Konzepts wurde dieser
               Prototyp erstellt.
 
               <h3>Query Builder</h3>

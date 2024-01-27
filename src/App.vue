@@ -112,7 +112,7 @@ export default {
     />
     <ModuleSelection v-if="currentView === 'moduleSelection'" />
     <LearningPathManager v-if="currentView === 'learningPathManager'" />
-    <QueryView v-if="currentView === 'query'" />
+    <QueryView :backendUrl="backendUrl" :token="token" v-if="currentView === 'query'" />
     <Settings v-if="currentView === 'settings'" />
   </div>
 </template>
