@@ -71,7 +71,7 @@ function initDashboard(initDashboardData: DashboardData) {
 
 // Local development: Uncomment this lines and remove type from "import type ..."
 // TODO: Find a better solution for local development: https://stackoverflow.com/questions/70709987/how-to-load-environment-variables-from-env-file-using-vite
-const backendUrl = 'http://develop.verdatas.inf.tu-dresden.de:8062'
+const backendUrl =  'https://tasverdatas.showcase.verdatas.inf.tu-dresden.de' //'http://develop.verdatas.inf.tu-dresden.de:8062'
 const pseudoId = 'verdatas1'
 const authUrl = backendUrl + '/api/v1/auth/login'
 const request = {
