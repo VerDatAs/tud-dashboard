@@ -25,7 +25,7 @@ export default {
 <template>
   <aside :class="`${isExpanded ? 'is-expanded' : ''}`">
     <div class="menu">
-      <div class="tab" @click="setCurrentView($event, 'knowledgeStructure')" title="Wissensstruktur">
+      <div class="tab active" @click="setCurrentView($event, 'knowledgeStructure')" title="Wissensstruktur">
         <font-awesome-icon class="icon" icon="sitemap" />
         <span class="text">Wissensstruktur</span>
       </div>
@@ -37,8 +37,7 @@ export default {
         <font-awesome-icon class="icon" icon="bezier-curve" />
         <span class="text">Lernpfade</span>
       </div>
-      <!-- Remove after Evaluation -->
-      <div class="tab active" @click="setCurrentView($event, 'query')" title="Datenabfrage">
+      <div class="tab" @click="setCurrentView($event, 'query')" title="Datenabfrage">
         <font-awesome-icon class="icon" icon="magnifying-glass" />
         <span class="text">Datenabfrage</span>
       </div>

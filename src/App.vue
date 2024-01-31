@@ -23,8 +23,8 @@ export default {
   data() {
     return {
       diagram: null,
-      diagramLoaded: false,
-      currentView: 'query',
+      diagramLoaded: true,
+      currentView: 'knowledgeStructure',
       isExpanded: ref(localStorage.getItem('is_expanded') === 'true')
     }
   },
