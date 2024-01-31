@@ -1,4 +1,4 @@
-//Currently supported comparison operators
+// The currently supported comparison operators
 export const comparisonOperators = [
   { displayName: 'gleich (=)', value: '$eq' },
   { displayName: 'nicht gleich (!=)', value: '$ne' },
@@ -10,7 +10,7 @@ export const comparisonOperators = [
   { displayName: 'nicht in ([])', value: '$nin' }
 ]
 
-//Currently supported aggregation operations
+// The currently supported aggregation operations
 export const aggregationOperators = [
   { displayName: 'min', value: '$min' },
   { displayName: 'max', value: '$max' },
@@ -18,11 +18,13 @@ export const aggregationOperators = [
   { displayName: 'sum', value: '$sum' }
 ]
 
+// The currently supported connections for filter
 export const Connections = {
   AND: '$and',
   OR: '$or'
 }
 
+// The currently available examples for the Code Editor
 export const queryExamples = [
   {
     name: 'Einfaches Filterbeispiel 1',
