@@ -601,14 +601,14 @@ export default {
   <div id="graph-viewer" class="rasterBackground" :class="canViewOnly ? 'canViewOnly' : ''">
     <div v-if="!canViewOnly && showEmptyMessage" class="empty">
       <p class="empty-message">
-        Please add learning content like modules, chapters and tests to see them visualized here!
+        Bitte fügen Sie Lerninhalte wie Module, Kapitel und Tests hinzu, um diese hier zu visualisieren.
       </p>
     </div>
     <div v-if="!canViewOnly" class="autosave">
       <p id="autosave-message" class="autosave-message">
-        {{ settings.autosave ? 'Auto-Save is On' : 'Auto-Save is Off' }}
+        {{ settings.autosave ? 'Auto-Save ist aktiviert.' : 'Auto-Save ist deaktiviert.' }}
       </p>
-      <p id="loading" class="loading" style="display: none">Saving<span>.</span><span>.</span><span>.</span></p>
+      <p id="loading" class="loading" style="display: none">Speichern<span>.</span><span>.</span><span>.</span></p>
     </div>
   </div>
 </template>
@@ -639,9 +639,11 @@ export default {
   top: 20%;
 }
 .empty-message {
+  border: 1px solid #ddd;
+  border-radius: 3px;
   width: 75%;
   background: white;
-  margin: auto;
+  margin: 0 auto !important;
   padding: 3%;
 }
 .autosave {
@@ -651,7 +653,9 @@ export default {
   bottom: 1%;
 }
 .autosave p {
-  width: 15%;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  width: 200px;
   background: white;
   margin: auto;
   padding: 1%;

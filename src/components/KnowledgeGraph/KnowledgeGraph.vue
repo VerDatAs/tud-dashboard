@@ -26,12 +26,15 @@ export default {
     diagramLoaded: Boolean,
     courseNode: Object,
     token: String,
-    canViewOnly: Boolean
+    canViewOnly: Boolean,
+    members: Array,
+    isExpanded: Boolean
   },
   created() {
     document.addEventListener('fullscreenchange', () => {
       if (!document.fullscreenElement) {
         this.isMaximized = false
+        document.getElementById('verdatas-dashboard').classList.remove('fullViewHeight')
         this.centerCanvas()
       }
     })
@@ -74,7 +77,7 @@ export default {
       }
     },
     toggleView() {
-      const elem = document.getElementById('knowledge-graph')
+      const elem = document.getElementById('dashboardApp')
       if (!this.isMaximized) {
         this.openFullscreen(elem)
       } else {
@@ -91,6 +94,7 @@ export default {
       } else if (elem.msRequestFullscreen) {
         elem.msRequestFullscreen()
       }
+      document.getElementById('verdatas-dashboard').classList.add('fullViewHeight')
       this.centerCanvas()
     },
     closeFullscreen() {
@@ -101,6 +105,7 @@ export default {
       } else if (document.msExitFullscreen) {
         document.msExitFullscreen()
       }
+      document.getElementById('verdatas-dashboard').classList.remove('fullViewHeight')
       this.centerCanvas()
     }
   }
@@ -108,7 +113,7 @@ export default {
 </script>
 
 <template>
-  <div id="knowledge-graph">
+  <div id="knowledge-graph" :class="isExpanded ? 'margin-250' : ''">
     <GraphControls
       v-if="!canViewOnly"
       :is-maximized="isMaximized"
@@ -132,10 +137,12 @@ export default {
       @updateMetamodel="updateMetamodel"
     />
     <PropertiesPanel
+      :backendUrl="backendUrl"
       :diagram="diagram"
       :elementSelected="elementSelected"
       :metamodel="metamodel"
       :canViewOnly="canViewOnly"
+      :members="members"
       @changeInput="changeInput"
     />
   </div>
@@ -145,5 +152,9 @@ export default {
 #knowledge-graph {
   height: 100%;
   position: relative;
+}
+
+.margin-250 {
+  margin-left: 250px;
 }
 </style>

@@ -2,10 +2,8 @@
 import { ref } from 'vue'
 
 export default {
-  data() {
-    return {
-      is_expanded: ref(localStorage.getItem('is_expanded') === 'true')
-    }
+  props: {
+    isExpanded: Boolean
   },
   methods: {
     setCurrentView(evt, viewName) {
@@ -18,31 +16,34 @@ export default {
       }
     },
     toggleMenu() {
-      this.is_expanded = !this.is_expanded
-      localStorage.setItem('is_expanded', this.is_expanded)
+      this.$emit('toggleNavigationExpanded', !this.isExpanded)
     }
   }
 }
 </script>
 
 <template>
-  <aside :class="`${is_expanded ? 'is-expanded' : ''}`">
+  <aside :class="`${isExpanded ? 'is-expanded' : ''}`">
     <div class="menu">
-      <div class="tab active" @click="setCurrentView($event, 'knowledgeStructure')" title="Knowledge Structure">
+      <div class="tab active" @click="setCurrentView($event, 'knowledgeStructure')" title="Wissensstruktur">
         <font-awesome-icon class="icon" icon="sitemap" />
-        <span class="text">Knowledge Structure</span>
+        <span class="text">Wissensstruktur</span>
       </div>
-      <div class="tab" @click="setCurrentView($event, 'moduleSelection')" title="Choose modules">
+      <div class="tab" @click="setCurrentView($event, 'moduleSelection')" title="Modulauswahl">
         <font-awesome-icon class="icon" icon="folder" />
-        <span class="text">Choose modules</span>
+        <span class="text">Modulauswahl</span>
       </div>
-      <div class="tab" @click="setCurrentView($event, 'learningPathManager')" title="Learning paths">
+      <div class="tab" @click="setCurrentView($event, 'collaborationMonitoring')" title="Kollaborationen">
+        <font-awesome-icon class="icon" icon="users" />
+        <span class="text">Kollaborationen</span>
+      </div>
+      <div class="tab" @click="setCurrentView($event, 'learningPathManager')" title="Lernpfade">
         <font-awesome-icon class="icon" icon="bezier-curve" />
-        <span class="text">Learning paths</span>
+        <span class="text">Lernpfade</span>
       </div>
-      <div class="tab" @click="setCurrentView($event, 'settings')" title="Settings">
+      <div class="tab" @click="setCurrentView($event, 'settings')" title="Einstellungen">
         <font-awesome-icon class="icon" icon="gear" />
-        <span class="text">Settings</span>
+        <span class="text">Einstellungen</span>
       </div>
     </div>
 

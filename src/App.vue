@@ -1,15 +1,18 @@
 <script>
 import KnowledgeGraph from '@/components/KnowledgeGraph/KnowledgeGraph.vue'
+import CollaborationMonitoring from '@/components/CollaborationMonitoring.vue'
 import LearningPathManager from '@/components/LearningPathManager.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import ModuleSelection from '@/components/ModuleSelection.vue'
 import NavigationView from '@/components/NavigationView.vue'
 import Settings from '@/components/SettingsView.vue'
 import { DashboardData } from '@/types/dashboard-data'
+import { ref } from 'vue'
 
 export default {
   name: 'VerDatAsDashboard',
   components: {
+    CollaborationMonitoring,
     KnowledgeGraph,
     LearningPathManager,
     LoadingScreen,
@@ -19,13 +22,10 @@ export default {
   },
   data() {
     return {
-      courseNode: null,
-      token: '',
       diagram: null,
       diagramLoaded: false,
       currentView: 'knowledgeStructure',
-      canViewOnly: true,
-      previewMode: false
+      isExpanded: ref(localStorage.getItem('is_expanded') === 'true')
     }
   },
   props: {
@@ -49,9 +49,22 @@ export default {
     },
     previewMode() {
       return this.initDashboardData?.previewMode ?? false
+    },
+    members() {
+      return this.initDashboardData?.members ?? []
     }
   },
+  created() {
+    this.initDashboardApp()
+  },
   methods: {
+    initDashboardApp() {
+      // https://stackoverflow.com/a/69196265
+      // TODO: This will center the canvas on every resize. Improve if possible.
+      new ResizeObserver(() => {
+        this.$refs.knowledgeGraph?.centerCanvas()
+      }).observe(document.getElementById('dashboardApp'))
+    },
     changeDiagramLoaded(diagramLoaded) {
       this.diagramLoaded = diagramLoaded
     },
@@ -62,6 +75,14 @@ export default {
     },
     setDiagram(diagram) {
       this.diagram = diagram
+    },
+    toggleNavigationExpanded(value) {
+      this.isExpanded = value
+      localStorage.setItem('is_expanded', this.isExpanded + '')
+      // TODO: This somehow makes the height larger than expected
+      setTimeout(() => {
+        this.$refs.knowledgeGraph?.centerCanvas()
+      }, 100)
     }
   }
 }
@@ -69,22 +90,35 @@ export default {
 
 <template>
   <div id="verdatas-dashboard">
-    <NavigationView v-if="!canViewOnly" @setCurrentView="setCurrentView" />
+    <NavigationView
+      v-if="!canViewOnly"
+      :isExpanded="isExpanded"
+      @setCurrentView="setCurrentView"
+      @toggleNavigationExpanded="toggleNavigationExpanded"
+    />
     <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
     <KnowledgeGraph
+      ref="knowledgeGraph"
       v-show="currentView === 'knowledgeStructure'"
       :backendUrl="backendUrl"
       :courseNode="courseNode"
+      :isExpanded="isExpanded"
       :token="token"
       :currentView="currentView"
       :diagram="diagram"
       :diagramLoaded="diagramLoaded"
       :canViewOnly="canViewOnly"
+      :members="members"
       @loadedDiagram="changeDiagramLoaded"
       @setCurrentView="setCurrentView"
       @setDiagram="setDiagram"
     />
     <ModuleSelection v-if="currentView === 'moduleSelection'" />
+    <CollaborationMonitoring
+      :backendUrl="backendUrl"
+      :isExpanded="isExpanded"
+      v-if="currentView === 'collaborationMonitoring'"
+    />
     <LearningPathManager v-if="currentView === 'learningPathManager'" />
     <Settings v-if="currentView === 'settings'" />
   </div>
@@ -93,9 +127,11 @@ export default {
 <style scoped>
 #verdatas-dashboard {
   outline: none !important;
+  border: 1px solid #ddd;
+  border-radius: 3px;
   position: relative;
   height: 600px;
-  margin-top: 10px;
+  width: 100%;
   margin-bottom: 10px;
 }
 </style>

@@ -5,6 +5,7 @@ export class DashboardData {
   path?: string
   canViewOnly?: boolean
   previewMode?: boolean
+  members?: string[]
 
   constructor(courseNode: Object, token: string, backendUrl: string) {
     this.courseNode = courseNode

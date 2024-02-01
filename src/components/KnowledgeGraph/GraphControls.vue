@@ -19,7 +19,7 @@ export default {
       this.$emit('saveXML', true)
     },
     toggleView() {
-      this.$emit('toggleView')
+      this.$emit('toggleView', true)
     }
   }
 }
@@ -32,7 +32,7 @@ export default {
       icon="maximize"
       size="lg"
       @click="toggleView()"
-      :title="isMaximized ? 'Close Fullscreen' : 'Enter Fullscreen'"
+      :title="isMaximized ? 'Vollbild-Modus beenden' : 'Vollbild-Modus einschalten'"
     />
   </div>
   <div id="controls">
@@ -42,7 +42,7 @@ export default {
       icon="refresh"
       size="xl"
       @click="redrawKnowledgeGraph()"
-      title="Redraw Graph"
+      title="Graph neuzeichnen"
     />
     <font-awesome-icon
       v-if="settings.debugging"
@@ -50,23 +50,29 @@ export default {
       icon="download"
       size="xl"
       @click="saveXML()"
-      title="Download Graph"
+      title="Graph herunterladen"
     />
-    <font-awesome-icon class="icon" icon="floppy-disk" size="xl" @click="saveKnowledgeGraph()" title="Save Graph" />
+    <font-awesome-icon
+      class="icon"
+      icon="floppy-disk"
+      size="xl"
+      @click="saveKnowledgeGraph()"
+      title="Graph speichern"
+    />
   </div>
 </template>
 
 <style scoped>
 #controls {
   position: absolute;
-  bottom: 2px;
-  right: 2px;
+  bottom: 10px;
+  right: 10px;
   z-index: 6;
 }
 #maximize {
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: 10px;
+  right: 10px;
   z-index: 6;
 }
 .icon {

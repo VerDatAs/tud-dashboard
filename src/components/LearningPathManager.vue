@@ -1,7 +1,7 @@
 <template>
   <div id="learning-path-manager">
     <div class="container py-4" style="max-width: 100%">
-      <h2>LearningPath Manager</h2>
+      <h2>Lernpfad-Verwaltung</h2>
       <p>...</p>
     </div>
   </div>

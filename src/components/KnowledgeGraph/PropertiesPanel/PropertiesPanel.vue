@@ -1,8 +1,10 @@
 <script>
+import axios from 'axios'
 import { markRaw } from 'vue'
 import VueMultiselect from 'vue-multiselect'
 import BasicTypes from './BasicTypes.vue'
 import { basicTypes, customTypes, excludedParameters, nonSelectableElements } from '@/util/GraphHelpers'
+import { useCollaborationsStore } from '@/stores/collaborations'
 
 export default {
   name: 'PropertiesPanel',
@@ -16,13 +18,28 @@ export default {
     parameters: [],
     parametrizedElement: null,
     priorKnowledgeValue: null,
-    referencedTestValue: null
+    referencedTestValue: null,
+    collaborationType: 'peer_collaboration',
+    collaborationUserName: '',
+    collaborationUserPassword: '',
+    collaborationMembers: [],
+    selectedCollaborationMembers: [],
+    startCollaborationInProgress: false,
+    collaborationStartSuccessfully: false,
+    collaborationStore: useCollaborationsStore()
   }),
   props: {
+    backendUrl: String,
     diagram: Object,
     elementSelected: Object,
     metamodel: Object,
-    canViewOnly: Boolean
+    canViewOnly: Boolean,
+    members: Array
+  },
+  created() {
+    this.collaborationMembers = this.members;
+    // select all members by default
+    this.selectedCollaborationMembers = this.members.map((member) => member.id);
   },
   watch: {
     // whenever the selected element changes, do something
@@ -158,6 +175,57 @@ export default {
         referencedTestElements.push(element)
       })
       this.changeInput(parameterName, referencedTestElements)
+    },
+    startCollaboration() {
+      if (!this.collaborationUserName || this.collaborationUserName === '' || !this.collaborationUserPassword || this.collaborationUserPassword === '') {
+        return
+      }
+      this.startCollaborationInProgress = true
+      const url = this.backendUrl + '/api/v1/auth/login'
+      const request = {
+        actorAccountName: this.collaborationUserName,
+        password: this.collaborationUserPassword
+      }
+      axios.post(url, request).then((data) => {
+        console.log('Admin login', data)
+        const token = data.data.token
+        // store token for usage in collaboration monitoring
+        this.collaborationStore.adminToken = token
+        const authHeader = {
+          'Content-Type': 'application/json;charset=UTF-8',
+          Authorization: 'Bearer ' + token
+        }
+        const assistanceUrl = this.backendUrl + '/api/v1/assistance'
+        const assistanceRequest = {
+          type: 'peer_collaboration',
+          language: 'de',
+          parameters: [
+            {
+              key: 'initiator',
+              value: this.collaborationUserName
+            },
+            {
+              key: 'collaborators',
+              value: this.selectedCollaborationMembers
+            }
+          ]
+        }
+        axios.post(assistanceUrl, assistanceRequest, { headers: authHeader }).then((data) => {
+          console.log('Started collaboration', data)
+          const startedAssistanceArray = data?.data?.assistance
+          startedAssistanceArray?.forEach((assistance) => {
+            if (assistance.aId) {
+              this.collaborationStore.collaborations.push(assistance.aId)
+            }
+          })
+          // TODO: Handle error cases (e.g., wrong password)
+          this.collaborationStartSuccessfully = true
+          setTimeout(() => {
+            this.startCollaborationInProgress = false
+            this.collaborationStartSuccessfully = false
+          }, 20000)
+        });
+      })
     }
   }
 }
@@ -218,9 +286,9 @@ export default {
               </template>
               <template v-if="parameter.type === 'verDatAs:ReferencedTest'">
                 <div class="col-xs-12">
-                  <label :for="parameter.name" class="control-label">{{
-                    elementSelected.type === 'verDatAs:Topic' ? 'finalTests' : parameter.name
-                  }}</label>
+                  <label :for="parameter.name" class="control-label">
+                    {{ elementSelected.type === 'verDatAs:Topic' ? 'finalTests' : parameter.name }}
+                  </label>
                 </div>
                 <div class="col-xs-12">
                   <!-- Options retrieved from https://vue-multiselect.js.org/#sub-custom-option-template -->
@@ -268,60 +336,49 @@ export default {
             </div>
           </div>
         </div>
+        <div class="form-horizontal row" v-if="members && members.length > 0">
+          <hr>
+          <div class="col-xs-12">
+            <h6>
+              Kollaboration starten ({{ selectedCollaborationMembers.length }} Nutzer)
+            </h6>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-12">
+              <label for="collborationUser" class="control-label">
+                Admin-Username
+              </label>
+              <input id="collborationUser" class="form-control" type="text" v-model="collaborationUserName" />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-12">
+              <label for="collborationPassword" class="control-label">
+                Admin-Passwort
+              </label>
+              <input id="collborationPassword" class="form-control" type="password" v-model="collaborationUserPassword" />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-12">
+              <div class="form-check" v-for="member in collaborationMembers" :key="member.id">
+                <input :id="'member_' + member.id" class="form-check-input" type="checkbox" v-model="selectedCollaborationMembers" :value="member.id"/>
+                <label :for="'member_' + member.id">{{ member.username }}</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-12">
+              <div class="alert alert-success mb-0" v-if="collaborationStartSuccessfully">
+                Die Kollaboration wurde erfolgreich gestartet.
+              </div>
+            </div>
+            <div class="col-xs-12">
+              <button class="btn btn-primary mt-2" type="button" @click="startCollaboration()" :disabled="startCollaborationInProgress">Bestätigen</button>
+            </div>
+          </div>
+        </div>
       </div>
-
-      <!-- TODO: This might be more dynamic in the future -->
-      <!-- However, for the moment, we want to allow having "custom" inputs -->
-      <!-- 'id', 'name', 'objectId', 'objectLink', 'priorKnowledgeElements', 'level',
-        'learningPathElements', 'selfRatingElements', 'modules', 'learningPaths',
-        'processingTime', 'structure', 'chapters', 'contentPages', 'interactiveTasks', 'concludeModule' -->
-      <!-- <input id="name" class="form-control" type="text" placeholder="name for graph (TODO)" style="display: none;" /> -->
-
-      <!-- text -->
-      <!--      <label id="objectIdLabel" for="objectId">objectId</label>-->
-      <!--      <input id="objectId" name="objectId" class="form-control" type="text" placeholder="ID (object.id)" style="display: none;" />-->
-
-      <!--      <label id="objectLinkLabel" for="objectLink">objectLink</label>-->
-      <!--      <input id="objectLink" name="objectLink" class="form-control" type="text" placeholder="Link (object.moreInfo)" style="display: none;" />-->
-
-      <!--      <hr>-->
-
-      <!--      &lt;!&ndash; number &ndash;&gt;-->
-      <!--      <label id="processingTimeLabel" for="processingTime">processingTime</label>-->
-      <!--      <input id="processingTime" name="processingTime" class="form-control" type="number" placeholder="processing time in s" style="display: none;" />-->
-
-      <!--      &lt;!&ndash; array &ndash;&gt;-->
-      <!--      <label id="selfRatingElementsLabel" for="selfRatingElements">selfRatingElements</label>-->
-      <!--      <input id="selfRatingElements" name="selfRatingElements" class="form-control" type="text" placeholder="['ID1', 'ID2']" style="display: none;" />-->
-
-      <!--      <label id="priorKnowledgeElementsLabel" for="priorKnowledgeElements">priorKnowledgeElements</label>-->
-      <!--      <input id="priorKnowledgeElements" name="priorKnowledgeElements" class="form-control" type="text" placeholder="['ID1', 'ID2']" style="display: none;" />-->
-
-      <!--      <label id="contentPagesLabel" for="contentPages">contentPages</label>-->
-      <!--      <input id="contentPages" name="contentPages" class="form-control" type="text" placeholder="['ID1', 'ID2']" style="display: none;" />-->
-
-      <!--      &lt;!&ndash; select (boolean, enum) &ndash;&gt;-->
-      <!--      <label id="levelLabel" for="level">level</label>-->
-      <!--      <select id="level" name="level" class="form-control" style="display: none;">-->
-      <!--        <option value="">&#45;&#45; level of difficulty &#45;&#45;</option>-->
-      <!--        <option value="beginner">beginner</option>-->
-      <!--        <option value="experienced">experienced</option>-->
-      <!--        <option value="expert">expert</option>-->
-      <!--      </select>-->
-
-      <!--      <label id="concludeModuleLabel" for="concludeModule">concludeModule</label>-->
-      <!--      <select id="concludeModule" name="concludeModule" class="form-control" style="display: none;">-->
-      <!--        <option value="">&#45;&#45; conclude module? &#45;&#45;</option>-->
-      <!--        <option value="true">true</option>-->
-      <!--        <option value="false">false</option>-->
-      <!--      </select>-->
-
-      <!--      &lt;!&ndash; other parameters: TODO &ndash;&gt;-->
-      <!--      <label id="structureLabel" for="structure">structure</label>-->
-      <!--      <input id="structure" name="structure" class="form-control" type="text" placeholder="TODO" style="display: none;" disabled />-->
-
-      <!--      <label id="learningPathsLabel" for="learningPaths">learningPaths</label>-->
-      <!--      <input id="learningPaths" name="learningPaths" class="form-control" type="text" placeholder="TODO" style="display: none;" disabled />-->
     </div>
   </div>
 </template>
@@ -329,14 +386,16 @@ export default {
 <style scoped>
 #propertiesPanel {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  height: calc(100% - 40px);
+  top: 45px;
+  right: 0;
+  height: calc(100% - 90px);
   width: 250px;
   padding: 10px;
-  color: #333333;
+  color: #333;
   background: #fafafa;
-  border: 1px solid #ccc;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
   border-top-left-radius: 3px;
   border-bottom-left-radius: 3px;
   overflow-x: hidden;
