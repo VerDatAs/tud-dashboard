@@ -1,5 +1,6 @@
 <script>
 import KnowledgeGraph from '@/components/KnowledgeGraph/KnowledgeGraph.vue'
+import CollaborationMonitoring from '@/components/CollaborationMonitoring.vue'
 import LearningPathManager from '@/components/LearningPathManager.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import ModuleSelection from '@/components/ModuleSelection.vue'
@@ -11,6 +12,7 @@ import { ref } from 'vue'
 export default {
   name: 'VerDatAsDashboard',
   components: {
+    CollaborationMonitoring,
     KnowledgeGraph,
     LearningPathManager,
     LoadingScreen,
@@ -20,13 +22,9 @@ export default {
   },
   data() {
     return {
-      courseNode: null,
-      token: '',
       diagram: null,
       diagramLoaded: false,
       currentView: 'knowledgeStructure',
-      canViewOnly: true,
-      previewMode: false,
       isExpanded: ref(localStorage.getItem('is_expanded') === 'true')
     }
   },
@@ -51,6 +49,9 @@ export default {
     },
     previewMode() {
       return this.initDashboardData?.previewMode ?? false
+    },
+    members() {
+      return this.initDashboardData?.members ?? []
     }
   },
   created() {
@@ -61,7 +62,7 @@ export default {
       // https://stackoverflow.com/a/69196265
       // TODO: This will center the canvas on every resize. Improve if possible.
       new ResizeObserver(() => {
-        this.$refs.knowledgeGraph.centerCanvas()
+        this.$refs.knowledgeGraph?.centerCanvas()
       }).observe(document.getElementById('dashboardApp'))
     },
     changeDiagramLoaded(diagramLoaded) {
@@ -80,7 +81,7 @@ export default {
       localStorage.setItem('is_expanded', this.isExpanded + '')
       // TODO: This somehow makes the height larger than expected
       setTimeout(() => {
-        this.$refs.knowledgeGraph.centerCanvas()
+        this.$refs.knowledgeGraph?.centerCanvas()
       }, 100)
     }
   }
@@ -107,11 +108,17 @@ export default {
       :diagram="diagram"
       :diagramLoaded="diagramLoaded"
       :canViewOnly="canViewOnly"
+      :members="members"
       @loadedDiagram="changeDiagramLoaded"
       @setCurrentView="setCurrentView"
       @setDiagram="setDiagram"
     />
     <ModuleSelection v-if="currentView === 'moduleSelection'" />
+    <CollaborationMonitoring
+      :backendUrl="backendUrl"
+      :isExpanded="isExpanded"
+      v-if="currentView === 'collaborationMonitoring'"
+    />
     <LearningPathManager v-if="currentView === 'learningPathManager'" />
     <Settings v-if="currentView === 'settings'" />
   </div>

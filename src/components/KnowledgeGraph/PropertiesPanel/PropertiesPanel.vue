@@ -1,8 +1,10 @@
 <script>
+import axios from 'axios'
 import { markRaw } from 'vue'
 import VueMultiselect from 'vue-multiselect'
 import BasicTypes from './BasicTypes.vue'
 import { basicTypes, customTypes, excludedParameters, nonSelectableElements } from '@/util/GraphHelpers'
+import { useCollaborationsStore } from '@/stores/collaborations'
 
 export default {
   name: 'PropertiesPanel',
@@ -16,13 +18,28 @@ export default {
     parameters: [],
     parametrizedElement: null,
     priorKnowledgeValue: null,
-    referencedTestValue: null
+    referencedTestValue: null,
+    collaborationType: 'peer_collaboration',
+    collaborationUserName: '',
+    collaborationUserPassword: '',
+    collaborationMembers: [],
+    selectedCollaborationMembers: [],
+    startCollaborationInProgress: false,
+    collaborationStartSuccessfully: false,
+    collaborationStore: useCollaborationsStore()
   }),
   props: {
+    backendUrl: String,
     diagram: Object,
     elementSelected: Object,
     metamodel: Object,
-    canViewOnly: Boolean
+    canViewOnly: Boolean,
+    members: Array
+  },
+  created() {
+    this.collaborationMembers = this.members;
+    // select all members by default
+    this.selectedCollaborationMembers = this.members.map((member) => member.id);
   },
   watch: {
     // whenever the selected element changes, do something
@@ -158,6 +175,57 @@ export default {
         referencedTestElements.push(element)
       })
       this.changeInput(parameterName, referencedTestElements)
+    },
+    startCollaboration() {
+      if (!this.collaborationUserName || this.collaborationUserName === '' || !this.collaborationUserPassword || this.collaborationUserPassword === '') {
+        return
+      }
+      this.startCollaborationInProgress = true
+      const url = this.backendUrl + '/api/v1/auth/login'
+      const request = {
+        actorAccountName: this.collaborationUserName,
+        password: this.collaborationUserPassword
+      }
+      axios.post(url, request).then((data) => {
+        console.log('Admin login', data)
+        const token = data.data.token
+        // store token for usage in collaboration monitoring
+        this.collaborationStore.adminToken = token
+        const authHeader = {
+          'Content-Type': 'application/json;charset=UTF-8',
+          Authorization: 'Bearer ' + token
+        }
+        const assistanceUrl = this.backendUrl + '/api/v1/assistance'
+        const assistanceRequest = {
+          type: 'peer_collaboration',
+          language: 'de',
+          parameters: [
+            {
+              key: 'initiator',
+              value: this.collaborationUserName
+            },
+            {
+              key: 'collaborators',
+              value: this.selectedCollaborationMembers
+            }
+          ]
+        }
+        axios.post(assistanceUrl, assistanceRequest, { headers: authHeader }).then((data) => {
+          console.log('Started collaboration', data)
+          const startedAssistanceArray = data?.data?.assistance
+          startedAssistanceArray?.forEach((assistance) => {
+            if (assistance.aId) {
+              this.collaborationStore.collaborations.push(assistance.aId)
+            }
+          })
+          // TODO: Handle error cases (e.g., wrong password)
+          this.collaborationStartSuccessfully = true
+          setTimeout(() => {
+            this.startCollaborationInProgress = false
+            this.collaborationStartSuccessfully = false
+          }, 20000)
+        });
+      })
     }
   }
 }
@@ -265,6 +333,48 @@ export default {
             </template>
             <div class="col-xs-12" v-if="!basicTypes.includes(parameter.type) && !customTypes.includes(parameter.type)">
               <p class="alert alert-info py-3 mb-2">The parameter {{ parameter.name }} will be supported soon.</p>
+            </div>
+          </div>
+        </div>
+        <div class="form-horizontal row" v-if="members && members.length > 0">
+          <hr>
+          <div class="col-xs-12">
+            <h6>
+              Kollaboration starten ({{ selectedCollaborationMembers.length }} Nutzer)
+            </h6>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-12">
+              <label for="collborationUser" class="control-label">
+                Admin-Username
+              </label>
+              <input id="collborationUser" class="form-control" type="text" v-model="collaborationUserName" />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-12">
+              <label for="collborationPassword" class="control-label">
+                Admin-Passwort
+              </label>
+              <input id="collborationPassword" class="form-control" type="password" v-model="collaborationUserPassword" />
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-12">
+              <div class="form-check" v-for="member in collaborationMembers" :key="member.id">
+                <input :id="'member_' + member.id" class="form-check-input" type="checkbox" v-model="selectedCollaborationMembers" :value="member.id"/>
+                <label :for="'member_' + member.id">{{ member.username }}</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-xs-12">
+              <div class="alert alert-success mb-0" v-if="collaborationStartSuccessfully">
+                Die Kollaboration wurde erfolgreich gestartet.
+              </div>
+            </div>
+            <div class="col-xs-12">
+              <button class="btn btn-primary mt-2" type="button" @click="startCollaboration()" :disabled="startCollaborationInProgress">Bestätigen</button>
             </div>
           </div>
         </div>

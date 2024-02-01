@@ -27,6 +27,7 @@ export default {
     courseNode: Object,
     token: String,
     canViewOnly: Boolean,
+    members: Array,
     isExpanded: Boolean
   },
   created() {
@@ -136,10 +137,12 @@ export default {
       @updateMetamodel="updateMetamodel"
     />
     <PropertiesPanel
+      :backendUrl="backendUrl"
       :diagram="diagram"
       :elementSelected="elementSelected"
       :metamodel="metamodel"
       :canViewOnly="canViewOnly"
+      :members="members"
       @changeInput="changeInput"
     />
   </div>

@@ -33,6 +33,10 @@ export default {
         <font-awesome-icon class="icon" icon="folder" />
         <span class="text">Modulauswahl</span>
       </div>
+      <div class="tab" @click="setCurrentView($event, 'collaborationMonitoring')" title="Kollaborationen">
+        <font-awesome-icon class="icon" icon="users" />
+        <span class="text">Kollaborationen</span>
+      </div>
       <div class="tab" @click="setCurrentView($event, 'learningPathManager')" title="Lernpfade">
         <font-awesome-icon class="icon" icon="bezier-curve" />
         <span class="text">Lernpfade</span>
