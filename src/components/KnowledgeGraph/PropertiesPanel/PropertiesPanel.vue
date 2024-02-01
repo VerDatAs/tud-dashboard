@@ -188,7 +188,9 @@ export default {
       }
       axios.post(url, request).then((data) => {
         console.log('Admin login', data)
-        const token = data.data.token;
+        const token = data.data.token
+        // store token for usage in collaboration monitoring
+        this.collaborationStore.adminToken = token
         const authHeader = {
           'Content-Type': 'application/json;charset=UTF-8',
           Authorization: 'Bearer ' + token
@@ -216,6 +218,7 @@ export default {
               this.collaborationStore.collaborations.push(assistance.aId)
             }
           })
+          // TODO: Handle error cases (e.g., wrong password)
           this.collaborationStartSuccessfully = true
           setTimeout(() => {
             this.startCollaborationInProgress = false

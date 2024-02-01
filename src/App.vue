@@ -1,5 +1,6 @@
 <script>
 import KnowledgeGraph from '@/components/KnowledgeGraph/KnowledgeGraph.vue'
+import CollaborationMonitoring from '@/components/CollaborationMonitoring.vue'
 import LearningPathManager from '@/components/LearningPathManager.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import ModuleSelection from '@/components/ModuleSelection.vue'
@@ -11,6 +12,7 @@ import { ref } from 'vue'
 export default {
   name: 'VerDatAsDashboard',
   components: {
+    CollaborationMonitoring,
     KnowledgeGraph,
     LearningPathManager,
     LoadingScreen,
@@ -112,6 +114,11 @@ export default {
       @setDiagram="setDiagram"
     />
     <ModuleSelection v-if="currentView === 'moduleSelection'" />
+    <CollaborationMonitoring
+      :backendUrl="backendUrl"
+      :isExpanded="isExpanded"
+      v-if="currentView === 'collaborationMonitoring'"
+    />
     <LearningPathManager v-if="currentView === 'learningPathManager'" />
     <Settings v-if="currentView === 'settings'" />
   </div>
