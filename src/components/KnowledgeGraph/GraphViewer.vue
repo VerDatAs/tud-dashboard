@@ -36,8 +36,8 @@ export default {
   methods: {
     // Handles the retrieval of the diagram and loading into the editor
     initGraphViewer() {
-      if (!this.courseNode?.lcoType || !this.courseNode?.attributes || !this.getCourseNodeObjectId()) {
-        console.log('The courseNode is incomplete (missing lcoType, attributes or objectId).')
+      if (!this.courseNode?.lcoType || !this.courseNode?.objectId) {
+        console.log('The courseNode is incomplete (missing lcoType or objectId).')
         return
       }
 
@@ -45,7 +45,7 @@ export default {
       // yes? -> initialize modeler with the resulting diagram
       // example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
       // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
-      const encodedId = Base64.encodeURI(this.getCourseNodeObjectId())
+      const encodedId = Base64.encodeURI(this.courseNode.objectId)
       const knowledgeGraphUrl = this.backendUrl + '/api/v1/courses/' + encodedId + '/knowledge-graph'
       const authHeader = {
         'Content-Type': 'application/json;charset=UTF-8',
@@ -118,7 +118,7 @@ export default {
           if (!this.canViewOnly) {
             const knowledgeGraphTopic = elementRegistry.filter((element) => element.type === 'verDatAs:Topic')[0]
             const properties = {}
-            properties['objectId'] = this.getCourseNodeObjectId()
+            properties['objectId'] = this.courseNode.objectId
             modeling.updateProperties(knowledgeGraphTopic, properties)
 
             // Listen to selection changes and show propertiesPanel, inputs and listen for input changes
@@ -208,11 +208,11 @@ export default {
     },
     redrawKnowledgeGraph() {
       console.log('redrawKnowledgeGraph', this.courseNode)
-      if (!this.courseNode?.lcoType || !this.courseNode?.attributes) {
+      if (!this.courseNode?.lcoType || !this.courseNode?.objectId) {
         return
       }
 
-      const encodedId = Base64.encodeURI(this.getCourseNodeObjectId())
+      const encodedId = Base64.encodeURI(this.courseNode.objectId)
       const courseName = this.getAttributeValue(this.courseNode, 'name') ?? 'Unknown'
 
       // First, initialize modeler
@@ -231,7 +231,7 @@ export default {
             (element) => element.id === knowledgeGraphTopic.label?.id
           )
           const properties = {}
-          properties['objectId'] = this.getCourseNodeObjectId()
+          properties['objectId'] = this.courseNode.objectId
           modeling.updateProperties(knowledgeGraphTopic, properties)
           const topicTitle = this.getAttributeValue(this.courseNode, 'title') ?? 'Topic'
           modeling.updateLabel(knowledgeGraphTopic, topicTitle)
@@ -245,7 +245,7 @@ export default {
             const knowledgeGraphTests = []
             tests?.forEach((test, testIndex) => {
               const learningPathElementObject = this.diagram.get('moddle').create('verDatAs:Test', {
-                objectId: this.getAttributeValue(test, 'objectId') || 'test' + (testIndex + 1),
+                objectId: test.objectId || 'test' + (testIndex + 1),
                 title: this.getAttributeValue(test, 'title') || 'Test ' + (testIndex + 1)
               })
               knowledgeGraphTests.push(learningPathElementObject)
@@ -309,7 +309,7 @@ export default {
 
             // Update objectId and label
             const moduleProperties = {}
-            moduleProperties['objectId'] = this.getAttributeValue(module, 'objectId')
+            moduleProperties['objectId'] = module.objectId
             modeling.updateProperties(moduleShape, moduleProperties)
 
             const moduleTitle = this.getAttributeValue(module, 'title') ?? 'Module ' + (moduleIndex + 1)
@@ -347,7 +347,7 @@ export default {
 
               // Update objectId and contentPages
               const chapterProperties = {}
-              chapterProperties['objectId'] = this.getAttributeValue(chapter, 'objectId')
+              chapterProperties['objectId'] = chapter.objectId
 
               // Iterate contentPages of the chapter
               const contentPages = []
@@ -355,7 +355,7 @@ export default {
               this.getAttributeValue(chapter, 'contentPages')?.forEach((page, pageIndex) => {
                 let taskShapesBusinessObjects = []
                 const pageProperties = {
-                  objectId: this.getAttributeValue(page, 'objectId'),
+                  objectId: page.objectId,
                   title: this.getAttributeValue(page, 'title') || 'ContentPage ' + (pageIndex + 1)
                 }
                 // Iterate interactiveTasks of the contentPage
@@ -374,7 +374,7 @@ export default {
                   const taskDimensions = getDefaultSize(taskType.type)
                   const taskAttributes = { ...taskPosition, ...taskDimensions, ...taskType }
                   const taskShape = elementFactory.createShape(taskAttributes)
-                  taskShape.businessObject.objectId = this.getAttributeValue(interactiveTask, 'objectId')
+                  taskShape.businessObject.objectId = interactiveTask.objectId
                   canvas.addShape(taskShape)
                   // set title of the task and connect it to the chapter shape
                   const taskTitle =
@@ -540,7 +540,7 @@ export default {
 
         this.diagram.saveXML({ format: true }).then((result) => {
           console.log('Test', graphs)
-          const courseObjectId = this.courseNode?.attributes?.find((attr) => attr.key === 'objectId')?.value
+          const courseObjectId = this.courseNode?.objectId
           if (!graphs[courseObjectId]) graphs[courseObjectId] = ''
 
           const lastSavedGraphForCourse = graphs[courseObjectId]
@@ -586,9 +586,6 @@ export default {
         .get('elementRegistry')
         .find((element) => element.id === this.elementSelected.id)
       this.diagram.get('modeling').updateProperties(elementToUpdate, propertyToDefine)
-    },
-    getCourseNodeObjectId() {
-      return this.getAttributeValue(this.courseNode, 'objectId')
     },
     getAttributeValue(dataObject, key) {
       return dataObject?.attributes?.find((attr) => attr.key === key)?.value

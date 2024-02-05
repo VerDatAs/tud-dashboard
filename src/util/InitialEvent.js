@@ -1,1016 +1,536 @@
 // TODO Niklas: Remove after integrating in ILIAS
-export const initialEvent = {
-  courseNode: {
-    lcoType: 'ILIAS_COURSE',
-    attributes: [
-      {
-        key: 'objectId',
-        value:
-          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=crs_503&client_id=default&obj_id_lrs=1690'
-      },
-      {
-        key: 'title',
-        value: 'Niklas Testkurs'
-      },
-      {
-        key: 'description',
-        value: ''
-      },
-      {
-        key: 'modules',
-        value: [
-          {
-            lcoType: 'ILIAS_MODULE',
-            attributes: [
-              {
-                key: 'objectId',
-                value:
-                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=lm_507&client_id=default&obj_id_lrs=1698'
-              },
-              {
-                key: 'title',
-                value: 'Evaluationsmodul'
-              },
-              {
-                key: 'description',
-                value:
-                  'Dieses Modul dient der Evaluation des Prototypen der im Rahmen der Arbeit zum Thema "Entwicklung einer Methode zur automatischen'
-              },
-              {
-                key: 'offline',
-                value: false
-              },
-              {
-                key: 'chapters',
-                value: [
-                  {
-                    lcoType: 'ILIAS_CHAPTER',
-                    attributes: [
-                      {
-                        key: 'objectId',
-                        value:
-                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=st_896_507&client_id=default&obj_id_lrs=1698'
-                      },
-                      {
-                        key: 'title',
-                        value: 'Evaluation der einzelnen Features'
-                      },
-                      {
-                        key: 'contentPages',
-                        value: [
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_897_507&client_id=default&obj_id_lrs=1698'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Einführung - Evaluation von Bearbeitungsdauer und Schlagwörtern'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="7c837be0b0763be5dc4d4c21f151d208"><Paragraph Language="en" Characteristic="Attention">Diese Inhaltsseite ist bereits Teil der Evaluation zum Punkt &quot;Bearbeitungsdauer und Schlagwörter&quot;.</Paragraph></PageContent><PageContent PCID="cacd6404d84533e3d8b7c4d3bf6fe00e"><Paragraph Language="en" Characteristic="Standard">Dieses Lernmodul dient der Evaluation des im Rahmen der Arbeit zum Thema &quot;Entwicklung einer Methode zur automatischen Extraktion von Metadaten aus Inhalten des Learning Management Systems ILIAS&quot; entstandenen Prototypen.<br></br><br></br>Die vom Prototypen generierten Metadaten sollen im Rahmen des Projektes <ExtLink Href="https://verdatas.de">VerDatAs</ExtLink> als Grundlage für ein tutorielles Assistenzsystem dienen. Das tutorielle Assistenzsystem soll auf Basis dieser Metadaten personalisierte Unterstützungsvorschläge für Lernende generieren können.<br></br><br></br>Hierfür werden durch den Prototypen folgende Metadaten für jede einzelne Seite dieses Lernmoduls extrahiert oder generiert:</Paragraph></PageContent><PageContent PCID="019e0b1c81a7d4f52c1817e234134335"><Table Language="de" Border="1px" CellSpacing="0px" CellPadding="2px" HorizontalAlign="Left" HeaderRows="1" Class="StandardTable"><TableRow PCID="9b7c336fb2ff938d3288501a03bc0e65"><TableData PCID="ba9f20f8f641b4c0de21d706d27261e7"><PageContent PCID="565d28b6a7376910ec3aa111207b01b9"><Paragraph Language="en" Characteristic="TableContent"><Strong>Titel</Strong></Paragraph></PageContent></TableData><TableData PCID="dd9b24b18091b5b3146dfe090e9e0ebf"><PageContent PCID="03c91a10aaae9513e5c1ee0d2b8b70df"><Paragraph Language="en" Characteristic="Standard">Überschrift des jeweiligen Inhalts (Inhaltsseite, Kapitel oder Lernmodul). Erforderlich, damit das TAS dem Nutzer konkrete Vorschläge mit Überschrift anzeigen kann.</Paragraph></PageContent></TableData></TableRow><TableRow PCID="9977deace805f09200e777ccf4374bbb"><TableData PCID="1c8a5fd1784795c75a055f286c20e2d1"><PageContent PCID="f8bfcd2145e08f9f9cb85ed9f268677c"><Paragraph Language="en" Characteristic="Standard"><Strong>Medien</Strong></Paragraph></PageContent></TableData><TableData PCID="82cf338a832fd23caf19b48fa28cba4c"><PageContent PCID="f54d46d6851c618c79aac2f45bd703c1"><Paragraph Language="en" Characteristic="Standard">Aufzählung der im jeweiligen Inhalt eingebundenen Medien und Ausgabe medienspezifischer Daten (Bildunterschrift, Pfad, Bildinhalt). Nützlich um die Empfehlungen an den Lerntyp anzupassen. Beispielsweise könnten je nach Lerntyp bevorzugt Module mit Audio-, Video- oder Bildinhalten angezeigt werden.</Paragraph></PageContent></TableData></TableRow><TableRow PCID="c8079fa2c1baae34c402e60e1af3eadf"><TableData PCID="8b6f8d94fdccfb9c8e40458e7347890b"><PageContent PCID="c4d70bd9417dcaccc94644403b6e7f1d"><Paragraph Language="en" Characteristic="Standard"><Strong>Aufgaben</Strong></Paragraph></PageContent></TableData><TableData PCID="f611359ce5d90ecd46b034eb46586c19"><PageContent PCID="a2b36cf2c3d5cb34d0a6f1bb214defa2"><Paragraph Language="en" Characteristic="Standard">Auflistung der verwendeten Aufgaben und Ausgabe aufgabenspezifischer Parameter (Aufgabentyp, Fragestellung, Antwortmöglichkeiten, Interaktivität). Diese können von dem TAS genutzt werden, um dem Nutzer Lerninhalte mit geeigneten Übungsaufgaben (optional auch zur Selbstkontrolle) anzuzeigen. Auch die Priorisierung von bestimmten Aufgabentypen, je nach Nutzerprofil ist möglich.</Paragraph></PageContent></TableData></TableRow><TableRow PCID="bdd51d212bfeedcf9224099f7d6626dd"><TableData PCID="4a3f186e129d5c4babae461aac3558ad"><PageContent PCID="5d611968e2397cef38df910badef19e2"><Paragraph Language="en" Characteristic="Standard"><Strong>Bearbeitungsdauer</Strong></Paragraph></PageContent></TableData><TableData PCID="8ed81a7597de0ca3c570cfa98128a6b1"><PageContent PCID="316ecfcab887750ba324c2edc1c72521"><Paragraph Language="en" Characteristic="Standard">Summierte Bearbeitungsdauer (in Minuten) pro Inhaltsseite bzw. Lernmodul. Die geschätzte Bearbeitungsdauer ist für das TAS relevant, um den Umfang eines Lerninhalts abschätzen zu können. Darauf aufbauend, können dann je nach Lernfortschritt des Lernenden, mehr oder weniger umfangreiche Inhalte vorgeschlagen werden.</Paragraph></PageContent></TableData></TableRow><TableRow PCID="ec05d971f4157257077ee87bc186c4d3"><TableData PCID="6bd4581e0cf07bfc0cb5a4ae6e7a9fdc"><PageContent PCID="709da246518ca72f020a827faa81a5ab"><Paragraph Language="en" Characteristic="Standard"><Strong>Schlagwörter</Strong></Paragraph></PageContent></TableData><TableData PCID="3d08b5c96e81f73b7a48cefbb997e993"><PageContent PCID="da3a11922accde98b00ea956785832ba"><Paragraph Language="en" Characteristic="Standard">Beschreiben den jeweiligen Inhalt mit wenigen Worten. Diese sind für das TAS erforderlich, damit Inhalte zunächst thematisch eingeordnet werden und erste Empfehlungen generiert werden können. Für eine weitere Filterung können dann die oben genannten Metadaten zum Einsatz kommen.</Paragraph></PageContent></TableData></TableRow></Table></PageContent><PageContent PCID="985f8be1d260eab498529922b4fe202b"><Paragraph Language="en" Characteristic="Standard">Nun sollen im Rahmen dieser Evaluation folgende Fragen geklärt werden:<br></br>- Wie relevant schätzen Sie die Bedeutung bestimmter Metainformationen für die Generierung von Vorschlägen durch das tutorielle Assistenzsystem ein?<br></br>- Wie zutreffend sind die generierten Metadaten?<br></br>- In welchen Bereichen könnte die Metadatengenerierung noch ausgebaut werden?</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_898_507&client_id=default&obj_id_lrs=1698'
-                              },
-                              {
-                                key: 'title',
-                                value: 'ILIAS Aufgaben - Evaluation von ILIAS-Fragen'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '\n\n<PageObject><PageContent PCID="2439e02e3c5cc3fa669c6a557108564b"><Paragraph Language="en" Characteristic="Attention">Diese Seite dient der Evaluation der gesammelten Metadaten zu dem "ILIAS Fragetyp".</Paragraph></PageContent><PageContent PCID="22f21132ecb2eedff2803d24e1e7e00e"><Paragraph Language="en" Characteristic="Standard">Auf dieser Seite des Evaluationsmoduls ist eine beispielhafte ILIAS Frage eingebaut. Die ausgewählten Antworten sind irrelevant, die Frage dient zu reinen Demonstrationszwecken. Die korrekten Antworten sind "ILIAS" und "Moodle". Die Frage kann durch das Neuladen der Seite erneut beantwortet werden.</Paragraph></PageContent><PageContent PCID="c4588e9c215cd8c27c9f6d51a73eb742"><Question QRef="il__qst_203"/></PageContent></PageObject>\n'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: [
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_898_507&client_id=default&ilq_object_id=203&obj_id_lrs=1698'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'Learning Management Systeme'
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_899_507&client_id=default&obj_id_lrs=1698'
-                              },
-                              {
-                                key: 'title',
-                                value: 'H5P Aufgaben - Evaluation von H5P-Inhalten'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '\n\n<PageObject><PageContent PCID="5eedd1688af3da8059d4b457e6e6884b"><Paragraph Language="en" Characteristic="Attention">Diese Seite dient der Evaluation der gesammelten Metadaten zu den "H5P Inhalten".</Paragraph></PageContent><PageContent PCID="9462d9eb213a51c93de707345e1575ca"><Paragraph Language="en" Characteristic="Standard">Auf dieser Seite ist ein durch die Erweiterung H5PPageComponent integrierte H5P-Inhalt eingebunden worden. Analog zur vorherigen Seite sind die ausgewählten Antworten irrelevant, die Aufgabe dient zu reinen Demonstrationszwecken. Die korrekten Antworten sind "ILIAS" und "Metadaten".</Paragraph></PageContent><PageContent PCID="e1b68cd0946d0216fb9197bf6935c60b"><Plugged PluginName="H5PPageComponent" PluginVersion="2.1.1"><PluggedProperty Name="content_id">5</PluggedProperty></Plugged></PageContent></PageObject>\n'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: [
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_899_507&client_id=default&h5p_object_id=5&obj_id_lrs=1698'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'MC3'
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_900_507&client_id=default&obj_id_lrs=1698'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Bilder - Evaluation der Texterkennung bei Bildinhalten'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '\n\n<PageObject><PageContent PCID="aff2ffc68a16703a76b809b12f142392"><Paragraph Language="en" Characteristic="Attention">Diese Seite dient der Evaluation der Texterkennung bei Bildinhalten.</Paragraph></PageContent><PageContent PCID="fd2f67dcdae63c5b4b5f6051294102d5"><Paragraph Language="en" Characteristic="Standard">Auf dieser Seite sind mehrere Bilder mit Textinhalten abgebildet. Die auf den Bildern abgebildeten Objekte sind für diesen Teil der Evaluation irrelevant.</Paragraph></PageContent><PageContent PCID="457e100298f9b76eb65663d5a97f846a"><MediaObject><MediaAlias OriginId="il__mob_1704"/><MediaAliasItem Purpose="Standard"><Layout HorizontalAlign="Left" Width="480" Height="360"/><Caption Align="bottom">Ein Steam Deck welches eine Fehlermeldung anzeigt</Caption></MediaAliasItem></MediaObject></PageContent><PageContent PCID="adb3dea89b84ebb7966ab13917ec8071"><MediaObject><MediaAlias OriginId="il__mob_1705"/><MediaAliasItem Purpose="Standard"><Layout HorizontalAlign="Left" Height="360"/><Caption Align="bottom">Display eines Leergutautomaten in einem Supermarkt</Caption></MediaAliasItem></MediaObject></PageContent><PageContent PCID="d008bf2dbe3c1b52e6c68d4eddd4d7b8"><MediaObject><MediaAlias OriginId="il__mob_1706"/><MediaAliasItem Purpose="Standard"><Layout HorizontalAlign="Left" Width="480"/><Caption Align="bottom">Display einer DHL Packstation mit Fehlermeldung</Caption></MediaAliasItem></MediaObject></PageContent></PageObject>\n'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_901_507&client_id=default&obj_id_lrs=1698'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Bilder - Evaluation der Klassifizierung von Bildinhalten'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '\n\n<PageObject><PageContent PCID="dae409a692d2cfb2e7d76eb0ca3b36f3"><Paragraph Language="en" Characteristic="Attention">Diese Seite dient der Evaluation der Klassifizierung von Bildinhalten.</Paragraph></PageContent><PageContent PCID="8a076c69307349828794069a77456914"><Paragraph Language="en" Characteristic="Standard">Auf dieser Seite sind Bilder mit verschiedensten Inhalten abgebildet. Anhand dieser soll die gewählte Klassifizierungsmethode evaluiert werden.</Paragraph></PageContent><PageContent PCID="4049c6ae3cfa240ef233deba52434531"><MediaObject><MediaAlias OriginId="il__mob_1699"/><MediaAliasItem Purpose="Standard"><Layout HorizontalAlign="Left" Width="480"/><Caption Align="bottom">Landschaft mit Strommasten</Caption></MediaAliasItem></MediaObject></PageContent><PageContent PCID="3075c52369c4a90b8f6c1bde9ddf7c2d"><MediaObject><MediaAlias OriginId="il__mob_1700"/><MediaAliasItem Purpose="Standard"><Layout HorizontalAlign="Left" Width="480"/><Caption Align="bottom">Abbildung von einer Mahlzeit und einem dazugehörigen Getränk</Caption></MediaAliasItem></MediaObject></PageContent><PageContent PCID="f0fb691a41eb525218f14432dda72ac9"><MediaObject><MediaAlias OriginId="il__mob_1701"/><MediaAliasItem Purpose="Standard"><Layout HorizontalAlign="Left" Width="480"/><Caption Align="bottom">Darstellung einer Wolkenlandschaft</Caption></MediaAliasItem></MediaObject></PageContent><PageContent PCID="85b3f6f94590d52cc32a170edae854cd"><MediaObject><MediaAlias OriginId="il__mob_1702"/><MediaAliasItem Purpose="Standard"><Layout HorizontalAlign="Left" Width="480" Height="360"/><Caption Align="bottom">Fahrrad inmitten einer Schneelandschaft</Caption></MediaAliasItem></MediaObject></PageContent><PageContent PCID="8fae8e07b01ffef64c4e499e134efa5f"><MediaObject><MediaAlias OriginId="il__mob_1703"/><MediaAliasItem Purpose="Standard"><Layout HorizontalAlign="Left" Width="480"/><Caption Align="bottom">Meissener Albrechtsburg bei Nacht</Caption></MediaAliasItem></MediaObject></PageContent></PageObject>\n'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            lcoType: 'ILIAS_MODULE',
-            attributes: [
-              {
-                key: 'objectId',
-                value:
-                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=lm_506&client_id=default&obj_id_lrs=1697'
-              },
-              {
-                key: 'title',
-                value: 'Test ILIAS-Lernmodul mit längerem Titel'
-              },
-              {
-                key: 'description',
-                value: ''
-              },
-              {
-                key: 'offline',
-                value: false
-              },
-              {
-                key: 'chapters',
-                value: [
-                  {
-                    lcoType: 'ILIAS_CHAPTER',
-                    attributes: [
-                      {
-                        key: 'objectId',
-                        value:
-                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=st_884_506&client_id=default&obj_id_lrs=1697'
-                      },
-                      {
-                        key: 'title',
-                        value: 'Test Kapitel 1'
-                      },
-                      {
-                        key: 'contentPages',
-                        value: [
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_885_506&client_id=default&obj_id_lrs=1697'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Inhaltsseite 1.1'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="3188140d406cf33f87af1a700b30867e"><Paragraph Language="en" Characteristic="Standard">Inhaltsseite 1.1</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_886_506&client_id=default&obj_id_lrs=1697'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Inhaltsseite 1.2 mit langem Titel aber ohne Lernaufgaben'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="16396a1e95b14ee686caa5813999d713"><Paragraph Language="en" Characteristic="Standard">Inhaltsseite 1.2</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_887_506&client_id=default&obj_id_lrs=1697'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Inhaltsseite 1.3 mit recht langem Titel'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="a8b91ebbd18e62c2b356240917004abe"><Paragraph Language="en" Characteristic="Standard">Inhaltsseite 1.3</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    lcoType: 'ILIAS_CHAPTER',
-                    attributes: [
-                      {
-                        key: 'objectId',
-                        value:
-                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=st_888_506&client_id=default&obj_id_lrs=1697'
-                      },
-                      {
-                        key: 'title',
-                        value: 'Test Kapitel 2 mit recht langer Beschreibung aber ohne Lernaufgaben'
-                      },
-                      {
-                        key: 'contentPages',
-                        value: [
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_889_506&client_id=default&obj_id_lrs=1697'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Inhaltsseite 2.1'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="ea6fbba9896fe48c6aa868ca505d92aa"><Paragraph Language="en" Characteristic="Standard">Inhaltsseite 2.1</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_890_506&client_id=default&obj_id_lrs=1697'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Inhaltsseite 2.2'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="8b8b7eb062f8e85e109aec4ad2097a2b"><Paragraph Language="en" Characteristic="Standard">Inhaltsseite 2.2</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    lcoType: 'ILIAS_CHAPTER',
-                    attributes: [
-                      {
-                        key: 'objectId',
-                        value:
-                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=st_891_506&client_id=default&obj_id_lrs=1697'
-                      },
-                      {
-                        key: 'title',
-                        value: 'Test Kapitel 3 mit Lernaufgaben'
-                      },
-                      {
-                        key: 'contentPages',
-                        value: [
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_892_506&client_id=default&obj_id_lrs=1697'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Inhaltsseite 3.1'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="3362d37ae0b5bc0cb09320b760e44961"><Paragraph Language="en" Characteristic="Standard">Inhaltsseite 3.1</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_893_506&client_id=default&obj_id_lrs=1697'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Inhaltsseite 3.2'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '\n\n<PageObject><PageContent PCID="107f512849a4ab603ad659223ad0ee48"><Question QRef="il__qst_201"/></PageContent></PageObject>\n'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: [
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_893_506&client_id=default&ilq_object_id=201&obj_id_lrs=1697'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'Test ILIAS Question'
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_894_506&client_id=default&obj_id_lrs=1697'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Inhaltsseite 3.3'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '\n\n<PageObject><PageContent PCID="132d4d9c9f07d29cf23af6cb74c48cef"><Plugged PluginName="H5PPageComponent" PluginVersion="2.1.2"><PluggedProperty Name="content_id">202</PluggedProperty></Plugged></PageContent></PageObject>\n'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: [
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_894_506&client_id=default&h5p_object_id=202&obj_id_lrs=1697'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'Test H5P Question'
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_895_506&client_id=default&obj_id_lrs=1697'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Inhaltsseite 3.4'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '\n\n<PageObject><PageContent PCID="2c4ca7929037f8d29eb7fd9a596bde14"><Paragraph Language="en" Characteristic="Standard">Auf dieser Inhaltsseite ist sowohl eine ILIAS-Aufgabe als auch eine H5P-Aufgabe eingebunden.</Paragraph></PageContent><PageContent PCID="84d599303ff36d9f96dfbacc8fd8d112"><Question QRef="il__qst_202"/></PageContent><PageContent PCID="10afe352408e855cb21152cfba720080"><Plugged PluginName="H5PPageComponent" PluginVersion="2.1.2"><PluggedProperty Name="content_id">203</PluggedProperty></Plugged></PageContent></PageObject>\n'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: [
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_895_506&client_id=default&ilq_object_id=202&obj_id_lrs=1697'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'Test ILIAS Question Nummer 2'
-                                      }
-                                    ]
-                                  },
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_895_506&client_id=default&h5p_object_id=203&obj_id_lrs=1697'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'Test H5P Question Nummer 2'
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            lcoType: 'ILIAS_MODULE',
-            attributes: [
-              {
-                key: 'objectId',
-                value:
-                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=lm_505&client_id=default&obj_id_lrs=1695'
-              },
-              {
-                key: 'title',
-                value: 'Verschachteltes ILIAS Lernmodul mit Fragen'
-              },
-              {
-                key: 'description',
-                value: ''
-              },
-              {
-                key: 'offline',
-                value: false
-              },
-              {
-                key: 'chapters',
-                value: [
-                  {
-                    lcoType: 'ILIAS_CHAPTER',
-                    attributes: [
-                      {
-                        key: 'objectId',
-                        value:
-                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=st_866_505&client_id=default&obj_id_lrs=1695'
-                      },
-                      {
-                        key: 'title',
-                        value: 'Chapter 1'
-                      },
-                      {
-                        key: 'contentPages',
-                        value: [
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_867_505&client_id=default&obj_id_lrs=1695'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Introduction to Chapter 1'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="7e1eee8fa6bdee358f070b150f50192b"><Paragraph Language="en" Characteristic="Standard">This is an example text for the content page &quot;Introduction to Chapter 1&quot;.</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_869_505&client_id=default&obj_id_lrs=1695'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Introduction to Chapter 1.1'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="8e548f4bded2f3046a54526a26c90dcf"><Paragraph Language="en" Characteristic="Standard">This is an example text for the content page &quot;Introduction to Chapter 1.1&quot;.</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_870_505&client_id=default&obj_id_lrs=1695'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Chapter 1.1 Content'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="a779f013fcb803752ea01ce95bf15384"><Paragraph Language="en" Characteristic="Standard">This is an example text for the content page &quot;Chapter 1.1 Content&quot;.</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_871_505&client_id=default&obj_id_lrs=1695'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Summary Chapter 1.1'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="e3975447edc531896f36911abd834716"><Paragraph Language="en" Characteristic="Standard">This is an example text for the content page &quot;Summary Chapter 1.1&quot;.</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_873_505&client_id=default&obj_id_lrs=1695'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Content Page of Chapter 1.2'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="af61daf0d398ac6b423666f8d0049ccb"><Paragraph Language="en" Characteristic="Standard">This is an example text for the content page &quot;Content Page of Chapter 1.2&quot;.</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    lcoType: 'ILIAS_CHAPTER',
-                    attributes: [
-                      {
-                        key: 'objectId',
-                        value:
-                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=st_874_505&client_id=default&obj_id_lrs=1695'
-                      },
-                      {
-                        key: 'title',
-                        value: 'Chapter 2 mit Lernaufgaben (sowohl H5P als auch ILIAS)'
-                      },
-                      {
-                        key: 'contentPages',
-                        value: [
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_875_505&client_id=default&obj_id_lrs=1695'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Content Page 2.1 (H5P Question)'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '\n\n<PageObject><PageContent PCID="1be101b26363fffe94be3eb8192317a4"><Paragraph Language="en" Characteristic="Standard">This is an example text for the content page "Content Page 2.1".</Paragraph></PageContent><PageContent PCID="97449d8851e8a9115f1dda25b36712ad"><Plugged PluginName="H5PPageComponent" PluginVersion="2.1.2"><PluggedProperty Name="content_id">198</PluggedProperty></Plugged></PageContent></PageObject>\n'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: [
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_875_505&client_id=default&h5p_object_id=198&obj_id_lrs=1695'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'Test einer H5P-MC Frage'
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_876_505&client_id=default&obj_id_lrs=1695'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Content Page 2.2 (ILIAS Question)'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '\n\n<PageObject><PageContent PCID="0cf7741880a8fbc5d014ffd49740b7d1"><Paragraph Language="en" Characteristic="Standard">This is an example text for the content page "Content Page 2.2".</Paragraph></PageContent><PageContent PCID="de3ed68b716194deba5ea07b261fef62"><Question QRef="il__qst_198"/></PageContent></PageObject>\n'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: [
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_876_505&client_id=default&ilq_object_id=198&obj_id_lrs=1695'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'ILIAS Test Question (MC)'
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_878_505&client_id=default&obj_id_lrs=1695'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Content Page 2.3.1 (Media)'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '\n\n<PageObject><PageContent PCID="9590e5afae9dd06c8cab6538c927130a"><Paragraph Language="en" Characteristic="Standard">This is an example text for the content page "Content Page 2.3.1".</Paragraph></PageContent><PageContent PCID="aa0b2a5d492e7f8af1421a85e25277a2"><Plugged PluginName="H5PPageComponent" PluginVersion="2.1.2"><PluggedProperty Name="content_id">199</PluggedProperty></Plugged></PageContent><PageContent PCID="f7318286d505092ba035b35627130fdf"><Plugged PluginName="H5PPageComponent" PluginVersion="2.1.2"><PluggedProperty Name="content_id">200</PluggedProperty></Plugged></PageContent><PageContent PCID="6dff87bb87035fe26d9fbb10e986fe16"><Question QRef="il__qst_199"/></PageContent><PageContent PCID="6d76e7fdf8a9ea7b721b0972387684ab"><Question QRef="il__qst_200"/></PageContent></PageObject>\n'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: [
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_878_505&client_id=default&ilq_object_id=199&obj_id_lrs=1695'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'Test ILIAS Multiple Choice Question with Multiple Answers'
-                                      }
-                                    ]
-                                  },
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_878_505&client_id=default&ilq_object_id=200&obj_id_lrs=1695'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'Test Cloze Question'
-                                      }
-                                    ]
-                                  },
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_878_505&client_id=default&h5p_object_id=199&obj_id_lrs=1695'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'Test H5P MC Aufgabe'
-                                      }
-                                    ]
-                                  },
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_878_505&client_id=default&h5p_object_id=200&obj_id_lrs=1695'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'Test'
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_879_505&client_id=default&obj_id_lrs=1695'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Content Page 2.3.2 (Combined multiple H5P & ILIAS Questions)'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '\n\n<PageObject><PageContent PCID="5fbff373aca919eba29c03db7e9ccec1"><Paragraph Language="en" Characteristic="Standard">This is an example text for the content page "Content Page 2.3.2".</Paragraph></PageContent><PageContent PCID="87bb97b8c3fec51403625821acf39bbd"><MediaObject><MediaAlias OriginId="il__mob_1696"/><MediaAliasItem Purpose="Standard"><Layout HorizontalAlign="Left"/></MediaAliasItem></MediaObject></PageContent><PageContent PCID="6dcfb2facfc5d7ead7cb7fe7fe23e01e"><Section Characteristic="Block" PCID="b1178da628d0b626cde825b612e386d7"><PageContent PCID="58a359d65abcda3c8b21e8fda5d4c70a"><Paragraph Language="en" Characteristic="Standard">This is an example section in ILIAS.</Paragraph></PageContent></Section></PageContent><PageContent PCID="532b4b8a54c47e913e04a12dc138e26c"><Paragraph Language="en" ShowLineNumbers="y" Characteristic="Code">return true;</Paragraph></PageContent><PageContent PCID="d8507ea6e3d59e3b836c95eae2efb151"><Plugged PluginName="H5PPageComponent" PluginVersion="2.1.2"><PluggedProperty Name="content_id">201</PluggedProperty></Plugged></PageContent></PageObject>\n'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: [
-                                  {
-                                    lcoType: 'ILIAS_INTERACTIVE_TASK',
-                                    attributes: [
-                                      {
-                                        key: 'objectId',
-                                        value:
-                                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_879_505&client_id=default&h5p_object_id=201&obj_id_lrs=1695'
-                                      },
-                                      {
-                                        key: 'title',
-                                        value: 'Just another H5P MC Question'
-                                      }
-                                    ]
-                                  }
-                                ]
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  },
-                  {
-                    lcoType: 'ILIAS_CHAPTER',
-                    attributes: [
-                      {
-                        key: 'objectId',
-                        value:
-                          'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=st_880_505&client_id=default&obj_id_lrs=1695'
-                      },
-                      {
-                        key: 'title',
-                        value: 'Chapter 3 (Zusammenfassung)'
-                      },
-                      {
-                        key: 'contentPages',
-                        value: [
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_881_505&client_id=default&obj_id_lrs=1695'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Content Page 3.1'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="de8613d37c175d14ae32324505d9b682"><Paragraph Language="en" Characteristic="Standard">This is an example text for the content page &quot;Content Page 3.1&quot;.</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          },
-                          {
-                            lcoType: 'ILIAS_CONTENT_PAGE',
-                            attributes: [
-                              {
-                                key: 'objectId',
-                                value:
-                                  'http://develop.verdatas.inf.tu-dresden.de:8091/goto.php?target=pg_882_505&client_id=default&obj_id_lrs=1695'
-                              },
-                              {
-                                key: 'title',
-                                value: 'Content Page 3.2'
-                              },
-                              {
-                                key: 'content',
-                                value:
-                                  '<PageObject><PageContent PCID="a1f64d3426164c3bde708fafd4b0126c"><Paragraph Language="en" Characteristic="Standard">This is an example text for the content page &quot;Content Page 3.2&quot;.</Paragraph></PageContent></PageObject>'
-                              },
-                              {
-                                key: 'interactiveTasks',
-                                value: []
-                              }
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        key: 'tests',
-        value: []
-      }
-    ]
-  },
-  token:
-    'eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJzZWxmIiwic3ViIjoiYTUwZDM4ZDMtOWE3Mi00ODE3LWJjOGMtOTY4ZjY5NmY2ZDEwIiwiZXhwIjoxNjk2NTg1OTA1LCJpYXQiOjE2OTY1ODIzMDUsInJvbGVzIjpbIlNUVURFTlQiXX0.bkhqqkYW0XaFze09e7ltYqsxQ5s-Tfo4thzWHWFw-AE',
-  backendUrl: 'http://develop.verdatas.inf.tu-dresden.de:8062',
-  canViewOnly: false,
-  previewMode: false
+export const localNode = {
+  "lcoType": "ILIAS_COURSE",
+  "objectId": "http://localhost:5173/goto.php?target=crs_88&client_id=default&obj_id_lrs=334",
+  "attributes": [
+    {
+      "key": "title",
+      "value": "Testkurs Kristin"
+    },
+    {
+      "key": "description",
+      "value": ""
+    },
+    {
+      "key": "modules",
+      "value": [
+        {
+          "lcoType": "ILIAS_MODULE",
+          "objectId": "http://localhost:5173/goto.php?target=lm_90&client_id=default&obj_id_lrs=339",
+          "attributes": [
+            {
+              "key": "title",
+              "value": "Wissenswertes aus der Naturwissenschaft"
+            },
+            {
+              "key": "description",
+              "value": ""
+            },
+            {
+              "key": "offline",
+              "value": false
+            },
+            {
+              "key": "chapters",
+              "value": [
+                {
+                  "lcoType": "ILIAS_CHAPTER",
+                  "objectId": "http://localhost:5173/goto.php?target=st_48_90&client_id=default&obj_id_lrs=339",
+                  "attributes": [
+                    {
+                      "key": "title",
+                      "value": "Einführung"
+                    },
+                    {
+                      "key": "contentPages",
+                      "value": [
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_49_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Einführung in das Lernmodul"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"58dde2d5c952434511787ffe5fa45895\"><MediaObject><MediaAlias OriginId=\"il__mob_343\"/><MediaAliasItem Purpose=\"Standard\"><Layout HorizontalAlign=\"RightFloat\"/></MediaAliasItem></MediaObject></PageContent><PageContent PCID=\"27689666131837692382\"><Paragraph Language=\"de\" Characteristic=\"Standard\">In diesem Lernmodul zum Thema \"Wissenswertes aus der Naturwissenschaft\" können Sie zunächst Ihr Wissen testen. Das Quiz soll Ihnen zeigen, ob sie bereits Experte auf dem Gebiet der Naturwissenschaft sind, oder ob Sie noch einiges neues in diesem Modul lernen können. Sie können sich im Lernmodul einen Überblick über die Themen Ernährung, Sehen, Atmung, endokrines System und Viren verschaffen und durch die anschließenden Lernaufgaben gleich ihr neu erworbenes Wissen testen.</Paragraph></PageContent><PageContent PCID=\"220910772464784801\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Auch ein Lerntagebuch steht Ihnen zur Verfügung. Dieses kann Ihnen helfen Ihre Ziele im Auge zu behalten und das gelernte Wissen zu reflektieren.</Paragraph></PageContent><PageContent PCID=\"1548030471289841805\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Wir wünschen Ihnen viel Spaß und hoffentlich spannende neue Erkenntnisse.</Paragraph></PageContent><PageContent PCID=\"28543779402637791969\"><Paragraph Language=\"de\" Characteristic=\"Standard\"/></PageContent><PageContent PCID=\"163605535814722298\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Comment><Quotation><Code><Emph> </Emph></Code></Quotation></Comment></Paragraph></PageContent><PageContent PCID=\"15545682022727139798\"><Paragraph Language=\"de\" Characteristic=\"Standard\"/></PageContent><PageContent PCID=\"15619711071728641284\"><Paragraph Language=\"de\" Characteristic=\"Standard\"/></PageContent><PageContent PCID=\"36923672662199310878\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Emph> </Emph></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": []
+                            }
+                          ]
+                        },
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_50_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Lerntagebuch"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"1e50293f437cb9d6865b6c81b92f1806\"><Plugged PluginName=\"H5PPageComponent\" PluginVersion=\"4.0.3\"><PluggedProperty Name=\"content_id\">16</PluggedProperty></Plugged></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": [
+                                {
+                                  "lcoType": "ILIAS_INTERACTIVE_TASK",
+                                  "objectId": "http://localhost:5173/goto.php?target=pg_50_90&client_id=default&h5p_object_id=16&obj_id_lrs=339",
+                                  "attributes": [
+                                    {
+                                      "key": "title",
+                                      "value": "Lerntagebuch"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "lcoType": "ILIAS_CHAPTER",
+                  "objectId": "http://localhost:5173/goto.php?target=st_51_90&client_id=default&obj_id_lrs=339",
+                  "attributes": [
+                    {
+                      "key": "title",
+                      "value": "Quiz zur Naturwissenschaft"
+                    },
+                    {
+                      "key": "contentPages",
+                      "value": [
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_52_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Quizfragen"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"35953490953741787616\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Im folgenden Quiz finden Sie 16 Fragen aus dem Bereich der Naturwissenschaften. Bitte beantworten Sie die Fragen so gut Sie können, indem Sie die korrekte Lösung anklicken. Es ist pro Aufgabe immer nur eine Antwort richtig.</Paragraph></PageContent><PageContent PCID=\"7f3eeef327aeef90c46cf9ca89146a38\"><Plugged PluginName=\"H5PPageComponent\" PluginVersion=\"4.0.3\"><PluggedProperty Name=\"content_id\">18</PluggedProperty></Plugged></PageContent><PageContent PCID=\"35303207511836119192\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Sup>Quelle: Best, R., Ozuru, Y., &amp; McNamara, D. S. (2004). Self-explaining science texts: strategies, knowledge, and reading skill. International Conference of Learning Sciences, 89–96. https://repository.isls.org/handle/1/4069</Sup></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": [
+                                {
+                                  "lcoType": "ILIAS_INTERACTIVE_TASK",
+                                  "objectId": "http://localhost:5173/goto.php?target=pg_52_90&client_id=default&h5p_object_id=18&obj_id_lrs=339",
+                                  "attributes": [
+                                    {
+                                      "key": "title",
+                                      "value": "Quizfragen"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "lcoType": "ILIAS_CHAPTER",
+                  "objectId": "http://localhost:5173/goto.php?target=st_53_90&client_id=default&obj_id_lrs=339",
+                  "attributes": [
+                    {
+                      "key": "title",
+                      "value": "Energie aus der Nahrung"
+                    },
+                    {
+                      "key": "contentPages",
+                      "value": [
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_54_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Energie aus der Nahrung"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"5869f78a4447a0bf5d75073e04e0b2f2\"><MediaObject><MediaAlias OriginId=\"il__mob_344\"/><MediaAliasItem Purpose=\"Standard\"><Layout HorizontalAlign=\"RightFloat\"/></MediaAliasItem></MediaObject></PageContent><PageContent PCID=\"39098648213286616708\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Jeder weiß, dass Essen Energie liefert, aber nicht jeder weiß, wie. Das Essen, welches Du zu Dir nimmst, spendet Deinem Körper nicht sofortige Energie. Es muss zunächst in den Zellen Deines Körpers zersetzt werden, um seine Energie freizusetzen.</Paragraph></PageContent><PageContent PCID=\"39522533271382478927\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Nachdem Du gegessen hast, wandelt Dein Körper Kohlenhydrate in Glucose um; das ist ein Art Zucker. Glukosemoleküle können entweder im Körper gespeichert oder direkt für Aktivitäten verwendet werden. Wenn Zellen Energie brauchen, spalten sie Glukosemoleküle um Energie freizusetzen. Dieser Prozess wird Zellatmung genannt. Die Bezeichnung ‚Atmung‘ kann irreführend sein, weil der Prozess des Ein-und Ausatmen auch als Atmung bezeichnet wird. Die Verwendung des Begriffes im Ernährungskontext bezieht sich darauf, dass Sauerstoff für die Zellatmung ebenso wichtig ist wie für das Ein-und Ausatmen beim Menschen.</Paragraph></PageContent><PageContent PCID=\"10135087783377839249\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Weil Lebewesen auf eine kontinuierliche Energieversorgung angewiesen sind, um grundlegende Funktionen auszuführen, betreiben die Zellen aller Lebewesen ständig ein wenig Zellatmung. Das Sitzen auf der Couch, zum Beispiel, verbraucht nicht sehr viel Energie. Wenn Du während des Fernsehens etwas isst, werden die Glukosemoleküle sehr wahrscheinlich für einen späteren Einsatz gespeichert werden. Wenn Aktivitäten mehr Energie verlangen, ist auch mehr Zellatmung nötig. Zellatmung ist ein zweistufiger Prozess. Die erste Stufe findet im Zellplasma statt; das ist die Flüssigkeit im Inneren der Zellen. Dort werden die Glukosemoleküle in kleinere Moleküle aufgespaltet. Sauerstoff ist hierbei nicht involviert und nur eine geringe Menge an Energie wird frei. </Paragraph></PageContent><PageContent PCID=\"3460551547419262403\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Die zweite Stufe der Zellatmung findet in den Mitochondrien statt. Mitochondrien sind stabförmige Organellen im Inneren des Zellplasmas. In den Mitochondrien werden die kleineren Moleküle nun in noch kleinere Moleküle aufgespaltet. Diese chemischen Reaktionen benötigen Sauerstoff und setzen eine enorme Menge an Energie frei. Die enorme Menge an Energie, die in den Mitochondrien freigesetzt wird, gibt den Mitochondrien ihren Spitznamen ‚Kraftwerke der Zellen‘.</Paragraph></PageContent><PageContent PCID=\"17247433062507449365\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Energie wird als Produkt beider Stufen der Zellatmung freigesetzt. Die Energie wird an andere Moleküle weitergegeben, welche sie dann dorthin transportieren, wo sie für Zellaktivitäten benötigt wird. Die übrige Energie wird als Wärmeenergie freigesetzt.</Paragraph></PageContent><PageContent PCID=\"10754394421538409816\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Zwei Nebenprodukte der Zellatmung sind Kohlendioxid und Wasser. Diese Produkte diffundieren aus der Zelle hinaus in den Blutkreislauf. Bei den meisten Tieren ist es so, dass das Kohlendioxid und das Wasser den Körper über die Ausatmung verlassen. Wenn Du einatmest, nimmst Du Sauerstoff auf, welcher für die Zellatmung verwendet wird. Wenn Du ausatmest, setzt Du Kohlenstoff und Wasser frei.</Paragraph></PageContent><PageContent PCID=\"37007954892729224149\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Sup>Quelle: Hinze, S. R., Wiley, J., &amp; Pellegrino, J. W. (2013). The importance of constructive comprehension processes in learning from tests. Journal of Memory and Language, 69(2), 151–164. https://doi.org/10.1016/j.jml.2013.03.002</Sup></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": []
+                            }
+                          ]
+                        },
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_55_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Lernaufgaben zum Thema Nahrung"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"6f4515ad85ea7cbcf6eae3ad538e408b\"><Plugged PluginName=\"H5PPageComponent\" PluginVersion=\"4.0.3\"><PluggedProperty Name=\"content_id\">13</PluggedProperty></Plugged></PageContent><PageContent PCID=\"39026009834207095970\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Sup>Quelle: Hinze, S. R., Wiley, J., &amp; Pellegrino, J. W. (2013). The importance of constructive comprehension processes in learning from tests. Journal of Memory and Language, 69(2), 151–164. https://doi.org/10.1016/j.jml.2013.03.002</Sup></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": [
+                                {
+                                  "lcoType": "ILIAS_INTERACTIVE_TASK",
+                                  "objectId": "http://localhost:5173/goto.php?target=pg_55_90&client_id=default&h5p_object_id=13&obj_id_lrs=339",
+                                  "attributes": [
+                                    {
+                                      "key": "title",
+                                      "value": "Lernaufgaben Nahrung"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "lcoType": "ILIAS_CHAPTER",
+                  "objectId": "http://localhost:5173/goto.php?target=st_56_90&client_id=default&obj_id_lrs=339",
+                  "attributes": [
+                    {
+                      "key": "title",
+                      "value": "Das Sehvermögen"
+                    },
+                    {
+                      "key": "contentPages",
+                      "value": [
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_57_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Das Sehvermögen"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"68f65298c812506174eb86e35788fa88\"><MediaObject><MediaAlias OriginId=\"il__mob_340\"/><MediaAliasItem Purpose=\"Standard\"><Layout HorizontalAlign=\"RightFloat\"/></MediaAliasItem></MediaObject></PageContent><PageContent PCID=\"1860502663527049431\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Deine Augen sind Sinnesorgane, welche Dich dazu befähigen, Dinge in Deiner Umwelt wahrzunehmen. Deine Augen reagieren auf Lichtreize. Sie wandeln diese um in Impulse, welche Dein Gehirn interpretiert, sodass Du sehen kannst.</Paragraph></PageContent><PageContent PCID=\"12808838522485971584\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Deine Augen bestehen aus vielen Schichten. Das Augenlid dient als erste Schutzinstanz, da das Schließen des Augenlids Deine Augen vor Licht schützen kann und Blinzeln dazu beiträgt, Schmutz zu entfernen. Die erste sichtbare Schicht des Auges beinhaltet Pupille und Iris, aber diese sind von der Hornhaut verdeckt, also von durchsichtigem Gewebe welches die Vorderseite des Auges bedeckt. Licht tritt zuerst durch die Hornhaut ins Auge ein und dringt in die Pupille ein. Die Pupille ist die Öffnung durch welche das Licht in die übrigen Schichten des Auges eindringt.</Paragraph></PageContent><PageContent PCID=\"10334572851802899932\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Die Iris ist die kreisförmige Struktur um die Pupille herum und sie kann unterschiedliche Farben haben, z.B. braun, blau, grau und grün. Die Iris reguliert die Menge an Licht, die durch die Pupille ins Auge eintritt. Die Größe der Pupille wird durch Muskeln in der Iris angepasst. Das Auge funktioniert am besten bei mittelstarkem Lichteinfall, wenn es nicht zu hell oder zu dunkel ist. Bei starkem Lichteinfall wird die Pupille kleiner. Bei schwachem Lichteinfall wird die Pupille größer.</Paragraph></PageContent><PageContent PCID=\"42063514902165175967\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Nachdem das Licht die Pupille passiert hat, erreicht es die Linse. Die Linse ist eine flexible Struktur welche das Licht fokussiert. Muskeln, die an der Linse andocken, regulieren die Form der Linse. Dadurch werden die einfallenden Lichtstrahlen so gebeugt, dass ein scharfes Bild entsteht. Um nahe Objekte zu erkennen, müssen die Linsen in unseren Augen dick sein, um die Lichtstrahlen stärker zu beugen. Um weit entfernte Objekte zu erkennen, müssen die Linsen dünn sein um die Lichtstrahlen weniger stark zu beugen. Wenn die Linsen die Lichtstrahlen nicht selbständig in der richtigen Region des Auges beugen können, braucht man eine Brille.</Paragraph></PageContent><PageContent PCID=\"32202436452713564064\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Nachdem das Licht durch die Linse hindurchgelangt ist, passieren die nun fokussierten Lichtstrahlen eine klare, gelartige Flüssigkeit in der Augenmitte. Dann treffen die Lichtstrahlen auf die Netzhaut welche aus Rezeptorzellen an der hinteren Augenwand besteht. Die Netzhaut beherbergt etwa 130 Millionen Rezeptorzellen, welche alle auf Licht reagieren-. Es gibt zwei verschiedene Arten von Rezeptorzellen. Die Zapfen funktionieren am besten im Hellen und ermöglichen es Dir, Farben und Details zu erkennen, wenn Du ein Objekt direkt betrachtest. Sie befinden sich hauptsächlich in der Mitte der Netzhaut. Im Gegensatz dazu funktionieren die Stäbchen am besten im Dämmerlicht und ermöglichen es Dir, schwarz, weiß und Graustufen zu erkennen. Der Großteil unserer Netzhaut ist mit Stäbchen besetzt, vor allem in den Regionen um die Mitte herum, welche auch als Peripherie bezeichnet werden.</Paragraph></PageContent><PageContent PCID=\"9714139021210222536\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Wenn Stäbchen und Zapfen auf Lichteinfall reagieren, werden Nervenimpulse durch den optischen Nerv an das Gehirn weitergeleitet, wo dann Formen, Farben und Objekte wahrgenommen werden.</Paragraph></PageContent><PageContent PCID=\"31893711224144246769\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Sup>Quelle: Hinze, S. R., Wiley, J., &amp; Pellegrino, J. W. (2013). The importance of constructive comprehension processes in learning from tests. Journal of Memory and Language, 69(2), 151–164. https://doi.org/10.1016/j.jml.2013.03.002</Sup></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": []
+                            }
+                          ]
+                        },
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_58_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Lernaufgaben zum Thema Sehvermögen"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"8dd61bb2b8674dc5d949d696507cbc5b\"><Plugged PluginName=\"H5PPageComponent\" PluginVersion=\"4.0.3\"><PluggedProperty Name=\"content_id\">14</PluggedProperty></Plugged></PageContent><PageContent PCID=\"4545677773821802602\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Sup>Quelle: Hinze, S. R., Wiley, J., &amp; Pellegrino, J. W. (2013). The importance of constructive comprehension processes in learning from tests. Journal of Memory and Language, 69(2), 151–164. https://doi.org/10.1016/j.jml.2013.03.002</Sup></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": [
+                                {
+                                  "lcoType": "ILIAS_INTERACTIVE_TASK",
+                                  "objectId": "http://localhost:5173/goto.php?target=pg_58_90&client_id=default&h5p_object_id=14&obj_id_lrs=339",
+                                  "attributes": [
+                                    {
+                                      "key": "title",
+                                      "value": "Lernaufgaben Sehvermögen"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "lcoType": "ILIAS_CHAPTER",
+                  "objectId": "http://localhost:5173/goto.php?target=st_59_90&client_id=default&obj_id_lrs=339",
+                  "attributes": [
+                    {
+                      "key": "title",
+                      "value": "Der Weg der Luft"
+                    },
+                    {
+                      "key": "contentPages",
+                      "value": [
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_60_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Der Weg der Luft"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"b5fed1dfbdcfa4f524e3388f8ab33f11\"><MediaObject><MediaAlias OriginId=\"il__mob_341\"/><MediaAliasItem Purpose=\"Standard\"><Layout HorizontalAlign=\"RightFloat\"/></MediaAliasItem></MediaObject></PageContent><PageContent PCID=\"13998855692802402433\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Wenn Du an einem heiteren Tag aus dem Fenster blickst, siehst Du vielleicht kleine Partikel in der Luft tanzen. Obwohl Du sie nicht sehen kannst, enthält Luft unter anderem auch Mikroorganismen, von denen einige Krankheiten im Menschen auslösen können. Wenn Du einatmest, gelangen alle diese Bestandteile gemeinsam mit der Luft Deinen Körper.</Paragraph></PageContent><PageContent PCID=\"27007350024082052175\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Dennoch erreichen viele dieser Bestandteile niemals Deine Lungen. Auf ihrem Weg zu den Lungen muss die Luft durch eine Reihe von Strukturen hindurch, welche Partikel herausfiltern und festhalten. Diese Strukturen wärmen die Luft auch und feuchten sie an. Die Luft wird vom Atmungssystem von der äußeren Umwelt in die Lungen transportiert. Die Luft braucht nur einige wenige Sekunden für den Weg von der Nase in die Lungen.</Paragraph></PageContent><PageContent PCID=\"34880063842321862818\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Die Luft strömt durch die Nasenlöcher in die Nase ein und dann in die Nasenhöhlen. Einige Zellen in den Nasenhöhlen produzieren Schleim. Dieses klebrige Material feuchtet die Luft an und verhindert, dass die Nasenschleimhäute austrocknen. Schleim hilft auch dabei, kleine Partikel wie z.B. Staub festzuhalten. Einige Partikel und Bakterien können die Schleimhäute Deiner Nase und Deines Halses reizen und Dich somit zum Niesen bringen. Die mächtige Kraft, die beim Niesen frei wird, schießt die Partikel zurück in die Außenluft.</Paragraph></PageContent><PageContent PCID=\"3890283612211260418\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Die Zellen, welche die Nasenschleimhäute besiedeln haben sogenannte Zilien. Zilien sind kleine haarartige Verlängerungen, die sich gemeinsam in einer Art Schwingung Hin- und Her-Bewegen können. Die Zilien kehren den Schleim in den Hals, wo Du ihn dann die Speiseröhre hinab hinunterschluckst. Von dort aus werden alle Krankheitserreger in den Magen transportiert, wo sie von Magensäure zerstört werden.</Paragraph></PageContent><PageContent PCID=\"22458838703910847035\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Wenn Du einatmest, bewegt sich die Luft durch den Hals in die Luftröhre. Du kannst Deine Luftröhre fühlen, wenn Du mit Deinem Finger sachte in der Mitte Deines Halses abtastest. Die Luftröhre fühlt sich an wie eine Röhre mit einer Reihe von wellenartigen Erhöhungen. Die festen Erhöhungen sind Knorpel, die die Luftröhre stärken und offen halten.</Paragraph></PageContent><PageContent PCID=\"21348665022858054878\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Ähnlich wie die Nase ist auch die Luftröhre mit Zilien und Schleim ausgestattet. Die Zilien in der Luftröhre bewegen den Schleim nach oben, in Richtung Hals, von wo aus der Schleim dann runtergeschluckt werden kann. Die Zilien der Luftröhre und der Schleim setzen den Reinigungs- und Befeuchtungsprozess fort, der in der Nase begonnen hatte. Wenn Partikel die Schleimhäute der Luftröhre reizen, musst Du husten. Beim Husten werden Partikel ähnlich wie beim Niesen zurück in die Außenluft befördert.</Paragraph></PageContent><PageContent PCID=\"37627111531634144515\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Von der Luftröhre aus gelangt die Luft in die Bronchien, welche die Luft dann in die Lungen befördern. Die linke Bronchie führt zur linken Lungenhälfte, die rechte Bronchie führ zur rechten Lungenhälfte. Hier in der Lunge nimmt nun das Blut den Sauerstoff aus der Luft aus, die Du eingeatmet hast.</Paragraph></PageContent><PageContent PCID=\"21209092282205981762\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Sup>Quelle: Hinze, S. R., Wiley, J., &amp; Pellegrino, J. W. (2013). The importance of constructive comprehension processes in learning from tests. Journal of Memory and Language, 69(2), 151–164. https://doi.org/10.1016/j.jml.2013.03.002</Sup></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": []
+                            }
+                          ]
+                        },
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_61_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Lernaufgaben zum Thema Atmung"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"1dc391a2ce12ec7ff1397d95a3214877\"><Plugged PluginName=\"H5PPageComponent\" PluginVersion=\"4.0.3\"><PluggedProperty Name=\"content_id\">11</PluggedProperty></Plugged></PageContent><PageContent PCID=\"6784812132315045882\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Sup>Quelle: Hinze, S. R., Wiley, J., &amp; Pellegrino, J. W. (2013). The importance of constructive comprehension processes in learning from tests. Journal of Memory and Language, 69(2), 151–164. https://doi.org/10.1016/j.jml.2013.03.002</Sup></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": [
+                                {
+                                  "lcoType": "ILIAS_INTERACTIVE_TASK",
+                                  "objectId": "http://localhost:5173/goto.php?target=pg_61_90&client_id=default&h5p_object_id=11&obj_id_lrs=339",
+                                  "attributes": [
+                                    {
+                                      "key": "title",
+                                      "value": "Lernaufgaben Atmung"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "lcoType": "ILIAS_CHAPTER",
+                  "objectId": "http://localhost:5173/goto.php?target=st_62_90&client_id=default&obj_id_lrs=339",
+                  "attributes": [
+                    {
+                      "key": "title",
+                      "value": "Die Kampf- oder Flucht-Reaktion"
+                    },
+                    {
+                      "key": "contentPages",
+                      "value": [
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_63_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Die Kampf- oder Fluchtreaktion"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"0ad73089ed0587f228360de4864bef34\"><MediaObject><MediaAlias OriginId=\"il__mob_342\"/><MediaAliasItem Purpose=\"Standard\"><Layout HorizontalAlign=\"RightFloat\"/></MediaAliasItem></MediaObject></PageContent><PageContent PCID=\"42345546582318343013\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Du bist an einem heißen Nachmittag im Park unterwegs. Ohne jede Warnung bilden sich dunkle Wolken. Plötzlich blitzt es. Donner grollt. Jemand schreit, Du springst auf und alle suchen Schutz. Dein Herz schlägt wie verrückt. Die Reaktion Deines Körpers auf den plötzlichen Sturm wird hauptsächlich von Deinem endokrinen System hervorgerufen.</Paragraph></PageContent><PageContent PCID=\"15708927403994586647\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Das endokrine System produziert Chemikalien, welche viele der täglichen Körperaktivitäten regulieren. Das endokrine System besteht aus Drüsen. Eine Drüse ist ein Organ welches Chemikalien entweder produziert oder freisetzt. Einige Drüsen, wie z.B. diejenigen, die Speichel und Schweiß produzieren, setzen ihre Chemikalien in kleine Röhren frei, welche auch als Kanäle bezeichnet werden. Die Kanäle transportieren die Chemikalien zu spezifischen Orten im Körper, oder auch zur Hautoberfläche. Endokrine Drüsen haben aber keine eigenen Auslieferröhren. Sie produzieren Chemikalien und setzen diese direkt in den Blutkreislauf frei, ohne den Umweg über Kanäle. Die chemischen Produkte von endokrinen Drüsen heißen Hormone. Der Blutkreislauf transportiert die Hormone durch den Körper.</Paragraph></PageContent><PageContent PCID=\"42292459381355624813\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Wenn ein Hormon in den Blutkreislauf eintritt, interagiert es nicht mit allen Organen im Körper. Es interagiert nur mit bestimmten Zellen, welche die chemische Struktur des Hormons erkennen. Diese Zellen heißen Zielzellen. Hormone, welche nicht mit den Zielzellen eines bestimmten Organs zusammenpassen, passieren den Blutstrom solange, bis sie die passenden Zielzellen finden. Die Zielzellen reagieren dann auf die Hormone, indem sie die Aktivitäten von Organen oder Gewebe einschalten, ausschalten, beschleunigen, oder abbremsen. Hormone können Aktivitäten in Gewebe und Organen regulieren, die nicht in der Nähe der Drüsen sind, die die Hormone produzieren.</Paragraph></PageContent><PageContent PCID=\"7635087122854482851\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Das endokrine System kontrolliert, wie der Körper auf eine aufregende Situation reagiert. Das Gehirn verarbeitet die Situation und setzt zuerst Hormone aus der Hirnanhangdrüse frei. Wenn das Gehirn eine Situation als gefährlich und angsteinflößend interpretiert, werden die Hormone aus der Hirnanhangdrüse zu einer speziellen endokrinen Drüse geleitet, der Nebennierendrüse. Diese Drüse setzt das Hormon Adrenalin in den Blutstrom frei.</Paragraph></PageContent><PageContent PCID=\"20395674451256379807\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Einige der Zielzellen, die auf Adrenalin reagieren, befinden sich in Deinem Herz und Deiner Lunge. Diese Zielzellen reagieren auf das Adrenalin, indem sie die Aktivitäten der beiden Organe beschleunigen. Außerdem wird Zucker in Deinen Muskeln freigesetzt, falls Du Energie brauchst, um entweder zu kämpfen oder zu flüchten. Diese Reaktion heißt deswegen auch Kampf-oder-Fluchtreaktion. Zur selben Zeit reagieren Zielzellen im Magen auf das Adrenalin, indem sie ihre Aktivität verlangsamen, sodass mehr Blut zu anderen Muskeln transportiert werden kann. Diese Reaktionen dauern an, solange bis die Menge an Adrenalin im Blut wieder auf ein normales Niveau gesunken ist.</Paragraph></PageContent><PageContent PCID=\"21677231991572652132\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Sup>Quelle: Hinze, S. R., Wiley, J., &amp; Pellegrino, J. W. (2013). The importance of constructive comprehension processes in learning from tests. Journal of Memory and Language, 69(2), 151–164. https://doi.org/10.1016/j.jml.2013.03.002</Sup></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": []
+                            }
+                          ]
+                        },
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_64_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Lernaufgaben zum Thema endokrines System"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"ba919db2be71882e8719cf48657518b5\"><Plugged PluginName=\"H5PPageComponent\" PluginVersion=\"4.0.3\"><PluggedProperty Name=\"content_id\">12</PluggedProperty></Plugged></PageContent><PageContent PCID=\"20891283384054449163\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Sup>Quelle: Hinze, S. R., Wiley, J., &amp; Pellegrino, J. W. (2013). The importance of constructive comprehension processes in learning from tests. Journal of Memory and Language, 69(2), 151–164. https://doi.org/10.1016/j.jml.2013.03.002</Sup></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": [
+                                {
+                                  "lcoType": "ILIAS_INTERACTIVE_TASK",
+                                  "objectId": "http://localhost:5173/goto.php?target=pg_64_90&client_id=default&h5p_object_id=12&obj_id_lrs=339",
+                                  "attributes": [
+                                    {
+                                      "key": "title",
+                                      "value": "Lernaufgaben endokrines System"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "lcoType": "ILIAS_CHAPTER",
+                  "objectId": "http://localhost:5173/goto.php?target=st_65_90&client_id=default&obj_id_lrs=339",
+                  "attributes": [
+                    {
+                      "key": "title",
+                      "value": "Viren"
+                    },
+                    {
+                      "key": "contentPages",
+                      "value": [
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_66_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Viren"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"9f2d453fa3a5e53458833d44682809d2\"><MediaObject><MediaAlias OriginId=\"il__mob_345\"/><MediaAliasItem Purpose=\"Standard\"><Layout HorizontalAlign=\"RightFloat\"/></MediaAliasItem></MediaObject></PageContent><PageContent PCID=\"1556019222568299305\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Ein Virus ist ein kleiner unbelebter Partikel, welcher in jede lebende Zelle eindringen und sich dort reproduzieren kann. Biologen ordnen Viren der unbelebten Natur zu, da sie keine Zellen sind. Viren benötigen keine Energie um zu wachsen und sie reagieren nicht auf ihre Umwelt. Viren können keine Nahrung produzieren oder aufnehmen und sie produzieren auch keine Abfallprodukte. Die einzige Eigenschaft von Organismen, die auch Viren aufweisen, ist die Fähigkeit zur Fortpflanzung, aber auch diese verläuft bei Viren anders. Viren können sich nämlich nur im Inneren einer lebenden Zelle vervielfältigen. Die Zellen, die von Viren zum Zwecke der Vervielfältigung befallen werden, heißen Wirtszellen.</Paragraph></PageContent><PageContent PCID=\"34458496983648466216\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Alle Viren bestehen aus zwei Grundbestandteilen: Ein Eiweißmantel, der den Virus schützt und ein innerer Kern, der aus genetischem Material besteht. Das genetische Material eines Virus‘ enthält die Anleitungen für dessen Vervielfältigung. Die Eiweiße an der Oberfläche des Virus‘ spielen eine tragende Rolle bei der Invasion einer Wirtszelle. Jeder Virus verfügt an seiner Oberfläche über einzigartige Eiweiße, die aussehen wie die Eiweiße, welche die Wirtszelle normalerweise benötigt. Der Virus heftet sich an spezielle Orte an der Wirtszelle, die üblicherweise für diese Eiweiße reserviert sind. Wie Schlüssel passen die Eiweiße des Virus‘ dabei nur in bestimmte ‚Schlösser‘, also nur in bestimmte Eiweiße der Wirtszelle. Weil die Schlüssel-Schloss-Passung eines Virus‘ spezifisch ist, kann sich ein bestimmter Virus nur an einige wenige Zelltypen anheften.</Paragraph></PageContent><PageContent PCID=\"18055266512500780254\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Wenn sich ein Virus einmal an die Oberfläche einer Wirtszelle geheftet hat, injiziert er sein genetisches Material in die Zelle. Der innere Kern des Virus‘ übernimmt die Funktionen der Wirtszelle und beginnt, die Eiweiße des Virus und dessen genetisches Material zu produzieren. In der Folge setzten sich diese beiden Komponenten zusammen und formen neue Viren, bis die Zelle ausgefüllt ist. Wenn die Wirtszelle voll mit neuen Viren ist, platzt sie und setzte hunderte neue Viren frei, welche nun andere Zellen infizieren und der Prozess der Vervielfältigung beginnt erneut.</Paragraph></PageContent><PageContent PCID=\"387137338564916921\"><Paragraph Language=\"de\" Characteristic=\"Standard\">Trotz ihrer geringen Größe haben Viren die Fähigkeit, in Zellen und anderen Organismen sehr viel Schaden anzurichten. Alle Lebewesen können von Viren infiziert werden. Einer der am besten untersuchten Viren infiziert Bakterien. Der Virus heißt Bakteriophage, was so viel bedeutet wie Bakterien-Fresser. Im Menschen können Viren relativ harmlose Krankheiten auslösen wie beispielsweise Herpes oder Erkältungen, aber auch lebensbedrohliche Erkrankungen wie Polio und AIDS.</Paragraph></PageContent><PageContent PCID=\"29179371873495896206\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Sup>Quelle: Hinze, S. R., Wiley, J., &amp; Pellegrino, J. W. (2013). The importance of constructive comprehension processes in learning from tests. Journal of Memory and Language, 69(2), 151–164. https://doi.org/10.1016/j.jml.2013.03.002</Sup></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": []
+                            }
+                          ]
+                        },
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_67_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Lernaufgaben zum Thema Viren"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"3ca65ba48d2ecc6e60874530c74c35e7\"><Plugged PluginName=\"H5PPageComponent\" PluginVersion=\"4.0.3\"><PluggedProperty Name=\"content_id\">15</PluggedProperty></Plugged></PageContent><PageContent PCID=\"27992918541153856630\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Sup>Quelle: Hinze, S. R., Wiley, J., &amp; Pellegrino, J. W. (2013). The importance of constructive comprehension processes in learning from tests. Journal of Memory and Language, 69(2), 151–164. https://doi.org/10.1016/j.jml.2013.03.002</Sup></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": [
+                                {
+                                  "lcoType": "ILIAS_INTERACTIVE_TASK",
+                                  "objectId": "http://localhost:5173/goto.php?target=pg_67_90&client_id=default&h5p_object_id=15&obj_id_lrs=339",
+                                  "attributes": [
+                                    {
+                                      "key": "title",
+                                      "value": "Lernaufgaben Viren"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "lcoType": "ILIAS_CHAPTER",
+                  "objectId": "http://localhost:5173/goto.php?target=st_68_90&client_id=default&obj_id_lrs=339",
+                  "attributes": [
+                    {
+                      "key": "title",
+                      "value": "Abschluss"
+                    },
+                    {
+                      "key": "contentPages",
+                      "value": [
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_69_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Lerntagebuch"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"a8d855ed87462df9b30f4b71de31e4bb\"><Plugged PluginName=\"H5PPageComponent\" PluginVersion=\"4.0.3\"><PluggedProperty Name=\"content_id\">17</PluggedProperty></Plugged></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": [
+                                {
+                                  "lcoType": "ILIAS_INTERACTIVE_TASK",
+                                  "objectId": "http://localhost:5173/goto.php?target=pg_69_90&client_id=default&h5p_object_id=17&obj_id_lrs=339",
+                                  "attributes": [
+                                    {
+                                      "key": "title",
+                                      "value": "Lerntagebuch"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "lcoType": "ILIAS_CONTENT_PAGE",
+                          "objectId": "http://localhost:5173/goto.php?target=pg_70_90&client_id=default&obj_id_lrs=339",
+                          "attributes": [
+                            {
+                              "key": "title",
+                              "value": "Abschlussbefragung"
+                            },
+                            {
+                              "key": "content",
+                              "value": "\n\n<PageObject><PageContent PCID=\"fc3ab42bf93d930a51eb6f7d34f669b6\"><Paragraph Language=\"de\" Characteristic=\"Standard\">In der folgenden Abschlussbefragung finden Sie 20 Fragen, die sich auf die 5 Texte aus dem Lernmodul beziehen. Bitte beantworten Sie die Fragen so gut Sie können, indem Sie die korrekte Lösung anklicken. Es ist pro Aufgabe immer nur eine Antwort richtig.</Paragraph></PageContent><PageContent PCID=\"9b5aa387d7fcb3057d2831e28dd7f1ee\"><Plugged PluginName=\"H5PPageComponent\" PluginVersion=\"4.0.3\"><PluggedProperty Name=\"content_id\">10</PluggedProperty></Plugged></PageContent><PageContent PCID=\"3979149889746524909\"><Paragraph Language=\"de\" Characteristic=\"Standard\"><Sup>Quelle: Hinze, S. R., Wiley, J., &amp; Pellegrino, J. W. (2013). The importance of constructive comprehension processes in learning from tests. Journal of Memory and Language, 69(2), 151–164. https://doi.org/10.1016/j.jml.2013.03.002</Sup></Paragraph></PageContent></PageObject>\n"
+                            },
+                            {
+                              "key": "interactiveTasks",
+                              "value": [
+                                {
+                                  "lcoType": "ILIAS_INTERACTIVE_TASK",
+                                  "objectId": "http://localhost:5173/goto.php?target=pg_70_90&client_id=default&h5p_object_id=10&obj_id_lrs=339",
+                                  "attributes": [
+                                    {
+                                      "key": "title",
+                                      "value": "Abschlussbefragung"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "tests",
+      "value": []
+    }
+  ]
 }
