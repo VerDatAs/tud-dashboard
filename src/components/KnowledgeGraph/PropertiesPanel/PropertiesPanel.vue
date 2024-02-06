@@ -36,6 +36,9 @@ export default {
     canViewOnly: Boolean,
     members: Array
   },
+  emits: [
+    'changeInput'
+  ],
   created() {
     this.collaborationMembers = this.members;
     // select all members by default

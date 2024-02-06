@@ -30,6 +30,11 @@ export default {
     members: Array,
     isExpanded: Boolean
   },
+  emits: [
+    'loadedDiagram',
+    'setDiagram',
+    'updateCourseNode'
+  ],
   created() {
     document.addEventListener('fullscreenchange', () => {
       if (!document.fullscreenElement) {
@@ -58,6 +63,9 @@ export default {
       if (value) {
         this.$refs.graphViewer.saveKnowledgeGraph()
       }
+    },
+    updateCourseNode(courseNode) {
+      this.$emit('updateCourseNode', courseNode)
     },
     updateMetamodel(metamodel) {
       this.metamodel = metamodel
@@ -134,6 +142,7 @@ export default {
       @loadedDiagram="changeDiagramLoaded"
       @selectedElement="selectedElement"
       @setDiagram="setDiagram"
+      @updateCourseNode="updateCourseNode"
       @updateMetamodel="updateMetamodel"
     />
     <PropertiesPanel

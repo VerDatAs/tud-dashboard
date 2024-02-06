@@ -5,6 +5,10 @@ export default {
   props: {
     isExpanded: Boolean
   },
+  emits: [
+    'setCurrentView',
+    'toggleNavigationExpanded'
+  ],
   methods: {
     setCurrentView(evt, viewName) {
       if (viewName && viewName !== '') {

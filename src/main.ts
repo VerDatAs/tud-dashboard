@@ -37,23 +37,28 @@ library.add(
   faUsers
 )
 
+import { useDashboardDataStore } from '@/stores/dashboardData'
+
 import type { DashboardData } from '@/types/dashboard-data'
 
 import './assets/main.scss'
 // import('./assets/local-dev.scss')
 
 // import { localNode } from '@/util/InitialEvent'
-//
+
 // import axios from 'axios'
 
 function initDashboard(initDashboardData: DashboardData) {
-  const app = createApp(App, { initDashboardData })
+  console.log('init dashboard', JSON.stringify(initDashboardData));
+  const app = createApp(App)
 
   const pinia = createPinia()
   pinia.use(piniaPluginPersistedstate)
   app.use(pinia)
 
   app.component('font-awesome-icon', FontAwesomeIcon)
+
+  useDashboardDataStore().setDashboardData(initDashboardData)
 
   app.mount('#dashboardApp')
 

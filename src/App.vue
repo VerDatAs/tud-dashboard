@@ -6,6 +6,7 @@ import LoadingScreen from '@/components/LoadingScreen.vue'
 import ModuleSelection from '@/components/ModuleSelection.vue'
 import NavigationView from '@/components/NavigationView.vue'
 import Settings from '@/components/SettingsView.vue'
+import { useDashboardDataStore } from '@/stores/dashboardData'
 import { DashboardData } from '@/types/dashboard-data'
 import { ref } from 'vue'
 
@@ -22,36 +23,18 @@ export default {
   },
   data() {
     return {
+      dashboardDataStore: useDashboardDataStore(),
       diagram: null,
       diagramLoaded: false,
       currentView: 'knowledgeStructure',
-      isExpanded: ref(localStorage.getItem('is_expanded') === 'true')
-    }
-  },
-  props: {
-    initDashboardData: DashboardData
-  },
-  computed: {
-    courseNode() {
-      return this.initDashboardData?.courseNode ?? {}
-    },
-    token() {
-      return this.initDashboardData?.token ?? ''
-    },
-    backendUrl() {
-      return this.initDashboardData?.backendUrl ?? ''
-    },
-    path() {
-      return this.initDashboardData?.path ?? ''
-    },
-    canViewOnly() {
-      return this.initDashboardData?.canViewOnly ?? true
-    },
-    previewMode() {
-      return this.initDashboardData?.previewMode ?? false
-    },
-    members() {
-      return this.initDashboardData?.members ?? []
+      isExpanded: ref(localStorage.getItem('is_expanded') === 'true'),
+      courseNode: {},
+      token: '',
+      backendUrl: '',
+      path: '',
+      canViewOnly: true,
+      previewMode: false,
+      members: []
     }
   },
   created() {
@@ -59,6 +42,13 @@ export default {
   },
   methods: {
     initDashboardApp() {
+      this.courseNode = this.dashboardDataStore.data?.courseNode ?? {}
+      this.token = this.dashboardDataStore.data?.token ?? ''
+      this.backendUrl = this.dashboardDataStore.data?.backendUrl ?? ''
+      this.path = this.dashboardDataStore.data?.path ?? ''
+      this.canViewOnly = this.dashboardDataStore.data?.canViewOnly ?? true
+      this.previewMode = this.dashboardDataStore.data?.previewMode ?? false
+      this.members = this.dashboardDataStore.data?.members ?? []
       // https://stackoverflow.com/a/69196265
       // TODO: This will center the canvas on every resize. Improve if possible.
       new ResizeObserver(() => {
@@ -83,6 +73,10 @@ export default {
       setTimeout(() => {
         this.$refs.knowledgeGraph?.centerCanvas()
       }, 100)
+    },
+    updateCourseNode(courseNode) {
+      this.dashboardDataStore.data.courseNode = courseNode
+      this.courseNode = courseNode
     }
   }
 }
@@ -112,6 +106,7 @@ export default {
       @loadedDiagram="changeDiagramLoaded"
       @setCurrentView="setCurrentView"
       @setDiagram="setDiagram"
+      @updateCourseNode="updateCourseNode"
     />
     <ModuleSelection v-if="currentView === 'moduleSelection'" />
     <CollaborationMonitoring

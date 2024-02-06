@@ -30,8 +30,20 @@ export default {
     elementSelected: Object,
     canViewOnly: Boolean
   },
+  emits: [
+    'loadedDiagram',
+    'selectedElement',
+    'setDiagram',
+    'updateCourseNode',
+    'updateMetamodel'
+  ],
   created() {
     this.initGraphViewer()
+  },
+  computed: {
+    existingLcoId() {
+      return this.courseNode.lcoId ?? null
+    }
   },
   methods: {
     // Handles the retrieval of the diagram and loading into the editor
@@ -46,28 +58,52 @@ export default {
       // example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
       // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
       const encodedId = Base64.encodeURI(this.courseNode.objectId)
-      const knowledgeGraphUrl = this.backendUrl + '/api/v1/courses/' + encodedId + '/knowledge-graph'
+      const knowledgeGraphUrl = this.backendUrl + '/api/v1/lco/search'
       const authHeader = {
         'Content-Type': 'application/json;charset=UTF-8',
         Authorization: 'Bearer ' + this.token
       }
+      // search for existing knowledge_graphs with a given objectId
+      const request = [
+        {
+          "key": "objectId",
+          "value": this.courseNode.objectId
+        }
+      ]
       axios
-        .get(knowledgeGraphUrl, { headers: authHeader })
+        .post(knowledgeGraphUrl, request, { headers: authHeader })
         .then((graphResponse) => {
           // Handle response
           console.log('graph data', graphResponse.data)
-          if (graphResponse.data?.graph) {
-            this.graph = graphResponse.data.graph
+          if (graphResponse.data?.lcos) {
+            const courseTitle = this.getAttributeValue(this.courseNode, 'title')
+            this.graph = initialModel(encodedId, courseTitle)
             this.processKnowledgeGraph()
+            setTimeout(() => {
+              if (graphResponse.data?.lcos[0]) {
+                const courseNode = graphResponse.data.lcos[0]
+                this.$emit('updateCourseNode', courseNode)
+                this.redrawKnowledgeGraph()
+              } else {
+                // the course node is transferred for the first time
+                this.redrawKnowledgeGraph()
+                // if at least one attribute exists, save it initially
+                if (this.courseNode.attributes?.length > 0) {
+                  // use setTimeout, as otherwise the knowledge graph might not be ready
+                  setTimeout(() => {
+                    this.saveKnowledgeGraph()
+                  }, 100)
+                }
+                else {
+                  this.showEmptyMessage = true
+                }
+              }
+            }, 100)
           }
         })
         .catch((err) => {
           // Handle errors
           console.error(err)
-          const courseTitle = this.getAttributeValue(this.courseNode, 'title')
-          this.graph = initialModel(encodedId, courseTitle)
-          this.processKnowledgeGraph()
-          this.showEmptyMessage = true
         })
     },
     // Handles the entire (Extended-)Viewer creation,
@@ -203,7 +239,10 @@ export default {
           eventBus.on('commandStack.changed', exportArtifacts)
 
           // Set that the initial diagram was loaded once
-          this.$emit('loadedDiagram', true)
+          // Add timeout to avoid loading artifacts
+          setTimeout(() => {
+            this.$emit('loadedDiagram', true)
+          }, 250)
         })
     },
     redrawKnowledgeGraph() {
@@ -467,112 +506,159 @@ export default {
         return
       }
       const knowledgeGraphTopic = topics[0]
-      if (knowledgeGraphTopic?.businessObject?.objectId && knowledgeGraphTopic.businessObject.objectId !== '') {
-        const topicBusinessObject = knowledgeGraphTopic.businessObject
-        // example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
-        // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
-        const encodedId = Base64.encodeURI(knowledgeGraphTopic.businessObject.objectId)
-        const url = this.backendUrl + '/api/v1/courses/' + encodedId + '/knowledge-graph'
-
-        // TODO: Add other attributes that can be set by the editor
-        const supportedAttributeKeys = [
-          'objectId',
-          'title',
-          'name',
-          'description',
-          'offline',
-          'content',
-          'processingTime'
-        ]
-        const nestedChildrenKeys = ['modules', 'chapters', 'contentPages', 'interactiveTasks']
-
-        const childKeyToLcoType = {
-          'verDatAs:Topic': 'ILIAS_COURSE',
-          'verDatAs:Module': 'ILIAS_MODULE',
-          'verDatAs:Chapter': 'ILIAS_CHAPTER',
-          'verDatAs:ContentPage': 'ILIAS_CONTENT_PAGE',
-          'verDatAs:InteractiveTask': 'ILIAS_INTERACTIVE_TASK'
-        }
-
-        const attributeObject = (key, value) => {
-          return { key, value }
-        }
-
-        const iterateAttributes = (currentBusinessObject) => {
-          const lcoType = childKeyToLcoType[currentBusinessObject['$type']] ?? 'UNKNOWN'
-          const attributes = []
-          console.log('attributes of ' + lcoType, Object.keys(currentBusinessObject))
-          Object.keys(currentBusinessObject)?.forEach((attrKey) => {
-            console.log('iterate ' + lcoType + ' -> ' + attrKey)
-            if (supportedAttributeKeys.includes(attrKey)) {
-              // the title attribute was used as name in the diagram
-              const keyToPush = attrKey === 'name' ? 'title' : attrKey
-              attributes.push(attributeObject(keyToPush, currentBusinessObject[attrKey]))
-            } else if (nestedChildrenKeys.includes(attrKey)) {
-              const attrObjects = []
-              // the children objects of a businessObject are automatically businessObjects again
-              currentBusinessObject[attrKey]?.forEach((childObject) => {
-                attrObjects.push(iterateAttributes(childObject))
-              })
-              attributes.push(attributeObject(attrKey, attrObjects))
-            }
-          })
-          // all drawn modules are not offline -> thus, set offline false
-          if (lcoType === 'ILIAS_MODULE') {
-            attributes.push(attributeObject('offline', false))
-          }
-          return {
-            lcoType,
-            attributes
-          }
-        }
-
-        const genericCourseFormat = iterateAttributes(topicBusinessObject)
-        console.log('1) Generic format as an object', genericCourseFormat)
-        console.log('2) Generic format as JSON', JSON.stringify(genericCourseFormat))
-
-        const authHeader = {
-          'Content-Type': 'application/json;charset=UTF-8',
-          Authorization: 'Bearer ' + this.token
-        }
-
-        const graphs = this.graphStore.graphs
-
-        this.diagram.saveXML({ format: true }).then((result) => {
-          console.log('Test', graphs)
-          const courseObjectId = this.courseNode?.objectId
-          if (!graphs[courseObjectId]) graphs[courseObjectId] = ''
-
-          const lastSavedGraphForCourse = graphs[courseObjectId]
-          // only save graph if something changed compared to the last saved graph
-          if (result.xml === lastSavedGraphForCourse) {
-            return
-          }
-
-          //save new graph to store
-          graphs[courseObjectId] = result.xml
-
-          const request = {
-            graph: result.xml,
-            format: 'XML'
-          }
-
-          axios.put(url, request, { headers: authHeader }).then(() => {
-            console.log('Save Graph')
-            //visual feedback for the user when graph is saved
-            const loading = document.getElementById('loading')
-            loading.style.display = 'block'
-            const errorMessage = document.getElementById('autosave-message')
-            errorMessage.style.display = 'none'
-            setTimeout(function () {
-              loading.style.display = 'none'
-              errorMessage.style.display = 'block'
-            }, 2800)
-          })
-        })
-      } else {
+      if (!knowledgeGraphTopic?.businessObject?.objectId || knowledgeGraphTopic.businessObject.objectId === '') {
         console.log('No objectId defined for topic.')
+        return
       }
+      const topicBusinessObject = knowledgeGraphTopic.businessObject
+
+      // TODO: Add other attributes that can be set by the editor
+      const supportedAttributeKeys = [
+        'title',
+        'name',
+        'description',
+        'offline',
+        'content',
+        'processingTime'
+      ]
+
+      const nestedChildrenKeys = [
+        'modules',
+        'chapters',
+        'contentPages',
+        'interactiveTasks'
+      ]
+
+      const childKeyToLcoType = {
+        'verDatAs:Topic': 'ILIAS_COURSE',
+        'verDatAs:Module': 'ILIAS_MODULE',
+        'verDatAs:Chapter': 'ILIAS_CHAPTER',
+        'verDatAs:ContentPage': 'ILIAS_CONTENT_PAGE',
+        'verDatAs:InteractiveTask': 'ILIAS_INTERACTIVE_TASK'
+      }
+
+      const attributeObject = (key, value) => {
+        return { key, value }
+      }
+
+      const iterateAttributes = (currentBusinessObject, iterationDepth) => {
+        const genericObject = {}
+        if (!iterationDepth) {
+          if (currentBusinessObject.lcoId) {
+            genericObject.lcoId = currentBusinessObject.lcoId
+          }
+          iterationDepth = 1
+        } else {
+          iterationDepth += 1
+        }
+        const lcoType = childKeyToLcoType[currentBusinessObject['$type']] ?? 'UNKNOWN'
+        genericObject.lcoType = lcoType
+        const objectId = currentBusinessObject.objectId ?? ''
+        if (objectId !== '') {
+          genericObject.objectId = objectId
+        }
+        const attributes = []
+        console.log('attributes of ' + lcoType, Object.keys(currentBusinessObject))
+        Object.keys(currentBusinessObject)?.forEach((attrKey) => {
+          console.log('iterate ' + lcoType + ' -> ' + attrKey)
+          if (supportedAttributeKeys.includes(attrKey)) {
+            // the title attribute was used as name in the diagram
+            const keyToPush = attrKey === 'name' ? 'title' : attrKey
+            attributes.push(attributeObject(keyToPush, currentBusinessObject[attrKey]))
+          } else if (nestedChildrenKeys.includes(attrKey)) {
+            const attrObjects = []
+            // the children objects of a businessObject are automatically businessObjects again
+            currentBusinessObject[attrKey]?.forEach((childObject) => {
+              attrObjects.push(iterateAttributes(childObject, iterationDepth))
+            })
+            attributes.push(attributeObject(attrKey, attrObjects))
+          }
+        })
+        // all drawn modules are not offline -> thus, set offline false
+        if (lcoType === 'ILIAS_MODULE') {
+          attributes.push(attributeObject('offline', false))
+        }
+        genericObject.attributes = attributes
+        return genericObject
+      }
+
+      const genericCourseFormatRequest = iterateAttributes(topicBusinessObject)
+      console.log('1) Generic format as an object', genericCourseFormatRequest)
+      console.log('2) Generic format as JSON', JSON.stringify(genericCourseFormatRequest))
+
+      const authHeader = {
+        'Content-Type': 'application/json;charset=UTF-8',
+        Authorization: 'Bearer ' + this.token
+      }
+
+      const url = !this.existingLcoId ? this.backendUrl + '/api/v1/lco' : this.backendUrl + '/api/v1/lco/' + this.existingLcoId
+
+      // if no lcoId exists, create a new lco object
+      if (!this.existingLcoId) {
+        axios.post(url, genericCourseFormatRequest, { headers: authHeader }).then(() => {
+          console.log('Save Graph')
+          //visual feedback for the user when graph is saved
+          const loading = document.getElementById('loading')
+          loading.style.display = 'block'
+          const errorMessage = document.getElementById('autosave-message')
+          errorMessage.style.display = 'none'
+          setTimeout(function () {
+            loading.style.display = 'none'
+            errorMessage.style.display = 'block'
+          }, 2800)
+        })
+      }
+      // if a lcoId exists, update this lco object
+      else {
+        axios.put(url, genericCourseFormatRequest, { headers: authHeader }).then(() => {
+          console.log('Updating Graph')
+          //visual feedback for the user when graph is saved
+          const loading = document.getElementById('loading')
+          loading.style.display = 'block'
+          const errorMessage = document.getElementById('autosave-message')
+          errorMessage.style.display = 'none'
+          setTimeout(function () {
+            loading.style.display = 'none'
+            errorMessage.style.display = 'block'
+          }, 2800)
+        })
+      }
+
+      // TODO: Remove, if transferred to adjusted functionality
+      // const graphs = this.graphStore.graphs
+
+      // this.diagram.saveXML({ format: true }).then((result) => {
+      //   console.log('Test', graphs)
+      //   const courseObjectId = this.courseNode?.objectId
+      //   if (!graphs[courseObjectId]) graphs[courseObjectId] = ''
+      //
+      //   const lastSavedGraphForCourse = graphs[courseObjectId]
+      //   // only save graph if something changed compared to the last saved graph
+      //   if (result.xml === lastSavedGraphForCourse) {
+      //     return
+      //   }
+      //
+      //   //save new graph to store
+      //   graphs[courseObjectId] = result.xml
+      //
+      //   const request = {
+      //     graph: result.xml,
+      //     format: 'XML'
+      //   }
+      //
+      //   axios.put(url, request, { headers: authHeader }).then(() => {
+      //     console.log('Save Graph')
+      //     //visual feedback for the user when graph is saved
+      //     const loading = document.getElementById('loading')
+      //     loading.style.display = 'block'
+      //     const errorMessage = document.getElementById('autosave-message')
+      //     errorMessage.style.display = 'none'
+      //     setTimeout(function () {
+      //       loading.style.display = 'none'
+      //       errorMessage.style.display = 'block'
+      //     }, 2800)
+      //   })
+      // })
     },
     centerCanvas() {
       const canvas = this.diagram.get('canvas')

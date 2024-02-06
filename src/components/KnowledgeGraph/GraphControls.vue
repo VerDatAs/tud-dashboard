@@ -8,6 +8,12 @@ export default {
   props: {
     isMaximized: Boolean
   },
+  emits: [
+    'redrawKnowledgeGraph',
+    'saveKnowledgeGraph',
+    'saveXML',
+    'toggleView'
+  ],
   methods: {
     redrawKnowledgeGraph() {
       this.$emit('redrawKnowledgeGraph', true)
