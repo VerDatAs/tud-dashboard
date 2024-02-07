@@ -74,6 +74,7 @@ export default {
         .post(knowledgeGraphUrl, request, { headers: authHeader })
         .then((graphResponse) => {
           // Handle response
+          // TODO: Make use of async and await functions to avoid using setTimeout multiple times
           console.log('graph data', graphResponse.data)
           if (graphResponse.data?.lcos) {
             const courseTitle = this.getAttributeValue(this.courseNode, 'title')
@@ -98,6 +99,11 @@ export default {
                   this.showEmptyMessage = true
                 }
               }
+              // Set that the initial diagram was loaded once
+              // Add timeout to avoid loading artifacts
+              setTimeout(() => {
+                this.$emit('loadedDiagram', true)
+              }, 250)
             }, 100)
           }
         })
@@ -165,7 +171,8 @@ export default {
               } else {
                 this.$emit('selectedElement', null)
                 //try to auto-save the graph after not selecting another graph element if activated in the settings
-                if (this.settings.autosave) {
+                if (this.settings.autosave && this.diagramLoaded) {
+                  console.log('auto saving')
                   this.saveKnowledgeGraph()
                 }
               }
@@ -237,12 +244,6 @@ export default {
           }, 500)
 
           eventBus.on('commandStack.changed', exportArtifacts)
-
-          // Set that the initial diagram was loaded once
-          // Add timeout to avoid loading artifacts
-          setTimeout(() => {
-            this.$emit('loadedDiagram', true)
-          }, 250)
         })
     },
     redrawKnowledgeGraph() {
