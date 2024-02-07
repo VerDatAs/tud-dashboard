@@ -42,11 +42,10 @@ import { useDashboardDataStore } from '@/stores/dashboardData'
 import type { DashboardData } from '@/types/dashboard-data'
 
 import './assets/main.scss'
-// import('./assets/local-dev.scss')
 
-// import { localNode } from '@/util/InitialEvent'
-
-// import axios from 'axios'
+function isDevelopmentBuild(): boolean {
+  return import.meta.env.MODE != 'production'
+}
 
 function initDashboard(initDashboardData: DashboardData) {
   console.log('init dashboard', JSON.stringify(initDashboardData));
@@ -67,22 +66,28 @@ function initDashboard(initDashboardData: DashboardData) {
   }, 1000)
 }
 
-// Local development: Uncomment this lines and remove type from "import type ..."
-// TODO: Find a better solution for local development: https://stackoverflow.com/questions/70709987/how-to-load-environment-variables-from-env-file-using-vite
-// const backendUrl = 'https://tasverdatas.showcase.verdatas.inf.tu-dresden.de';
-// const pseudoId = 'verdatas1'
-// const authUrl = backendUrl + '/api/v1/auth/login'
-// const request = {
-//   actorAccountName: pseudoId
-// }
-// axios.post(authUrl, request).then((data: any) => {
-//   const token = data.data?.token
-//   const dashboardData = new DashboardData(localNode, token, backendUrl)
-//   dashboardData.previewMode = false
-//   dashboardData.canViewOnly = false
-//   dashboardData.path = ''
-//   initDashboard(dashboardData)
-// })
+if (isDevelopmentBuild()) {
+  // solution of conditional imports retrieved from https://stackoverflow.com/a/67059286
+  const axios = (await import('axios')).default
+  const localNode  = (await import('@/util/InitialEvent')).localNode
+  import('./assets/local-dev.scss')
+  const DashboardData = (await import('@/types/dashboard-data')).DashboardData
+
+  const backendUrl = import.meta.env.VITE_BACKEND_URL
+  const pseudoId = import.meta.env.VITE_PSEUDO_ID
+  const authUrl = backendUrl + '/api/v1/auth/login'
+  const request = {
+    actorAccountName: pseudoId
+  }
+  axios.post(authUrl, request).then((data: any) => {
+    const token = data.data?.token
+    const dashboardData = new DashboardData(localNode, token, backendUrl)
+    dashboardData.previewMode = false
+    dashboardData.canViewOnly = false
+    dashboardData.path = ''
+    initDashboard(dashboardData)
+  })
+}
 
 export function init(initDashboardData: DashboardData) {
   initDashboard(initDashboardData)
