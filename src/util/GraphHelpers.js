@@ -22,6 +22,9 @@ export const customTypes = [
   'verDatAs:ReferencedTest',
   'verDatAs:ContentPage'
 ]
+const questionTypes = [
+  'ILIAS_INTERACTIVE_TASK'
+]
 export const excludedParameters = [
   'id',
   'name',
@@ -36,6 +39,10 @@ export const excludedTypeNames = [
   'ContentPage',
   'SequenceFlow',
   'FlowNode'
+]
+const excludedVerbs = [
+  'http://adlnet.gov/expapi/verbs/attempted',
+  'http://adlnet.gov/expapi/verbs/interacted'
 ]
 export const nonSelectableElements = [
   'verDatAs:KnowledgeGraph',
@@ -119,6 +126,65 @@ export const extendAttributes = (existingAttributes, objectToAdd) => {
     }
   })
   return existingAttributes
+}
+const progressForObjectId = (studentProgress, objectId) => {
+  const subLco = studentProgress.sub_lco_progress?.find((item) => item.key === objectId)
+  return subLco?.value || []
+}
+const processExperiences = (filteredExperiences, lcoType) => {
+  let experienceStatus = 'in-progress'
+  // interactive tasks -> attempted, completed, answered
+  if (questionTypes.includes(lcoType)) {
+    // console.log('question', filteredExperiences)
+    // if a completed exists, all answered statements behind it have not to be taken into account
+    const lastCompleted = filteredExperiences.findLast(exp => exp.verbId === 'http://adlnet.gov/expapi/verbs/completed')
+    if (lastCompleted?.result?.score?.scaled !== undefined) {
+      experienceStatus = lastCompleted.result.score.scaled === 1 ? 'passes' : 'failed'
+    } else {
+      // if no completed exists, check for answered and the object ID
+      const lastAnswered = filteredExperiences.findLast(exp => exp.verbId === 'http://adlnet.gov/expapi/verbs/answered')
+      if (lastAnswered && !lastAnswered.objectId?.includes('h5p-subContentId') && lastAnswered?.result?.score?.scaled !== undefined) {
+        experienceStatus = lastAnswered.result.score.scaled === 1 ? 'passes' : 'failed'
+      }
+    }
+  }
+  return {
+    experiences: filteredExperiences,
+    status: experienceStatus
+  }
+}
+export const iterateAndFillStudentModel = (currentLco, studentProgress, studentModel, progressValue) => {
+  let hasChildren = false
+  if (currentLco.attributes) {
+    currentLco.attributes?.forEach((attr) => {
+      if (nestedChildrenKeys.includes(attr.key)) {
+        // even though ILIAS_CONTENT_PAGE has ILIAS_INTERACTIVE_TASK as children, the function should not apply for this case
+        hasChildren = attr.key !== nestedChildrenKeys[nestedChildrenKeys.length - 1]
+        attributeValue(currentLco, attr.key)?.forEach((childLco) => {
+          studentModel = iterateAndFillStudentModel(childLco, studentProgress, studentModel, true)
+          // if at least one child has no status set, the parent cannot have a status, too
+          if (!studentModel[childLco.objectId]?.status) {
+            progressValue = false
+          }
+        })
+      }
+    })
+  }
+  if (currentLco.objectId && progressForObjectId(studentProgress, currentLco.objectId)?.length > 0) {
+    const experiences = progressForObjectId(studentProgress, currentLco.objectId)
+    const filteredExperiences = experiences.filter(exp => !excludedVerbs.includes(exp.verbId))
+    // if at least one child has no status set, the parent cannot have a status, too
+    if (filteredExperiences.length > 0 && progressValue) {
+      studentModel[currentLco.objectId] = processExperiences(experiences, currentLco.lcoType)
+    }
+  }
+  // otherwise, the status of the children decides on the progress value
+  else if (hasChildren && progressValue) {
+    studentModel[currentLco.objectId] = {
+      status: 'in-progress'
+    }
+  }
+  return studentModel
 }
 export const initialModel = (courseId, courseTitle) =>
   '<?xml version="1.0" encoding="UTF-8"?>\n' +

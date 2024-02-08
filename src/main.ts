@@ -82,8 +82,9 @@ if (isDevelopmentBuild()) {
   axios.post(authUrl, request).then((data: any) => {
     const token = data.data?.token
     const dashboardData = new DashboardData(localNode, token, backendUrl)
-    dashboardData.previewMode = false
-    dashboardData.canViewOnly = false
+    dashboardData.previewMode = import.meta.env.VITE_PREVIEW_MODE === 'true'
+    dashboardData.canViewOnly = import.meta.env.VITE_CAN_VIEW_ONLY === 'true'
+    dashboardData.pseudoId = pseudoId
     dashboardData.path = ''
     initDashboard(dashboardData)
   })

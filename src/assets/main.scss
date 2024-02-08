@@ -38,8 +38,14 @@
 }
 
 /* Highlighting for viewer */
-.djs-shape.highlight .djs-visual .icon-bg {
-  fill: #fcd26f !important;
+.djs-shape.in-progress .djs-visual .icon-bg {
+  fill: #ffd041 !important;
+}
+.djs-shape.passes .djs-visual .icon-bg {
+  fill: #3abc7b !important;
+}
+.djs-shape.failed .djs-visual .icon-bg {
+  fill: #e95a5a !important;
 }
 
 /* Multiselect styles */

@@ -28,7 +28,8 @@ export default {
     token: String,
     canViewOnly: Boolean,
     members: Array,
-    isExpanded: Boolean
+    isExpanded: Boolean,
+    pseudoId: String
   },
   emits: [
     'loadedDiagram',
@@ -139,6 +140,7 @@ export default {
       :diagramLoaded="diagramLoaded"
       :elementSelected="elementSelected"
       :canViewOnly="canViewOnly"
+      :pseudoId="pseudoId"
       @loadedDiagram="changeDiagramLoaded"
       @selectedElement="selectedElement"
       @setDiagram="setDiagram"

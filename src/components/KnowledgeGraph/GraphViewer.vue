@@ -3,12 +3,13 @@ import axios from 'axios'
 import { Base64 } from 'js-base64'
 import {
   attributeValue,
-  extendAttributes,
-  iterateAttributes,
   centerCanvas,
   excludedTypeNames,
+  extendAttributes,
   getDefaultSize,
   initialModel,
+  iterateAndFillStudentModel,
+  iterateAttributes,
   nonSelectableElements
 } from '@/util/GraphHelpers'
 import ExtendedViewer from '@/util/KnowledgeGraph/ExtendedViewer'
@@ -22,7 +23,8 @@ export default {
     showEmptyMessage: false,
     intervalHandle: null,
     settings: useSettingStore(),
-    graphStore: useGraphStore()
+    graphStore: useGraphStore(),
+    studentModel: {}
   }),
   props: {
     backendUrl: String,
@@ -31,7 +33,8 @@ export default {
     diagram: Object,
     diagramLoaded: Boolean,
     elementSelected: Object,
-    canViewOnly: Boolean
+    canViewOnly: Boolean,
+    pseudoId: String
   },
   emits: [
     'loadedDiagram',
@@ -75,39 +78,38 @@ export default {
       ]
       axios
         .post(knowledgeGraphUrl, request, { headers: authHeader })
-        .then((graphResponse) => {
+        .then(async (graphResponse) => {
           // Handle response
           // TODO: Make use of async and await functions to avoid using setTimeout multiple times
           console.log('graph data', graphResponse.data)
           if (graphResponse.data?.lcos) {
             const courseTitle = attributeValue(this.courseNode, 'title')
             this.graph = initialModel(encodedId, courseTitle)
-            this.processKnowledgeGraph()
-            setTimeout(() => {
-              if (graphResponse.data?.lcos[0]) {
-                const courseNode = graphResponse.data.lcos[0]
-                this.$emit('updateCourseNode', courseNode)
-                this.redrawKnowledgeGraph()
-              } else {
-                // the course node is transferred for the first time
-                this.redrawKnowledgeGraph()
-                // if at least one attribute exists, save it initially
-                if (this.courseNode.attributes?.length > 0) {
-                  // use setTimeout, as otherwise the knowledge graph might not be ready
-                  setTimeout(() => {
-                    this.saveKnowledgeGraph()
-                  }, 100)
-                }
-                else {
-                  this.showEmptyMessage = true
-                }
+            if (graphResponse.data?.lcos[0]) {
+              const courseNode = graphResponse.data.lcos[0]
+              this.$emit('updateCourseNode', courseNode)
+              await this.processKnowledgeGraph(authHeader)
+              this.redrawKnowledgeGraph()
+            } else {
+              // the course node is transferred for the first time
+              await this.processKnowledgeGraph(authHeader)
+              this.redrawKnowledgeGraph()
+              // if at least one attribute exists, save it initially
+              if (this.courseNode.attributes?.length > 0) {
+                // use setTimeout, as otherwise the knowledge graph might not be ready
+                setTimeout(() => {
+                  this.saveKnowledgeGraph()
+                }, 100)
               }
-              // Set that the initial diagram was loaded once
-              // Add timeout to avoid loading artifacts
-              setTimeout(() => {
-                this.$emit('loadedDiagram', true)
-              }, 250)
-            }, 100)
+              else {
+                this.showEmptyMessage = true
+              }
+            }
+            // Set that the initial diagram was loaded once
+            // Add timeout to avoid loading artifacts
+            setTimeout(() => {
+              this.$emit('loadedDiagram', true)
+            }, 250)
           }
         })
         .catch((err) => {
@@ -118,7 +120,7 @@ export default {
     // Handles the entire (Extended-)Viewer creation,
     // the definition of the metamodel,
     // as well as the events happening after importing the diagram (centering, click, update events)
-    processKnowledgeGraph() {
+    async processKnowledgeGraph(authHeader) {
       if (this.diagramLoaded || !this.graph) {
         return
       }
@@ -154,7 +156,7 @@ export default {
             return console.error('Could not import VerDatAs board', err)
           }
         })
-        .then(() => {
+        .then(async () => {
           // After importing xml:
           // Center canvas
           centerCanvas(canvas)
@@ -181,6 +183,16 @@ export default {
               }
             })
           } else {
+            const url = this.backendUrl + '/api/v1/student/progress'
+            const request = {
+              subLcos: true,
+              userId: this.pseudoId,
+              objectId: this.courseNode.objectId
+            }
+            const studentProgress = await axios.post(url, request, { headers: authHeader })
+            this.studentModel = iterateAndFillStudentModel(this.courseNode, studentProgress.data, this.studentModel, true)
+            console.log('studentModel', this.studentModel)
+
             // TODO: Remove, if implemented by VSG
             eventBus.on('element.click', (e) => {
               const element = e.element
@@ -189,28 +201,29 @@ export default {
                 const objectId = element.businessObject.objectId
                 // Check string, whether it contains a valid URL
                 if (objectId.includes('http://') || objectId.includes('https://')) {
-                  let visitedObjects = []
-                  if (localStorage.getItem('visitedObjects')) {
-                    visitedObjects = JSON.parse(localStorage.getItem('visitedObjects'))
-                  }
-                  if (!visitedObjects.includes(objectId)) {
-                    visitedObjects.push(objectId)
-                  }
-                  localStorage.setItem('visitedObjects', JSON.stringify(visitedObjects))
+                  // let visitedObjects = []
+                  // if (localStorage.getItem('visitedObjects')) {
+                  //   visitedObjects = JSON.parse(localStorage.getItem('visitedObjects'))
+                  // }
+                  // if (!visitedObjects.includes(objectId)) {
+                  //   visitedObjects.push(objectId)
+                  // }
+                  // localStorage.setItem('visitedObjects', JSON.stringify(visitedObjects))
                   // Open on click
                   window.open(element.businessObject.objectId, '_self')
                 }
               }
             })
-            // Add markers for highlighting the visitedObjects
-            if (localStorage.getItem('visitedObjects')) {
-              const elementsToHighlight = JSON.parse(localStorage.getItem('visitedObjects'))
-              elementRegistry.forEach((elem) => {
-                if (elementsToHighlight.includes(elem?.businessObject?.objectId)) {
-                  canvas.addMarker(elem, 'highlight')
+            const elementsToHighlight = Object.keys(this.studentModel)
+            // iterate elements in registry except of Labels and Connections
+            elementRegistry.filter((elem) => !['label', 'verDatAs:SequenceFlow'].includes(elem.type)).forEach((elem) => {
+              if (elem.businessObject?.objectId && elementsToHighlight.includes(elem.businessObject.objectId)) {
+                const elementModel = this.studentModel[elem.businessObject.objectId]
+                if (elementModel.status) {
+                  canvas.addMarker(elem, elementModel.status)
                 }
-              })
-            }
+              }
+            })
           }
 
           function debounce(fn, timeout) {
