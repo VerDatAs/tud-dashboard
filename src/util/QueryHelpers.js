@@ -25,7 +25,7 @@ export const Connections = {
 }
 
 // The currently available examples for the Code Editor
-export const queryExamples = [
+export const codeQueryExamples = [
   {
     name: 'Einfaches Filterbeispiel 1',
     query: {
