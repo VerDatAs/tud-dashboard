@@ -2,6 +2,9 @@
 import axios from 'axios'
 import { Base64 } from 'js-base64'
 import {
+  attributeValue,
+  extendAttributes,
+  iterateAttributes,
   centerCanvas,
   excludedTypeNames,
   getDefaultSize,
@@ -77,7 +80,7 @@ export default {
           // TODO: Make use of async and await functions to avoid using setTimeout multiple times
           console.log('graph data', graphResponse.data)
           if (graphResponse.data?.lcos) {
-            const courseTitle = this.getAttributeValue(this.courseNode, 'title')
+            const courseTitle = attributeValue(this.courseNode, 'title')
             this.graph = initialModel(encodedId, courseTitle)
             this.processKnowledgeGraph()
             setTimeout(() => {
@@ -253,7 +256,7 @@ export default {
       }
 
       const encodedId = Base64.encodeURI(this.courseNode.objectId)
-      const courseName = this.getAttributeValue(this.courseNode, 'name') ?? 'Unknown'
+      const courseName = attributeValue(this.courseNode, 'name') ?? 'Unknown'
 
       // First, initialize modeler
       this.loadInitialModel(this.diagram, encodedId, courseName).then(() => {
@@ -270,28 +273,33 @@ export default {
           const knowledgeGraphTopicLabel = elementRegistry.find(
             (element) => element.id === knowledgeGraphTopic.label?.id
           )
-          const properties = {}
+          // Update objectId and other attributes
+          let properties = {}
           properties['objectId'] = this.courseNode.objectId
+          properties = extendAttributes(properties, this.courseNode)
           modeling.updateProperties(knowledgeGraphTopic, properties)
-          const topicTitle = this.getAttributeValue(this.courseNode, 'title') ?? 'Topic'
+
+          // Set title of the topic
+          const topicTitle = attributeValue(this.courseNode, 'title') ?? 'Topic'
           modeling.updateLabel(knowledgeGraphTopic, topicTitle)
 
+          // TODO: Tests are currently not used. Add back, if necessary
           // Add tests to KnowledgeGraph
-          const rootElement = canvas.getRootElement()
+          // const rootElement = canvas.getRootElement()
 
-          let tests = this.getAttributeValue(this.courseNode, 'tests')
-          if (tests?.length > 0) {
-            tests = tests.filter((m) => this.getAttributeValue(m, 'offline') === false)
-            const knowledgeGraphTests = []
-            tests?.forEach((test, testIndex) => {
-              const learningPathElementObject = this.diagram.get('moddle').create('verDatAs:Test', {
-                objectId: test.objectId || 'test' + (testIndex + 1),
-                title: this.getAttributeValue(test, 'title') || 'Test ' + (testIndex + 1)
-              })
-              knowledgeGraphTests.push(learningPathElementObject)
-            })
-            this.diagram.get('modeling').updateProperties(rootElement, { tests: knowledgeGraphTests })
-          }
+          // let tests = attributeValue(this.courseNode, 'tests')
+          // if (tests?.length > 0) {
+          //   tests = tests.filter((m) => attributeValue(m, 'offline') === false)
+          //   const knowledgeGraphTests = []
+          //   tests?.forEach((test, testIndex) => {
+          //     const learningPathElementObject = this.diagram.get('moddle').create('verDatAs:Test', {
+          //       objectId: test.objectId || 'test' + (testIndex + 1),
+          //       title: attributeValue(test, 'title') || 'Test ' + (testIndex + 1)
+          //     })
+          //     knowledgeGraphTests.push(learningPathElementObject)
+          //   })
+          //   this.diagram.get('modeling').updateProperties(rootElement, { tests: knowledgeGraphTests })
+          // }
 
           // GENERAL IDEA: Draw first and center afterward
           // Define dimensions, offsets and initial positions
@@ -315,14 +323,14 @@ export default {
 
           // Reduce list of modules to those that are currently set online
           let filteredModules = []
-          const courseModules = this.getAttributeValue(this.courseNode, 'modules')
+          const courseModules = attributeValue(this.courseNode, 'modules')
           if (courseModules?.length > 0) {
-            filteredModules = courseModules.filter((m) => this.getAttributeValue(m, 'offline') === false)
+            filteredModules = courseModules.filter((m) => attributeValue(m, 'offline') === false)
           }
 
           // Iterate remaining modules
           filteredModules?.forEach((module, moduleIndex) => {
-            const moduleChapters = this.getAttributeValue(module, 'chapters')
+            const moduleChapters = attributeValue(module, 'chapters')
             const chapterCount = moduleChapters?.length || 0
             // Calculate the entire width of all chapters of the module
             const totalChapterWidth = chapterCount * chapterWidth + (chapterCount - 1) * chapterOffset
@@ -342,17 +350,19 @@ export default {
             const moduleShape = elementFactory.create('shape', moduleAttributes)
             canvas.addShape(moduleShape)
 
-            // Add it to the modeling object of the knowledgeGraphTopic
+            // Add it to the modeling object
             const existingModules = knowledgeGraphTopic.businessObject?.modules ?? []
             existingModules.push(moduleShape.businessObject)
             modeling.updateProperties(knowledgeGraphTopic, { modules: existingModules })
 
-            // Update objectId and label
-            const moduleProperties = {}
+            // Update objectId and other attributes
+            let moduleProperties = {}
             moduleProperties['objectId'] = module.objectId
+            moduleProperties = extendAttributes(moduleProperties, module)
             modeling.updateProperties(moduleShape, moduleProperties)
 
-            const moduleTitle = this.getAttributeValue(module, 'title') ?? 'Module ' + (moduleIndex + 1)
+            // Set title of the module
+            const moduleTitle = attributeValue(module, 'title') ?? 'Module ' + (moduleIndex + 1)
             modeling.updateLabel(moduleShape, moduleTitle)
 
             // Draw connection to the topic
@@ -376,30 +386,35 @@ export default {
               const chapterShape = elementFactory.createShape(chapterAttributes)
               canvas.addShape(chapterShape)
 
-              // Set title of the chapter
-              const chapterTitle = this.getAttributeValue(chapter, 'title') ?? 'Chapter ' + (chapterIndex + 1)
-              modeling.updateLabel(chapterShape, chapterTitle)
-
-              // Add it to the modeling object of the knowledgeGraphTopic
+              // Add it to the modeling object
               const existingChapters = moduleShape.businessObject?.chapters ?? []
               existingChapters.push(chapterShape.businessObject)
               modeling.updateProperties(moduleShape, { chapters: existingChapters })
 
-              // Update objectId and contentPages
-              const chapterProperties = {}
+              // Update objectId and other attributes
+              let chapterProperties = {}
               chapterProperties['objectId'] = chapter.objectId
+              chapterProperties = extendAttributes(chapterProperties, chapter)
+
+              // Set title of the chapter
+              const chapterTitle = attributeValue(chapter, 'title') ?? 'Chapter ' + (chapterIndex + 1)
+              modeling.updateLabel(chapterShape, chapterTitle)
 
               // Iterate contentPages of the chapter
               const contentPages = []
               let taskIndex = 0
-              this.getAttributeValue(chapter, 'contentPages')?.forEach((page, pageIndex) => {
+              attributeValue(chapter, 'contentPages')?.forEach((page, pageIndex) => {
                 let taskShapesBusinessObjects = []
-                const pageProperties = {
+
+                // Update objectId and other attributes
+                let pageProperties = {
                   objectId: page.objectId,
-                  title: this.getAttributeValue(page, 'title') || 'ContentPage ' + (pageIndex + 1)
+                  title: attributeValue(page, 'title') || 'ContentPage ' + (pageIndex + 1)
                 }
+                pageProperties = extendAttributes(pageProperties, page)
+
                 // Iterate interactiveTasks of the contentPage
-                this.getAttributeValue(page, 'interactiveTasks')?.forEach((interactiveTask, interactiveTaskIndex) => {
+                attributeValue(page, 'interactiveTasks')?.forEach((interactiveTask, interactiveTaskIndex) => {
                   const taskType = {
                     type: 'verDatAs:InteractiveTask'
                   }
@@ -414,12 +429,21 @@ export default {
                   const taskDimensions = getDefaultSize(taskType.type)
                   const taskAttributes = { ...taskPosition, ...taskDimensions, ...taskType }
                   const taskShape = elementFactory.createShape(taskAttributes)
-                  taskShape.businessObject.objectId = interactiveTask.objectId
                   canvas.addShape(taskShape)
-                  // set title of the task and connect it to the chapter shape
+
+                  // Set title of the task
                   const taskTitle =
-                    this.getAttributeValue(interactiveTask, 'title') ?? 'Task ' + (interactiveTaskIndex + 1)
+                      attributeValue(interactiveTask, 'title') ?? 'Task ' + (interactiveTaskIndex + 1)
                   modeling.updateLabel(taskShape, taskTitle)
+
+                  // Update objectId and other attributes
+                  let taskProperties = {}
+                  taskProperties['objectId'] = interactiveTask.objectId
+                  taskProperties = extendAttributes(taskProperties, interactiveTask)
+
+                  modeling.updateProperties(taskShape, taskProperties)
+
+                  // Draw connection to the chapter
                   modeling.connect(chapterShape, taskShape)
                   taskIndex += 1
                   taskShapesBusinessObjects.push(taskShape.businessObject)
@@ -513,76 +537,6 @@ export default {
       }
       const topicBusinessObject = knowledgeGraphTopic.businessObject
 
-      // TODO: Add other attributes that can be set by the editor
-      const supportedAttributeKeys = [
-        'title',
-        'name',
-        'description',
-        'offline',
-        'content',
-        'processingTime'
-      ]
-
-      const nestedChildrenKeys = [
-        'modules',
-        'chapters',
-        'contentPages',
-        'interactiveTasks'
-      ]
-
-      const childKeyToLcoType = {
-        'verDatAs:Topic': 'ILIAS_COURSE',
-        'verDatAs:Module': 'ILIAS_MODULE',
-        'verDatAs:Chapter': 'ILIAS_CHAPTER',
-        'verDatAs:ContentPage': 'ILIAS_CONTENT_PAGE',
-        'verDatAs:InteractiveTask': 'ILIAS_INTERACTIVE_TASK'
-      }
-
-      const attributeObject = (key, value) => {
-        return { key, value }
-      }
-
-      const iterateAttributes = (currentBusinessObject, iterationDepth) => {
-        const genericObject = {}
-        if (!iterationDepth) {
-          if (currentBusinessObject.lcoId) {
-            genericObject.lcoId = currentBusinessObject.lcoId
-          }
-          iterationDepth = 1
-        } else {
-          iterationDepth += 1
-        }
-        const lcoType = childKeyToLcoType[currentBusinessObject['$type']] ?? 'UNKNOWN'
-        genericObject.lcoType = lcoType
-        const objectId = currentBusinessObject.objectId ?? ''
-        if (objectId !== '') {
-          genericObject.objectId = objectId
-        }
-        const attributes = []
-        console.log('attributes of ' + lcoType, Object.keys(currentBusinessObject))
-        Object.keys(currentBusinessObject)?.forEach((attrKey) => {
-          console.log('iterate ' + lcoType + ' -> ' + attrKey)
-          if (supportedAttributeKeys.includes(attrKey)) {
-            // the title attribute was used as name in the diagram
-            const keyToPush = attrKey === 'name' ? 'title' : attrKey
-            attributes.push(attributeObject(keyToPush, currentBusinessObject[attrKey]))
-          } else if (nestedChildrenKeys.includes(attrKey)) {
-            const attrObjects = []
-            // the children objects of a businessObject are automatically businessObjects again
-            currentBusinessObject[attrKey]?.forEach((childObject) => {
-              attrObjects.push(iterateAttributes(childObject, iterationDepth))
-            })
-            attributes.push(attributeObject(attrKey, attrObjects))
-          }
-        })
-        // all drawn modules are not offline -> thus, set offline false
-        if (lcoType === 'ILIAS_MODULE') {
-          attributes.push(attributeObject('offline', false))
-        }
-        genericObject.attributes = attributes
-        return genericObject
-      }
-
       const genericCourseFormatRequest = iterateAttributes(topicBusinessObject)
       console.log('1) Generic format as an object', genericCourseFormatRequest)
       console.log('2) Generic format as JSON', JSON.stringify(genericCourseFormatRequest))
@@ -673,9 +627,6 @@ export default {
         .get('elementRegistry')
         .find((element) => element.id === this.elementSelected.id)
       this.diagram.get('modeling').updateProperties(elementToUpdate, propertyToDefine)
-    },
-    getAttributeValue(dataObject, key) {
-      return dataObject?.attributes?.find((attr) => attr.key === key)?.value
     }
   }
 }

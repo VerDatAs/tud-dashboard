@@ -1,16 +1,34 @@
 import { is } from '@/util/KnowledgeGraph/util/ModelUtil'
 
 const prefix = 'verDatAs'
-const elements = ['Topic', 'Module', 'Chapter', 'InteractiveTask']
+const elements = [
+  'Topic',
+  'Module',
+  'Chapter',
+  'InteractiveTask'
+]
 
 const topicType = 'verDatAs:Topic'
 const moduleType = 'verDatAs:Module'
 const chapterType = 'verDatAs:Chapter'
 const interactiveTaskType = 'verDatAs:InteractiveTask'
 
-export const basicTypes = ['String', 'Integer']
-export const customTypes = ['verDatAs:PriorKnowledge', 'verDatAs:ReferencedTest', 'verDatAs:ContentPage']
-export const excludedParameters = ['id', 'name', 'objectId', 'modules', 'chapters']
+export const basicTypes = [
+  'String',
+  'Integer'
+]
+export const customTypes = [
+  'verDatAs:PriorKnowledge',
+  'verDatAs:ReferencedTest',
+  'verDatAs:ContentPage'
+]
+export const excludedParameters = [
+  'id',
+  'name',
+  'objectId',
+  'modules',
+  'chapters'
+]
 export const excludedTypeNames = [
   'Definitions',
   'KnowledgeGraph',
@@ -19,7 +37,89 @@ export const excludedTypeNames = [
   'SequenceFlow',
   'FlowNode'
 ]
-export const nonSelectableElements = ['verDatAs:KnowledgeGraph', 'verDatAs:SequenceFlow', 'label']
+export const nonSelectableElements = [
+  'verDatAs:KnowledgeGraph',
+  'verDatAs:SequenceFlow',
+  'label'
+]
+const supportedObjectAttributeKeys = [
+  'title',
+  'name'
+]
+const supportedAttributeKeys = [
+  'description',
+  'offline',
+  'content',
+  'processingTime'
+]
+const nestedChildrenKeys = [
+  'modules',
+  'chapters',
+  'contentPages',
+  'interactiveTasks'
+]
+const childKeyToLcoType = {
+  'verDatAs:Topic': 'ILIAS_COURSE',
+  'verDatAs:Module': 'ILIAS_MODULE',
+  'verDatAs:Chapter': 'ILIAS_CHAPTER',
+  'verDatAs:ContentPage': 'ILIAS_CONTENT_PAGE',
+  'verDatAs:InteractiveTask': 'ILIAS_INTERACTIVE_TASK'
+}
+const attributeObject = (key, value) => {
+  return { key, value }
+}
+export const iterateAttributes = (currentBusinessObject, iterationDepth) => {
+  const genericObject = {}
+  if (!iterationDepth) {
+    if (currentBusinessObject.lcoId) {
+      genericObject.lcoId = currentBusinessObject.lcoId
+    }
+    iterationDepth = 1
+  } else {
+    iterationDepth += 1
+  }
+  const lcoType = childKeyToLcoType[currentBusinessObject['$type']] ?? 'UNKNOWN'
+  genericObject.lcoType = lcoType
+  const objectId = currentBusinessObject.objectId ?? ''
+  if (objectId !== '') {
+    genericObject.objectId = objectId
+  }
+  const attributes = []
+  console.log('attributes of ' + lcoType, Object.keys(currentBusinessObject))
+  Object.keys(currentBusinessObject)?.forEach((attrKey) => {
+    console.log('iterate ' + lcoType + ' -> ' + attrKey)
+    if (supportedAttributeKeys.concat(supportedObjectAttributeKeys).includes(attrKey)) {
+      // the title attribute was used as name in the diagram
+      const keyToPush = attrKey === 'name' ? 'title' : attrKey
+      attributes.push(attributeObject(keyToPush, currentBusinessObject[attrKey]))
+    } else if (nestedChildrenKeys.includes(attrKey)) {
+      const attrObjects = []
+      // the children objects of a businessObject are automatically businessObjects again
+      currentBusinessObject[attrKey]?.forEach((childObject) => {
+        attrObjects.push(iterateAttributes(childObject, iterationDepth))
+      })
+      attributes.push(attributeObject(attrKey, attrObjects))
+    }
+  })
+  // all drawn modules are not offline -> thus, set offline false
+  if (lcoType === 'ILIAS_MODULE') {
+    attributes.push(attributeObject('offline', false))
+  }
+  genericObject.attributes = attributes
+  return genericObject
+}
+export const attributeValue = (assistanceObject, key) => {
+  // Difference between ?? and || -> https://stackoverflow.com/questions/66883181/difference-between-and-operators
+  return assistanceObject.attributes?.find((param) => param.key === key)?.value;
+}
+export const extendAttributes = (existingAttributes, objectToAdd) => {
+  supportedAttributeKeys.forEach((attr) => {
+    if (attributeValue(objectToAdd, attr)) {
+      existingAttributes[attr] = attributeValue(objectToAdd, attr)
+    }
+  })
+  return existingAttributes
+}
 export const initialModel = (courseId, courseTitle) =>
   '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '<verDatAs:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:verDatAs="http://verdatas.de/schema/verDatAs" xmlns:verDatAsDi="http://verdatas.de/schema/verDatAsDi" id="verdatas-diagram">\n' +
