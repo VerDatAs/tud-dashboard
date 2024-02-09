@@ -139,12 +139,12 @@ const processExperiences = (filteredExperiences, lcoType) => {
     // if a completed exists, all answered statements behind it have not to be taken into account
     const lastCompleted = filteredExperiences.findLast(exp => exp.verbId === 'http://adlnet.gov/expapi/verbs/completed')
     if (lastCompleted?.result?.score?.scaled !== undefined) {
-      experienceStatus = lastCompleted.result.score.scaled === 1 ? 'passes' : 'failed'
+      experienceStatus = lastCompleted.result.score.scaled === 1 ? 'passed' : 'failed'
     } else {
       // if no completed exists, check for answered and the object ID
       const lastAnswered = filteredExperiences.findLast(exp => exp.verbId === 'http://adlnet.gov/expapi/verbs/answered')
       if (lastAnswered && !lastAnswered.objectId?.includes('h5p-subContentId') && lastAnswered?.result?.score?.scaled !== undefined) {
-        experienceStatus = lastAnswered.result.score.scaled === 1 ? 'passes' : 'failed'
+        experienceStatus = lastAnswered.result.score.scaled === 1 ? 'passed' : 'failed'
       }
     }
   }
