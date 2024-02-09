@@ -10,7 +10,8 @@ import {
   initialModel,
   iterateAndFillStudentModel,
   iterateAttributes,
-  nonSelectableElements
+  nonSelectableElements,
+  questionTypes
 } from '@/util/GraphHelpers'
 import ExtendedViewer from '@/util/KnowledgeGraph/ExtendedViewer'
 import Viewer from '@/util/KnowledgeGraph/Viewer'
@@ -320,16 +321,22 @@ export default {
           const topicWidth = topicDimensions.width
           const topicHeight = topicDimensions.height
 
-          const offsetBetweenLayers = 160
+          const offsetBetweenLayers = 75
 
           const moduleWidth = getDefaultSize('verDatAs:Module').width
-          const initialModulePosition = knowledgeGraphTopic.y + topicHeight + (2 * offsetBetweenLayers) / 3
+          const moduleHeight = getDefaultSize('verDatAs:Module').height
+          // TODO: It seems like the initial position y refers to the outer position and all following are the middle of the element
+          const initialModulePosition = knowledgeGraphTopic.y + topicHeight + offsetBetweenLayers + moduleHeight / 2
 
           const chapterWidth = getDefaultSize('verDatAs:Chapter').width
+          const chapterHeight = getDefaultSize('verDatAs:Chapter').height
           const chapterOffset = 10
           let chapterPositionX = 0
 
           const taskWidth = getDefaultSize('verDatAs:InteractiveTask').width
+          const taskHeight = getDefaultSize('verDatAs:InteractiveTask').height
+          const documentationToolWidth = getDefaultSize('verDatAs:DocumentationTool').width
+          const documentationToolHeight = getDefaultSize('verDatAs:DocumentationTool').height
 
           const offset = 70
           let totalWidth = 0
@@ -355,7 +362,9 @@ export default {
               type: 'verDatAs:Module'
             }
             const modulePosition = {
-              x: chapterPositionX + totalChapterWidth / 2, // "- moduleWidth / 2" is not longer necessary, as the middle has to be defined
+              // FIXME: the module position is current somehow off 7px
+              // Investigate how this happens
+              x: chapterPositionX + totalChapterWidth / 2 - 7, // "- moduleWidth / 2" is not longer necessary, as the middle has to be defined
               y: initialModulePosition
             }
             const moduleDimensions = getDefaultSize(moduleType.type)
@@ -392,7 +401,7 @@ export default {
               }
               const chapterPosition = {
                 x: currentChapterPositionX,
-                y: modulePosition.y + offsetBetweenLayers
+                y: modulePosition.y + moduleHeight + offsetBetweenLayers + chapterHeight / 2
               }
               const chapterDimensions = getDefaultSize(chapterType.type)
               const chapterAttributes = { ...chapterPosition, ...chapterDimensions, ...chapterType }
@@ -415,9 +424,10 @@ export default {
 
               // Iterate contentPages of the chapter
               const contentPages = []
-              let taskIndex = 0
+              let taskOrDocumentationToolIndex = 0
               attributeValue(chapter, 'contentPages')?.forEach((page, pageIndex) => {
                 let taskShapesBusinessObjects = []
+                let documentationToolShapesBusinessObjects = []
 
                 // Update objectId and other attributes
                 let pageProperties = {
@@ -426,42 +436,65 @@ export default {
                 }
                 pageProperties = extendAttributes(pageProperties, page)
 
-                // Iterate interactiveTasks of the contentPage
-                attributeValue(page, 'interactiveTasks')?.forEach((interactiveTask, interactiveTaskIndex) => {
-                  const taskType = {
-                    type: 'verDatAs:InteractiveTask'
+                let attributeInteractiveTasks = attributeValue(page, 'interactiveTasks') ?? []
+                let attributeDocumentationTools = attributeValue(page, 'documentationTools') ?? []
+                let interactiveTaskIndex = 0
+                let documentationToolIndex = 0
+
+                // Iterate interactiveTasks and documentationTools of the contentPage
+                attributeInteractiveTasks.concat(attributeDocumentationTools)?.forEach((pageChild, childIndex) => {
+                  const isInteractiveTask = questionTypes.includes(pageChild.lcoType)
+                  if (isInteractiveTask) {
+                    interactiveTaskIndex += 1
+                  } else {
+                    documentationToolIndex += 1
                   }
-                  const taskPosition = {
-                    x: currentChapterPositionX + 10,
+                  const childType = {
+                    type: isInteractiveTask ? 'verDatAs:InteractiveTask' : 'verDatAs:DocumentationTool'
+                  }
+                  const childWidth = isInteractiveTask ? taskWidth : documentationToolWidth
+                  const childHeight = isInteractiveTask ? taskHeight : documentationToolHeight
+                  const childPosition = {
+                    // Hint: the children are currently centered, too. In order to remove this, add a small offset
+                    x: currentChapterPositionX + (chapterWidth / 2) - (childWidth / 2), // old solution -> x: currentChapterPositionX + 10,
+                    // TODO: 75 is a value that currently works good. However, this has not be the case for different knowledge structures
+                    // Only use half of the offset, as no further split is made on the next level
                     y:
                       chapterShape.y +
                       chapterShape.height +
                       offsetBetweenLayers / 2 +
-                      taskIndex * (offset / 2 + taskWidth / 2 + 15) // TODO: Rework necessary, as this does not make sense
+                      childHeight / 2 +
+                      taskOrDocumentationToolIndex * 75
                   }
-                  const taskDimensions = getDefaultSize(taskType.type)
-                  const taskAttributes = { ...taskPosition, ...taskDimensions, ...taskType }
-                  const taskShape = elementFactory.createShape(taskAttributes)
-                  canvas.addShape(taskShape)
+                  const childDimensions = getDefaultSize(childType.type)
+                  const childAttributes = { ...childPosition, ...childDimensions, ...childType }
+                  const childShape = elementFactory.createShape(childAttributes)
+                  canvas.addShape(childShape)
 
-                  // Set title of the task
-                  const taskTitle =
-                      attributeValue(interactiveTask, 'title') ?? 'Task ' + (interactiveTaskIndex + 1)
-                  modeling.updateLabel(taskShape, taskTitle)
+                  const defaultTypeName = isInteractiveTask ? 'Task ' + interactiveTaskIndex : 'Diary ' + documentationToolIndex
+                  // Set title of the child
+                  const childTitle =
+                      attributeValue(pageChild, 'title') ?? defaultTypeName
+                  modeling.updateLabel(childShape, childTitle)
 
                   // Update objectId and other attributes
-                  let taskProperties = {}
-                  taskProperties['objectId'] = interactiveTask.objectId
-                  taskProperties = extendAttributes(taskProperties, interactiveTask)
+                  let childProperties = {}
+                  childProperties['objectId'] = pageChild.objectId
+                  childProperties = extendAttributes(childProperties, pageChild)
 
-                  modeling.updateProperties(taskShape, taskProperties)
+                  modeling.updateProperties(childShape, childProperties)
 
                   // Draw connection to the chapter
-                  modeling.connect(chapterShape, taskShape)
-                  taskIndex += 1
-                  taskShapesBusinessObjects.push(taskShape.businessObject)
+                  modeling.connect(chapterShape, childShape)
+                  taskOrDocumentationToolIndex += 1
+                  if (isInteractiveTask) {
+                    taskShapesBusinessObjects.push(childShape.businessObject)
+                  } else {
+                    documentationToolShapesBusinessObjects.push(childShape.businessObject)
+                  }
                 })
                 pageProperties.interactiveTasks = taskShapesBusinessObjects
+                pageProperties.documentationTools = documentationToolShapesBusinessObjects
 
                 const element = moddle.create('verDatAs:ContentPage', pageProperties)
                 contentPages.push(element)
@@ -481,17 +514,21 @@ export default {
             })
             // Draw topic
             if (moduleIndex === filteredModules.length - 1) {
+              // FIXME: The totalWidth currently somehow misses the width of one chapter in order to be centered
+              totalWidth += chapterWidth
               // Move topic
               // TODO: This somehow does not move the label of the topic
               modeling.moveElements([knowledgeGraphTopic], {
                 x: totalWidth / 2 - topicWidth / 2 - knowledgeGraphTopic.x,
-                y: 90 - knowledgeGraphTopic.y // 90 is the position set on initialization
+                // TODO: 20 are added to reduce the distance from the topic to the module
+                y: 90 - knowledgeGraphTopic.y + 20 // 90 is the position set on initialization
               })
               // Move topic label
               modeling.moveElements([knowledgeGraphTopicLabel], {
                 x: totalWidth / 2 - knowledgeGraphTopicLabel.width / 2 - knowledgeGraphTopicLabel.x,
                 // TODO: Currently, no offset is used
-                y: 90 + knowledgeGraphTopic.height - knowledgeGraphTopicLabel.y // 90 + height + offset of label
+                // TODO: 20 are added to reduce the distance from the topic to the module
+                y: 90 + knowledgeGraphTopic.height - knowledgeGraphTopicLabel.y + 20 // 90 + height + offset of label
               })
             } else {
               // increase total width with offset

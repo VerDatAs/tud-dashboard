@@ -270,6 +270,11 @@
           "name": "interactiveTasks",
           "isMany": true,
           "type": "InteractiveTask"
+        },
+        {
+          "name": "documentationTools",
+          "isMany": true,
+          "type": "DocumentationTool"
         }
       ]
     },
@@ -283,6 +288,11 @@
           "type": "Boolean"
         }
       ]
+    },
+    {
+      "name": "DocumentationTool",
+      "superClass": ["GraphElement", "GraphNodeElement", "PriorKnowledgeElement"],
+      "properties": []
     },
     {
       "name": "SequenceFlow",

@@ -18,6 +18,8 @@ const svgChapter =
   '<svg version="1.1" width="46" height="41" viewBox="0 0 46 41" xmlns="http://www.w3.org/2000/svg"><g transform="matrix(.175 0 0 .175 -5 -7.5)"><path d="m265 245h-210v-170h50l6.7 20h153.3zm15 5v-160c0-5.5-4.5-10-10-10h-143.3l-6.7-20h-80v190c0 5.5 4.5 10 10 10h220c5.5 0 10-4.5 10-10"/></g><path class="icon-bg" d="m4.5244 5.5853c-0.0479 7.6576-0.00684 15.33-0.020529 22.993 0.025511 2.2815-0.051043 4.5867 0.038313 6.8534 6.6282 0.05124 13.275 0.0073 19.91 0.02197h16.895c0.23926-0.38465 0.029-1.0153 0.09993-1.4898v-24.843c-0.38465-0.23926-1.0153-0.029003-1.4898-0.099928h-25.365c-0.37848-1.1354-0.75692-2.2708-1.1353-3.4062-0.76882-0.16082-1.6344-0.021864-2.4402-0.068372h-6.4135l-0.077959 0.038313z" fill="#fff" stroke-width=".086864"/></svg>'
 const svgInteractiveTask =
   '<svg version="1.1" width="38" height="40" viewBox="0 0 38 40" xmlns="http://www.w3.org/2000/svg"><path d="m4.8333 2.8333h28.333v21.25h-9.9167v9.9167h-18.417zm-2.8333-2.8333v36.833h24.083l9.9167-9.9167v-26.917z" stroke-width=".14167"/><path d="m23.254 14.649c0-2.587-2.4829-3.6114-4.7747-3.6114-1.4237 0-2.5002 0.26044-3.733 0.62506l0.1389 2.2571c0.93759-0.34725 1.962-0.60769 2.969-0.60769 1.1112 0 2.2918 0.50352 2.2918 1.7536 0 2.4655-3.1774 2.4655-3.1774 6.2506v0.2778h2.5697v-0.32989c0-3.0558 3.7156-3.351 3.7156-6.6152m-3.542 8.5251h-2.917v2.6217h2.917z" stroke-width=".17363"/><path class="icon-bg" d="m4.763 2.8022v31.241c0.63753 0.19177 1.4248 0.02022 2.1185 0.07545 5.4493-0.01456 10.899-0.02926 16.348-0.044 0.19484-0.63724 0.03096-1.4244 0.09104-2.118 0.01326-2.6089 0.02637-5.2178 0.03951-7.8266h9.8139c0.19297-0.63735 0.02396-1.4247 0.08091-2.1184v-19.21c-0.63734-0.19297-1.4247-0.02396-2.1184-0.080914h-26.293l-0.068604 0.068604zm13.651 8.3332c1.7372 3e-3 3.8161 0.59563 4.5368 2.3564 0.53535 1.3065 0.05613 2.8502-0.97288 3.7895-0.93419 1.1246-2.3845 2.0728-2.4962 3.6647 0.14572 0.75864-0.50584 0.61216-1.044 0.59698-0.41892-0.13946-1.4388 0.31985-1.3845-0.29106-0.0085-1.2718 0.53522-2.5039 1.465-3.3785 0.79216-0.85081 1.9119-1.8083 1.6549-3.1133-0.19686-1.2607-1.7044-1.612-2.7855-1.5062-0.82312 0.02498-1.6707 0.38732-2.4277 0.49017-0.06727-0.67351-0.08853-1.3471-0.12961-2.0224 1.1657-0.34614 2.3641-0.59757 3.5835-0.5861zm-0.18154 12.122c0.44011 0.14737 1.5352-0.36016 1.3744 0.38808v2.0696h-2.7488v-2.4577h1.3744z" fill="#fff" stroke-width=".097022"/></svg>'
+const svgDocumentationTool =
+    '<svg version="1.1" width="38" height="40" viewBox="0 0 38 40" xmlns="http://www.w3.org/2000/svg"><path d="m4.8333 2.8333h28.333v21.25h-9.9167v9.9167h-18.417zm-2.8333-2.8333v36.833h24.083l9.9167-9.9167v-26.917z" stroke-width=".14167"/><path class="icon-bg" d="m4.763 2.8022v31.241c0.63753 0.19177 1.4248 0.02022 2.1185 0.07545 5.4493-0.01456 10.899-0.02926 16.348-0.044 0.19484-0.63724 0.03096-1.4244 0.09104-2.118 0.01326-2.6089 0.02637-5.2178 0.03951-7.8266h9.8139c0.19297-0.63735 0.02396-1.4247 0.08091-2.1184v-19.21c-0.63734-0.19297-1.4247-0.02396-2.1184-0.080914h-26.293l-0.068604 0.068604z" fill="#fff" stroke-width=".097022"/><path d="m13.555 23.577h1.1083l7.6028-7.6028-1.1083-1.1083-7.6028 7.6028zm-1.5556 1.5556v-3.3056l10.267-10.247q0.23333-0.21389 0.51528-0.33056 0.28194-0.11667 0.59306-0.11667t0.60278 0.11667q0.29167 0.11667 0.50556 0.35l1.0694 1.0889q0.23333 0.21389 0.34028 0.50556 0.10694 0.29167 0.10694 0.58333 0 0.31111-0.10694 0.59306-0.10694 0.28194-0.34028 0.51528l-10.247 10.247zm12.444-11.356-1.0889-1.0889zm-2.7417 1.6528-0.54444-0.56389 1.1083 1.1083z" stroke-width=".019444"/></svg>'
 
 export default function VerDatAsRenderer(eventBus, styles, textRenderer, priority) {
   BaseRenderer.call(this, eventBus, priority)
@@ -130,6 +132,12 @@ export default function VerDatAsRenderer(eventBus, styles, textRenderer, priorit
       return customIconSvg
     },
 
+    'verDatAs:DocumentationTool': function (parentGfx) {
+      const customIconSvg = document.createRange().createContextualFragment(svgDocumentationTool)
+      svgAppend(parentGfx, customIconSvg)
+      return customIconSvg
+    },
+
     label: function (parentGfx, element) {
       return renderExternalLabel(parentGfx, element)
     }
@@ -147,7 +155,7 @@ VerDatAsRenderer.prototype.canRender = function (element) {
 VerDatAsRenderer.prototype.drawShape = function (parentGfx, element) {
   var type = element.type
   // TODO: This is a dirty workaround to properly set the dimensions of the topic.
-  //       For modules, chapters and interactiveTasks, it works without the workaround.
+  //       For modules, chapters, interactiveTasks and documentationTools, it works without the workaround.
   if (type === 'verDatAs:Topic') {
     element.width = 80
     element.height = 90

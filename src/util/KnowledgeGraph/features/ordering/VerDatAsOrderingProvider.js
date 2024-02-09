@@ -51,6 +51,12 @@ export default function VerDatAsOrderingProvider(eventBus, canvas, translate) {
       order: {
         level: 5
       }
+    },
+    {
+      type: 'verDatAs:DocumentationTool',
+      order: {
+        level: 5
+      }
     }
   ]
 

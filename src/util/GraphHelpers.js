@@ -5,13 +5,15 @@ const elements = [
   'Topic',
   'Module',
   'Chapter',
-  'InteractiveTask'
+  'InteractiveTask',
+  'DocumentationTool'
 ]
 
 const topicType = 'verDatAs:Topic'
 const moduleType = 'verDatAs:Module'
 const chapterType = 'verDatAs:Chapter'
 const interactiveTaskType = 'verDatAs:InteractiveTask'
+const documentationToolType = 'verDatAs:DocumentationTool'
 
 export const basicTypes = [
   'String',
@@ -22,8 +24,11 @@ export const customTypes = [
   'verDatAs:ReferencedTest',
   'verDatAs:ContentPage'
 ]
-const questionTypes = [
+export const questionTypes = [
   'ILIAS_INTERACTIVE_TASK'
+]
+const documentationToolTypes = [
+  'ILIAS_DOCUMENTATION_TOOL'
 ]
 export const excludedParameters = [
   'id',
@@ -41,8 +46,7 @@ export const excludedTypeNames = [
   'FlowNode'
 ]
 const excludedVerbs = [
-  'http://adlnet.gov/expapi/verbs/attempted',
-  'http://adlnet.gov/expapi/verbs/interacted'
+  'http://adlnet.gov/expapi/verbs/attempted'
 ]
 export const nonSelectableElements = [
   'verDatAs:KnowledgeGraph',
@@ -63,14 +67,16 @@ const nestedChildrenKeys = [
   'modules',
   'chapters',
   'contentPages',
-  'interactiveTasks'
+  'interactiveTasks',
+  'documentationTools'
 ]
 const childKeyToLcoType = {
   'verDatAs:Topic': 'ILIAS_COURSE',
   'verDatAs:Module': 'ILIAS_MODULE',
   'verDatAs:Chapter': 'ILIAS_CHAPTER',
   'verDatAs:ContentPage': 'ILIAS_CONTENT_PAGE',
-  'verDatAs:InteractiveTask': 'ILIAS_INTERACTIVE_TASK'
+  'verDatAs:InteractiveTask': 'ILIAS_INTERACTIVE_TASK',
+  'verDatAs:DocumentationTool': 'ILIAS_DOCUMENTATION_TOOL'
 }
 const attributeObject = (key, value) => {
   return { key, value }
@@ -131,7 +137,8 @@ const progressForObjectId = (studentProgress, objectId) => {
   const subLco = studentProgress.sub_lco_progress?.find((item) => item.key === objectId)
   return subLco?.value || []
 }
-const processExperiences = (filteredExperiences, lcoType) => {
+const processExperiences = (studentModel, filteredExperiences, currentLco) => {
+  const lcoType = currentLco.lcoType
   let experienceStatus = 'in-progress'
   // interactive tasks -> attempted, completed, answered
   if (questionTypes.includes(lcoType)) {
@@ -147,20 +154,32 @@ const processExperiences = (filteredExperiences, lcoType) => {
         experienceStatus = lastAnswered.result.score.scaled === 1 ? 'passed' : 'failed'
       }
     }
+    // if the experiences do not only include "interacted"-statements, set an entry for the studentModel
+    if (filteredExperiences.filter(exp => exp.verbId !== 'http://adlnet.gov/expapi/verbs/interacted')?.length > 0) {
+      studentModel[currentLco.objectId] = {
+        experiences: filteredExperiences,
+        status: experienceStatus
+      }
+    }
   }
-  return {
-    experiences: filteredExperiences,
-    status: experienceStatus
+  // for other types (contentPage, documentationTool), record the in-progress state (even for "interacted"-statements)
+  else {
+    studentModel[currentLco.objectId] = {
+      experiences: filteredExperiences,
+      status: experienceStatus
+    }
   }
+  return studentModel
 }
 export const iterateAndFillStudentModel = (currentLco, studentProgress, studentModel, progressValue) => {
   let hasChildren = false
   if (currentLco.attributes) {
     currentLco.attributes?.forEach((attr) => {
       if (nestedChildrenKeys.includes(attr.key)) {
-        // even though ILIAS_CONTENT_PAGE has ILIAS_INTERACTIVE_TASK as children, the function should not apply for this case
-        hasChildren = attr.key !== nestedChildrenKeys[nestedChildrenKeys.length - 1]
+        // even though ILIAS_CONTENT_PAGE has interactiveTasks and documentationTools as children, the function should not apply for those
+        hasChildren = !['interactiveTasks', 'documentationTools'].includes(attr.key)
         attributeValue(currentLco, attr.key)?.forEach((childLco) => {
+          // Hint: It should not be necessary to overwrite the studentModel here. However, it feels more transparent.
           studentModel = iterateAndFillStudentModel(childLco, studentProgress, studentModel, true)
           // if at least one child has no status set, the parent cannot have a status, too
           if (!studentModel[childLco.objectId]?.status) {
@@ -175,7 +194,8 @@ export const iterateAndFillStudentModel = (currentLco, studentProgress, studentM
     const filteredExperiences = experiences.filter(exp => !excludedVerbs.includes(exp.verbId))
     // if at least one child has no status set, the parent cannot have a status, too
     if (filteredExperiences.length > 0 && progressValue) {
-      studentModel[currentLco.objectId] = processExperiences(experiences, currentLco.lcoType)
+      // Hint: It should not be necessary to overwrite the studentModel here. However, it feels more transparent.
+      studentModel = processExperiences(studentModel, experiences, currentLco)
     }
   }
   // otherwise, the status of the children decides on the progress value
@@ -281,6 +301,10 @@ export const getDefaultSize = (semantic) => {
   }
 
   if (is(semantic, interactiveTaskType) || semantic === interactiveTaskType) {
+    return { width: 38, height: 40 }
+  }
+
+  if (is(semantic, documentationToolType) || semantic === documentationToolType) {
     return { width: 38, height: 40 }
   }
 

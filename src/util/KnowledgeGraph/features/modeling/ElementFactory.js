@@ -106,22 +106,26 @@ ElementFactory.prototype.createVerDatAsElement = function (elementType, attrs) {
 
 ElementFactory.prototype.getDefaultSize = function (element, di) {
   if (is(element, 'verDatAs:Topic')) {
-    return { width: 70, height: 70 }
+    return { width: 80, height: 90 }
   }
 
   if (is(element, 'verDatAs:Module')) {
-    return { width: 100, height: 70 }
+    return { width: 60, height: 70 }
   }
 
   if (is(element, 'verDatAs:Chapter')) {
-    return { width: 49, height: 70 }
+    return { width: 46, height: 41 }
   }
 
   if (is(element, 'verDatAs:InteractiveTask')) {
-    return { width: 49, height: 24.5 }
+    return { width: 38, height: 40 }
   }
 
-  return { width: 100, height: 80 }
+  if (is(element, 'verDatAs:DocumentationTool')) {
+    return { width: 38, height: 40 }
+  }
+
+  return { width: 70, height: 70 }
 }
 
 /**
