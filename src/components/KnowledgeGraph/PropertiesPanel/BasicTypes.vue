@@ -2,7 +2,7 @@
 export default {
   name: 'BasicTypes',
   data: () => ({
-    latestUpdate: false
+    currentCheckboxValue: false
   }),
   props: {
     element: Object,
@@ -18,9 +18,6 @@ export default {
         if (newValue === '') {
           newValue = null
         }
-        if (this.parameter.type === 'Boolean') {
-          this.latestUpdate = newValue
-        }
         this.$emit('changeInput', this.parameter.name, newValue)
       }
     }
@@ -29,7 +26,20 @@ export default {
     'changeInput'
   ],
   created() {
-    this.latestUpdate = this.computedFormElement
+    this.createOrUpdateCheckboxValue()
+  },
+  updated() {
+    this.createOrUpdateCheckboxValue()
+  },
+  methods: {
+    createOrUpdateCheckboxValue() {
+      if (this.parameter.type === 'Boolean') {
+        this.currentCheckboxValue = this.element?.businessObject?.[this.parameter.name] ?? false
+      }
+    },
+    changeValue() {
+      this.currentCheckboxValue = !this.currentCheckboxValue
+    }
   }
 }
 </script>
@@ -63,9 +73,10 @@ export default {
         type="checkbox"
         v-if="parameter.type === 'Boolean'"
         v-model="computedFormElement"
+        @change="changeValue"
       />
       <span class="badge">
-        {{ latestUpdate ? 'aktiviert' : 'deaktiviert' }}
+        {{ currentCheckboxValue ? 'aktiviert' : 'deaktiviert' }}
       </span>
     </template>
   </div>
