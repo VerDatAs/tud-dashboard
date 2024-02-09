@@ -17,11 +17,11 @@ const documentationToolType = 'verDatAs:DocumentationTool'
 
 export const basicTypes = [
   'String',
-  'Integer'
+  'Integer',
+  'Boolean'
 ]
 export const customTypes = [
   'verDatAs:PriorKnowledge',
-  'verDatAs:ReferencedTest',
   'verDatAs:ContentPage'
 ]
 export const questionTypes = [
@@ -61,7 +61,9 @@ const supportedAttributeKeys = [
   'description',
   'offline',
   'content',
-  'processingTime'
+  'processingTime',
+  'isEntryTest',
+  'isFinalTest'
 ]
 const nestedChildrenKeys = [
   'modules',

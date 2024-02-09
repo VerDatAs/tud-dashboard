@@ -297,24 +297,6 @@ export default {
           const topicTitle = attributeValue(this.courseNode, 'title') ?? 'Topic'
           modeling.updateLabel(knowledgeGraphTopic, topicTitle)
 
-          // TODO: Tests are currently not used. Add back, if necessary
-          // Add tests to KnowledgeGraph
-          // const rootElement = canvas.getRootElement()
-
-          // let tests = attributeValue(this.courseNode, 'tests')
-          // if (tests?.length > 0) {
-          //   tests = tests.filter((m) => attributeValue(m, 'offline') === false)
-          //   const knowledgeGraphTests = []
-          //   tests?.forEach((test, testIndex) => {
-          //     const learningPathElementObject = this.diagram.get('moddle').create('verDatAs:Test', {
-          //       objectId: test.objectId || 'test' + (testIndex + 1),
-          //       title: attributeValue(test, 'title') || 'Test ' + (testIndex + 1)
-          //     })
-          //     knowledgeGraphTests.push(learningPathElementObject)
-          //   })
-          //   this.diagram.get('modeling').updateProperties(rootElement, { tests: knowledgeGraphTests })
-          // }
-
           // GENERAL IDEA: Draw first and center afterward
           // Define dimensions, offsets and initial positions
           const topicDimensions = getDefaultSize(knowledgeGraphTopic)
@@ -633,7 +615,7 @@ export default {
       // const graphs = this.graphStore.graphs
 
       // this.diagram.saveXML({ format: true }).then((result) => {
-      //   console.log('Test', graphs)
+      //   console.log('Graphs', graphs)
       //   const courseObjectId = this.courseNode?.objectId
       //   if (!graphs[courseObjectId]) graphs[courseObjectId] = ''
       //
@@ -686,7 +668,7 @@ export default {
   <div id="graph-viewer" class="rasterBackground" :class="canViewOnly ? 'canViewOnly' : ''">
     <div v-if="!canViewOnly && showEmptyMessage" class="empty">
       <p class="empty-message">
-        Bitte fügen Sie Lerninhalte wie Module, Kapitel und Tests hinzu, um diese hier zu visualisieren.
+        Bitte fügen Sie Lerninhalte wie Module und interaktive Aufgaben hinzu, um diese hier zu visualisieren.
       </p>
     </div>
     <div v-if="!canViewOnly" class="autosave">
