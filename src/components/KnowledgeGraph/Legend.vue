@@ -27,34 +27,34 @@
   padding: 10px 16px 10px 10px;
   border: 1px solid #ddd;
   box-shadow: 4px 4px 3px rgba(0, 0, 0, .5);
+}
 
-  strong {
-    text-decoration: underline;
-  }
+#legend strong {
+  text-decoration: underline;
+}
 
-  ul {
-    list-style: none;
-    padding-left: 5px;
-    margin-bottom: 6px;
+#legend ul {
+  list-style: none;
+  padding-left: 5px;
+  margin-bottom: 6px;
+}
 
-    li span {
-      display: inline-block;
-      padding: 5px;
-      border-radius: 5px;
-      height: 10px;
+#legend ul li span {
+  display: inline-block;
+  padding: 5px;
+  border-radius: 5px;
+  height: 10px;
+}
 
-      &.in-progress {
-        background: var(--in-progress)
-      }
+#legend ul li span.in-progress {
+  background: var(--in-progress)
+}
 
-      &.passed {
-        background: var(--passed)
-      }
+#legend ul li span.passed {
+  background: var(--passed)
+}
 
-      &.failed {
-        background: var(--failed)
-      }
-    }
-  }
+#legend ul li span.failed {
+  background: var(--failed)
 }
 </style>
