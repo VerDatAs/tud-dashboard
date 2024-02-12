@@ -127,7 +127,7 @@ export default {
   border: 1px solid #ddd;
   border-radius: 3px;
   position: relative;
-  height: 600px;
+  height: 550px;
   width: 100%;
   margin-bottom: 10px;
 }
