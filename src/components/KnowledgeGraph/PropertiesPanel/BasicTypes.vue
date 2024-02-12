@@ -11,7 +11,12 @@ export default {
   computed: {
     computedFormElement: {
       get() {
-        return this.element?.businessObject?.[this.parameter.name] ?? ''
+        if (this.parameter.type === 'Boolean') {
+          // FIXME: Workaround, as the checkbox is not checked properly using the value of element.businessObject
+          return this.currentCheckboxValue
+        } else {
+          return this.element?.businessObject?.[this.parameter.name] ?? ''
+        }
       },
       set(newValue) {
         // Do not set empty parameters
