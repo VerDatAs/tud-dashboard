@@ -18,7 +18,10 @@ export default {
         this.$emit('changeInput', this.parameter.name, newValue)
       }
     }
-  }
+  },
+  emits: [
+    'changeInput'
+  ]
 }
 </script>
 
