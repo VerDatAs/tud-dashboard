@@ -1,16 +1,42 @@
 import { is } from '@/util/KnowledgeGraph/util/ModelUtil'
 
 const prefix = 'verDatAs'
-const elements = ['Topic', 'Module', 'Chapter', 'InteractiveTask']
+const elements = [
+  'Topic',
+  'Module',
+  'Chapter',
+  'InteractiveTask',
+  'DocumentationTool'
+]
 
 const topicType = 'verDatAs:Topic'
 const moduleType = 'verDatAs:Module'
 const chapterType = 'verDatAs:Chapter'
 const interactiveTaskType = 'verDatAs:InteractiveTask'
+const documentationToolType = 'verDatAs:DocumentationTool'
 
-export const basicTypes = ['String', 'Integer']
-export const customTypes = ['verDatAs:PriorKnowledge', 'verDatAs:ReferencedTest', 'verDatAs:ContentPage']
-export const excludedParameters = ['id', 'name', 'objectId', 'modules', 'chapters']
+export const basicTypes = [
+  'String',
+  'Integer',
+  'Boolean'
+]
+export const customTypes = [
+  'verDatAs:PriorKnowledge',
+  'verDatAs:ContentPage'
+]
+export const questionTypes = [
+  'ILIAS_INTERACTIVE_TASK'
+]
+const documentationToolTypes = [
+  'ILIAS_DOCUMENTATION_TOOL'
+]
+export const excludedParameters = [
+  'id',
+  'name',
+  'objectId',
+  'modules',
+  'chapters'
+]
 export const excludedTypeNames = [
   'Definitions',
   'KnowledgeGraph',
@@ -19,7 +45,169 @@ export const excludedTypeNames = [
   'SequenceFlow',
   'FlowNode'
 ]
-export const nonSelectableElements = ['verDatAs:KnowledgeGraph', 'verDatAs:SequenceFlow', 'label']
+const excludedVerbs = [
+  'http://adlnet.gov/expapi/verbs/attempted'
+]
+export const nonSelectableElements = [
+  'verDatAs:KnowledgeGraph',
+  'verDatAs:SequenceFlow',
+  'label'
+]
+const supportedObjectAttributeKeys = [
+  'title',
+  'name'
+]
+const supportedAttributeKeys = [
+  'description',
+  'offline',
+  'content',
+  'processingTime',
+  'isEntryTest',
+  'isFinalTest'
+]
+const nestedChildrenKeys = [
+  'modules',
+  'chapters',
+  'contentPages',
+  'interactiveTasks',
+  'documentationTools'
+]
+const childKeyToLcoType = {
+  'verDatAs:Topic': 'ILIAS_COURSE',
+  'verDatAs:Module': 'ILIAS_MODULE',
+  'verDatAs:Chapter': 'ILIAS_CHAPTER',
+  'verDatAs:ContentPage': 'ILIAS_CONTENT_PAGE',
+  'verDatAs:InteractiveTask': 'ILIAS_INTERACTIVE_TASK',
+  'verDatAs:DocumentationTool': 'ILIAS_DOCUMENTATION_TOOL'
+}
+const attributeObject = (key, value) => {
+  return { key, value }
+}
+export const iterateAttributes = (currentBusinessObject, iterationDepth) => {
+  const genericObject = {}
+  if (!iterationDepth) {
+    if (currentBusinessObject.lcoId) {
+      genericObject.lcoId = currentBusinessObject.lcoId
+    }
+    iterationDepth = 1
+  } else {
+    iterationDepth += 1
+  }
+  const lcoType = childKeyToLcoType[currentBusinessObject['$type']] ?? 'UNKNOWN'
+  genericObject.lcoType = lcoType
+  const objectId = currentBusinessObject.objectId ?? ''
+  if (objectId !== '') {
+    genericObject.objectId = objectId
+  }
+  const attributes = []
+  console.log('attributes of ' + lcoType, Object.keys(currentBusinessObject))
+  Object.keys(currentBusinessObject)?.forEach((attrKey) => {
+    console.log('iterate ' + lcoType + ' -> ' + attrKey)
+    if (supportedAttributeKeys.concat(supportedObjectAttributeKeys).includes(attrKey)) {
+      // the title attribute was used as name in the diagram
+      const keyToPush = attrKey === 'name' ? 'title' : attrKey
+      attributes.push(attributeObject(keyToPush, currentBusinessObject[attrKey]))
+    } else if (nestedChildrenKeys.includes(attrKey)) {
+      const attrObjects = []
+      // the children objects of a businessObject are automatically businessObjects again
+      currentBusinessObject[attrKey]?.forEach((childObject) => {
+        attrObjects.push(iterateAttributes(childObject, iterationDepth))
+      })
+      attributes.push(attributeObject(attrKey, attrObjects))
+    }
+  })
+  // all drawn modules are not offline -> thus, set offline false
+  if (lcoType === 'ILIAS_MODULE') {
+    attributes.push(attributeObject('offline', false))
+  }
+  genericObject.attributes = attributes
+  return genericObject
+}
+export const attributeValue = (assistanceObject, key) => {
+  // Difference between ?? and || -> https://stackoverflow.com/questions/66883181/difference-between-and-operators
+  return assistanceObject.attributes?.find((param) => param.key === key)?.value;
+}
+export const extendAttributes = (existingAttributes, objectToAdd) => {
+  supportedAttributeKeys.forEach((attr) => {
+    if (attributeValue(objectToAdd, attr)) {
+      existingAttributes[attr] = attributeValue(objectToAdd, attr)
+    }
+  })
+  return existingAttributes
+}
+const progressForObjectId = (studentProgress, objectId) => {
+  const subLco = studentProgress.sub_lco_progress?.find((item) => item.key === objectId)
+  return subLco?.value || []
+}
+const processExperiences = (studentModel, filteredExperiences, currentLco) => {
+  const lcoType = currentLco.lcoType
+  let experienceStatus = 'in-progress'
+  // interactive tasks -> attempted, completed, answered
+  if (questionTypes.includes(lcoType)) {
+    // console.log('question', filteredExperiences)
+    // if a completed exists, all answered statements behind it have not to be taken into account
+    const lastCompleted = filteredExperiences.findLast(exp => exp.verbId === 'http://adlnet.gov/expapi/verbs/completed')
+    if (lastCompleted?.result?.score?.scaled !== undefined) {
+      experienceStatus = lastCompleted.result.score.scaled === 1 ? 'passed' : 'failed'
+    } else {
+      // if no completed exists, check for answered and the object ID
+      const lastAnswered = filteredExperiences.findLast(exp => exp.verbId === 'http://adlnet.gov/expapi/verbs/answered')
+      if (lastAnswered && !lastAnswered.objectId?.includes('h5p-subContentId') && lastAnswered?.result?.score?.scaled !== undefined) {
+        experienceStatus = lastAnswered.result.score.scaled === 1 ? 'passed' : 'failed'
+      }
+    }
+    // if the experiences do not only include "interacted"-statements, set an entry for the studentModel
+    if (filteredExperiences.filter(exp => exp.verbId !== 'http://adlnet.gov/expapi/verbs/interacted')?.length > 0) {
+      studentModel[currentLco.objectId] = {
+        experiences: filteredExperiences,
+        status: experienceStatus
+      }
+    }
+  }
+  // for other types (contentPage, documentationTool), record the in-progress state (even for "interacted"-statements)
+  else {
+    studentModel[currentLco.objectId] = {
+      experiences: filteredExperiences,
+      status: experienceStatus
+    }
+  }
+  return studentModel
+}
+export const iterateAndFillStudentModel = (currentLco, studentProgress, studentModel, progressValue) => {
+  let hasChildren = false
+  if (currentLco.attributes) {
+    currentLco.attributes?.forEach((attr) => {
+      if (nestedChildrenKeys.includes(attr.key)) {
+        // even though ILIAS_CONTENT_PAGE has interactiveTasks and documentationTools as children, the function should not apply for those
+        hasChildren = !['interactiveTasks', 'documentationTools'].includes(attr.key)
+        attributeValue(currentLco, attr.key)?.forEach((childLco) => {
+          // Hint: It should not be necessary to overwrite the studentModel here. However, it feels more transparent.
+          studentModel = iterateAndFillStudentModel(childLco, studentProgress, studentModel, true)
+          // if at least one child has no status set, the parent cannot have a status, too
+          if (!studentModel[childLco.objectId]?.status) {
+            progressValue = false
+          }
+        })
+      }
+    })
+  }
+  if (currentLco.objectId && progressForObjectId(studentProgress, currentLco.objectId)?.length > 0) {
+    const experiences = progressForObjectId(studentProgress, currentLco.objectId)
+    const filteredExperiences = experiences.filter(exp => !excludedVerbs.includes(exp.verbId))
+    // if at least one child has no status set, the parent cannot have a status, too
+    if (filteredExperiences.length > 0 && progressValue) {
+      // Hint: It should not be necessary to overwrite the studentModel here. However, it feels more transparent.
+      studentModel = processExperiences(studentModel, experiences, currentLco)
+    }
+  }
+  // otherwise, the status of the children decides on the progress value
+  else if (hasChildren && progressValue) {
+    studentModel[currentLco.objectId] = {
+      status: 'in-progress'
+    }
+  }
+  return studentModel
+}
 export const initialModel = (courseId, courseTitle) =>
   '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '<verDatAs:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:verDatAs="http://verdatas.de/schema/verDatAs" xmlns:verDatAsDi="http://verdatas.de/schema/verDatAsDi" id="verdatas-diagram">\n' +
@@ -115,6 +303,10 @@ export const getDefaultSize = (semantic) => {
   }
 
   if (is(semantic, interactiveTaskType) || semantic === interactiveTaskType) {
+    return { width: 38, height: 40 }
+  }
+
+  if (is(semantic, documentationToolType) || semantic === documentationToolType) {
     return { width: 38, height: 40 }
   }
 

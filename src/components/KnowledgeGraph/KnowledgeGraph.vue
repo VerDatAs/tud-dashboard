@@ -1,6 +1,7 @@
 <script>
 import GraphControls from './GraphControls.vue'
 import GraphViewer from './GraphViewer.vue'
+import Legend from './Legend.vue'
 import PropertiesPanel from './PropertiesPanel/PropertiesPanel.vue'
 import { centerCanvas } from '@/util/GraphHelpers'
 
@@ -9,6 +10,7 @@ export default {
   components: {
     GraphControls,
     GraphViewer,
+    Legend,
     PropertiesPanel
   },
   data: () => ({
@@ -28,7 +30,8 @@ export default {
     token: String,
     canViewOnly: Boolean,
     members: Array,
-    isExpanded: Boolean
+    isExpanded: Boolean,
+    pseudoId: String
   },
   emits: [
     'loadedDiagram',
@@ -139,6 +142,7 @@ export default {
       :diagramLoaded="diagramLoaded"
       :elementSelected="elementSelected"
       :canViewOnly="canViewOnly"
+      :pseudoId="pseudoId"
       @loadedDiagram="changeDiagramLoaded"
       @selectedElement="selectedElement"
       @setDiagram="setDiagram"
@@ -154,6 +158,8 @@ export default {
       :members="members"
       @changeInput="changeInput"
     />
+    <Legend v-if="canViewOnly">
+    </Legend>
   </div>
 </template>
 

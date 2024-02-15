@@ -8,7 +8,6 @@ import NavigationView from '@/components/NavigationView.vue'
 import QueryView from '@/components/Query/QueryView.vue'
 import Settings from '@/components/SettingsView.vue'
 import { useDashboardDataStore } from '@/stores/dashboardData'
-import { DashboardData } from '@/types/dashboard-data'
 import { ref } from 'vue'
 
 export default {
@@ -36,7 +35,8 @@ export default {
       path: '',
       canViewOnly: true,
       previewMode: false,
-      members: []
+      members: [],
+      pseudoId: ''
     }
   },
   created() {
@@ -51,6 +51,7 @@ export default {
       this.canViewOnly = this.dashboardDataStore.data?.canViewOnly ?? true
       this.previewMode = this.dashboardDataStore.data?.previewMode ?? false
       this.members = this.dashboardDataStore.data?.members ?? []
+      this.pseudoId = this.dashboardDataStore.data?.pseudoId ?? ''
       // https://stackoverflow.com/a/69196265
       // TODO: This will center the canvas on every resize. Improve if possible.
       new ResizeObserver(() => {
@@ -106,6 +107,7 @@ export default {
       :diagramLoaded="diagramLoaded"
       :canViewOnly="canViewOnly"
       :members="members"
+      :pseudoId="pseudoId"
       @loadedDiagram="changeDiagramLoaded"
       @setCurrentView="setCurrentView"
       @setDiagram="setDiagram"
@@ -129,7 +131,7 @@ export default {
   border: 1px solid #ddd;
   border-radius: 3px;
   position: relative;
-  height: 600px;
+  height: 550px;
   width: 100%;
   margin-bottom: 10px;
 }
