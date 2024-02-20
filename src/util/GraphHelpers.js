@@ -58,12 +58,13 @@ const supportedObjectAttributeKeys = [
   'name'
 ]
 const supportedAttributeKeys = [
-  'description',
-  'offline',
   'content',
-  'processingTime',
+  'description',
   'isEntryTest',
-  'isFinalTest'
+  'isFinalTest',
+  'lecturerDashboardLink',
+  'offline',
+  'processingTime'
 ]
 const nestedChildrenKeys = [
   'modules',
@@ -71,6 +72,9 @@ const nestedChildrenKeys = [
   'contentPages',
   'interactiveTasks',
   'documentationTools'
+]
+export const urlAttributeKeys = [
+  'lecturerDashboardLink'
 ]
 const childKeyToLcoType = {
   'verDatAs:Course': 'ILIAS_COURSE',

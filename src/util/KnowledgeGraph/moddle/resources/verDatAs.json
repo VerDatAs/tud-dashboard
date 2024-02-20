@@ -119,6 +119,11 @@
       "superClass": ["GraphElement", "GraphNodeElement"],
       "properties": [
         {
+          "name": "lecturerDashboardLink",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
           "name": "modules",
           "isMany": true,
           "type": "Module"

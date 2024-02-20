@@ -1,8 +1,11 @@
 <script>
+import { urlAttributeKeys } from '@/util/GraphHelpers'
+
 export default {
   name: 'BasicTypes',
   data: () => ({
-    currentCheckboxValue: false
+    currentCheckboxValue: false,
+    urlAttributeKeys
   }),
   props: {
     element: Object,
@@ -56,7 +59,7 @@ export default {
       :name="parameter.name"
       :aria-label="parameter.name"
       class="form-control"
-      type="text"
+      :type="urlAttributeKeys.includes(parameter.name) ? 'url' : 'text'"
       v-if="parameter.type === 'String'"
       v-model="computedFormElement"
     />
