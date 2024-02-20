@@ -5,6 +5,9 @@
     <strong>Legende:</strong>
     <ul>
       <li>
+        <span class="me-1 dashed-info-border"></span> Startpunkt
+      </li>
+      <li>
         <span class="me-1 in-progress"></span> Bearbeitet
       </li>
       <li>
@@ -46,15 +49,22 @@
   height: 10px;
 }
 
+#legend ul li span.dashed-info-border {
+  padding: 3px;
+  border-radius: 2px;
+  border: 2px dotted var(--info);
+  margin-right: .3rem !important;
+}
+
 #legend ul li span.in-progress {
-  background: var(--in-progress)
+  background: var(--in-progress);
 }
 
 #legend ul li span.passed {
-  background: var(--passed)
+  background: var(--passed);
 }
 
 #legend ul li span.failed {
-  background: var(--failed)
+  background: var(--failed);
 }
 </style>
