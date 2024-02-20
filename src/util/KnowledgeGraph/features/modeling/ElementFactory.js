@@ -105,7 +105,7 @@ ElementFactory.prototype.createVerDatAsElement = function (elementType, attrs) {
 }
 
 ElementFactory.prototype.getDefaultSize = function (element, di) {
-  if (is(element, 'verDatAs:Topic')) {
+  if (is(element, 'verDatAs:Course')) {
     return { width: 80, height: 90 }
   }
 

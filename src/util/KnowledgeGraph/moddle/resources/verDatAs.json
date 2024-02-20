@@ -115,7 +115,7 @@
       ]
     },
     {
-      "name": "Topic",
+      "name": "Course",
       "superClass": ["GraphElement", "GraphNodeElement"],
       "properties": [
         {

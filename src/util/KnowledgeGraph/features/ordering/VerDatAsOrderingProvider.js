@@ -29,7 +29,7 @@ export default function VerDatAsOrderingProvider(eventBus, canvas, translate) {
       }
     },
     {
-      type: 'verDatAs:Topic',
+      type: 'verDatAs:Course',
       order: {
         level: 5
       }

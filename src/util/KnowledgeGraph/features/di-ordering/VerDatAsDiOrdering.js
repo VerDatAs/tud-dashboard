@@ -31,7 +31,7 @@ export default function VerDatAsDiOrdering(eventBus, canvas) {
       diElements.sort(function (a, b) {
         return a.id - b.id || a.id.localeCompare(b.id)
       })
-      // Sort topic to the beginning
+      // Sort course to the beginning
       diElements.unshift(diElements.pop())
 
       // TODO: Is this really the correct way to go?

@@ -162,12 +162,12 @@ export default {
           // Center canvas
           centerCanvas(canvas)
 
-          // Update objectId of topic
+          // Update objectId of course
           if (!this.canViewOnly) {
-            const knowledgeGraphTopic = elementRegistry.filter((element) => element.type === 'verDatAs:Topic')[0]
+            const knowledgeGraphCourse = elementRegistry.filter((element) => element.type === 'verDatAs:Course')[0]
             const properties = {}
             properties['objectId'] = this.courseNode.objectId
-            modeling.updateProperties(knowledgeGraphTopic, properties)
+            modeling.updateProperties(knowledgeGraphCourse, properties)
 
             // Listen to selection changes and show propertiesPanel, inputs and listen for input changes
             eventBus.on('selection.changed', (e) => {
@@ -282,33 +282,33 @@ export default {
         const elementRegistry = this.diagram.get('elementRegistry')
 
         if (modeling) {
-          // Replace objectId of the topic and set its title as a label
-          const knowledgeGraphTopic = elementRegistry.find((element) => element.type === 'verDatAs:Topic')
-          const knowledgeGraphTopicLabel = elementRegistry.find(
-            (element) => element.id === knowledgeGraphTopic.label?.id
+          // Replace objectId of the course and set its title as a label
+          const knowledgeGraphCourse = elementRegistry.find((element) => element.type === 'verDatAs:Course')
+          const knowledgeGraphCourseLabel = elementRegistry.find(
+            (element) => element.id === knowledgeGraphCourse.label?.id
           )
           // Update objectId and other attributes
           let properties = {}
           properties['objectId'] = this.courseNode.objectId
           properties = extendAttributes(properties, this.courseNode)
-          modeling.updateProperties(knowledgeGraphTopic, properties)
+          modeling.updateProperties(knowledgeGraphCourse, properties)
 
-          // Set title of the topic
-          const topicTitle = attributeValue(this.courseNode, 'title') ?? 'Topic'
-          modeling.updateLabel(knowledgeGraphTopic, topicTitle)
+          // Set title of the course
+          const courseTitle = attributeValue(this.courseNode, 'title') ?? 'Course'
+          modeling.updateLabel(knowledgeGraphCourse, courseTitle)
 
           // GENERAL IDEA: Draw first and center afterward
           // Define dimensions, offsets and initial positions
-          const topicDimensions = getDefaultSize(knowledgeGraphTopic)
-          const topicWidth = topicDimensions.width
-          const topicHeight = topicDimensions.height
+          const courseDimensions = getDefaultSize(knowledgeGraphCourse)
+          const courseWidth = courseDimensions.width
+          const courseHeight = courseDimensions.height
 
           const offsetBetweenLayers = 75
 
           const moduleWidth = getDefaultSize('verDatAs:Module').width
           const moduleHeight = getDefaultSize('verDatAs:Module').height
           // TODO: It seems like the initial position y refers to the outer position and all following are the middle of the element
-          const initialModulePosition = knowledgeGraphTopic.y + topicHeight + offsetBetweenLayers + moduleHeight / 2
+          const initialModulePosition = knowledgeGraphCourse.y + courseHeight + offsetBetweenLayers + moduleHeight / 2
 
           const chapterWidth = getDefaultSize('verDatAs:Chapter').width
           const chapterHeight = getDefaultSize('verDatAs:Chapter').height
@@ -355,9 +355,9 @@ export default {
             canvas.addShape(moduleShape)
 
             // Add it to the modeling object
-            const existingModules = knowledgeGraphTopic.businessObject?.modules ?? []
+            const existingModules = knowledgeGraphCourse.businessObject?.modules ?? []
             existingModules.push(moduleShape.businessObject)
-            modeling.updateProperties(knowledgeGraphTopic, { modules: existingModules })
+            modeling.updateProperties(knowledgeGraphCourse, { modules: existingModules })
 
             // Update objectId and other attributes
             let moduleProperties = {}
@@ -369,8 +369,8 @@ export default {
             const moduleTitle = attributeValue(module, 'title') ?? 'Module ' + (moduleIndex + 1)
             modeling.updateLabel(moduleShape, moduleTitle)
 
-            // Draw connection to the topic
-            modeling.connect(knowledgeGraphTopic, moduleShape)
+            // Draw connection to the course
+            modeling.connect(knowledgeGraphCourse, moduleShape)
 
             // Iterate chapters of module
             moduleChapters?.forEach((chapter, chapterIndex) => {
@@ -494,23 +494,23 @@ export default {
                   chapterPositionX + chapterIndex * (chapterWidth + chapterOffset) + chapterWidth + offset
               }
             })
-            // Draw topic
+            // Draw course
             if (moduleIndex === filteredModules.length - 1) {
               // FIXME: The totalWidth currently somehow misses the width of one chapter in order to be centered
               totalWidth += chapterWidth
-              // Move topic
-              // TODO: This somehow does not move the label of the topic
-              modeling.moveElements([knowledgeGraphTopic], {
-                x: totalWidth / 2 - topicWidth / 2 - knowledgeGraphTopic.x,
-                // TODO: 20 are added to reduce the distance from the topic to the module
-                y: 90 - knowledgeGraphTopic.y + 20 // 90 is the position set on initialization
+              // Move course
+              // TODO: This somehow does not move the label of the course
+              modeling.moveElements([knowledgeGraphCourse], {
+                x: totalWidth / 2 - courseWidth / 2 - knowledgeGraphCourse.x,
+                // TODO: 20 are added to reduce the distance from the course to the module
+                y: 90 - knowledgeGraphCourse.y + 20 // 90 is the position set on initialization
               })
-              // Move topic label
-              modeling.moveElements([knowledgeGraphTopicLabel], {
-                x: totalWidth / 2 - knowledgeGraphTopicLabel.width / 2 - knowledgeGraphTopicLabel.x,
+              // Move course label
+              modeling.moveElements([knowledgeGraphCourseLabel], {
+                x: totalWidth / 2 - knowledgeGraphCourseLabel.width / 2 - knowledgeGraphCourseLabel.x,
                 // TODO: Currently, no offset is used
-                // TODO: 20 are added to reduce the distance from the topic to the module
-                y: 90 + knowledgeGraphTopic.height - knowledgeGraphTopicLabel.y + 20 // 90 + height + offset of label
+                // TODO: 20 are added to reduce the distance from the course to the module
+                y: 90 + knowledgeGraphCourse.height - knowledgeGraphCourseLabel.y + 20 // 90 + height + offset of label
               })
             } else {
               // increase total width with offset
@@ -557,19 +557,19 @@ export default {
     },
     saveKnowledgeGraph() {
       const elementRegistry = this.diagram.get('elementRegistry')
-      const topics = elementRegistry.filter((element) => element.type === 'verDatAs:Topic')
-      if (!topics || topics.length === 0) {
-        console.error('No topic has been defined so far.')
+      const courses = elementRegistry.filter((element) => element.type === 'verDatAs:Course')
+      if (!courses || courses.length === 0) {
+        console.error('No course has been defined so far.')
         return
       }
-      const knowledgeGraphTopic = topics[0]
-      if (!knowledgeGraphTopic?.businessObject?.objectId || knowledgeGraphTopic.businessObject.objectId === '') {
-        console.log('No objectId defined for topic.')
+      const knowledgeGraphCourse = courses[0]
+      if (!knowledgeGraphCourse?.businessObject?.objectId || knowledgeGraphCourse.businessObject.objectId === '') {
+        console.log('No objectId defined for course.')
         return
       }
-      const topicBusinessObject = knowledgeGraphTopic.businessObject
+      const courseBusinessObject = knowledgeGraphCourse.businessObject
 
-      const genericCourseFormatRequest = iterateAttributes(topicBusinessObject)
+      const genericCourseFormatRequest = iterateAttributes(courseBusinessObject)
       console.log('1) Generic format as an object', genericCourseFormatRequest)
       console.log('2) Generic format as JSON', JSON.stringify(genericCourseFormatRequest))
 

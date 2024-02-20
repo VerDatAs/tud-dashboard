@@ -10,7 +10,7 @@ import { getLabel } from '../features/label-editing/LabelUtil'
 
 import { is } from '../util/ModelUtil'
 
-const svgTopic =
+const svgCourse =
   '<svg version="1.1" width="80" height="90" viewBox="0 0 80 90" xmlns="http://www.w3.org/2000/svg"><path d="m70.314 47.105h-60.632v-37.053h60.632zm-39.747 5.0526h18.863c0.03368 0.06737 0.03368 0.13474 0.06737 0.2021l5.3221 11.587h-29.642l5.3221-11.587c0.03368-0.06737 0.06737-0.13474 0.06737-0.2021m44.8-3.3684v-40.421c-2e-6 -1.8526-1.5158-3.3684-3.3684-3.3684h-64c-1.8526 0-3.3684 1.5158-3.3684 3.3684v40.421c0 1.8526 1.5158 3.3684 3.3684 3.3684h17.044l-13.44 29.272c-0.57263 1.28-0.03369 2.7621 1.2463 3.3347 0.33684 0.16842 0.70737 0.23579 1.0442 0.23579 0.94316 0 1.8863-0.53895 2.2905-1.4821l5.8947-12.834h35.806l5.8947 12.834c0.43789 0.94316 1.3474 1.4821 2.2905 1.4821 0.33684 0 0.70737-0.06737 1.0442-0.23579 1.28-0.57263 1.8189-2.0884 1.2463-3.3347l-13.406-29.272h17.044c1.8526 0 3.3684-1.5158 3.3684-3.3684" stroke-width=".33684"/><path class="icon-bg" d="m9.6376 10.037v37.003c1.6485 0.23311 3.4761 0.03365 5.1936 0.10007h55.43c0.23311-1.6485 0.03365-3.4761 0.10007-5.1936v-31.91c-1.6485-0.23311-3.4761-0.03365-5.1936-0.10007h-55.43z" fill="#fff" stroke-width=".14981"/></svg>'
 const svgModule =
   '<svg version="1.1" width="60" height="70" viewBox="0 0 60 70" xmlns="http://www.w3.org/2000/svg"><path d="m41.958 29.335h-19.664v3.6871h19.664zm0-6.4892h-19.664v3.6871h19.664zm7.3741 38.444-32.766 0.02458c-2.5072-0.02458-4.744-2.3106-5.2848-3.5887-0.36871-0.83573-0.58993-4.1049-0.58993-6.6367v-38.911c0.34412 0.39329 0.68825 0.78657 1.0324 1.1307 2.0402 2.0402 4.0312 2.0402 5.3339 2.0402h0.54077l31.684-0.02458zm3.6871 1.8189-0.073741-49.652c0-1.0078-0.83573-1.8435-1.8435-1.8435l-33.503 0.04916h-0.54077c-1.1061 0-1.7944 0-2.753-0.95863-0.54077-0.54077-1.1553-1.2782-1.7206-2.0156h32.864c1.0078 0 1.8435-0.83573 1.8435-1.8435 0-1.0078-0.83573-1.8435-1.8435-1.8435h-36.477c-0.44245 0-0.86031 0.17206-1.2044 0.44245-0.46703 0.34412-0.78657 0.88489-0.78657 1.4994v44.122c0 1.4257 0.073741 6.1697 0.88489 8.1115 1.0078 2.3351 4.449 5.801 8.6769 5.8255l34.634-0.02458c0.49161 0 0.95864-0.19664 1.3028-0.54077 0.3687-0.3687 0.54077-0.83573 0.54077-1.3273" stroke-width=".2458"/><path d="m10.618 12.149c-0.05061 2.1706-0.0071 4.3572-0.02161 6.534 0.01372 10.807-0.03278 21.614 0.04136 32.42 0.04213 2.0813 0.02344 4.1885 0.45263 6.2348 0.3457 1.2372 1.3264 2.1846 2.337 2.9184 0.97285 0.67177 2.1238 1.1806 3.3307 1.0985 7.9527 0.06942 15.906 0.03701 23.859 0.0306 2.8906-0.0025 5.7811-0.02561 8.6715-0.06326 0.2291-0.22658 0.03441-0.68482 0.09878-0.99882v-44.983c-0.22454-0.2313-0.6851-0.03519-0.99882-0.09998-10.767-0.01359-21.534 0.03224-32.3-0.04272-1.8402 0.04214-3.5147-1.0634-4.7235-2.3841-0.23681-0.21939-0.40523-0.52566-0.67078-0.70217l-0.05365 0.0267zm21.501 10.782h9.7576v3.5154h-19.515v-3.5154h9.7576zm0 6.4718h9.7576v3.5154h-19.515v-3.5154h9.7576z" class="icon-bg" fill="#fff" stroke-width=".059924"/></svg>'
@@ -89,27 +89,8 @@ export default function VerDatAsRenderer(eventBus, styles, textRenderer, priorit
   }
 
   this.handlers = {
-    // TODO: Remove, if not needed anymore
-    // Old solution:
-    // 'verDatAs:Topic': function (parentGfx, element) {
-    // const customIcon = svgCreate('image', {
-    //   x: 0,
-    //   y: 0,
-    //   width: element.width,
-    //   height: element.height,
-    //   href: svgTopicIcon
-    // })
-    // svgAppend(parentGfx, customIcon)
-
-    // renderEmbeddedLabel(parentGfx, element, 'center-middle');
-
-    // return parentGfx
-    // }
-
-    // TODO: Argument type DocumentFragment is not assignable to parameter type SVGElement
-
-    'verDatAs:Topic': function (parentGfx) {
-      const customIconSvg = document.createRange().createContextualFragment(svgTopic)
+    'verDatAs:Course': function (parentGfx) {
+      const customIconSvg = document.createRange().createContextualFragment(svgCourse)
       svgAppend(parentGfx, customIconSvg)
       return customIconSvg
     },
@@ -154,9 +135,9 @@ VerDatAsRenderer.prototype.canRender = function (element) {
 
 VerDatAsRenderer.prototype.drawShape = function (parentGfx, element) {
   var type = element.type
-  // TODO: This is a dirty workaround to properly set the dimensions of the topic.
+  // TODO: This is a dirty workaround to properly set the dimensions of the course.
   //       For modules, chapters, interactiveTasks and documentationTools, it works without the workaround.
-  if (type === 'verDatAs:Topic') {
+  if (type === 'verDatAs:Course') {
     element.width = 80
     element.height = 90
   }

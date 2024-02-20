@@ -2,14 +2,14 @@ import { is } from '@/util/KnowledgeGraph/util/ModelUtil'
 
 const prefix = 'verDatAs'
 const elements = [
-  'Topic',
+  'Course',
   'Module',
   'Chapter',
   'InteractiveTask',
   'DocumentationTool'
 ]
 
-const topicType = 'verDatAs:Topic'
+const courseType = 'verDatAs:Course'
 const moduleType = 'verDatAs:Module'
 const chapterType = 'verDatAs:Chapter'
 const interactiveTaskType = 'verDatAs:InteractiveTask'
@@ -73,7 +73,7 @@ const nestedChildrenKeys = [
   'documentationTools'
 ]
 const childKeyToLcoType = {
-  'verDatAs:Topic': 'ILIAS_COURSE',
+  'verDatAs:Course': 'ILIAS_COURSE',
   'verDatAs:Module': 'ILIAS_MODULE',
   'verDatAs:Chapter': 'ILIAS_CHAPTER',
   'verDatAs:ContentPage': 'ILIAS_CONTENT_PAGE',
@@ -214,7 +214,7 @@ export const initialModel = (courseId, courseTitle) =>
   '  <verDatAs:knowledgeGraph id="Graph_' +
   courseId +
   '">\n' +
-  '    <verDatAs:topic id="Topic_1" name="' +
+  '    <verDatAs:course id="Course_1" name="' +
   courseTitle +
   '" />\n' +
   '  </verDatAs:knowledgeGraph>\n' +
@@ -222,7 +222,7 @@ export const initialModel = (courseId, courseTitle) =>
   '    <verDatAsDi:graphPlane id="GraphPlane_1" graphElement="Graph_' +
   courseId +
   '">\n' +
-  '      <verDatAsDi:graphShape id="Topic_1_di" graphElement="Topic_1">\n' +
+  '      <verDatAsDi:graphShape id="Course_1_di" graphElement="Course_1">\n' +
   '        <dc:Bounds x="600" y="90" width="70" height="70" />\n' +
   '      </verDatAsDi:graphShape>\n' +
   '    </verDatAsDi:graphPlane>\n' +
@@ -290,7 +290,7 @@ export const getVerDatAsElements = () => {
  * Helper function to retrieve the default size of elements of VerDatAs
  */
 export const getDefaultSize = (semantic) => {
-  if (is(semantic, topicType) || semantic === topicType) {
+  if (is(semantic, courseType) || semantic === courseType) {
     return { width: 80, height: 90 }
   }
 
