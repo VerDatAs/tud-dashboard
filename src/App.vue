@@ -53,6 +53,7 @@ export default {
       // https://stackoverflow.com/a/69196265
       // TODO: This will center the canvas on every resize. Improve if possible.
       new ResizeObserver(() => {
+        this.diagram?.get('canvas')?.resized()
         this.$refs.knowledgeGraph?.centerCanvas()
       }).observe(document.getElementById('dashboardApp'))
     },
