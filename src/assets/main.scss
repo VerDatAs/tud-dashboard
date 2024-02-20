@@ -11,6 +11,7 @@
   --in-progress: #ffd041;
   --passed: #3abc7b;
   --failed: #e95a5a;
+  --info: #3abcbc;
   --sidebar-width: 250px;
 }
 
@@ -49,6 +50,13 @@
 }
 .djs-shape.failed .djs-visual .icon-bg {
   fill: var(--failed) !important;
+}
+.djs-shape.initialElement .djs-hit {
+  stroke-opacity: 1 !important;
+  stroke: var(--info) !important;
+  stroke-width: 3px !important;
+  stroke-dasharray: 3,3 !important;
+  stroke-linejoin: round !important;
 }
 
 /* Multiselect styles */

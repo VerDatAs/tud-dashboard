@@ -216,15 +216,38 @@ export default {
               }
             })
             const elementsToHighlight = Object.keys(this.studentModel)
-            // iterate elements in registry except of Labels and Connections
-            elementRegistry.filter((elem) => !['label', 'verDatAs:SequenceFlow'].includes(elem.type)).forEach((elem) => {
-              if (elem.businessObject?.objectId && elementsToHighlight.includes(elem.businessObject.objectId)) {
-                const elementModel = this.studentModel[elem.businessObject.objectId]
-                if (elementModel.status) {
-                  canvas.addMarker(elem, elementModel.status)
+            if (elementsToHighlight?.length > 0) {
+              // iterate elements in registry except of Labels and Connections
+              elementRegistry.filter((elem) => !['label', 'verDatAs:SequenceFlow'].includes(elem.type)).forEach((elem) => {
+                if (elem.businessObject?.objectId && elementsToHighlight.includes(elem.businessObject.objectId)) {
+                  const elementModel = this.studentModel[elem.businessObject.objectId]
+                  if (elementModel.status) {
+                    canvas.addMarker(elem, elementModel.status)
+                  }
+                }
+              })
+            } else {
+              // draw stroke around the initial object
+              const modules = elementRegistry.filter((elem) => elem.type === 'verDatAs:Module')
+              if (modules?.length > 0) {
+                // find first module by sorting the modules after their names
+                const sortedModules = modules.sort((a, b) => {
+                  const nameA = a.businessObject?.name?.toLowerCase() ?? ''
+                  const nameB = b.businessObject?.name?.toLowerCase() ?? ''
+                  if (nameA < nameB) {
+                    return -1
+                  }
+                  else if (nameA > nameB) {
+                    return 1
+                  }
+                  return 0
+                })
+                const firstModule = sortedModules[0]
+                if (firstModule) {
+                  canvas.addMarker(firstModule, 'initialElement')
                 }
               }
-            })
+            }
           }
 
           function debounce(fn, timeout) {
