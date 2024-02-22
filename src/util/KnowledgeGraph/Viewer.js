@@ -13,8 +13,6 @@ import CustomModeling from './features/modeling'
 import ElementStyleModule from './features/style'
 import VerDatAsDiOrdering from './features/di-ordering'
 import EditorActionsModule from './features/editor-actions'
-import KeyboardModule from './features/keyboard'
-import SearchModule from './features/search'
 
 /**
  * @typedef { import('./BaseViewer').BaseViewerOptions } BaseViewerOptions
@@ -77,9 +75,7 @@ Viewer.prototype._modules = [
   TranslateModule,
   OverlaysModule,
   VerDatAsDiOrdering,
-  EditorActionsModule,
-  KeyboardModule,
-  SearchModule
+  EditorActionsModule
 ]
 
 // default moddle extensions the viewer is composed of
