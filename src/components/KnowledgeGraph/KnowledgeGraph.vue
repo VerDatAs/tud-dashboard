@@ -3,6 +3,7 @@ import GraphControls from './GraphControls.vue'
 import GraphViewer from './GraphViewer.vue'
 import Legend from './Legend.vue'
 import PropertiesPanel from './PropertiesPanel/PropertiesPanel.vue'
+import LearningState from './LearningState.vue'
 import { centerCanvas } from '@/util/GraphHelpers'
 
 export default {
@@ -10,6 +11,7 @@ export default {
   components: {
     GraphControls,
     GraphViewer,
+    LearningState,
     Legend,
     PropertiesPanel
   },
@@ -158,8 +160,12 @@ export default {
       :members="members"
       @changeInput="changeInput"
     />
-    <Legend v-if="canViewOnly">
-    </Legend>
+    <Legend
+      v-if="canViewOnly"
+    />
+    <LearningState
+      v-if="canViewOnly"
+    />
   </div>
 </template>
 

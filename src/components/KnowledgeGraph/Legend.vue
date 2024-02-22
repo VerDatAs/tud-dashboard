@@ -1,20 +1,34 @@
 <script>
+import { svgCourse, svgModule, svgChapter, svgInteractiveTask, svgDocumentationTool } from '@/util/GraphHelpers'
+export default {
+  name: 'Legend',
+  data: () => ({
+    svgCourse,
+    svgModule,
+    svgChapter,
+    svgInteractiveTask,
+    svgDocumentationTool
+  })
+}
 </script>
 <template>
   <div id="legend">
     <strong>Legende:</strong>
     <ul>
       <li>
-        <span class="me-1 dashed-info-border"></span> Startpunkt
+        <span v-html="svgCourse"></span> Kurs
       </li>
       <li>
-        <span class="me-1 in-progress"></span> Bearbeitet
+        <span v-html="svgModule"></span> Lernmodul
       </li>
       <li>
-        <span class="me-1 passed"></span> Richtig beantwortet
+        <span v-html="svgChapter"></span> Kapitel
       </li>
       <li>
-        <span class="me-1 failed"></span> Falsch beantwortet
+        <span v-html="svgInteractiveTask"></span> Interaktive Aufgabe
+      </li>
+      <li>
+        <span v-html="svgDocumentationTool"></span> Lerntagebuch
       </li>
     </ul>
   </div>
@@ -29,42 +43,30 @@
   background: #fff;
   padding: 10px 16px 10px 10px;
   border: 1px solid #ddd;
-  box-shadow: 4px 4px 3px rgba(0, 0, 0, .5);
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
 }
 
 #legend strong {
+  margin-left: 5px;
   text-decoration: underline;
 }
 
 #legend ul {
   list-style: none;
+  font-size: 0.825rem;
   padding-left: 5px;
+  margin-top: 10px;
   margin-bottom: 6px;
+}
+
+#legend ul li {
+  height: 22px;
 }
 
 #legend ul li span {
   display: inline-block;
-  padding: 5px;
+  padding-right: 5px;
   border-radius: 5px;
   height: 10px;
-}
-
-#legend ul li span.dashed-info-border {
-  padding: 3px;
-  border-radius: 2px;
-  border: 2px dotted var(--info);
-  margin-right: .3rem !important;
-}
-
-#legend ul li span.in-progress {
-  background: var(--in-progress);
-}
-
-#legend ul li span.passed {
-  background: var(--passed);
-}
-
-#legend ul li span.failed {
-  background: var(--failed);
 }
 </style>

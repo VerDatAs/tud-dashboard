@@ -39,6 +39,13 @@
 
 .canViewOnly .djs-hit-all {
   cursor: pointer !important;
+  /* avoid selecting text on double click */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 /* Highlighting for viewer */
@@ -57,6 +64,13 @@
   stroke-width: 3px !important;
   stroke-dasharray: 3,3 !important;
   stroke-linejoin: round !important;
+}
+
+// fix for Legend, as the SVG is embedded dynamically
+#legend li svg {
+  max-height: 14px;
+  max-width: 14px;
+  margin-bottom: -2px;
 }
 
 /* Multiselect styles */
