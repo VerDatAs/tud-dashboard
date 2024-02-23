@@ -48,7 +48,7 @@ function isDevelopmentBuild(): boolean {
 }
 
 function initDashboard(initDashboardData: DashboardData) {
-  console.log('init dashboard', JSON.stringify(initDashboardData));
+  // console.log('init dashboard', JSON.stringify(initDashboardData));
   const app = createApp(App)
 
   const pinia = createPinia()

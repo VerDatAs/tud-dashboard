@@ -82,7 +82,7 @@ export default {
         .then(async (graphResponse) => {
           // Handle response
           // TODO: Make use of async and await functions to avoid using setTimeout multiple times
-          console.log('graph data', graphResponse.data)
+          // console.log('graph data', graphResponse.data)
           if (graphResponse.data?.lcos) {
             const courseTitle = attributeValue(this.courseNode, 'title')
             this.graph = initialModel(encodedId, courseTitle)
@@ -192,7 +192,7 @@ export default {
             }
             const studentProgress = await axios.post(url, request, { headers: authHeader })
             this.studentModel = iterateAndFillStudentModel(this.courseNode, studentProgress.data, this.studentModel, true)
-            console.log('studentModel', this.studentModel)
+            // console.log('studentModel', this.studentModel)
 
             // TODO: Remove, if implemented by VSG
             eventBus.on('element.click', (e) => {
@@ -287,7 +287,7 @@ export default {
         })
     },
     redrawKnowledgeGraph() {
-      console.log('redrawKnowledgeGraph', this.courseNode)
+      // console.log('redrawKnowledgeGraph', this.courseNode)
       if (!this.courseNode?.lcoType || !this.courseNode?.objectId) {
         return
       }
@@ -593,8 +593,8 @@ export default {
       const courseBusinessObject = knowledgeGraphCourse.businessObject
 
       const genericCourseFormatRequest = iterateAttributes(courseBusinessObject)
-      console.log('1) Generic format as an object', genericCourseFormatRequest)
-      console.log('2) Generic format as JSON', JSON.stringify(genericCourseFormatRequest))
+      // console.log('1) Generic format as an object', genericCourseFormatRequest)
+      // console.log('2) Generic format as JSON', JSON.stringify(genericCourseFormatRequest))
 
       const authHeader = {
         'Content-Type': 'application/json;charset=UTF-8',
