@@ -22,7 +22,7 @@
 #learningState {
   position: absolute;
   top: -1px;
-  right: 0;
+  right: -1px;
   z-index: 6;
   background: #fff;
   padding: 10px 16px 10px 10px;
