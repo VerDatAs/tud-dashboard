@@ -73,6 +73,12 @@
   margin-bottom: -2px;
 }
 
+// fix for simulating a background within SVG elements: https://stackoverflow.com/a/41902064/3623608
+.stroke-background {
+  stroke: white;
+  stroke-width: 8px;
+}
+
 /* Multiselect styles */
 .multiselect {
   .multiselect__tags {

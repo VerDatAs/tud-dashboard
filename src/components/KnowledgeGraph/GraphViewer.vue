@@ -462,14 +462,14 @@ export default {
                   const childPosition = {
                     // Hint: the children are currently centered, too. In order to remove this, add a small offset
                     x: currentChapterPositionX + (chapterWidth / 2) - (childWidth / 2), // old solution -> x: currentChapterPositionX + 10,
-                    // TODO: 75 is a value that currently works good. However, this has not be the case for different knowledge structures
+                    // TODO: 80 is a value that currently works good. However, this has not be the case for different knowledge structures
                     // Only use half of the offset, as no further split is made on the next level
                     y:
                       chapterShape.y +
                       chapterShape.height +
                       offsetBetweenLayers / 2 +
                       childHeight / 2 +
-                      taskOrDocumentationToolIndex * 75
+                      taskOrDocumentationToolIndex * 80
                   }
                   const childDimensions = getDefaultSize(childType.type)
                   const childAttributes = { ...childPosition, ...childDimensions, ...childType }

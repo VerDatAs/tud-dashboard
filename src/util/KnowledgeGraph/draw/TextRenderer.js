@@ -2,15 +2,15 @@ import { assign } from 'min-dash'
 
 import TextUtil from 'diagram-js/lib/util/Text'
 
-var DEFAULT_FONT_SIZE = 12
-var LINE_HEIGHT_RATIO = 1.2
+var DEFAULT_FONT_SIZE = 10
+var LINE_HEIGHT_RATIO = 1.1
 
 var MIN_TEXT_ANNOTATION_HEIGHT = 30
 
 export default function TextRenderer(config) {
   var defaultStyle = assign(
     {
-      fontFamily: 'Arial, sans-serif',
+      fontFamily: '"Open Sans", Verdana, Arial, Helvetica, sans-serif',
       fontSize: DEFAULT_FONT_SIZE,
       fontWeight: 'normal',
       lineHeight: LINE_HEIGHT_RATIO
@@ -18,7 +18,7 @@ export default function TextRenderer(config) {
     (config && config.defaultStyle) || {}
   )
 
-  var fontSize = parseInt(defaultStyle.fontSize, 10) - 1
+  var fontSize = parseInt(defaultStyle.fontSize, 10)
 
   var externalStyle = assign(
     {},
@@ -44,11 +44,12 @@ export default function TextRenderer(config) {
    */
   this.getExternalLabelBounds = function (bounds, text, element) {
     const boxWidth = element && element.width ? element.width : 50
+    const overflow = 2
     var layoutedDimensions = textUtil.getDimensions(text, {
       box: {
-        width: boxWidth,
+        width: boxWidth + overflow,
         height: 30,
-        x: bounds.width / 2 + bounds.x,
+        x: bounds.width / 2 + bounds.x - overflow / 2,
         y: bounds.height / 2 + bounds.y
       },
       style: externalStyle

@@ -29,29 +29,51 @@ export default function VerDatAsRenderer(eventBus, styles, textRenderer, priorit
     // cut off visual representation of the label
     let maxLength = 20
     if (element.width < 40) {
-      maxLength = 10
-    } else if (element.width >= 40 && element.width < 50) {
       maxLength = 14
+    } else if (element.width >= 40 && element.width < 50) {
+      maxLength = 18
     } else if (element.width >= 50 && element.width < 60) {
-      maxLength = 17
+      maxLength = 24
     }
 
     // Transform the title into a string with maxLength and ...
     const transformTitle = (title) => {
-      if (title.length > maxLength) {
+      // check if the title is too long and also exceeds an acceptable offset
+      // "+ 1" is necessary to avoid the trailing points after maxLength
+      if (title.length > maxLength + 1) {
+        const listOfNonWantedCharacters = [':', '-', '_', '/', '.']
+        const whitespace = ' '
+        const trailingPoints = '…'
+        // there should be at least two successive characters or a whitespace at the end
+        for (let i = maxLength; i >= 1; i--) {
+          const lastCharacter = title.charAt(i)
+          const secondLastCharacter = title.charAt(i - 1)
+          if (lastCharacter === whitespace) {
+            return title.substring(0, i + 1) + trailingPoints
+          }
+          else if (!listOfNonWantedCharacters.includes(lastCharacter) && !listOfNonWantedCharacters.includes(secondLastCharacter)) {
+            return title.substring(0, i + 1) + trailingPoints
+          }
+        }
+        // is this is not possible at all, do a normal return by only considering the last character
         const lastCharacter = title.charAt(maxLength)
-        const potentialSpace = lastCharacter === ' ' || lastCharacter === ':' ? ' ' : ''
-        title = title.substring(0, maxLength) + potentialSpace + '...'
+        const potentialSpace = (lastCharacter === ' ' || lastCharacter === ':') ? ' ' : ''
+        return title.substring(0, maxLength + 1) + potentialSpace + trailingPoints
       }
+      // otherwise, return the full title
       return title
     }
 
     label = transformTitle(label)
 
+    // dirty workaround for simulating a background of SVG elements
+    var textBackground = textRenderer.createText(label || '', options)
+    svgClasses(textBackground).add('stroke-background')
+    svgAppend(parentGfx, textBackground)
+
+    // this is the normal text
     var text = textRenderer.createText(label || '', options)
-
     svgClasses(text).add('djs-label')
-
     svgAppend(parentGfx, text)
 
     return text
