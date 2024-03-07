@@ -37,21 +37,27 @@ library.add(
   faUsers
 )
 
+import { useDashboardDataStore } from '@/stores/dashboardData'
+
 import type { DashboardData } from '@/types/dashboard-data'
 
 import './assets/main.scss'
-// import('./assets/local-dev.scss')
 
-// import axios from 'axios'
+function isDevelopmentBuild(): boolean {
+  return import.meta.env.MODE != 'production'
+}
 
 function initDashboard(initDashboardData: DashboardData) {
-  const app = createApp(App, { initDashboardData })
+  // console.log('init dashboard', JSON.stringify(initDashboardData));
+  const app = createApp(App)
 
   const pinia = createPinia()
   pinia.use(piniaPluginPersistedstate)
   app.use(pinia)
 
   app.component('font-awesome-icon', FontAwesomeIcon)
+
+  useDashboardDataStore().setDashboardData(initDashboardData)
 
   app.mount('#dashboardApp')
 
@@ -60,233 +66,29 @@ function initDashboard(initDashboardData: DashboardData) {
   }, 1000)
 }
 
-// Local development: Uncomment this lines and remove type from "import type ..."
-// TODO: Find a better solution for local development: https://stackoverflow.com/questions/70709987/how-to-load-environment-variables-from-env-file-using-vite
-// const backendUrl = 'https://tasverdatas.showcase.verdatas.inf.tu-dresden.de';
-// const pseudoId = 'verdatas1'
-// const authUrl = backendUrl + '/api/v1/auth/login'
-// const request = {
-//   actorAccountName: pseudoId
-// }
-// axios.post(authUrl, request).then((data: any) => {
-//   const token = data.data?.token
-//   const courseNode = {
-//     "lcoType": "ILIAS_COURSE",
-//     "attributes": [
-//       {
-//         "key": "objectId",
-//         "value": "http://localhost:8081/goto.php?target=crs_83&client_id=default&obj_id_lrs=309"
-//       },
-//       {
-//         "key": "title",
-//         "value": "VerDatAs Demonstrationskurs"
-//       },
-//       {
-//         "key": "description",
-//         "value": ""
-//       },
-//       {
-//         "key": "modules",
-//         "value": [
-//           {
-//             "lcoType": "ILIAS_MODULE",
-//             "attributes": [
-//               {
-//                 "key": "objectId",
-//                 "value": "http://localhost:8081/goto.php?target=lm_84&client_id=default&obj_id_lrs=313"
-//               },
-//               {
-//                 "key": "title",
-//                 "value": "Testmodul 13 Nov"
-//               },
-//               {
-//                 "key": "description",
-//                 "value": ""
-//               },
-//               {
-//                 "key": "offline",
-//                 "value": false
-//               },
-//               {
-//                 "key": "chapters",
-//                 "value": [
-//                   {
-//                     "lcoType": "ILIAS_CHAPTER",
-//                     "attributes": [
-//                       {
-//                         "key": "objectId",
-//                         "value": "http://localhost:8081/goto.php?target=st_2_84&client_id=default&obj_id_lrs=313"
-//                       },
-//                       {
-//                         "key": "title",
-//                         "value": "Kapitel 1"
-//                       },
-//                       {
-//                         "key": "contentPages",
-//                         "value": [
-//                           {
-//                             "lcoType": "ILIAS_CONTENT_PAGE",
-//                             "attributes": [
-//                               {
-//                                 "key": "objectId",
-//                                 "value": "http://localhost:8081/goto.php?target=pg_3_84&client_id=default&obj_id_lrs=313"
-//                               },
-//                               {
-//                                 "key": "title",
-//                                 "value": "Inhaltsseite 1"
-//                               },
-//                               {
-//                                 "key": "content",
-//                                 "value": "<PageObject><PageContent PCID=\"1510321342920596300\"><Paragraph Language=\"en\" Characteristic=\"Standard\">Inhalt der Inhaltsseite 1</Paragraph></PageContent></PageObject>"
-//                               },
-//                               {
-//                                 "key": "interactiveTasks",
-//                                 "value": []
-//                               }
-//                             ]
-//                           },
-//                           {
-//                             "lcoType": "ILIAS_CONTENT_PAGE",
-//                             "attributes": [
-//                               {
-//                                 "key": "objectId",
-//                                 "value": "http://localhost:8081/goto.php?target=pg_4_84&client_id=default&obj_id_lrs=313"
-//                               },
-//                               {
-//                                 "key": "title",
-//                                 "value": "Inhaltsseite 2"
-//                               },
-//                               {
-//                                 "key": "content",
-//                                 "value": "<PageObject></PageObject>"
-//                               },
-//                               {
-//                                 "key": "interactiveTasks",
-//                                 "value": []
-//                               }
-//                             ]
-//                           }
-//                         ]
-//                       }
-//                     ]
-//                   },
-//                   {
-//                     "lcoType": "ILIAS_CHAPTER",
-//                     "attributes": [
-//                       {
-//                         "key": "objectId",
-//                         "value": "http://localhost:8081/goto.php?target=st_5_84&client_id=default&obj_id_lrs=313"
-//                       },
-//                       {
-//                         "key": "title",
-//                         "value": "Kapitel 2"
-//                       },
-//                       {
-//                         "key": "contentPages",
-//                         "value": [
-//                           {
-//                             "lcoType": "ILIAS_CONTENT_PAGE",
-//                             "attributes": [
-//                               {
-//                                 "key": "objectId",
-//                                 "value": "http://localhost:8081/goto.php?target=pg_6_84&client_id=default&obj_id_lrs=313"
-//                               },
-//                               {
-//                                 "key": "title",
-//                                 "value": "Inhaltsseite 3"
-//                               },
-//                               {
-//                                 "key": "content",
-//                                 "value": "<PageObject></PageObject>"
-//                               },
-//                               {
-//                                 "key": "interactiveTasks",
-//                                 "value": []
-//                               }
-//                             ]
-//                           },
-//                           {
-//                             "lcoType": "ILIAS_CONTENT_PAGE",
-//                             "attributes": [
-//                               {
-//                                 "key": "objectId",
-//                                 "value": "http://localhost:8081/goto.php?target=pg_7_84&client_id=default&obj_id_lrs=313"
-//                               },
-//                               {
-//                                 "key": "title",
-//                                 "value": "Inhaltsseite 4"
-//                               },
-//                               {
-//                                 "key": "content",
-//                                 "value": "<PageObject></PageObject>"
-//                               },
-//                               {
-//                                 "key": "interactiveTasks",
-//                                 "value": []
-//                               }
-//                             ]
-//                           }
-//                         ]
-//                       }
-//                     ]
-//                   },
-//                   {
-//                     "lcoType": "ILIAS_CHAPTER",
-//                     "attributes": [
-//                       {
-//                         "key": "objectId",
-//                         "value": "http://localhost:8081/goto.php?target=st_8_84&client_id=default&obj_id_lrs=313"
-//                       },
-//                       {
-//                         "key": "title",
-//                         "value": "Kapitel 3"
-//                       },
-//                       {
-//                         "key": "contentPages",
-//                         "value": [
-//                           {
-//                             "lcoType": "ILIAS_CONTENT_PAGE",
-//                             "attributes": [
-//                               {
-//                                 "key": "objectId",
-//                                 "value": "http://localhost:8081/goto.php?target=pg_9_84&client_id=default&obj_id_lrs=313"
-//                               },
-//                               {
-//                                 "key": "title",
-//                                 "value": "Inhaltsseite 5"
-//                               },
-//                               {
-//                                 "key": "content",
-//                                 "value": "<PageObject></PageObject>"
-//                               },
-//                               {
-//                                 "key": "interactiveTasks",
-//                                 "value": []
-//                               }
-//                             ]
-//                           }
-//                         ]
-//                       }
-//                     ]
-//                   }
-//                 ]
-//               }
-//             ]
-//           }
-//         ]
-//       },
-//       {
-//         "key": "tests",
-//         "value": []
-//       }
-//     ]
-//   };
-//   const dashboardData = new DashboardData(courseNode, token, backendUrl)
-//   dashboardData.previewMode = false
-//   dashboardData.canViewOnly = false
-//   dashboardData.path = ''
-//   initDashboard(dashboardData)
-// })
+if (isDevelopmentBuild()) {
+  // solution of conditional imports retrieved from https://stackoverflow.com/a/67059286
+  const axios = (await import('axios')).default
+  const localNode  = (await import('@/util/InitialEvent')).localNode
+  import('./assets/local-dev.scss')
+  const DashboardData = (await import('@/types/dashboard-data')).DashboardData
+
+  const backendUrl = import.meta.env.VITE_BACKEND_URL
+  const pseudoId = import.meta.env.VITE_PSEUDO_ID
+  const authUrl = backendUrl + '/api/v1/auth/login'
+  const request = {
+    actorAccountName: pseudoId
+  }
+  axios.post(authUrl, request).then((data: any) => {
+    const token = data.data?.token
+    const dashboardData = new DashboardData(localNode, token, backendUrl)
+    dashboardData.previewMode = import.meta.env.VITE_PREVIEW_MODE === 'true'
+    dashboardData.canViewOnly = import.meta.env.VITE_CAN_VIEW_ONLY === 'true'
+    dashboardData.pseudoId = pseudoId
+    dashboardData.path = ''
+    initDashboard(dashboardData)
+  })
+}
 
 export function init(initDashboardData: DashboardData) {
   initDashboard(initDashboardData)

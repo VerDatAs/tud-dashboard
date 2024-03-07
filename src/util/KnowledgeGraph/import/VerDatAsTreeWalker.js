@@ -213,7 +213,7 @@ export default function VerDatAsTreeWalker(handler, translate) {
           handleSequenceFlow(element, context)
         })
       } else {
-        // TODO: Quick fix for Topic, Module, Chapter, InteractiveTask
+        // TODO: Quick fix for Course, Module, Chapter, InteractiveTask, DocumentationTool
         visitIfDi(element, context)
         if (element.modules) {
           handleGraphElements(element.modules, context)
@@ -225,6 +225,9 @@ export default function VerDatAsTreeWalker(handler, translate) {
           element.contentPages?.forEach((page) => {
             if (page.interactiveTasks) {
               handleGraphElements(page.interactiveTasks, context)
+            }
+            if (page.documentationTools) {
+              handleGraphElements(page.documentationTools, context)
             }
           })
         }

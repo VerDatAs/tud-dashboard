@@ -1,7 +1,9 @@
 <script>
 import GraphControls from './GraphControls.vue'
 import GraphViewer from './GraphViewer.vue'
+import Legend from './Legend.vue'
 import PropertiesPanel from './PropertiesPanel/PropertiesPanel.vue'
+import LearningState from './LearningState.vue'
 import { centerCanvas } from '@/util/GraphHelpers'
 
 export default {
@@ -9,6 +11,8 @@ export default {
   components: {
     GraphControls,
     GraphViewer,
+    LearningState,
+    Legend,
     PropertiesPanel
   },
   data: () => ({
@@ -28,8 +32,14 @@ export default {
     token: String,
     canViewOnly: Boolean,
     members: Array,
-    isExpanded: Boolean
+    isExpanded: Boolean,
+    pseudoId: String
   },
+  emits: [
+    'loadedDiagram',
+    'setDiagram',
+    'updateCourseNode'
+  ],
   created() {
     document.addEventListener('fullscreenchange', () => {
       if (!document.fullscreenElement) {
@@ -58,6 +68,9 @@ export default {
       if (value) {
         this.$refs.graphViewer.saveKnowledgeGraph()
       }
+    },
+    updateCourseNode(courseNode) {
+      this.$emit('updateCourseNode', courseNode)
     },
     updateMetamodel(metamodel) {
       this.metamodel = metamodel
@@ -131,9 +144,11 @@ export default {
       :diagramLoaded="diagramLoaded"
       :elementSelected="elementSelected"
       :canViewOnly="canViewOnly"
+      :pseudoId="pseudoId"
       @loadedDiagram="changeDiagramLoaded"
       @selectedElement="selectedElement"
       @setDiagram="setDiagram"
+      @updateCourseNode="updateCourseNode"
       @updateMetamodel="updateMetamodel"
     />
     <PropertiesPanel
@@ -144,6 +159,12 @@ export default {
       :canViewOnly="canViewOnly"
       :members="members"
       @changeInput="changeInput"
+    />
+    <Legend
+      v-if="canViewOnly"
+    />
+    <LearningState
+      v-if="canViewOnly"
     />
   </div>
 </template>

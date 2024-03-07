@@ -18,7 +18,6 @@ export default {
     parameters: [],
     parametrizedElement: null,
     priorKnowledgeValue: null,
-    referencedTestValue: null,
     collaborationType: 'peer_collaboration',
     collaborationUserName: '',
     collaborationUserPassword: '',
@@ -36,6 +35,9 @@ export default {
     canViewOnly: Boolean,
     members: Array
   },
+  emits: [
+    'changeInput'
+  ],
   created() {
     this.collaborationMembers = this.members;
     // select all members by default
@@ -57,14 +59,6 @@ export default {
         this.priorKnowledgeValue = markRaw(
           this.allGraphElements.filter((element) => priorKnowledgeElements.includes(element.businessObject.objectId))
         )
-        // load referencedTests
-        const referencedTestElements =
-          this.parametrizedElement?.businessObject?.referencedTests?.map(
-            (referencedTest) => referencedTest?.elementId
-          ) ?? []
-        this.referencedTestValue = markRaw(
-          this.allTests.filter((element) => referencedTestElements.includes(element.objectId))
-        )
       }
     }
   },
@@ -76,9 +70,6 @@ export default {
           ?.getAll()
           ?.filter((element) => !nonSelectableElements.includes(element.type)) ?? []
       )
-    },
-    allTests() {
-      return this.diagram?.get('canvas')?.getRootElement()?.businessObject?.tests ?? []
     }
   },
   methods: {
@@ -163,19 +154,6 @@ export default {
       })
       this.changeInput(parameterName, priorKnowledgeElements)
     },
-    // Update the referenced test multiselect value
-    updateSelectedReferencedTest(selectedElements, parameterName) {
-      this.referencedTestValue = markRaw(selectedElements)
-      const referencedTestElements = []
-      this.referencedTestValue.forEach((elem) => {
-        const element = this.diagram.get('moddle').create('verDatAs:ReferencedTest', {
-          // Note: In this case, no businessObject exists
-          elementId: elem.objectId
-        })
-        referencedTestElements.push(element)
-      })
-      this.changeInput(parameterName, referencedTestElements)
-    },
     startCollaboration() {
       if (!this.collaborationUserName || this.collaborationUserName === '' || !this.collaborationUserPassword || this.collaborationUserPassword === '') {
         return
@@ -246,93 +224,77 @@ export default {
         <hr />
 
         <div class="form-horizontal row">
-          <div class="form-group" v-for="(parameter, index) in parameters" :key="'parameterInput' + index">
-            <template v-if="basicTypes.includes(parameter.type)">
-              <div class="col-xs-12">
-                <label :for="parameter.name" class="control-label">{{ parameter.name }}</label>
-              </div>
-              <div class="col-xs-12">
-                <BasicTypes
-                  :element="elementSelected"
-                  :parameter="parameter"
-                  v-if="basicTypes.includes(parameter.type)"
-                  @changeInput="changeInput"
-                ></BasicTypes>
-              </div>
-            </template>
-            <template v-if="customTypes.includes(parameter.type)">
-              <template v-if="parameter.type === 'verDatAs:PriorKnowledge'">
+          <template v-if="parameters && parameters.length > 0">
+            <div class="form-group" v-for="(parameter, index) in parameters" :key="'parameterInput' + index">
+              <template v-if="basicTypes.includes(parameter.type)">
                 <div class="col-xs-12">
                   <label :for="parameter.name" class="control-label">{{ parameter.name }}</label>
                 </div>
                 <div class="col-xs-12">
-                  <!-- Options retrieved from https://vue-multiselect.js.org/#sub-custom-option-template -->
-                  <!-- .map((element) => element.businessObject)" -->
-                  <VueMultiselect
-                    label="id"
-                    track-by="id"
-                    placeholder="Select prior knowledge"
-                    :model-value="priorKnowledgeValue"
-                    :id="parameter.name"
-                    :name="parameter.name"
-                    :multiple="true"
-                    :options="allGraphElements"
-                    :custom-label="customLabel"
-                    :show-labels="false"
-                    @update:model-value="updateSelectedPriorKnowledge($event, parameter.name)"
-                  >
-                  </VueMultiselect>
+                  <BasicTypes
+                    :element="elementSelected"
+                    :parameter="parameter"
+                    v-if="basicTypes.includes(parameter.type)"
+                    @changeInput="changeInput"
+                  ></BasicTypes>
                 </div>
               </template>
-              <template v-if="parameter.type === 'verDatAs:ReferencedTest'">
-                <div class="col-xs-12">
-                  <label :for="parameter.name" class="control-label">
-                    {{ elementSelected.type === 'verDatAs:Topic' ? 'finalTests' : parameter.name }}
-                  </label>
-                </div>
-                <div class="col-xs-12">
-                  <!-- Options retrieved from https://vue-multiselect.js.org/#sub-custom-option-template -->
-                  <!-- As a businessObject does not exist, a customLabel is not necessary -->
-                  <VueMultiselect
-                    label="title"
-                    track-by="objectId"
-                    placeholder="Select referenced test"
-                    :model-value="referencedTestValue"
-                    :id="parameter.name"
-                    :name="parameter.name"
-                    :multiple="true"
-                    :options="allTests"
-                    @update:model-value="updateSelectedReferencedTest($event, parameter.name)"
-                  >
-                  </VueMultiselect>
-                </div>
-              </template>
-              <template v-if="parameter.type === 'verDatAs:ContentPage'">
-                <div class="col-xs-12">
-                  <label :for="parameter.name" class="control-label">{{ parameter.name }}</label>
-                </div>
-                <div class="col-xs-12">
-                  <ul
-                    class="mt-2 ps-5"
-                    v-if="
-                      elementSelected &&
-                      elementSelected.businessObject &&
-                      elementSelected.businessObject[parameter.name] &&
-                      elementSelected.businessObject[parameter.name].length > 0
-                    "
-                  >
-                    <li
-                      v-for="(contentPage, pageIndex) in elementSelected.businessObject[parameter.name]"
-                      :key="'contentPage' + pageIndex"
+              <template v-if="customTypes.includes(parameter.type)">
+                <template v-if="parameter.type === 'verDatAs:PriorKnowledge'">
+                  <div class="col-xs-12">
+                    <label :for="parameter.name" class="control-label">{{ parameter.name }}</label>
+                  </div>
+                  <div class="col-xs-12">
+                    <!-- Options retrieved from https://vue-multiselect.js.org/#sub-custom-option-template -->
+                    <!-- .map((element) => element.businessObject)" -->
+                    <VueMultiselect
+                      label="id"
+                      track-by="id"
+                      placeholder="Select prior knowledge"
+                      :model-value="priorKnowledgeValue"
+                      :id="parameter.name"
+                      :name="parameter.name"
+                      :multiple="true"
+                      :options="allGraphElements"
+                      :custom-label="customLabel"
+                      :show-labels="false"
+                      @update:model-value="updateSelectedPriorKnowledge($event, parameter.name)"
                     >
-                      {{ contentPage.title ? contentPage.title : 'ContentPage ' + (pageIndex + 1) }}
-                    </li>
-                  </ul>
-                </div>
+                    </VueMultiselect>
+                  </div>
+                </template>
+                <template v-if="parameter.type === 'verDatAs:ContentPage'">
+                  <div class="col-xs-12">
+                    <label :for="parameter.name" class="control-label">{{ parameter.name }}</label>
+                  </div>
+                  <div class="col-xs-12">
+                    <ul
+                      class="mt-2 ps-4"
+                      v-if="
+                        elementSelected &&
+                        elementSelected.businessObject &&
+                        elementSelected.businessObject[parameter.name] &&
+                        elementSelected.businessObject[parameter.name].length > 0
+                      "
+                    >
+                      <li
+                        v-for="(contentPage, pageIndex) in elementSelected.businessObject[parameter.name]"
+                        :key="'contentPage' + pageIndex"
+                      >
+                        {{ contentPage.title ? contentPage.title : 'ContentPage ' + (pageIndex + 1) }}
+                      </li>
+                    </ul>
+                  </div>
+                </template>
               </template>
-            </template>
-            <div class="col-xs-12" v-if="!basicTypes.includes(parameter.type) && !customTypes.includes(parameter.type)">
-              <p class="alert alert-info py-3 mb-2">The parameter {{ parameter.name }} will be supported soon.</p>
+              <div class="col-xs-12" v-if="!basicTypes.includes(parameter.type) && !customTypes.includes(parameter.type)">
+                <p class="alert alert-info py-3 mt-0 mb-2">Der Parameter <span style="font-style: italic;">{{ parameter.name }}</span> wird bald unterstützt.</p>
+              </div>
+            </div>
+          </template>
+          <div class="col-xs-12" v-else>
+            <div class="alert alert-info">
+              Für dieses Element können keine Attribute definiert werden.
             </div>
           </div>
         </div>

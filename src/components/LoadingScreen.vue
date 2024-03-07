@@ -11,7 +11,7 @@ export default {
   <div id="loadingScreen" v-if="!diagramLoaded">
     <div>
       <img
-        :src="path + '/logo.jpeg'"
+        :src="path + '/logo.jpg'"
         width="400"
         alt="VerDatAs logo containing both the icon itself as well as the text VerDatAs"
       />

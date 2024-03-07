@@ -2,6 +2,8 @@ import inherits from 'inherits-browser'
 
 import Viewer from './Viewer'
 
+import KeyboardModule from './features/keyboard'
+import SearchModule from './features/search'
 import KeyboardMoveModule from 'diagram-js/lib/navigation/keyboard-move'
 import MoveCanvasModule from 'diagram-js/lib/navigation/movecanvas'
 import SelectionModule from 'diagram-js/lib/features/selection'
@@ -25,6 +27,8 @@ export default function ExtendedViewer(options) {
 inherits(ExtendedViewer, Viewer)
 
 ExtendedViewer.prototype._extendedModules = [
+  KeyboardModule,
+  SearchModule,
   KeyboardMoveModule,
   MoveCanvasModule,
   SelectionModule,

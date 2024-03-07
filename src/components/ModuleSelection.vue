@@ -1,6 +1,9 @@
 <script>
 export default {
   data: () => ({}),
+  emits: [
+    'setCurrentView'
+  ],
   methods: {
     openTab(evt, tabname) {
       const tabcontent = document.getElementsByClassName('tabcontent')

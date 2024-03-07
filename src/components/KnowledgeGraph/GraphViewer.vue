@@ -2,11 +2,16 @@
 import axios from 'axios'
 import { Base64 } from 'js-base64'
 import {
+  attributeValue,
   centerCanvas,
   excludedTypeNames,
+  extendAttributes,
   getDefaultSize,
   initialModel,
-  nonSelectableElements
+  iterateAndFillStudentModel,
+  iterateAttributes,
+  nonSelectableElements,
+  questionTypes
 } from '@/util/GraphHelpers'
 import ExtendedViewer from '@/util/KnowledgeGraph/ExtendedViewer'
 import Viewer from '@/util/KnowledgeGraph/Viewer'
@@ -19,7 +24,8 @@ export default {
     showEmptyMessage: false,
     intervalHandle: null,
     settings: useSettingStore(),
-    graphStore: useGraphStore()
+    graphStore: useGraphStore(),
+    studentModel: {}
   }),
   props: {
     backendUrl: String,
@@ -28,16 +34,29 @@ export default {
     diagram: Object,
     diagramLoaded: Boolean,
     elementSelected: Object,
-    canViewOnly: Boolean
+    canViewOnly: Boolean,
+    pseudoId: String
   },
+  emits: [
+    'loadedDiagram',
+    'selectedElement',
+    'setDiagram',
+    'updateCourseNode',
+    'updateMetamodel'
+  ],
   created() {
     this.initGraphViewer()
+  },
+  computed: {
+    existingLcoId() {
+      return this.courseNode.lcoId ?? null
+    }
   },
   methods: {
     // Handles the retrieval of the diagram and loading into the editor
     initGraphViewer() {
-      if (!this.courseNode?.lcoType || !this.courseNode?.attributes || !this.getCourseNodeObjectId()) {
-        console.log('The courseNode is incomplete (missing lcoType, attributes or objectId).')
+      if (!this.courseNode?.lcoType || !this.courseNode?.objectId) {
+        console.log('The courseNode is incomplete (missing lcoType or objectId).')
         return
       }
 
@@ -45,35 +64,64 @@ export default {
       // yes? -> initialize modeler with the resulting diagram
       // example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
       // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
-      const encodedId = Base64.encodeURI(this.getCourseNodeObjectId())
-      const knowledgeGraphUrl = this.backendUrl + '/api/v1/courses/' + encodedId + '/knowledge-graph'
+      const encodedId = Base64.encodeURI(this.courseNode.objectId)
+      const knowledgeGraphUrl = this.backendUrl + '/api/v1/lco/search'
       const authHeader = {
         'Content-Type': 'application/json;charset=UTF-8',
         Authorization: 'Bearer ' + this.token
       }
+      // search for existing knowledge_graphs with a given objectId
+      const request = [
+        {
+          "key": "objectId",
+          "value": this.courseNode.objectId
+        }
+      ]
       axios
-        .get(knowledgeGraphUrl, { headers: authHeader })
-        .then((graphResponse) => {
+        .post(knowledgeGraphUrl, request, { headers: authHeader })
+        .then(async (graphResponse) => {
           // Handle response
-          console.log('graph data', graphResponse.data)
-          if (graphResponse.data?.graph) {
-            this.graph = graphResponse.data.graph
-            this.processKnowledgeGraph()
+          // TODO: Make use of async and await functions to avoid using setTimeout multiple times
+          // console.log('graph data', graphResponse.data)
+          if (graphResponse.data?.lcos) {
+            const courseTitle = attributeValue(this.courseNode, 'title')
+            this.graph = initialModel(encodedId, courseTitle)
+            if (graphResponse.data?.lcos[0]) {
+              const courseNode = graphResponse.data.lcos[0]
+              this.$emit('updateCourseNode', courseNode)
+              await this.processKnowledgeGraph(authHeader)
+              this.redrawKnowledgeGraph()
+            } else {
+              // the course node is transferred for the first time
+              await this.processKnowledgeGraph(authHeader)
+              this.redrawKnowledgeGraph()
+              // if at least one attribute exists, save it initially
+              if (this.courseNode.attributes?.length > 0) {
+                // use setTimeout, as otherwise the knowledge graph might not be ready
+                setTimeout(() => {
+                  this.saveKnowledgeGraph()
+                }, 100)
+              }
+              else {
+                this.showEmptyMessage = true
+              }
+            }
+            // Set that the initial diagram was loaded once
+            // Add timeout to avoid loading artifacts
+            setTimeout(() => {
+              this.$emit('loadedDiagram', true)
+            }, 250)
           }
         })
         .catch((err) => {
           // Handle errors
           console.error(err)
-          const courseTitle = this.getAttributeValue(this.courseNode, 'title')
-          this.graph = initialModel(encodedId, courseTitle)
-          this.processKnowledgeGraph()
-          this.showEmptyMessage = true
         })
     },
     // Handles the entire (Extended-)Viewer creation,
     // the definition of the metamodel,
     // as well as the events happening after importing the diagram (centering, click, update events)
-    processKnowledgeGraph() {
+    async processKnowledgeGraph(authHeader) {
       if (this.diagramLoaded || !this.graph) {
         return
       }
@@ -109,17 +157,17 @@ export default {
             return console.error('Could not import VerDatAs board', err)
           }
         })
-        .then(() => {
+        .then(async () => {
           // After importing xml:
           // Center canvas
           centerCanvas(canvas)
 
-          // Update objectId of topic
+          // Update objectId of course
           if (!this.canViewOnly) {
-            const knowledgeGraphTopic = elementRegistry.filter((element) => element.type === 'verDatAs:Topic')[0]
+            const knowledgeGraphCourse = elementRegistry.filter((element) => element.type === 'verDatAs:Course')[0]
             const properties = {}
-            properties['objectId'] = this.getCourseNodeObjectId()
-            modeling.updateProperties(knowledgeGraphTopic, properties)
+            properties['objectId'] = this.courseNode.objectId
+            modeling.updateProperties(knowledgeGraphCourse, properties)
 
             // Listen to selection changes and show propertiesPanel, inputs and listen for input changes
             eventBus.on('selection.changed', (e) => {
@@ -129,12 +177,23 @@ export default {
               } else {
                 this.$emit('selectedElement', null)
                 //try to auto-save the graph after not selecting another graph element if activated in the settings
-                if (this.settings.autosave) {
+                if (this.settings.autosave && this.diagramLoaded) {
+                  console.log('auto saving')
                   this.saveKnowledgeGraph()
                 }
               }
             })
           } else {
+            const url = this.backendUrl + '/api/v1/student/progress'
+            const request = {
+              subLcos: true,
+              userId: this.pseudoId,
+              objectId: this.courseNode.objectId
+            }
+            const studentProgress = await axios.post(url, request, { headers: authHeader })
+            this.studentModel = iterateAndFillStudentModel(this.courseNode, studentProgress.data, this.studentModel, true)
+            // console.log('studentModel', this.studentModel)
+
             // TODO: Remove, if implemented by VSG
             eventBus.on('element.click', (e) => {
               const element = e.element
@@ -143,27 +202,51 @@ export default {
                 const objectId = element.businessObject.objectId
                 // Check string, whether it contains a valid URL
                 if (objectId.includes('http://') || objectId.includes('https://')) {
-                  let visitedObjects = []
-                  if (localStorage.getItem('visitedObjects')) {
-                    visitedObjects = JSON.parse(localStorage.getItem('visitedObjects'))
-                  }
-                  if (!visitedObjects.includes(objectId)) {
-                    visitedObjects.push(objectId)
-                  }
-                  localStorage.setItem('visitedObjects', JSON.stringify(visitedObjects))
+                  // let visitedObjects = []
+                  // if (localStorage.getItem('visitedObjects')) {
+                  //   visitedObjects = JSON.parse(localStorage.getItem('visitedObjects'))
+                  // }
+                  // if (!visitedObjects.includes(objectId)) {
+                  //   visitedObjects.push(objectId)
+                  // }
+                  // localStorage.setItem('visitedObjects', JSON.stringify(visitedObjects))
                   // Open on click
                   window.open(element.businessObject.objectId, '_self')
                 }
               }
             })
-            // Add markers for highlighting the visitedObjects
-            if (localStorage.getItem('visitedObjects')) {
-              const elementsToHighlight = JSON.parse(localStorage.getItem('visitedObjects'))
-              elementRegistry.forEach((elem) => {
-                if (elementsToHighlight.includes(elem?.businessObject?.objectId)) {
-                  canvas.addMarker(elem, 'highlight')
+            const elementsToHighlight = Object.keys(this.studentModel)
+            if (elementsToHighlight?.length > 0) {
+              // iterate elements in registry except of Labels and Connections
+              elementRegistry.filter((elem) => !['label', 'verDatAs:SequenceFlow'].includes(elem.type)).forEach((elem) => {
+                if (elem.businessObject?.objectId && elementsToHighlight.includes(elem.businessObject.objectId)) {
+                  const elementModel = this.studentModel[elem.businessObject.objectId]
+                  if (elementModel.status) {
+                    canvas.addMarker(elem, elementModel.status)
+                  }
                 }
               })
+            } else {
+              // draw stroke around the initial object
+              const modules = elementRegistry.filter((elem) => elem.type === 'verDatAs:Module')
+              if (modules?.length > 0) {
+                // find first module by sorting the modules after their names
+                const sortedModules = modules.sort((a, b) => {
+                  const nameA = a.businessObject?.name?.toLowerCase() ?? ''
+                  const nameB = b.businessObject?.name?.toLowerCase() ?? ''
+                  if (nameA < nameB) {
+                    return -1
+                  }
+                  else if (nameA > nameB) {
+                    return 1
+                  }
+                  return 0
+                })
+                const firstModule = sortedModules[0]
+                if (firstModule) {
+                  canvas.addMarker(firstModule, 'initialElement')
+                }
+              }
             }
           }
 
@@ -201,19 +284,16 @@ export default {
           }, 500)
 
           eventBus.on('commandStack.changed', exportArtifacts)
-
-          // Set that the initial diagram was loaded once
-          this.$emit('loadedDiagram', true)
         })
     },
     redrawKnowledgeGraph() {
-      console.log('redrawKnowledgeGraph', this.courseNode)
-      if (!this.courseNode?.lcoType || !this.courseNode?.attributes) {
+      // console.log('redrawKnowledgeGraph', this.courseNode)
+      if (!this.courseNode?.lcoType || !this.courseNode?.objectId) {
         return
       }
 
-      const encodedId = Base64.encodeURI(this.getCourseNodeObjectId())
-      const courseName = this.getAttributeValue(this.courseNode, 'name') ?? 'Unknown'
+      const encodedId = Base64.encodeURI(this.courseNode.objectId)
+      const courseName = attributeValue(this.courseNode, 'name') ?? 'Unknown'
 
       // First, initialize modeler
       this.loadInitialModel(this.diagram, encodedId, courseName).then(() => {
@@ -225,64 +305,57 @@ export default {
         const elementRegistry = this.diagram.get('elementRegistry')
 
         if (modeling) {
-          // Replace objectId of the topic and set its title as a label
-          const knowledgeGraphTopic = elementRegistry.find((element) => element.type === 'verDatAs:Topic')
-          const knowledgeGraphTopicLabel = elementRegistry.find(
-            (element) => element.id === knowledgeGraphTopic.label?.id
+          // Replace objectId of the course and set its title as a label
+          const knowledgeGraphCourse = elementRegistry.find((element) => element.type === 'verDatAs:Course')
+          const knowledgeGraphCourseLabel = elementRegistry.find(
+            (element) => element.id === knowledgeGraphCourse.label?.id
           )
-          const properties = {}
-          properties['objectId'] = this.getCourseNodeObjectId()
-          modeling.updateProperties(knowledgeGraphTopic, properties)
-          const topicTitle = this.getAttributeValue(this.courseNode, 'title') ?? 'Topic'
-          modeling.updateLabel(knowledgeGraphTopic, topicTitle)
+          // Update objectId and other attributes
+          let properties = {}
+          properties['objectId'] = this.courseNode.objectId
+          properties = extendAttributes(properties, this.courseNode)
+          modeling.updateProperties(knowledgeGraphCourse, properties)
 
-          // Add tests to KnowledgeGraph
-          const rootElement = canvas.getRootElement()
-
-          let tests = this.getAttributeValue(this.courseNode, 'tests')
-          if (tests?.length > 0) {
-            tests = tests.filter((m) => this.getAttributeValue(m, 'offline') === false)
-            const knowledgeGraphTests = []
-            tests?.forEach((test, testIndex) => {
-              const learningPathElementObject = this.diagram.get('moddle').create('verDatAs:Test', {
-                objectId: this.getAttributeValue(test, 'objectId') || 'test' + (testIndex + 1),
-                title: this.getAttributeValue(test, 'title') || 'Test ' + (testIndex + 1)
-              })
-              knowledgeGraphTests.push(learningPathElementObject)
-            })
-            this.diagram.get('modeling').updateProperties(rootElement, { tests: knowledgeGraphTests })
-          }
+          // Set title of the course
+          const courseTitle = attributeValue(this.courseNode, 'title') ?? 'Course'
+          modeling.updateLabel(knowledgeGraphCourse, courseTitle)
 
           // GENERAL IDEA: Draw first and center afterward
           // Define dimensions, offsets and initial positions
-          const topicDimensions = getDefaultSize(knowledgeGraphTopic)
-          const topicWidth = topicDimensions.width
-          const topicHeight = topicDimensions.height
+          const courseDimensions = getDefaultSize(knowledgeGraphCourse)
+          const courseWidth = courseDimensions.width
+          const courseHeight = courseDimensions.height
 
-          const offsetBetweenLayers = 160
+          const offsetBetweenLayers = 75
 
           const moduleWidth = getDefaultSize('verDatAs:Module').width
-          const initialModulePosition = knowledgeGraphTopic.y + topicHeight + (2 * offsetBetweenLayers) / 3
+          const moduleHeight = getDefaultSize('verDatAs:Module').height
+          // TODO: It seems like the initial position y refers to the outer position and all following are the middle of the element
+          const initialModulePosition = knowledgeGraphCourse.y + courseHeight + offsetBetweenLayers + moduleHeight / 2
 
           const chapterWidth = getDefaultSize('verDatAs:Chapter').width
+          const chapterHeight = getDefaultSize('verDatAs:Chapter').height
           const chapterOffset = 10
           let chapterPositionX = 0
 
           const taskWidth = getDefaultSize('verDatAs:InteractiveTask').width
+          const taskHeight = getDefaultSize('verDatAs:InteractiveTask').height
+          const documentationToolWidth = getDefaultSize('verDatAs:DocumentationTool').width
+          const documentationToolHeight = getDefaultSize('verDatAs:DocumentationTool').height
 
           const offset = 70
           let totalWidth = 0
 
           // Reduce list of modules to those that are currently set online
           let filteredModules = []
-          const courseModules = this.getAttributeValue(this.courseNode, 'modules')
+          const courseModules = attributeValue(this.courseNode, 'modules')
           if (courseModules?.length > 0) {
-            filteredModules = courseModules.filter((m) => this.getAttributeValue(m, 'offline') === false)
+            filteredModules = courseModules.filter((m) => attributeValue(m, 'offline') === false)
           }
 
           // Iterate remaining modules
           filteredModules?.forEach((module, moduleIndex) => {
-            const moduleChapters = this.getAttributeValue(module, 'chapters')
+            const moduleChapters = attributeValue(module, 'chapters')
             const chapterCount = moduleChapters?.length || 0
             // Calculate the entire width of all chapters of the module
             const totalChapterWidth = chapterCount * chapterWidth + (chapterCount - 1) * chapterOffset
@@ -294,7 +367,9 @@ export default {
               type: 'verDatAs:Module'
             }
             const modulePosition = {
-              x: chapterPositionX + totalChapterWidth / 2, // "- moduleWidth / 2" is not longer necessary, as the middle has to be defined
+              // FIXME: the module position is current somehow off 7px
+              // Investigate how this happens
+              x: chapterPositionX + totalChapterWidth / 2 - 7, // "- moduleWidth / 2" is not longer necessary, as the middle has to be defined
               y: initialModulePosition
             }
             const moduleDimensions = getDefaultSize(moduleType.type)
@@ -302,21 +377,23 @@ export default {
             const moduleShape = elementFactory.create('shape', moduleAttributes)
             canvas.addShape(moduleShape)
 
-            // Add it to the modeling object of the knowledgeGraphTopic
-            const existingModules = knowledgeGraphTopic.businessObject?.modules ?? []
+            // Add it to the modeling object
+            const existingModules = knowledgeGraphCourse.businessObject?.modules ?? []
             existingModules.push(moduleShape.businessObject)
-            modeling.updateProperties(knowledgeGraphTopic, { modules: existingModules })
+            modeling.updateProperties(knowledgeGraphCourse, { modules: existingModules })
 
-            // Update objectId and label
-            const moduleProperties = {}
-            moduleProperties['objectId'] = this.getAttributeValue(module, 'objectId')
+            // Update objectId and other attributes
+            let moduleProperties = {}
+            moduleProperties['objectId'] = module.objectId
+            moduleProperties = extendAttributes(moduleProperties, module)
             modeling.updateProperties(moduleShape, moduleProperties)
 
-            const moduleTitle = this.getAttributeValue(module, 'title') ?? 'Module ' + (moduleIndex + 1)
+            // Set title of the module
+            const moduleTitle = attributeValue(module, 'title') ?? 'Module ' + (moduleIndex + 1)
             modeling.updateLabel(moduleShape, moduleTitle)
 
-            // Draw connection to the topic
-            modeling.connect(knowledgeGraphTopic, moduleShape)
+            // Draw connection to the course
+            modeling.connect(knowledgeGraphCourse, moduleShape)
 
             // Iterate chapters of module
             moduleChapters?.forEach((chapter, chapterIndex) => {
@@ -329,62 +406,100 @@ export default {
               }
               const chapterPosition = {
                 x: currentChapterPositionX,
-                y: modulePosition.y + offsetBetweenLayers
+                y: modulePosition.y + moduleHeight + offsetBetweenLayers + chapterHeight / 2
               }
               const chapterDimensions = getDefaultSize(chapterType.type)
               const chapterAttributes = { ...chapterPosition, ...chapterDimensions, ...chapterType }
               const chapterShape = elementFactory.createShape(chapterAttributes)
               canvas.addShape(chapterShape)
 
-              // Set title of the chapter
-              const chapterTitle = this.getAttributeValue(chapter, 'title') ?? 'Chapter ' + (chapterIndex + 1)
-              modeling.updateLabel(chapterShape, chapterTitle)
-
-              // Add it to the modeling object of the knowledgeGraphTopic
+              // Add it to the modeling object
               const existingChapters = moduleShape.businessObject?.chapters ?? []
               existingChapters.push(chapterShape.businessObject)
               modeling.updateProperties(moduleShape, { chapters: existingChapters })
 
-              // Update objectId and contentPages
-              const chapterProperties = {}
-              chapterProperties['objectId'] = this.getAttributeValue(chapter, 'objectId')
+              // Update objectId and other attributes
+              let chapterProperties = {}
+              chapterProperties['objectId'] = chapter.objectId
+              chapterProperties = extendAttributes(chapterProperties, chapter)
+
+              // Set title of the chapter
+              const chapterTitle = attributeValue(chapter, 'title') ?? 'Chapter ' + (chapterIndex + 1)
+              modeling.updateLabel(chapterShape, chapterTitle)
 
               // Iterate contentPages of the chapter
               const contentPages = []
-              let taskIndex = 0
-              this.getAttributeValue(chapter, 'contentPages')?.forEach((page, pageIndex) => {
+              let taskOrDocumentationToolIndex = 0
+              attributeValue(chapter, 'contentPages')?.forEach((page, pageIndex) => {
                 let taskShapesBusinessObjects = []
-                const pageProperties = {
-                  objectId: this.getAttributeValue(page, 'objectId'),
-                  title: this.getAttributeValue(page, 'title') || 'ContentPage ' + (pageIndex + 1)
+                let documentationToolShapesBusinessObjects = []
+
+                // Update objectId and other attributes
+                let pageProperties = {
+                  objectId: page.objectId,
+                  title: attributeValue(page, 'title') || 'ContentPage ' + (pageIndex + 1)
                 }
-                // Iterate interactiveTasks of the contentPage
-                this.getAttributeValue(page, 'interactiveTasks')?.forEach((interactiveTask, interactiveTaskIndex) => {
-                  const taskType = {
-                    type: 'verDatAs:InteractiveTask'
+                pageProperties = extendAttributes(pageProperties, page)
+
+                let attributeInteractiveTasks = attributeValue(page, 'interactiveTasks') ?? []
+                let attributeDocumentationTools = attributeValue(page, 'documentationTools') ?? []
+                let interactiveTaskIndex = 0
+                let documentationToolIndex = 0
+
+                // Iterate interactiveTasks and documentationTools of the contentPage
+                attributeInteractiveTasks.concat(attributeDocumentationTools)?.forEach((pageChild, childIndex) => {
+                  const isInteractiveTask = questionTypes.includes(pageChild.lcoType)
+                  if (isInteractiveTask) {
+                    interactiveTaskIndex += 1
+                  } else {
+                    documentationToolIndex += 1
                   }
-                  const taskPosition = {
-                    x: currentChapterPositionX + 10,
+                  const childType = {
+                    type: isInteractiveTask ? 'verDatAs:InteractiveTask' : 'verDatAs:DocumentationTool'
+                  }
+                  const childWidth = isInteractiveTask ? taskWidth : documentationToolWidth
+                  const childHeight = isInteractiveTask ? taskHeight : documentationToolHeight
+                  const childPosition = {
+                    // Hint: the children are currently centered, too. In order to remove this, add a small offset
+                    x: currentChapterPositionX + (chapterWidth / 2) - (childWidth / 2), // old solution -> x: currentChapterPositionX + 10,
+                    // TODO: 80 is a value that currently works good. However, this has not be the case for different knowledge structures
+                    // Only use half of the offset, as no further split is made on the next level
                     y:
                       chapterShape.y +
                       chapterShape.height +
                       offsetBetweenLayers / 2 +
-                      taskIndex * (offset / 2 + taskWidth / 2 + 15) // TODO: Rework necessary, as this does not make sense
+                      childHeight / 2 +
+                      taskOrDocumentationToolIndex * 80
                   }
-                  const taskDimensions = getDefaultSize(taskType.type)
-                  const taskAttributes = { ...taskPosition, ...taskDimensions, ...taskType }
-                  const taskShape = elementFactory.createShape(taskAttributes)
-                  taskShape.businessObject.objectId = this.getAttributeValue(interactiveTask, 'objectId')
-                  canvas.addShape(taskShape)
-                  // set title of the task and connect it to the chapter shape
-                  const taskTitle =
-                    this.getAttributeValue(interactiveTask, 'title') ?? 'Task ' + (interactiveTaskIndex + 1)
-                  modeling.updateLabel(taskShape, taskTitle)
-                  modeling.connect(chapterShape, taskShape)
-                  taskIndex += 1
-                  taskShapesBusinessObjects.push(taskShape.businessObject)
+                  const childDimensions = getDefaultSize(childType.type)
+                  const childAttributes = { ...childPosition, ...childDimensions, ...childType }
+                  const childShape = elementFactory.createShape(childAttributes)
+                  canvas.addShape(childShape)
+
+                  const defaultTypeName = isInteractiveTask ? 'Task ' + interactiveTaskIndex : 'Diary ' + documentationToolIndex
+                  // Set title of the child
+                  const childTitle =
+                      attributeValue(pageChild, 'title') ?? defaultTypeName
+                  modeling.updateLabel(childShape, childTitle)
+
+                  // Update objectId and other attributes
+                  let childProperties = {}
+                  childProperties['objectId'] = pageChild.objectId
+                  childProperties = extendAttributes(childProperties, pageChild)
+
+                  modeling.updateProperties(childShape, childProperties)
+
+                  // Draw connection to the chapter
+                  modeling.connect(chapterShape, childShape)
+                  taskOrDocumentationToolIndex += 1
+                  if (isInteractiveTask) {
+                    taskShapesBusinessObjects.push(childShape.businessObject)
+                  } else {
+                    documentationToolShapesBusinessObjects.push(childShape.businessObject)
+                  }
                 })
                 pageProperties.interactiveTasks = taskShapesBusinessObjects
+                pageProperties.documentationTools = documentationToolShapesBusinessObjects
 
                 const element = moddle.create('verDatAs:ContentPage', pageProperties)
                 contentPages.push(element)
@@ -402,19 +517,23 @@ export default {
                   chapterPositionX + chapterIndex * (chapterWidth + chapterOffset) + chapterWidth + offset
               }
             })
-            // Draw topic
+            // Draw course
             if (moduleIndex === filteredModules.length - 1) {
-              // Move topic
-              // TODO: This somehow does not move the label of the topic
-              modeling.moveElements([knowledgeGraphTopic], {
-                x: totalWidth / 2 - topicWidth / 2 - knowledgeGraphTopic.x,
-                y: 90 - knowledgeGraphTopic.y // 90 is the position set on initialization
+              // FIXME: The totalWidth currently somehow misses the width of one chapter in order to be centered
+              totalWidth += chapterWidth
+              // Move course
+              // TODO: This somehow does not move the label of the course
+              modeling.moveElements([knowledgeGraphCourse], {
+                x: totalWidth / 2 - courseWidth / 2 - knowledgeGraphCourse.x,
+                // TODO: 20 are added to reduce the distance from the course to the module
+                y: 90 - knowledgeGraphCourse.y + 20 // 90 is the position set on initialization
               })
-              // Move topic label
-              modeling.moveElements([knowledgeGraphTopicLabel], {
-                x: totalWidth / 2 - knowledgeGraphTopicLabel.width / 2 - knowledgeGraphTopicLabel.x,
+              // Move course label
+              modeling.moveElements([knowledgeGraphCourseLabel], {
+                x: totalWidth / 2 - knowledgeGraphCourseLabel.width / 2 - knowledgeGraphCourseLabel.x,
                 // TODO: Currently, no offset is used
-                y: 90 + knowledgeGraphTopic.height - knowledgeGraphTopicLabel.y // 90 + height + offset of label
+                // TODO: 20 are added to reduce the distance from the course to the module
+                y: 90 + knowledgeGraphCourse.height - knowledgeGraphCourseLabel.y + 20 // 90 + height + offset of label
               })
             } else {
               // increase total width with offset
@@ -461,118 +580,95 @@ export default {
     },
     saveKnowledgeGraph() {
       const elementRegistry = this.diagram.get('elementRegistry')
-      const topics = elementRegistry.filter((element) => element.type === 'verDatAs:Topic')
-      if (!topics || topics.length === 0) {
-        console.error('No topic has been defined so far.')
+      const courses = elementRegistry.filter((element) => element.type === 'verDatAs:Course')
+      if (!courses || courses.length === 0) {
+        console.error('No course has been defined so far.')
         return
       }
-      const knowledgeGraphTopic = topics[0]
-      if (knowledgeGraphTopic?.businessObject?.objectId && knowledgeGraphTopic.businessObject.objectId !== '') {
-        const topicBusinessObject = knowledgeGraphTopic.businessObject
-        // example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
-        // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
-        const encodedId = Base64.encodeURI(knowledgeGraphTopic.businessObject.objectId)
-        const url = this.backendUrl + '/api/v1/courses/' + encodedId + '/knowledge-graph'
-
-        // TODO: Add other attributes that can be set by the editor
-        const supportedAttributeKeys = [
-          'objectId',
-          'title',
-          'name',
-          'description',
-          'offline',
-          'content',
-          'processingTime'
-        ]
-        const nestedChildrenKeys = ['modules', 'chapters', 'contentPages', 'interactiveTasks']
-
-        const childKeyToLcoType = {
-          'verDatAs:Topic': 'ILIAS_COURSE',
-          'verDatAs:Module': 'ILIAS_MODULE',
-          'verDatAs:Chapter': 'ILIAS_CHAPTER',
-          'verDatAs:ContentPage': 'ILIAS_CONTENT_PAGE',
-          'verDatAs:InteractiveTask': 'ILIAS_INTERACTIVE_TASK'
-        }
-
-        const attributeObject = (key, value) => {
-          return { key, value }
-        }
-
-        const iterateAttributes = (currentBusinessObject) => {
-          const lcoType = childKeyToLcoType[currentBusinessObject['$type']] ?? 'UNKNOWN'
-          const attributes = []
-          console.log('attributes of ' + lcoType, Object.keys(currentBusinessObject))
-          Object.keys(currentBusinessObject)?.forEach((attrKey) => {
-            console.log('iterate ' + lcoType + ' -> ' + attrKey)
-            if (supportedAttributeKeys.includes(attrKey)) {
-              // the title attribute was used as name in the diagram
-              const keyToPush = attrKey === 'name' ? 'title' : attrKey
-              attributes.push(attributeObject(keyToPush, currentBusinessObject[attrKey]))
-            } else if (nestedChildrenKeys.includes(attrKey)) {
-              const attrObjects = []
-              // the children objects of a businessObject are automatically businessObjects again
-              currentBusinessObject[attrKey]?.forEach((childObject) => {
-                attrObjects.push(iterateAttributes(childObject))
-              })
-              attributes.push(attributeObject(attrKey, attrObjects))
-            }
-          })
-          // all drawn modules are not offline -> thus, set offline false
-          if (lcoType === 'ILIAS_MODULE') {
-            attributes.push(attributeObject('offline', false))
-          }
-          return {
-            lcoType,
-            attributes
-          }
-        }
-
-        const genericCourseFormat = iterateAttributes(topicBusinessObject)
-        console.log('1) Generic format as an object', genericCourseFormat)
-        console.log('2) Generic format as JSON', JSON.stringify(genericCourseFormat))
-
-        const authHeader = {
-          'Content-Type': 'application/json;charset=UTF-8',
-          Authorization: 'Bearer ' + this.token
-        }
-
-        const graphs = this.graphStore.graphs
-
-        this.diagram.saveXML({ format: true }).then((result) => {
-          console.log('Test', graphs)
-          const courseObjectId = this.courseNode?.attributes?.find((attr) => attr.key === 'objectId')?.value
-          if (!graphs[courseObjectId]) graphs[courseObjectId] = ''
-
-          const lastSavedGraphForCourse = graphs[courseObjectId]
-          // only save graph if something changed compared to the last saved graph
-          if (result.xml === lastSavedGraphForCourse) {
-            return
-          }
-
-          //save new graph to store
-          graphs[courseObjectId] = result.xml
-
-          const request = {
-            graph: result.xml,
-            format: 'XML'
-          }
-
-          axios.put(url, request, { headers: authHeader }).then(() => {
-            console.log('Save Graph')
-            //visual feedback for the user when graph is saved
-            const loading = document.getElementById('loading')
-            loading.style.display = 'block'
-            const errorMessage = document.getElementById('autosave-message')
-            errorMessage.style.display = 'none'
-            setTimeout(function () {
-              loading.style.display = 'none'
-              errorMessage.style.display = 'block'
-            }, 2800)
-          })
-        })
-      } else {
-        console.log('No objectId defined for topic.')
+      const knowledgeGraphCourse = courses[0]
+      if (!knowledgeGraphCourse?.businessObject?.objectId || knowledgeGraphCourse.businessObject.objectId === '') {
+        console.log('No objectId defined for course.')
+        return
       }
+      const courseBusinessObject = knowledgeGraphCourse.businessObject
+
+      const genericCourseFormatRequest = iterateAttributes(courseBusinessObject)
+      // console.log('1) Generic format as an object', genericCourseFormatRequest)
+      // console.log('2) Generic format as JSON', JSON.stringify(genericCourseFormatRequest))
+
+      const authHeader = {
+        'Content-Type': 'application/json;charset=UTF-8',
+        Authorization: 'Bearer ' + this.token
+      }
+
+      const url = !this.existingLcoId ? this.backendUrl + '/api/v1/lco' : this.backendUrl + '/api/v1/lco/' + this.existingLcoId
+
+      // if no lcoId exists, create a new lco object
+      if (!this.existingLcoId) {
+        axios.post(url, genericCourseFormatRequest, { headers: authHeader }).then(() => {
+          console.log('Save Graph')
+          //visual feedback for the user when graph is saved
+          const loading = document.getElementById('loading')
+          loading.style.display = 'block'
+          const errorMessage = document.getElementById('autosave-message')
+          errorMessage.style.display = 'none'
+          setTimeout(function () {
+            loading.style.display = 'none'
+            errorMessage.style.display = 'block'
+          }, 2800)
+        })
+      }
+      // if a lcoId exists, update this lco object
+      else {
+        axios.put(url, genericCourseFormatRequest, { headers: authHeader }).then(() => {
+          console.log('Updating Graph')
+          //visual feedback for the user when graph is saved
+          const loading = document.getElementById('loading')
+          loading.style.display = 'block'
+          const errorMessage = document.getElementById('autosave-message')
+          errorMessage.style.display = 'none'
+          setTimeout(function () {
+            loading.style.display = 'none'
+            errorMessage.style.display = 'block'
+          }, 2800)
+        })
+      }
+
+      // TODO: Remove, if transferred to adjusted functionality
+      // const graphs = this.graphStore.graphs
+
+      // this.diagram.saveXML({ format: true }).then((result) => {
+      //   console.log('Graphs', graphs)
+      //   const courseObjectId = this.courseNode?.objectId
+      //   if (!graphs[courseObjectId]) graphs[courseObjectId] = ''
+      //
+      //   const lastSavedGraphForCourse = graphs[courseObjectId]
+      //   // only save graph if something changed compared to the last saved graph
+      //   if (result.xml === lastSavedGraphForCourse) {
+      //     return
+      //   }
+      //
+      //   //save new graph to store
+      //   graphs[courseObjectId] = result.xml
+      //
+      //   const request = {
+      //     graph: result.xml,
+      //     format: 'XML'
+      //   }
+      //
+      //   axios.put(url, request, { headers: authHeader }).then(() => {
+      //     console.log('Save Graph')
+      //     //visual feedback for the user when graph is saved
+      //     const loading = document.getElementById('loading')
+      //     loading.style.display = 'block'
+      //     const errorMessage = document.getElementById('autosave-message')
+      //     errorMessage.style.display = 'none'
+      //     setTimeout(function () {
+      //       loading.style.display = 'none'
+      //       errorMessage.style.display = 'block'
+      //     }, 2800)
+      //   })
+      // })
     },
     centerCanvas() {
       const canvas = this.diagram.get('canvas')
@@ -586,12 +682,6 @@ export default {
         .get('elementRegistry')
         .find((element) => element.id === this.elementSelected.id)
       this.diagram.get('modeling').updateProperties(elementToUpdate, propertyToDefine)
-    },
-    getCourseNodeObjectId() {
-      return this.getAttributeValue(this.courseNode, 'objectId')
-    },
-    getAttributeValue(dataObject, key) {
-      return dataObject?.attributes?.find((attr) => attr.key === key)?.value
     }
   }
 }
@@ -601,7 +691,7 @@ export default {
   <div id="graph-viewer" class="rasterBackground" :class="canViewOnly ? 'canViewOnly' : ''">
     <div v-if="!canViewOnly && showEmptyMessage" class="empty">
       <p class="empty-message">
-        Bitte fügen Sie Lerninhalte wie Module, Kapitel und Tests hinzu, um diese hier zu visualisieren.
+        Bitte fügen Sie Lerninhalte wie Module und interaktive Aufgaben hinzu, um diese hier zu visualisieren.
       </p>
     </div>
     <div v-if="!canViewOnly" class="autosave">
