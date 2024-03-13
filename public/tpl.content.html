@@ -7,3 +7,11 @@
     <div id="dashboardApp"></div>
   </body>
 </html>
+<script>
+    // workaround to fix a bug resulting from main template of ILIAS not being reloaded (on cut/copy and paste)
+    setTimeout(() => {
+        if (typeof VerDatAsDashboard !== 'undefined') {
+            VerDatAsDashboard.reInit()
+        }
+    }, 1500)
+</script>

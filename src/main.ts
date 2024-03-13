@@ -93,3 +93,11 @@ if (isDevelopmentBuild()) {
 export function init(initDashboardData: DashboardData) {
   initDashboard(initDashboardData)
 }
+
+// helper function to re-initialize the app with the existing dashboardData
+export function reInit() {
+  if (useDashboardDataStore().reInitNecessary) {
+    const dashboardData = useDashboardDataStore().data
+    initDashboard(dashboardData)
+  }
+}

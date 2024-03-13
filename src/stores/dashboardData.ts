@@ -4,7 +4,8 @@ import type { DashboardData } from '@/types/dashboard-data'
 export const useDashboardDataStore = defineStore({
   id: 'dashboardData',
   state: () => ({
-    data: {} as DashboardData
+    data: {} as DashboardData,
+    reInitNecessary: false as Boolean
   }),
   actions: {
     setDashboardData(dashboardData: DashboardData) {

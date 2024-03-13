@@ -50,6 +50,11 @@ export default {
       this.previewMode = this.dashboardDataStore.data?.previewMode ?? false
       this.members = this.dashboardDataStore.data?.members ?? []
       this.pseudoId = this.dashboardDataStore.data?.pseudoId ?? ''
+      this.dashboardDataStore.reInitNecessary = false
+      // workaround to avoid calling both init() and reInit()
+      setTimeout(() => {
+        this.dashboardDataStore.reInitNecessary = true
+      }, 1600)
       // https://stackoverflow.com/a/69196265
       // TODO: This will center the canvas on every resize. Improve if possible.
       new ResizeObserver(() => {
