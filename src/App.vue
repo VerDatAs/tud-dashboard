@@ -111,14 +111,23 @@ export default {
       @setCurrentView="setCurrentView"
       @setDiagram="setDiagram"
     />
-    <ModuleSelection v-if="currentView === 'moduleSelection'" />
+    <ModuleSelection
+      :isExpanded="isExpanded"
+      v-if="currentView === 'moduleSelection'"
+    />
     <CollaborationMonitoring
       :backendUrl="backendUrl"
       :isExpanded="isExpanded"
       v-if="currentView === 'collaborationMonitoring'"
     />
-    <LearningPathManager v-if="currentView === 'learningPathManager'" />
-    <Settings v-if="currentView === 'settings'" />
+    <LearningPathManager
+      :isExpanded="isExpanded"
+      v-if="currentView === 'learningPathManager'"
+    />
+    <Settings
+      :isExpanded="isExpanded"
+      v-if="currentView === 'settings'"
+    />
     <DialogsWrapper />
   </div>
 </template>

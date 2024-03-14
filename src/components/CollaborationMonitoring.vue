@@ -212,17 +212,17 @@ export default {
   background: #eee;
   border: 1px solid #ccc;
   overflow-y: scroll;
+}
 
-  &.is-expanded {
-    left: calc(var(--sidebar-width) + 10px);
-    width: calc(100% - var(--sidebar-width) - 20px);
-  }
+#collaboration-monitoring.is-expanded {
+  left: calc(var(--sidebar-width) + 10px);
+  width: calc(100% - var(--sidebar-width) - 20px);
+}
 
-  .solution {
-    white-space: pre-line;
-    padding: 7px 14px;
-    background: #fff;
-  }
+#collaboration-monitoring .solution {
+  white-space: pre-line;
+  padding: 7px 14px;
+  background: #fff;
 }
 </style>
 <script setup lang="ts">

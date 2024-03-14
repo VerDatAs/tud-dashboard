@@ -1,6 +1,9 @@
 <script>
 export default {
   data: () => ({}),
+  props: {
+    isExpanded: Boolean
+  },
   emits: [
     'setCurrentView'
   ],
@@ -29,7 +32,7 @@ export default {
 </script>
 
 <template>
-  <div id="module-selection">
+  <div id="module-selection" :class="`${isExpanded ? 'is-expanded' : ''}`">
     <div class="container py-4" style="max-width: 100%">
       <div class="tab">
         <button class="tablinks active" @click="openTab($event, 'features')">Funktionen</button>
@@ -73,13 +76,19 @@ export default {
 #module-selection {
   z-index: 8;
   position: absolute;
-  top: 15%;
-  left: 15%;
-  height: calc(100% - 30%);
-  width: calc(100% - 30%);
+  top: 10px;
+  left: calc(1rem + 32px + 10px);
+  height: calc(100% - 20px);
+  width: calc(100% - (1rem + 32px) - 20px);
   background: #eee;
   border: 1px solid #ccc;
+  overflow-y: scroll;
 }
+#module-selection.is-expanded {
+  left: calc(var(--sidebar-width) + 10px);
+  width: calc(100% - var(--sidebar-width) - 20px);
+}
+
 .tab {
   overflow: hidden;
 }
