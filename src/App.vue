@@ -80,10 +80,6 @@ export default {
       setTimeout(() => {
         this.$refs.knowledgeGraph?.centerCanvas()
       }, 100)
-    },
-    updateCourseNode(courseNode) {
-      this.dashboardDataStore.data.courseNode = courseNode
-      this.courseNode = courseNode
     }
   }
 }
@@ -114,7 +110,6 @@ export default {
       @loadedDiagram="changeDiagramLoaded"
       @setCurrentView="setCurrentView"
       @setDiagram="setDiagram"
-      @updateCourseNode="updateCourseNode"
     />
     <ModuleSelection v-if="currentView === 'moduleSelection'" />
     <CollaborationMonitoring

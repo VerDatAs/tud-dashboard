@@ -21,6 +21,7 @@ import { useGraphStore } from '@/stores/graph'
 export default {
   data: () => ({
     graph: '',
+    existingCourseNode: {},
     showEmptyMessage: false,
     intervalHandle: null,
     settings: useSettingStore(),
@@ -41,7 +42,6 @@ export default {
     'loadedDiagram',
     'selectedElement',
     'setDiagram',
-    'updateCourseNode',
     'updateMetamodel'
   ],
   created() {
@@ -49,7 +49,7 @@ export default {
   },
   computed: {
     existingLcoId() {
-      return this.courseNode.lcoId ?? null
+      return this.existingCourseNode.lcoId ?? null
     }
   },
   methods: {
@@ -88,9 +88,9 @@ export default {
             this.graph = initialModel(encodedId, courseTitle)
             if (graphResponse.data?.lcos[0]) {
               const courseNode = graphResponse.data.lcos[0]
-              this.$emit('updateCourseNode', courseNode)
+              this.existingCourseNode = courseNode
               await this.processKnowledgeGraph(authHeader)
-              this.redrawKnowledgeGraph()
+              this.redrawKnowledgeGraph(courseNode)
             } else {
               // the course node is transferred for the first time
               await this.processKnowledgeGraph(authHeader)
@@ -135,7 +135,9 @@ export default {
           container: document.getElementById('graph-viewer')
         })
       }
-      this.$emit('setDiagram', diagram)
+      if (diagram) {
+        this.$emit('setDiagram', diagram)
+      }
 
       // Retrieve the metamodel and its parameters
       if (diagram._moddle?.registry?.packages?.length > 0) {
@@ -286,14 +288,16 @@ export default {
           eventBus.on('commandStack.changed', exportArtifacts)
         })
     },
-    redrawKnowledgeGraph() {
-      // console.log('redrawKnowledgeGraph', this.courseNode)
-      if (!this.courseNode?.lcoType || !this.courseNode?.objectId) {
+    redrawKnowledgeGraph(existingCourseNode) {
+      // depending on whether a course node exists, use this node or the node from ILIAS (this.courseNode)
+      const courseNode = existingCourseNode ? existingCourseNode : this.courseNode
+      // console.log('redrawKnowledgeGraph', courseNode)
+      if (!courseNode?.lcoType || !courseNode?.objectId) {
         return
       }
 
-      const encodedId = Base64.encodeURI(this.courseNode.objectId)
-      const courseName = attributeValue(this.courseNode, 'name') ?? 'Unknown'
+      const encodedId = Base64.encodeURI(courseNode.objectId)
+      const courseName = attributeValue(courseNode, 'title') ?? 'Unknown'
 
       // First, initialize modeler
       this.loadInitialModel(this.diagram, encodedId, courseName).then(() => {
@@ -312,12 +316,12 @@ export default {
           )
           // Update objectId and other attributes
           let properties = {}
-          properties['objectId'] = this.courseNode.objectId
-          properties = extendAttributes(properties, this.courseNode)
+          properties['objectId'] = courseNode.objectId
+          properties = extendAttributes(properties, courseNode)
           modeling.updateProperties(knowledgeGraphCourse, properties)
 
           // Set title of the course
-          const courseTitle = attributeValue(this.courseNode, 'title') ?? 'Course'
+          const courseTitle = attributeValue(courseNode, 'title') ?? 'Course'
           modeling.updateLabel(knowledgeGraphCourse, courseTitle)
 
           // GENERAL IDEA: Draw first and center afterward
@@ -348,7 +352,7 @@ export default {
 
           // Reduce list of modules to those that are currently set online
           let filteredModules = []
-          const courseModules = attributeValue(this.courseNode, 'modules')
+          const courseModules = attributeValue(courseNode, 'modules')
           if (courseModules?.length > 0) {
             filteredModules = courseModules.filter((m) => attributeValue(m, 'offline') === false)
           }
@@ -639,7 +643,7 @@ export default {
 
       // this.diagram.saveXML({ format: true }).then((result) => {
       //   console.log('Graphs', graphs)
-      //   const courseObjectId = this.courseNode?.objectId
+      //   const courseObjectId = courseNode?.objectId
       //   if (!graphs[courseObjectId]) graphs[courseObjectId] = ''
       //
       //   const lastSavedGraphForCourse = graphs[courseObjectId]
