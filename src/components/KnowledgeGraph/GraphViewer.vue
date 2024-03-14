@@ -15,11 +15,14 @@ import {
 } from '@/util/GraphHelpers'
 import ExtendedViewer from '@/util/KnowledgeGraph/ExtendedViewer'
 import Viewer from '@/util/KnowledgeGraph/Viewer'
+import ConfirmationDialog from '@/components/shared/ConfirmationDialog.vue'
 import { useSettingStore } from '@/stores/settings'
 import { useGraphStore } from '@/stores/graph'
+import { createConfirmDialog } from 'vuejs-confirm-dialog'
 
 export default {
   data: () => ({
+    dialog: null,
     graph: '',
     existingCourseNode: {},
     showEmptyMessage: false,
@@ -296,6 +299,27 @@ export default {
         return
       }
 
+      if (existingCourseNode) {
+        // when having an existing courseNode, redraw the knowledge graph without confirming
+        this.processRedrawKnowledgeGraph(courseNode)
+      } else {
+        // in other cases, a confirmation is necessary
+        this.dialog = createConfirmDialog(ConfirmationDialog, {
+          title: 'Graph neuzeichnen',
+          question: 'Sind Sie sich sicher, dass Sie den Graph neuzeichnen wollen? Die Parameter, die Sie definiert haben, gehen dadurch verloren.',
+          confirmTxt: 'Bestätigen',
+          cancelTxt: 'Abbrechen'
+        })
+        this.dialog.reveal()
+        this.dialog.onConfirm(() => {
+          this.processRedrawKnowledgeGraph(courseNode)
+        })
+        this.dialog.onCancel(() => {
+          this.dialog.close()
+        })
+      }
+    },
+    processRedrawKnowledgeGraph(courseNode) {
       const encodedId = Base64.encodeURI(courseNode.objectId)
       const courseName = attributeValue(courseNode, 'title') ?? 'Unknown'
 
@@ -312,7 +336,7 @@ export default {
           // Replace objectId of the course and set its title as a label
           const knowledgeGraphCourse = elementRegistry.find((element) => element.type === 'verDatAs:Course')
           const knowledgeGraphCourseLabel = elementRegistry.find(
-            (element) => element.id === knowledgeGraphCourse.label?.id
+              (element) => element.id === knowledgeGraphCourse.label?.id
           )
           // Update objectId and other attributes
           let properties = {}
@@ -404,7 +428,7 @@ export default {
               // Draw chapter (define type, position and dimensions)
               // Take starting position + the width of the last element + offset + half to the elements width
               const currentChapterPositionX =
-                chapterPositionX + chapterIndex * (chapterWidth + chapterOffset) + chapterWidth / 2
+                  chapterPositionX + chapterIndex * (chapterWidth + chapterOffset) + chapterWidth / 2
               const chapterType = {
                 type: 'verDatAs:Chapter'
               }
@@ -469,11 +493,11 @@ export default {
                     // TODO: 80 is a value that currently works good. However, this has not be the case for different knowledge structures
                     // Only use half of the offset, as no further split is made on the next level
                     y:
-                      chapterShape.y +
-                      chapterShape.height +
-                      offsetBetweenLayers / 2 +
-                      childHeight / 2 +
-                      taskOrDocumentationToolIndex * 80
+                        chapterShape.y +
+                        chapterShape.height +
+                        offsetBetweenLayers / 2 +
+                        childHeight / 2 +
+                        taskOrDocumentationToolIndex * 80
                   }
                   const childDimensions = getDefaultSize(childType.type)
                   const childAttributes = { ...childPosition, ...childDimensions, ...childType }
@@ -518,7 +542,7 @@ export default {
               // Set next position
               if (chapterIndex === chapterCount - 1) {
                 chapterPositionX =
-                  chapterPositionX + chapterIndex * (chapterWidth + chapterOffset) + chapterWidth + offset
+                    chapterPositionX + chapterIndex * (chapterWidth + chapterOffset) + chapterWidth + offset
               }
             })
             // Draw course
@@ -709,6 +733,7 @@ export default {
 
 <style scoped>
 #graph-viewer {
+  position: relative;
   height: 100%;
   z-index: 5;
 }

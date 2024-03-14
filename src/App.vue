@@ -119,6 +119,7 @@ export default {
     />
     <LearningPathManager v-if="currentView === 'learningPathManager'" />
     <Settings v-if="currentView === 'settings'" />
+    <DialogsWrapper />
   </div>
 </template>
 

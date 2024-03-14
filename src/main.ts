@@ -38,8 +38,8 @@ library.add(
 )
 
 import { useDashboardDataStore } from '@/stores/dashboardData'
-
 import type { DashboardData } from '@/types/dashboard-data'
+import * as ConfirmDialog from 'vuejs-confirm-dialog'
 
 import './assets/main.scss'
 
@@ -50,6 +50,8 @@ function isDevelopmentBuild(): boolean {
 function initDashboard(initDashboardData: DashboardData) {
   // console.log('init dashboard', JSON.stringify(initDashboardData));
   const app = createApp(App)
+
+  app.use(ConfirmDialog)
 
   const pinia = createPinia()
   pinia.use(piniaPluginPersistedstate)
