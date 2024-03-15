@@ -39,6 +39,15 @@ export default {
     'loadedDiagram',
     'setDiagram'
   ],
+  watch: {
+    isExpanded() {
+      // this only works when using setTimeout
+      setTimeout(() => {
+        this.diagram?.get('canvas')?.resized()
+        this.centerCanvas()
+      }, 1)
+    }
+  },
   created() {
     document.addEventListener('fullscreenchange', () => {
       if (!document.fullscreenElement) {

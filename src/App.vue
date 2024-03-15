@@ -76,10 +76,6 @@ export default {
     toggleNavigationExpanded(value) {
       this.isExpanded = value
       localStorage.setItem('is_expanded', this.isExpanded + '')
-      // TODO: This somehow makes the height larger than expected
-      setTimeout(() => {
-        this.$refs.knowledgeGraph?.centerCanvas()
-      }, 100)
     }
   }
 }
