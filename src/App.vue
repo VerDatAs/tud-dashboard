@@ -5,6 +5,7 @@ import LearningPathManager from '@/components/LearningPathManager.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import ModuleSelection from '@/components/ModuleSelection.vue'
 import NavigationView from '@/components/NavigationView.vue'
+import PreviewContainer from '@/components/PreviewContainer.vue'
 import Settings from '@/components/SettingsView.vue'
 import { useDashboardDataStore } from '@/stores/dashboardData'
 import { ref } from 'vue'
@@ -18,6 +19,7 @@ export default {
     LoadingScreen,
     ModuleSelection,
     NavigationView,
+    PreviewContainer,
     Settings
   },
   data() {
@@ -48,6 +50,9 @@ export default {
       this.path = this.dashboardDataStore.data?.path ?? ''
       this.canViewOnly = this.dashboardDataStore.data?.canViewOnly ?? true
       this.previewMode = this.dashboardDataStore.data?.previewMode ?? false
+      if (this.previewMode) {
+        this.isExpanded = true;
+      }
       this.members = this.dashboardDataStore.data?.members ?? []
       this.pseudoId = this.dashboardDataStore.data?.pseudoId ?? ''
       this.dashboardDataStore.reInitNecessary = false
@@ -83,13 +88,14 @@ export default {
 
 <template>
   <div id="verdatas-dashboard">
+    <PreviewContainer v-if="previewMode" />
+    <LoadingScreen :diagramLoaded="diagramLoaded" :path="path" v-if="!previewMode" />
     <NavigationView
       v-if="!canViewOnly"
       :isExpanded="isExpanded"
       @setCurrentView="setCurrentView"
       @toggleNavigationExpanded="toggleNavigationExpanded"
     />
-    <LoadingScreen :diagramLoaded="diagramLoaded" :path="path"></LoadingScreen>
     <KnowledgeGraph
       ref="knowledgeGraph"
       v-show="currentView === 'knowledgeStructure'"
