@@ -32,7 +32,7 @@ export default {
 </template>
 <style>
 .confirmationModal {
-  z-index: 1000;
+  z-index: 9;
   position: absolute;
   top: 0;
   right: 0;

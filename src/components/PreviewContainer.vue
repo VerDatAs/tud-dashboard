@@ -6,7 +6,7 @@
 
 <style scoped>
 #previewContainer {
-  z-index: 121;
+  z-index: 10;
   position: absolute;
   top: 0;
   left: 0;

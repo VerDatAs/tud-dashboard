@@ -62,7 +62,7 @@ export default {
 
 <style lang="scss" scoped>
 aside {
-  z-index: 120;
+  z-index: 6;
   position: absolute;
   top: 0;
   left: 0;
