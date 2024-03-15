@@ -194,7 +194,7 @@ export default {
           </div>
         </div>
         <div class="alert alert-info" v-else>
-          Es konnte keine gestartete Kollaboration im LocalStorage gefunden werden.
+          Es konnte keine gestartete Kollaboration gefunden werden. Sie haben jedoch die Möglichkeit über [+] die ID einer Kollaboration manuell hinzuzufügen.
         </div>
       </template>
     </div>
