@@ -5,9 +5,6 @@ import vue from '@vitejs/plugin-vue'
 import banner from 'vite-plugin-banner'
 import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
-const path = require('path')
-const license = require('rollup-plugin-license')
-
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -29,7 +26,7 @@ export default defineConfig({
         ' * You should have received a copy of the GNU General Public License\n' +
         ' * along with this program.  If not, see <http://www.gnu.org/licenses/>.\n' +
         ' *\n' +
-        ' * Please find the licenses of the third-party libraries used here: ./vendor.LICENSE.txt\n' +
+        ' * Please find the licenses of the third-party libraries used here: ./THIRD-PARTY-tud-dashboard.md\n' +
         ' */'),
     cssInjectedByJsPlugin()
   ],
@@ -52,17 +49,7 @@ export default defineConfig({
         chunkFileNames: `assets/[name].js`,
         assetFileNames: `assets/[name].[ext]`,
         manualChunks: undefined,
-      },
-      plugins: [
-        license({
-          thirdParty: {
-            includePrivate: true,
-            output: {
-              file: path.resolve(__dirname, './dist/assets/vendor.LICENSE.txt')
-            },
-          },
-        }),
-      ],
+      }
     }
   },
   resolve: {
