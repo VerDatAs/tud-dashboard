@@ -35,7 +35,7 @@ export default {
 p {
   margin-top: 10px;
   font-size: 20px;
-  color: #00517d;
+  color: var(--secondary);
   text-align: center;
 }
 </style>

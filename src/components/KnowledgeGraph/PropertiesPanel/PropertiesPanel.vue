@@ -347,6 +347,7 @@ export default {
 
 <style scoped>
 #propertiesPanel {
+  z-index: 6;
   position: absolute;
   top: 45px;
   right: 0;

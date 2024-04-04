@@ -97,7 +97,7 @@ export default {
             } else {
               // the course node is transferred for the first time
               await this.processKnowledgeGraph(authHeader)
-              this.redrawKnowledgeGraph()
+              this.redrawKnowledgeGraph(this.courseNode)
               // if at least one attribute exists, save it initially
               if (this.courseNode.attributes?.length > 0) {
                 // use setTimeout, as otherwise the knowledge graph might not be ready
@@ -638,11 +638,11 @@ export default {
           //visual feedback for the user when graph is saved
           const loading = document.getElementById('loading')
           loading.style.display = 'block'
-          const errorMessage = document.getElementById('autosave-message')
-          errorMessage.style.display = 'none'
+          // const errorMessage = document.getElementById('autosave-message')
+          // errorMessage.style.display = 'none'
           setTimeout(function () {
             loading.style.display = 'none'
-            errorMessage.style.display = 'block'
+            // errorMessage.style.display = 'block'
           }, 2800)
         })
       }
@@ -653,11 +653,11 @@ export default {
           //visual feedback for the user when graph is saved
           const loading = document.getElementById('loading')
           loading.style.display = 'block'
-          const errorMessage = document.getElementById('autosave-message')
-          errorMessage.style.display = 'none'
+          // const errorMessage = document.getElementById('autosave-message')
+          // errorMessage.style.display = 'none'
           setTimeout(function () {
             loading.style.display = 'none'
-            errorMessage.style.display = 'block'
+            // errorMessage.style.display = 'block'
           }, 2800)
         })
       }
@@ -723,9 +723,9 @@ export default {
       </p>
     </div>
     <div v-if="!canViewOnly" class="autosave">
-      <p id="autosave-message" class="autosave-message">
-        {{ settings.autosave ? 'Auto-Save ist aktiviert.' : 'Auto-Save ist deaktiviert.' }}
-      </p>
+<!--      <p id="autosave-message" class="autosave-message">-->
+<!--        {{ settings.autosave ? 'Auto-Save ist aktiviert.' : 'Auto-Save ist deaktiviert.' }}-->
+<!--      </p>-->
       <p id="loading" class="loading" style="display: none">Speichern<span>.</span><span>.</span><span>.</span></p>
     </div>
   </div>
