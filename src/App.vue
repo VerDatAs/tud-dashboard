@@ -6,6 +6,7 @@ import LoadingScreen from '@/components/LoadingScreen.vue'
 import ModuleSelection from '@/components/ModuleSelection.vue'
 import NavigationView from '@/components/NavigationView.vue'
 import PreviewContainer from '@/components/PreviewContainer.vue'
+import QueryView from '@/components/Query/QueryView.vue'
 import Settings from '@/components/SettingsView.vue'
 import { useDashboardDataStore } from '@/stores/dashboardData'
 import { ref } from 'vue'
@@ -20,6 +21,7 @@ export default {
     ModuleSelection,
     NavigationView,
     PreviewContainer,
+    QueryView,
     Settings
   },
   data() {
@@ -93,6 +95,7 @@ export default {
     <NavigationView
       v-if="!canViewOnly"
       :isExpanded="isExpanded"
+      :currentView="currentView"
       @setCurrentView="setCurrentView"
       @toggleNavigationExpanded="toggleNavigationExpanded"
     />
@@ -126,6 +129,11 @@ export default {
 <!--      :isExpanded="isExpanded"-->
 <!--      v-if="currentView === 'learningPathManager'"-->
 <!--    />-->
+    <QueryView
+      :backendUrl="backendUrl"
+      :token="token"
+      v-if="currentView === 'query'"
+    />
     <Settings
       :isExpanded="isExpanded"
       v-if="currentView === 'settings'"

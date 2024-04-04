@@ -18,7 +18,16 @@ import {
   faPlus,
   faRefresh,
   faSitemap,
-  faUsers
+  faUsers,
+  faMagnifyingGlass,
+  faCode,
+  faList,
+  faCircleXmark,
+  faCirclePlus,
+  faChevronRight,
+  faChevronDown,
+  faShare,
+  faXmark
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -32,9 +41,20 @@ library.add(
   faMinus,
   faPlus,
   faMaximize,
+  faDownload,
+  faCircleInfo,
   faRefresh,
   faSitemap,
-  faUsers
+  faUsers,
+  faMagnifyingGlass,
+  faCode,
+  faList,
+  faCircleXmark,
+  faCirclePlus,
+  faChevronRight,
+  faChevronDown,
+  faShare,
+  faXmark
 )
 
 import { useDashboardDataStore } from '@/stores/dashboardData'
