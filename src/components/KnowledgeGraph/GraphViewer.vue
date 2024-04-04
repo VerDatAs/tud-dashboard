@@ -97,7 +97,7 @@ export default {
             } else {
               // the course node is transferred for the first time
               await this.processKnowledgeGraph(authHeader)
-              this.redrawKnowledgeGraph()
+              this.redrawKnowledgeGraph(this.courseNode)
               // if at least one attribute exists, save it initially
               if (this.courseNode.attributes?.length > 0) {
                 // use setTimeout, as otherwise the knowledge graph might not be ready
