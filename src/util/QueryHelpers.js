@@ -1,6 +1,6 @@
 // The currently supported comparison operators
 export const comparisonOperators = [
-  { displayName: 'gleich (=)', value: '$eq' },
+  { displayName: 'gleich (==)', value: '$eq' },
   { displayName: 'nicht gleich (!=)', value: '$ne' },
   { displayName: 'größer (>)', value: '$gt' },
   { displayName: 'größer gleich (>=)', value: '$gte' },
