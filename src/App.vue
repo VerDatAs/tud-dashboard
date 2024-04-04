@@ -131,6 +131,7 @@ export default {
 <!--    />-->
     <QueryView
       :backendUrl="backendUrl"
+      :isExpanded="isExpanded"
       :token="token"
       v-if="currentView === 'query'"
     />

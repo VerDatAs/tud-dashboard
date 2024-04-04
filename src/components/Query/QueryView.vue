@@ -28,6 +28,7 @@ export default {
   }),
   props: {
     backendUrl: String,
+    isExpanded: Boolean,
     token: String,
   },
   created() {
@@ -400,7 +401,7 @@ export default {
 </script>
 
 <template>
-  <div id="query-view">
+  <div id="query-view" :class="`${isExpanded ? 'is-expanded' : ''}`">
     <div id="query-view-content" class="container py-4">
       <div id="query-view-header" class="py-2">
         <h2 class="bold-heading" style="display: inline">
@@ -659,16 +660,19 @@ input:focus) {
 }
 
 #query-view {
-  z-index: 8;
   position: absolute;
-  top: 7%;
-  left: 7%;
-  height: calc(100% - 12%);
-  width: calc(100% - 12%);
-  border-radius: 10px;
-  box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.06);
-  border: 1px solid grey;
-  overflow: auto;
+  top: 10px;
+  left: calc(1rem + 32px + 10px);
+  height: calc(100% - 20px);
+  width: calc(100% - (1rem + 32px) - 20px);
+  background: #eee;
+  border: 1px solid #ccc;
+  overflow-y: scroll;
+}
+
+#query-view.is-expanded {
+  left: calc(var(--sidebar-width) + 10px);
+  width: calc(100% - var(--sidebar-width) - 20px);
 }
 
 #query-view-content {
