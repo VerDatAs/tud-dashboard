@@ -66,4 +66,3 @@ export default defineConfig({
     open: '/index.html'
   }
 })
-
