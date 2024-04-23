@@ -1,33 +1,53 @@
-import { setLabel, getLabel } from '../LabelUtil'
+/**
+ * This is a modified version of the original file from https://github.com/pinussilvestrus/postit-js (MIT).
+ *
+ * Copyright 2020 Niklas Kiefer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * -----
+ *
+ * Adjustments for Dashboard of the assistance system developed as part of the VerDatAs project
+ * Copyright (C) 2022-2024 TU Dresden (Tommy Kubica)
+ *
+ * In addition to the terms of the MIT license, this file is distributed under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+import { setLabel, getLabel } from '@/util/KnowledgeGraph/features/label-editing/LabelUtil'
+import { getExternalLabelMid, isLabelExternal, hasExternalLabel, isLabel } from '@/util/KnowledgeGraph/util/LabelUtil'
+import { getDi } from '@/util/KnowledgeGraph/util/ModelUtil'
 
-import { getExternalLabelMid, isLabelExternal, hasExternalLabel, isLabel } from '../../../util/LabelUtil'
-
-import { getDi, is } from '../../../util/ModelUtil'
-
-var NULL_DIMENSIONS = {
+const NULL_DIMENSIONS = {
   width: 0,
   height: 0
 }
 
 /**
- * A handler that updates the text of a BPMN element.
+ * A handler that updates the text of an element.
  */
 export default function UpdateLabelHandler(modeling, textRenderer, verDatAsFactory) {
   /**
-   * Creates an empty `diLabel` attribute for embedded labels.
+   * Creates an empty diLabel attribute for embedded labels.
    *
-   * @param {djs.model.Base} element
-   * @param {string} text
+   * @param element
+   * @param text
    */
   function ensureInternalLabelDi(element, text) {
+    // Early return for external labels
     if (isLabelExternal(element)) {
       return
     }
 
-    var di = getDi(element)
+    const di = getDi(element)
 
     if (text && !di.label) {
-      di.label = verDatAsFactory.create('verDatAsDi:BPMNLabel')
+      di.label = verDatAsFactory.create('verDatAsDi:Label')
     }
 
     if (!text && di.label) {
@@ -38,16 +58,14 @@ export default function UpdateLabelHandler(modeling, textRenderer, verDatAsFacto
   /**
    * Set the label and return the changed elements.
    *
-   * Element parameter can be label itself or connection (i.e. sequence flow).
-   *
-   * @param {djs.model.Base} element
-   * @param {string} text
+   * @param element
+   * @param text
    */
   function setText(element, text) {
-    // external label if present
-    var label = element.label || element
+    // External label if present
+    const label = element.label || element
 
-    var labelTarget = element.labelTarget || element
+    const labelTarget = element.labelTarget || element
 
     setLabel(label, text, labelTarget !== label)
 
@@ -56,21 +74,23 @@ export default function UpdateLabelHandler(modeling, textRenderer, verDatAsFacto
     return [label, labelTarget]
   }
 
+  /**
+   * Define actions that are carried out before the actual execution.
+   *
+   * @param ctx
+   */
   function preExecute(ctx) {
-    var element = ctx.element,
-      businessObject = element.businessObject,
-      newLabel = ctx.newLabel
+    const element = ctx.element
+    const businessObject = element.businessObject
+    const newLabel = ctx.newLabel
 
     if (!isLabel(element) && isLabelExternal(element) && !hasExternalLabel(element) && !isEmptyText(newLabel)) {
-      // create label
-      // TODO: Remove, if not used
-      var paddingTop = 0
-
-      var labelCenter = getExternalLabelMid(element)
+      // Create label
+      let labelCenter = getExternalLabelMid(element)
 
       labelCenter = {
         x: labelCenter.x,
-        y: labelCenter.y + paddingTop
+        y: labelCenter.y
       }
 
       modeling.createLabel(element, labelCenter, {
@@ -81,24 +101,38 @@ export default function UpdateLabelHandler(modeling, textRenderer, verDatAsFacto
     }
   }
 
+  /**
+   * Define actions during execution.
+   *
+   * @param ctx
+   */
   function execute(ctx) {
     ctx.oldLabel = getLabel(ctx.element)
     return setText(ctx.element, ctx.newLabel)
   }
 
+  /**
+   * Define actions that are carried out on revert.
+   *
+   * @param ctx
+   */
   function revert(ctx) {
     return setText(ctx.element, ctx.oldLabel)
   }
 
+  /**
+   * Define actions that are carried out after the actual execution.
+   *
+   * @param ctx
+   */
   function postExecute(ctx) {
-    var element = ctx.element,
-      label = element.label || element,
-      newLabel = ctx.newLabel,
-      newBounds = ctx.newBounds,
-      hints = ctx.hints || {}
+    const element = ctx.element
+    const label = element.label || element
+    const newLabel = ctx.newLabel
+    let newBounds = ctx.newBounds
+    const hints = ctx.hints || {}
 
-    // ignore internal labels for elements except text annotations
-    if (!isLabel(label) && !is(label, 'bpmn:TextAnnotation')) {
+    if (!isLabel(label)) {
       return
     }
 
@@ -110,22 +144,21 @@ export default function UpdateLabelHandler(modeling, textRenderer, verDatAsFacto
       return
     }
 
-    var text = getLabel(label)
+    const text = getLabel(label)
 
-    // resize element based on label _or_ pre-defined bounds
+    // Resize element based on label _or_ pre-defined bounds
     if (typeof newBounds === 'undefined') {
       newBounds = textRenderer.getExternalLabelBounds(label, text, element)
     }
 
-    // setting newBounds to false or _null_ will
-    // disable the postExecute resize operation
+    // Setting newBounds to false or _null_ will
+    // Disable the postExecute resize operation
     if (newBounds) {
       modeling.resizeShape(label, newBounds, NULL_DIMENSIONS)
     }
   }
 
-  // API
-
+  // API specific stuff
   this.preExecute = preExecute
   this.execute = execute
   this.revert = revert
@@ -133,8 +166,6 @@ export default function UpdateLabelHandler(modeling, textRenderer, verDatAsFacto
 }
 
 UpdateLabelHandler.$inject = ['modeling', 'textRenderer', 'verDatAsFactory']
-
-// helpers ///////////////////////
 
 function isEmptyText(label) {
   return !label || !label.trim()

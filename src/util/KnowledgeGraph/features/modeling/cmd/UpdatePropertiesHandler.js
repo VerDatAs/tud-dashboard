@@ -1,24 +1,38 @@
+/**
+ * This is a modified version of the original file from https://github.com/pinussilvestrus/postit-js (MIT).
+ *
+ * Copyright 2020 Niklas Kiefer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * -----
+ *
+ * Adjustments for Dashboard of the assistance system developed as part of the VerDatAs project
+ * Copyright (C) 2022-2024 TU Dresden (Tommy Kubica)
+ *
+ * In addition to the terms of the MIT license, this file is distributed under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+import { getBusinessObject, getDi } from '@/util/KnowledgeGraph/util/ModelUtil'
 import { reduce, keys, forEach, assign } from 'min-dash'
 
-import { getBusinessObject, getDi } from '../../../util/ModelUtil'
+const DEFAULT_FLOW = 'default'
+const ID = 'id'
+const DI = 'di'
 
-var DEFAULT_FLOW = 'default',
-  ID = 'id',
-  DI = 'di'
-
-var NULL_DIMENSIONS = {
+const NULL_DIMENSIONS = {
   width: 0,
   height: 0
 }
 
 /**
- * A handler that implements a BPMN 2.0 property update.
- *
- * This should be used to set simple properties on elements with
- * an underlying BPMN business object.
- *
- * Use respective diagram-js provided handlers if you would
- * like to perform automated modeling.
+ * A handler that implements a VerDatAs property update.
  */
 export default function UpdatePropertiesHandler(elementRegistry, moddle, translate, modeling, textRenderer) {
   this._elementRegistry = elementRegistry
@@ -30,33 +44,28 @@ export default function UpdatePropertiesHandler(elementRegistry, moddle, transla
 
 UpdatePropertiesHandler.$inject = ['elementRegistry', 'moddle', 'translate', 'modeling', 'textRenderer']
 
-// api //////////////////////
+// API specific stuff
 
 /**
- * Updates a BPMN element with a list of new properties
+ * Updates an element with a list of new properties.
  *
- * @param {Object} context
- * @param {djs.model.Base} context.element the element to update
- * @param {Object} context.properties a list of properties to set on the element's
- *                                    businessObject (the BPMN model element)
- *
- * @return {Array<djs.model.Base>} the updated element
+ * @param context
  */
 UpdatePropertiesHandler.prototype.execute = function (context) {
-  var element = context.element,
-    changed = [element],
-    translate = this._translate
+  const element = context.element
+  const changed = [element]
+  const translate = this._translate
 
   if (!element) {
     throw new Error(translate('element required'))
   }
 
-  var elementRegistry = this._elementRegistry,
-    ids = this._moddle.ids
+  const elementRegistry = this._elementRegistry
+  const ids = this._moddle.ids
 
-  var businessObject = element.businessObject,
-    properties = unwrapBusinessObjects(context.properties),
-    oldProperties = context.oldProperties || getProperties(element, properties)
+  const businessObject = element.businessObject
+  const properties = unwrapBusinessObjects(context.properties)
+  const oldProperties = context.oldProperties || getProperties(element, properties)
 
   if (isIdChange(properties, businessObject)) {
     ids.unclaim(businessObject[ID])
@@ -66,7 +75,7 @@ UpdatePropertiesHandler.prototype.execute = function (context) {
     ids.claim(properties[ID], businessObject)
   }
 
-  // correctly indicate visual changes on default flow updates
+  // Correctly indicate the visual changes on the default flow updates
   if (DEFAULT_FLOW in properties) {
     if (properties[DEFAULT_FLOW]) {
       changed.push(elementRegistry.get(properties[DEFAULT_FLOW].id))
@@ -77,53 +86,49 @@ UpdatePropertiesHandler.prototype.execute = function (context) {
     }
   }
 
-  // update properties
+  // Set the new properties
   setProperties(element, properties)
 
-  // store old values
+  // Store the old values
   context.oldProperties = oldProperties
   context.changed = changed
 
-  // indicate changed on objects affected by the update
-  // TODO: Returning "changed" will cause an error in the console
-  // Uncaught TypeError: 'get' on proxy: property 'children' is a read-only and non-configurable data property
-  // on the proxy target but the proxy did not return its actual value (expected '[object Array]' but got '[object Array]')
   return changed
 }
 
+/**
+ * Resize the shape of the label after updating an element.
+ *
+ * @param context
+ */
 UpdatePropertiesHandler.prototype.postExecute = function (context) {
-  var element = context.element,
-    label = element.label
+  const element = context.element
+  const label = element.label
 
-  var text = label && getBusinessObject(label).name
+  const text = label && getBusinessObject(label).name
 
   if (!text) {
     return
   }
 
-  // get layouted text bounds and resize external
-  // external label accordingly
-  var newLabelBounds = this._textRenderer.getExternalLabelBounds(label, text)
+  // Retrieve the layouted text bounds and resize external label accordingly
+  const newLabelBounds = this._textRenderer.getExternalLabelBounds(label, text)
 
   this._modeling.resizeShape(label, newLabelBounds, NULL_DIMENSIONS)
 }
 
 /**
- * Reverts the update on a BPMN elements properties.
- *
- * @param  {Object} context
- *
- * @return {djs.model.Base} the updated element
+ * Reverts the update on an element's properties.
  */
 UpdatePropertiesHandler.prototype.revert = function (context) {
-  var element = context.element,
-    properties = context.properties,
-    oldProperties = context.oldProperties,
-    businessObject = element.businessObject,
-    elementRegistry = this._elementRegistry,
-    ids = this._moddle.ids
+  const element = context.element
+  const properties = context.properties
+  const oldProperties = context.oldProperties
+  const businessObject = element.businessObject
+  const elementRegistry = this._elementRegistry
+  const ids = this._moddle.ids
 
-  // update properties
+  // Set the old properties
   setProperties(element, oldProperties)
 
   if (isIdChange(properties, businessObject)) {
@@ -137,19 +142,31 @@ UpdatePropertiesHandler.prototype.revert = function (context) {
   return context.changed
 }
 
+/**
+ * Check for ID changes.
+ *
+ * @param properties
+ * @param businessObject
+ */
 function isIdChange(properties, businessObject) {
   return ID in properties && properties[ID] !== businessObject[ID]
 }
 
+/**
+ * Retrieve the properties of an element.
+ *
+ * @param element
+ * @param properties
+ */
 function getProperties(element, properties) {
-  var propertyNames = keys(properties),
-    businessObject = element.businessObject,
-    di = getDi(element)
+  const propertyNames = keys(properties)
+  const businessObject = element.businessObject
+  const di = getDi(element)
 
   return reduce(
     propertyNames,
     function (result, key) {
-      // handle DI separately
+      // Handle DI separately
       if (key !== DI) {
         result[key] = businessObject.get(key)
       } else {
@@ -162,6 +179,12 @@ function getProperties(element, properties) {
   )
 }
 
+/**
+ * Retrieve the properties of a DI.
+ *
+ * @param di
+ * @param propertyNames
+ */
 function getDiProperties(di, propertyNames) {
   return reduce(
     propertyNames,
@@ -174,15 +197,21 @@ function getDiProperties(di, propertyNames) {
   )
 }
 
+/**
+ * Set the properties of an element.
+ *
+ * @param element
+ * @param properties
+ */
 function setProperties(element, properties) {
-  var businessObject = element.businessObject,
-    di = getDi(element)
+  const businessObject = element.businessObject
+  const di = getDi(element)
 
   forEach(properties, function (value, key) {
     if (key !== DI) {
       businessObject.set(key, value)
     } else {
-      // only update, if di exists
+      // Only update, if di exists
       if (di) {
         setDiProperties(di, value)
       }
@@ -190,25 +219,25 @@ function setProperties(element, properties) {
   })
 }
 
+/**
+ * Set the properties of a DI.
+ *
+ * @param di
+ * @param properties
+ */
 function setDiProperties(di, properties) {
   forEach(properties, function (value, key) {
     di.set(key, value)
   })
 }
 
-var referencePropertyNames = ['default']
+const referencePropertyNames = ['default']
 
 /**
- * Make sure we unwrap the actual business object
- * behind diagram element that may have been
- * passed as arguments.
- *
- * @param  {Object} properties
- *
- * @return {Object} unwrappedProps
+ * Make sure to unwrap the actual business object behind the diagram element that may have been passed as arguments.
  */
 function unwrapBusinessObjects(properties) {
-  var unwrappedProps = assign({}, properties)
+  const unwrappedProps = assign({}, properties)
 
   referencePropertyNames.forEach(function (name) {
     if (name in properties) {

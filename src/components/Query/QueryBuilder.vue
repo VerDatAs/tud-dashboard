@@ -1,6 +1,23 @@
+<!--
+Dashboard for the assistance system developed as part of the VerDatAs project
+Copyright (C) 2022-2024 TU Dresden (Niklas Harbig)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <script>
+import { aggregationOperators, comparisonOperators, Connections } from '@/util/QueryHelpers'
 import axios from 'axios'
-import { comparisonOperators, aggregationOperators, Connections } from '@/util/QueryHelpers'
 
 export default {
   data: () => ({
@@ -16,7 +33,7 @@ export default {
     querySkip: '',
     querySort: { selectedAttribute: '', selectedDirection: '' },
     queryOutput: null,
-    showAdvancedFilterOptions: false,
+    showAdvancedFilterOptions: false
   }),
   props: {
     backendUrl: String,
@@ -25,17 +42,22 @@ export default {
     operationAttributes: Array
   },
   methods: {
+    /**
+     * Adjust the filter on attribute selection.
+     *
+     * @param attribute
+     * @param index
+     */
     adjustFilterStructure(attribute, index) {
-
-      // Function to adjust the filter on attribute select
-
-      // reset some things
+      // Reset several variables
       this.filterBuilder[index].comparisonOperators = comparisonOperators
-      if (attribute === '') this.inputType[index] = 'string'
+      if (attribute === '') {
+        this.inputType[index] = 'string'
+      }
 
       const attributeType = this.filterAttributes.find((element) => element.attribute === attribute).type
 
-      // declare and input type and comparison operators based on the attributes types
+      // Declare an input type and comparison operators based on the attribute types
       if (attributeType === 'number') {
         this.filterBuilder[index].inputType = 'number'
       } else if (attribute === 'timestamp') {
@@ -61,23 +83,23 @@ export default {
       this.filterBuilder[index].selectedComparison = ''
       this.filterBuilder[index].selectedValueFilter = null
     },
+    /**
+     * Build the query from the user input.
+     */
     queryBuilder() {
-
-      // Function to build the query from the user inputs
-
-      // reset some things
+      // Reset several variables
       this.queryOutput = null
       const errorMessages = []
 
-      // basic structure query
+      // Basic structure of the query
       let input = {
         search: {},
         operations: []
       }
 
-      // iterate over the filters created by the user
+      // Iterate over the filters created by the user
       for (const filter of this.filterBuilder) {
-        // look if filter is completely specified
+        // Check, if the filter is completely specified
         if (
           filter.selectedAttribute === '' ||
           filter.selectedComparison === '' ||
@@ -92,13 +114,15 @@ export default {
           )
         }
 
-        // set the current connection for the filter
+        // Set the current connection for the filter
         const connectionKey = this.currentConnection
-        if (!input.search[connectionKey]) input.search[connectionKey] = []
+        if (!input.search[connectionKey]) {
+          input.search[connectionKey] = []
+        }
 
-        // special case for these operators
+        // Special case for specific operators ($in, $nin)
         if (filter.selectedComparison === '$in' || filter.selectedComparison === '$nin') {
-          // convert user input for these operators to ana rray
+          // Convert the user input for these operators to an array
           const convertedValue = filter.selectedValueFilter.split(',').map((element) => {
             if (!isNaN(element)) {
               return Number(element)
@@ -106,7 +130,7 @@ export default {
               return element.trim()
             }
           })
-          // create an adjusted filter object
+          // Create an adjusted filter object
           const adjustedFilter = {
             selectedAttribute: filter.selectedAttribute,
             selectedComparison: filter.selectedComparison,
@@ -118,7 +142,7 @@ export default {
         }
       }
 
-      // look if skip was specified by user and if yes add it to the query
+      // Check, if skip was specified by the user and if yes, add it to the query
       if (this.querySkip !== '') {
         const skipObject = {
           ['$skip']: Number(this.querySkip)
@@ -126,7 +150,7 @@ export default {
         input.operations.push(skipObject)
       }
 
-      // look if limit was specified by user and if yes add it to the query
+      // Check, if limit was specified by the user and if yes, add it to the query
       if (this.queryLimit !== '') {
         const limitObject = {
           ['$limit']: Number(this.queryLimit)
@@ -134,7 +158,7 @@ export default {
         input.operations.push(limitObject)
       }
 
-      // look if group was specified by user and if yes add it to the query      
+      // Check, if group was specified by the user and if yes, add it to the query
       let groupOperationExists = false
       if (this.queryGroup !== '') {
         const groupObject = {
@@ -146,7 +170,7 @@ export default {
         groupOperationExists = true
       }
 
-      // look if sort was specified by user and if yes add it to the query  
+      // Check, if sort was specified by the user and if yes, add it to the query
       if (this.querySort.selectedAttribute !== '' && this.querySort.selectedDirection !== '') {
         const sortObject = {
           ['$sort']: {
@@ -156,9 +180,9 @@ export default {
         input.operations.push(sortObject)
       }
 
-      // iterate over the operations created by the user
+      // Iterate over the operations created by the user
       for (const operation of this.operationBuilder) {
-        // look if operation is completely specified
+        // Check, if the operation is completely specified
         if (operation.selectedOperation === '' || operation.selectedAttribute === '') {
           const currentIndex = this.operationBuilder.indexOf(operation)
           errorMessages.push(
@@ -168,7 +192,7 @@ export default {
           )
         }
 
-        // add operation to query based on whether the group object already exists or not
+        // Add the operation to the query based on whether the group object already exists or not
         if (groupOperationExists) {
           input.operations.forEach((element) => {
             if ('$group' in element) {
@@ -188,61 +212,74 @@ export default {
         }
       }
 
-      // return from function when errors were found
-      if(errorMessages.length > 0) {
+      // Return, when errors were found
+      if (errorMessages.length > 0) {
         this.$emit('setErrorMessages', errorMessages)
         return
       }
 
-      this.$emit("sendQuery", input)
+      this.$emit('sendQuery', input)
     },
+    /**
+     * Build an object for a filter.
+     *
+     * @param filter
+     */
     buildFilterQueryObject(filter) {
-
-      // Function to build an object for a filter  
-
       let filterValue = filter.selectedValueFilter
 
-      // if value is not an array and an number, then convert it to a number
+      // If the value is not an array, but a number, then convert it into a number
       if (!Array.isArray(filterValue) && !isNaN(filterValue)) {
         filterValue = Number(filterValue)
       }
 
-      // if attribute for the filter is 'timestamp' then convert value to date
+      // If the attribute for the filter is 'timestamp', then convert the value into a date
       if (filter.selectedAttribute === 'timestamp') {
         filterValue = new Date(filterValue).toISOString().substring(0, 16)
       }
 
-      // if filter has input type boolean then convert to boolean
+      // If the filter has the input type boolean, then convert into a boolean
       if (filter.inputType === 'boolean') {
         filterValue = Boolean(filterValue)
       }
 
-      const filterObject = {
+      return {
         [filter.selectedAttribute]: {
           [filter.selectedComparison]: filterValue
         }
       }
-      return filterObject
     },
+    /**
+     * Build an object for an operation.
+     *
+     * @param operation
+     */
     buildOperationQueryObject(operation) {
-
-     // Function to build an object for an operation  
-
       const prefix = operation.selectedOperation.split('$')[1]
-      const operationObject = {
+      return {
         [prefix + 'Value']: {
           [operation.selectedOperation]: '$' + operation.selectedAttribute
         }
       }
-
-      return operationObject
     },
+    /**
+     * Add an operation.
+     */
     addOperationBuilder() {
       this.operationBuilder.push({ selectedOperation: '', selectedAttribute: '' })
     },
+    /**
+     * Remove an operation.
+     */
     removeOperationBuilder(index) {
       this.operationBuilder.splice(index, 1)
     },
+    /**
+     * Add a filter with a specific index and connection type.
+     *
+     * @param index
+     * @param connection
+     */
     addFilterBuilder(index = 0, connection = Connections.AND) {
       this.currentConnection = connection
       this.filterBuilder.push({
@@ -251,31 +288,48 @@ export default {
         comparisonOperators: this.comparisonOperators,
         suggestions: []
       })
-      // add the connection as a text in the UI for the user to see
-      if (this.filterBuilder.length > 1)
+      // Add the connection as a text in the UI
+      if (this.filterBuilder.length > 1) {
         document.getElementById('filter-connection' + index).innerHTML = connection === Connections.AND ? 'AND' : 'OR'
+      }
     },
+    /**
+     * Remove a filter with a specific index.
+     *
+     * @param index
+     */
     removeFilterBuilder(index) {
       this.filterBuilder.splice(index, 1)
-      // remove text with filter connection from UI
-      if (this.filterBuilder.length > 0) document.getElementById('filter-connection' + (index - 1)).innerHTML = ''
+      // Remove text with filter connection from the UI
+      if (this.filterBuilder.length > 0) {
+        document.getElementById('filter-connection' + (index - 1)).innerHTML = ''
+      }
     },
+    /**
+     * Retrieve an attribute from the attribute list.
+     *
+     * @param attribute
+     */
     getAttribute(attribute) {
       return this.filterAttributes.filter((element) => element.attribute === attribute)
     },
+    /**
+     * Fetch suggestion for an attribute from the backend.
+     *
+     * @param filter
+     */
     getSuggestions(filter) {
-
-      // Function to fetch suggestion for an attribute from the backend  
-
       // Omit some cases where no suggestions should be fetched
-      if (!filter.selectedAttribute) return
-      if (filter.selectedAttribute === 'timestamp') return
       if (
+        !filter.selectedAttribute ||
+        filter.selectedAttribute === 'timestamp' ||
         this.getAttribute(filter.selectedAttribute)[0].type === 'number' ||
         this.getAttribute(filter.selectedAttribute)[0].type === 'boolean'
-      )
+      ) {
         return
+      }
 
+      // Prepare the request
       const currentFilterValue = filter.selectedValueFilter ? filter.selectedValueFilter : ''
       const url =
         this.backendUrl + '/api/v2/statement/' + filter.selectedAttribute + '/suggestions?suggest=' + currentFilterValue
@@ -288,7 +342,6 @@ export default {
       }
 
       axios
-        //.get(url, { auth: { username: this.authUser, password: this.authPassword } })
         .get(url, { headers: authHeader })
         .then((result) => {
           console.log('Fetch suggestions for xAPI statement attribute', result)
@@ -299,8 +352,13 @@ export default {
           console.error(err)
         })
     },
+    /**
+     * Set the selected suggestion and hide the suggestion list.
+     *
+     * @param filter
+     * @param suggestion
+     */
     setSuggestion(filter, suggestion) {
-      // Function to set the selected suggestion and hide the suggestion list  
       filter.selectedValueFilter = suggestion
       document.getElementById('suggestions' + this.filterBuilder.indexOf(filter)).classList.add('hide')
     }
@@ -309,284 +367,269 @@ export default {
 </script>
 
 <template>
-   <form class="py-2" autocomplete="off" @submit.prevent="onSubmit">
-        <h4 class="bold-heading">
-          Filter
+  <form class="py-2" autocomplete="off" @submit.prevent="onSubmit">
+    <h4 class="bold-heading">
+      Filter
+      <font-awesome-icon
+        class="icon"
+        size="sm"
+        icon="circle-info"
+        title="Klicke hier für eine Erklärung"
+        @click="$emit('openIntro', 'filter')"
+      />
+    </h4>
+
+    <div class="add-builder" title="Filter hinzufügen" v-show="filterBuilder.length === 0" @click="addFilterBuilder()">
+      <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
+    </div>
+
+    <div v-for="(filter, index) in filterBuilder" :key="index" :id="'filter' + index">
+      <div class="flex-center">
+        <select v-model="filter.selectedAttribute" @change="adjustFilterStructure(filter.selectedAttribute, index)">
+          <option value="" disabled selected>Auswahl Attribut</option>
+          <option v-for="(attribute, index) in filterAttributes" :key="index" :value="attribute.attribute">
+            {{ attribute.attribute }}
+          </option>
+        </select>
+
+        <select v-model="filter.selectedComparison">
+          <option value="" disabled selected>Auswahl Vergleichsoperator</option>
+          <option v-for="(operator, index) in filter.comparisonOperators" :key="index" :value="operator.value">
+            {{ operator.displayName }}
+          </option>
+        </select>
+
+        <div v-if="filter.inputType === 'boolean'">
+          <select v-model="filter.selectedValueFilter">
+            <option value="" disabled selected></option>
+            <option value="true">true</option>
+            <option value="false">false</option>
+          </select>
+        </div>
+
+        <div v-else class="autocomplete">
+          <input
+            name="filter-input"
+            @keyup="getSuggestions(filter)"
+            @focus="getSuggestions(filter)"
+            v-model="filter.selectedValueFilter"
+            :type="
+              filter.selectedComparison === '$in' || filter.selectedComparison === '$nin' ? 'string' : filter.inputType
+            "
+            :step="filter.inputType === 'number' ? 'any' : ''"
+            :min="filter.inputType === 'number' ? 0 : ''"
+            placeholder="Eingabe Attributwert..."
+          />
+
+          <div
+            :class="filter.suggestions.length > 0 ? 'autocomplete-items' : 'autocomplete-items hide'"
+            :id="'suggestions' + index"
+          >
+            <div
+              class="autocomplete-item"
+              v-for="(suggestion, index) in filter.suggestions"
+              :key="index"
+              @click="setSuggestion(filter, suggestion)"
+            >
+              {{ suggestion }}
+            </div>
+          </div>
+        </div>
+
+        <button
+          class="add-connection"
+          v-show="index === 0 && filterBuilder.length === 1"
+          @click="addFilterBuilder(index)"
+          title="Filter durch AND-Verbindungen verknüpfen"
+        >
+          AND
+        </button>
+        <button
+          class="add-connection"
+          v-show="index === 0 && filterBuilder.length === 1"
+          @click="addFilterBuilder(index, connections.OR)"
+          title="Filter durch OR-Verbindungen verknüpfen"
+        >
+          OR
+        </button>
+
+        <div title="Filter entfernen" v-show="index === filterBuilder.length - 1" @click="removeFilterBuilder(index)">
+          <font-awesome-icon class="icon" icon="circle-xmark" size="xl" />
+        </div>
+
+        <div
+          title="Filter hinzufügen"
+          v-show="index === filterBuilder.length - 1 && index !== 0"
+          @click="addFilterBuilder(index, currentConnection)"
+        >
+          <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
+        </div>
+      </div>
+      <div class="py-1" v-show="filter.selectedComparison === '$in' || filter.selectedComparison === '$nin'">
+        Bei diesem Operator muss eine Liste nach folgendem Schema angegeben werden: Tom, Tim, Thomas, ...
+      </div>
+      <div class="py-1" :id="'filter-connection' + index"></div>
+    </div>
+
+    <div class="py-2">
+      <div class="flex-center">
+        <div>
+          <span class="title-with-info">Weitere Filter Optionen</span>
           <font-awesome-icon
             class="icon"
             size="sm"
             icon="circle-info"
             title="Klicke hier für eine Erklärung"
-            @click="$emit('openIntro', 'filter')"
+            @click="$emit('openIntro', 'options')"
           />
-        </h4>
+        </div>
 
-        <div
-          class="add-builder"
-          title="Filter hinzufügen"
-          v-show="filterBuilder.length === 0"
-          @click="addFilterBuilder()"
-        >
+        <font-awesome-icon
+          class="icon"
+          :icon="showAdvancedFilterOptions ? 'chevron-down' : 'chevron-right'"
+          :title="
+            showAdvancedFilterOptions
+              ? 'Klicke hier um weitere Filter Optionen zu schließen'
+              : 'Klicke hier um weitere Filter Optionen anzuzeigen'
+          "
+          @click="showAdvancedFilterOptions = !showAdvancedFilterOptions"
+        />
+      </div>
+
+      <div v-show="showAdvancedFilterOptions">
+        <div class="flex-center py-2">
+          <div>
+            <label for="sort-select">Sort:</label>
+            <select id="sort-select" v-model="querySort.selectedAttribute">
+              <option value="" selected></option>
+              <option v-for="(attr, index) in filterAttributes" :key="index" :value="attr.attribute">
+                {{ attr.attribute }}
+              </option>
+            </select>
+          </div>
+
+          <select v-model="querySort.selectedDirection">
+            <option value="" selected></option>
+            <option value="1">aufsteigend</option>
+            <option value="-1">absteigend</option>
+          </select>
+        </div>
+
+        <div class="flex-center py-2">
+          <div>
+            <label for="queryLimit">Limit:</label>
+            <input id="queryLimit" type="number" min="1" v-model="queryLimit" />
+          </div>
+          <div>
+            <label for="querySkip">Skip:</label>
+            <input id="querySkip" type="number" min="0" v-model="querySkip" />
+          </div>
+        </div>
+
+        <div>
+          <label for="group-select">Group:</label>
+          <select id="group-select" v-model="queryGroup">
+            <option value="" selected></option>
+            <option v-for="(attr, index) in filterAttributes" :key="index" :value="attr.attribute">
+              {{ attr.attribute }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="py-2">
+      <h4 class="bold-heading">
+        Operationen
+        <font-awesome-icon
+          class="icon"
+          size="sm"
+          icon="circle-info"
+          title="Klicke hier für eine Erklärung"
+          @click="$emit('openIntro', 'operations')"
+        />
+      </h4>
+
+      <div
+        class="add-builder"
+        title="Operation hinzufügen"
+        v-show="operationBuilder.length === 0"
+        @click="addOperationBuilder()"
+      >
+        <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
+      </div>
+
+      <div
+        class="flex-center py-2"
+        v-for="(operation, index) in operationBuilder"
+        :key="index"
+        :id="'operation' + index"
+      >
+        <select v-model="operation.selectedOperation">
+          <option value="" disabled selected></option>
+          <option v-for="(aggregation, index) in aggregationOperators" :key="index" :value="aggregation.value">
+            {{ aggregation.displayName }}
+          </option>
+        </select>
+
+        <select v-model="operation.selectedAttribute">
+          <option value="" disabled selected></option>
+          <option v-for="(attribute, index) in operationAttributes" :key="index" :value="attribute.attribute">
+            {{ attribute.attribute }}
+          </option>
+        </select>
+
+        <div title="Operation entfernen" @click="removeOperationBuilder(index)">
+          <font-awesome-icon class="icon" icon="circle-xmark" size="xl" />
+        </div>
+
+        <div title="Operation hinzufügen" v-show="index === operationBuilder.length - 1" @click="addOperationBuilder()">
           <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
         </div>
+      </div>
+    </div>
 
-        <div v-for="(filter, index) in filterBuilder" :key="index" :id="'filter' + index">
-          <div class="flex-center">
-            <select v-model="filter.selectedAttribute" @change="adjustFilterStructure(filter.selectedAttribute, index)">
-              <option value="" disabled selected>Auswahl Attribut</option>
-              <option v-for="(attribute, index) in filterAttributes" :key="index" :value="attribute.attribute">
-                {{ attribute.attribute }}
-              </option>
-            </select>
+    <div class="py-3">
+      <button title="Absenden der erstellten Abfrage" class="float-right" @click="queryBuilder()">Suche</button>
+    </div>
 
-            <select v-model="filter.selectedComparison">
-              <option value="" disabled selected>Auswahl Vergleichsoperator</option>
-              <option v-for="(operator, index) in filter.comparisonOperators" :key="index" :value="operator.value">
-                {{ operator.displayName }}
-              </option>
-            </select>
-
-            <div v-if="filter.inputType === 'boolean'">
-              <select v-model="filter.selectedValueFilter">
-                <option value="" disabled selected></option>
-                <option value="true">true</option>
-                <option value="false">false</option>
-              </select>
-            </div>
-
-            <div v-else class="autocomplete">
-              <input
-                name="filter-input"
-                @keyup="getSuggestions(filter)"
-                @focus="getSuggestions(filter)"
-                v-model="filter.selectedValueFilter"
-                :type="
-                  filter.selectedComparison === '$in' || filter.selectedComparison === '$nin'
-                    ? 'string'
-                    : filter.inputType
-                "
-                :step="filter.inputType === 'number' ? 'any' : ''"
-                :min="filter.inputType === 'number' ? 0 : ''"
-                placeholder="Eingabe Attributwert..."
-              />
-
-              <div
-                :class="filter.suggestions.length > 0 ? 'autocomplete-items' : 'autocomplete-items hide'"
-                :id="'suggestions' + index"
-              >
-                <div
-                  class="autocomplete-item"
-                  v-for="(suggestion, index) in filter.suggestions"
-                  :key="index"
-                  @click="setSuggestion(filter, suggestion)"
-                >
-                  {{ suggestion }}
-                </div>
-              </div>
-            </div>
-
-            <button
-              class="add-connection"
-              v-show="index === 0 && filterBuilder.length === 1"
-              @click="addFilterBuilder(index)"
-              title="Filter durch AND-Verbindungen verknüpfen"
-            >
-              AND
-            </button>
-            <button
-              class="add-connection"
-              v-show="index === 0 && filterBuilder.length === 1"
-              @click="addFilterBuilder(index, connections.OR)"
-              title="Filter durch OR-Verbindungen verknüpfen"
-            >
-              OR
-            </button>
-
-            <div
-              title="Filter entfernen"
-              v-show="index === filterBuilder.length - 1"
-              @click="removeFilterBuilder(index)"
-            >
-              <font-awesome-icon class="icon" icon="circle-xmark" size="xl" />
-            </div>
-
-            <div
-              title="Filter hinzufügen"
-              v-show="index === filterBuilder.length - 1 && index !== 0"
-              @click="addFilterBuilder(index, currentConnection)"
-            >
-              <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
-            </div>
-          </div>
-          <div class="py-1" v-show="filter.selectedComparison === '$in' || filter.selectedComparison === '$nin'">
-            Bei diesem Operator muss eine Liste nach folgendem Schema angegeben werden: Tom, Tim, Thomas, ...
-          </div>
-          <div class="py-1" :id="'filter-connection' + index"></div>
+    <div class="py-2">
+      <div class="flex-center">
+        <div>
+          <span class="title-with-info">Syntax</span>
+          <font-awesome-icon
+            class="icon"
+            size="sm"
+            icon="circle-info"
+            title="Klicke hier für eine Erklärung"
+            @click="$emit('openIntro', 'query')"
+          />
         </div>
 
-        <div class="py-2">
-          <div class="flex-center">
-            <div>
-              <span class="title-with-info">Weitere Filter Optionen</span>
-              <font-awesome-icon
-                class="icon"
-                size="sm"
-                icon="circle-info"
-                title="Klicke hier für eine Erklärung"
-                @click="$emit('openIntro', 'options')"
-              />
-            </div>
+        <font-awesome-icon
+          class="icon"
+          :icon="showQuery ? 'chevron-down' : 'chevron-right'"
+          :title="
+            showQuery
+              ? 'Klicke hier um die aktuelle Abfrage zu verstecken'
+              : 'Klicke hier um die aktuelle Abfrage anzuzeigen'
+          "
+          @click="showQuery = !showQuery"
+        />
+      </div>
 
-            <font-awesome-icon
-              class="icon"
-              :icon="showAdvancedFilterOptions ? 'chevron-down' : 'chevron-right'"
-              :title="
-                showAdvancedFilterOptions
-                  ? 'Klicke hier um weitere Filter Optionen zu schließen'
-                  : 'Klicke hier um weitere Filter Optionen anzuzeigen'
-              "
-              @click="showAdvancedFilterOptions = !showAdvancedFilterOptions"
-            />
-          </div>
-
-          <div v-show="showAdvancedFilterOptions">
-            <div class="flex-center py-2">
-              <div>
-                <label for="sort-select">Sort:</label>
-                <select id="sort-select" v-model="querySort.selectedAttribute">
-                  <option value="" selected></option>
-                  <option v-for="(attr, index) in filterAttributes" :key="index" :value="attr.attribute">
-                    {{ attr.attribute }}
-                  </option>
-                </select>
-              </div>
-
-              <select v-model="querySort.selectedDirection">
-                <option value="" selected></option>
-                <option value="1">aufsteigend</option>
-                <option value="-1">absteigend</option>
-              </select>
-            </div>
-
-            <div class="flex-center py-2">
-              <div>
-                <label for="queryLimit">Limit:</label>
-                <input id="queryLimit" type="number" min="1" v-model="queryLimit" />
-              </div>
-              <div>
-                <label for="querySkip">Skip:</label>
-                <input id="querySkip" type="number" min="0" v-model="querySkip" />
-              </div>
-            </div>
-
-            <div>
-              <label for="group-select">Group:</label>
-              <select id="group-select" v-model="queryGroup">
-                <option value="" selected></option>
-                <option v-for="(attr, index) in filterAttributes" :key="index" :value="attr.attribute">
-                  {{ attr.attribute }}
-                </option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div class="py-2">
-          <h4 class="bold-heading">
-            Operationen
-            <font-awesome-icon
-              class="icon"
-              size="sm"
-              icon="circle-info"
-              title="Klicke hier für eine Erklärung"
-              @click="$emit('openIntro', 'operations')"
-            />
-          </h4>
-
-          <div
-            class="add-builder"
-            title="Operation hinzufügen"
-            v-show="operationBuilder.length === 0"
-            @click="addOperationBuilder()"
-          >
-            <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
-          </div>
-
-          <div
-            class="flex-center py-2"
-            v-for="(operation, index) in operationBuilder"
-            :key="index"
-            :id="'operation' + index"
-          >
-            <select v-model="operation.selectedOperation">
-              <option value="" disabled selected></option>
-              <option v-for="(aggregation, index) in aggregationOperators" :key="index" :value="aggregation.value">
-                {{ aggregation.displayName }}
-              </option>
-            </select>
-
-            <select v-model="operation.selectedAttribute">
-              <option value="" disabled selected></option>
-              <option v-for="(attribute, index) in operationAttributes" :key="index" :value="attribute.attribute">
-                {{ attribute.attribute }}
-              </option>
-            </select>
-
-            <div title="Operation entfernen" @click="removeOperationBuilder(index)">
-              <font-awesome-icon class="icon" icon="circle-xmark" size="xl" />
-            </div>
-
-            <div
-              title="Operation hinzufügen"
-              v-show="index === operationBuilder.length - 1"
-              @click="addOperationBuilder()"
-            >
-              <font-awesome-icon class="icon" icon="circle-plus" size="xl" />
-            </div>
-          </div>
-        </div>
-
-        <div class="py-3">
-          <button title="Absenden der erstellten Abfrage" class="float-right" @click="queryBuilder()">Suche</button>
-        </div>
-
-        <div class="py-2">
-          <div class="flex-center">
-            <div>
-              <span class="title-with-info">Syntax</span>
-              <font-awesome-icon
-                class="icon"
-                size="sm"
-                icon="circle-info"
-                title="Klicke hier für eine Erklärung"
-                @click="$emit('openIntro', 'query')"
-              />
-            </div>
-
-            <font-awesome-icon
-              class="icon"
-              :icon="showQuery ? 'chevron-down' : 'chevron-right'"
-              :title="
-                showQuery
-                  ? 'Klicke hier um die aktuelle Abfrage zu verstecken'
-                  : 'Klicke hier um die aktuelle Abfrage anzuzeigen'
-              "
-              @click="showQuery = !showQuery"
-            />
-          </div>
-
-          <div v-show="showQuery">
-            <font-awesome-icon
-              id="share"
-              icon="share"
-              size="lg"
-              title="Kopiere aktuelle Abfrage in den Code Editor"
-              @click="$emit('forwardQueryToCodeEditor', this.queryOutput)"
-            />
-            <pre id="current-query">{{ queryOutput }}</pre>
-          </div>
-        </div>
-      </form>
+      <div v-show="showQuery">
+        <font-awesome-icon
+          id="share"
+          icon="share"
+          size="lg"
+          title="Kopiere aktuelle Abfrage in den Code Editor"
+          @click="$emit('forwardQueryToCodeEditor', this.queryOutput)"
+        />
+        <pre id="current-query">{{ queryOutput }}</pre>
+      </div>
+    </div>
+  </form>
 </template>
 
 <style scoped>

@@ -1,8 +1,22 @@
+/**
+ * This file is part of ILIAS, a powerful learning management system
+ * published by ILIAS open source e-Learning e.V.
+ *
+ * ILIAS is licensed with the GPL-3.0,
+ * see https://www.gnu.org/licenses/gpl-3.0.en.html
+ *
+ * -----
+ *
+ * In this project (GPL-3.0 licensed), this file is used to simulate the integration within ILIAS, even when running
+ * the application in development mode (npm run dev).
+ */
+
+// Custom rules for local development
 #verdatas-dashboard {
-  margin: 0 auto;
-  margin-top: 50px;
+  margin: 50px auto 0;
   max-width: 1100px;
   position: relative;
+
   &.fullViewHeight {
     height: 100vh;
     max-width: 100%;
@@ -3327,34 +3341,34 @@ a.thumbnail.active {
 .progress-striped .progress-bar,
 .progress-bar-striped {
   background-image: -webkit-linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
   background-image: -o-linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
   background-image: linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
   background-size: 40px 40px;
 }
@@ -3369,34 +3383,34 @@ a.thumbnail.active {
 }
 .progress-striped .progress-bar-success {
   background-image: -webkit-linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
   background-image: -o-linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
   background-image: linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
 }
 .progress-bar-info {
@@ -3404,34 +3418,34 @@ a.thumbnail.active {
 }
 .progress-striped .progress-bar-info {
   background-image: -webkit-linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
   background-image: -o-linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
   background-image: linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
 }
 .progress-bar-warning {
@@ -3439,34 +3453,34 @@ a.thumbnail.active {
 }
 .progress-striped .progress-bar-warning {
   background-image: -webkit-linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
   background-image: -o-linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
   background-image: linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
 }
 .progress-bar-danger {
@@ -3474,34 +3488,34 @@ a.thumbnail.active {
 }
 .progress-striped .progress-bar-danger {
   background-image: -webkit-linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
   background-image: -o-linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
   background-image: linear-gradient(
-                  45deg,
-                  rgba(255, 255, 255, 0.15) 25%,
-                  transparent 25%,
-                  transparent 50%,
-                  rgba(255, 255, 255, 0.15) 50%,
-                  rgba(255, 255, 255, 0.15) 75%,
-                  transparent 75%,
-                  transparent
+    45deg,
+    rgba(255, 255, 255, 0.15) 25%,
+    transparent 25%,
+    transparent 50%,
+    rgba(255, 255, 255, 0.15) 50%,
+    rgba(255, 255, 255, 0.15) 75%,
+    transparent 75%,
+    transparent
   );
 }
 .media {
@@ -6016,25 +6030,15 @@ output {
   border-radius: 0;
   -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
-  -webkit-transition:
-          border-color ease-in-out 0.15s,
-          box-shadow ease-in-out 0.15s;
-  -o-transition:
-          border-color ease-in-out 0.15s,
-          box-shadow ease-in-out 0.15s;
-  transition:
-          border-color ease-in-out 0.15s,
-          box-shadow ease-in-out 0.15s;
+  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
 .form-control:focus {
   border-color: #8198b7;
   outline: 0;
-  -webkit-box-shadow:
-          inset 0 1px 1px rgba(0, 0, 0, 0.075),
-          0 0 8px rgba(129, 152, 183, 0.6);
-  box-shadow:
-          inset 0 1px 1px rgba(0, 0, 0, 0.075),
-          0 0 8px rgba(129, 152, 183, 0.6);
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(129, 152, 183, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(129, 152, 183, 0.6);
 }
 .form-control::-moz-placeholder {
   color: #6f6f6f;
@@ -6295,12 +6299,8 @@ select[multiple].input-lg {
 }
 .has-success .form-control:focus {
   border-color: #2b542c;
-  -webkit-box-shadow:
-          inset 0 1px 1px rgba(0, 0, 0, 0.075),
-          0 0 6px #67b168;
-  box-shadow:
-          inset 0 1px 1px rgba(0, 0, 0, 0.075),
-          0 0 6px #67b168;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #67b168;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #67b168;
 }
 .has-success .input-group-addon {
   color: #3c763d;
@@ -6329,12 +6329,8 @@ select[multiple].input-lg {
 }
 .has-warning .form-control:focus {
   border-color: #66512c;
-  -webkit-box-shadow:
-          inset 0 1px 1px rgba(0, 0, 0, 0.075),
-          0 0 6px #c0a16b;
-  box-shadow:
-          inset 0 1px 1px rgba(0, 0, 0, 0.075),
-          0 0 6px #c0a16b;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #c0a16b;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #c0a16b;
 }
 .has-warning .input-group-addon {
   color: #8a6d3b;
@@ -6363,12 +6359,8 @@ select[multiple].input-lg {
 }
 .has-error .form-control:focus {
   border-color: #843534;
-  -webkit-box-shadow:
-          inset 0 1px 1px rgba(0, 0, 0, 0.075),
-          0 0 6px #ce8483;
-  box-shadow:
-          inset 0 1px 1px rgba(0, 0, 0, 0.075),
-          0 0 6px #ce8483;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #ce8483;
 }
 .has-error .input-group-addon {
   color: #a94442;
@@ -6681,12 +6673,8 @@ select[multiple].input-lg {
   padding: 10px 15px;
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
-  -webkit-box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.1),
-          0 1px 0 rgba(255, 255, 255, 0.1);
-  box-shadow:
-          inset 0 1px 0 rgba(255, 255, 255, 0.1),
-          0 1px 0 rgba(255, 255, 255, 0.1);
+  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
   margin-top: 8.57142857px;
   margin-bottom: 8.57142857px;
 }
@@ -7280,10 +7268,10 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   height: 38px;
 }
 .il-card
-.il-card-repository-head
-.il-chart-progressmeter-box
-> .il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox {
+  .il-card-repository-head
+  .il-chart-progressmeter-box
+  > .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox {
   max-width: 100%;
   filter: brightness(1.2);
 }
@@ -8163,122 +8151,122 @@ ul.dropdown-menu > li > .btn:focus {
   max-height: 800px;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-circle-bg {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-circle-bg {
   stroke: #dddddd;
   fill: none;
   stroke-width: 6;
   stroke-linecap: round;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-circle {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-circle {
   fill: none;
   stroke-linecap: round;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-multicircle
-.il-chart-progressmeter-circle {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-multicircle
+  .il-chart-progressmeter-circle {
   stroke-width: 1.66666667;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-monocircle
-.il-chart-progressmeter-circle {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-monocircle
+  .il-chart-progressmeter-circle {
   stroke-width: 4;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-circle.no-success {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-circle.no-success {
   stroke: #d9534f;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-circle.success {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-circle.success {
   stroke: #6ea03c;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-circle.not-active {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-circle.not-active {
   stroke: #f0ad4e;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-circle.active {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-circle.active {
   stroke: #aaaaaa;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-text
-text {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-text
+  text {
   text-anchor: middle;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-text
-.text-score {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-text
+  .text-score {
   font-size: 0.625rem;
   font-weight: 600;
   fill: #000000;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-text
-.text-comparision {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-text
+  .text-comparision {
   font-size: 2.5px;
   fill: #000000;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-text
-.text-score-info,
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-text
+  .text-score-info,
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-text
-.text-comparision-info {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-text
+  .text-comparision-info {
   font-size: 2.5px;
   fill: #bcbcbc;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-needle {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-needle {
   transform-origin: 24.6066px 22.8934px;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-needle
-.il-chart-progressmeter-needle-border {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-needle
+  .il-chart-progressmeter-needle-border {
   stroke: #bcbcbc;
   stroke-width: 0.1;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-needle
-.il-chart-progressmeter-needle-fill {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-needle
+  .il-chart-progressmeter-needle-fill {
   fill: #efefef;
   stroke-width: 0;
 }
 .il-chart-progressmeter-box
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-needle.no-needle {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-needle.no-needle {
   display: none;
 }
 .il-chart-progressmeter-box.il-chart-progressmeter-mini .il-chart-progressmeter-container {
@@ -8286,40 +8274,40 @@ text {
   max-width: 250px;
 }
 .il-chart-progressmeter-box.il-chart-progressmeter-mini
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox {
   min-width: 20px;
   max-height: 250px;
 }
 .il-chart-progressmeter-box.il-chart-progressmeter-mini
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-circle-bg {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-circle-bg {
   stroke: #dddddd;
   stroke-width: 5;
 }
 .il-chart-progressmeter-box.il-chart-progressmeter-mini
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-circle {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-circle {
   stroke-width: 5;
 }
 .il-chart-progressmeter-box.il-chart-progressmeter-mini
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-circle.no-success {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-circle.no-success {
   stroke: #d9534f;
 }
 .il-chart-progressmeter-box.il-chart-progressmeter-mini
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-circle.success {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-circle.success {
   stroke: #6ea03c;
 }
 .il-chart-progressmeter-box.il-chart-progressmeter-mini
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-needle {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-needle {
   stroke: #bcbcbc;
   fill: none;
   stroke-width: 4;
@@ -8327,9 +8315,9 @@ text {
   transform-origin: 25px 23.25px;
 }
 .il-chart-progressmeter-box.il-chart-progressmeter-mini
-.il-chart-progressmeter-container
-.il-chart-progressmeter-viewbox
-.il-chart-progressmeter-needle.no-needle {
+  .il-chart-progressmeter-container
+  .il-chart-progressmeter-viewbox
+  .il-chart-progressmeter-needle.no-needle {
   stroke: transparent;
 }
 /*****************/
@@ -9066,15 +9054,15 @@ fieldset[disabled] .il-table-presentation-viewcontrols .btn-default.engaged.focu
   }
 }
 .il-table-presentation-row
-.il-table-presentation-row-expanded
-.il-table-presentation-details
-.il-table-presentation-actions {
+  .il-table-presentation-row-expanded
+  .il-table-presentation-details
+  .il-table-presentation-actions {
   margin-bottom: 6px;
 }
 .il-table-presentation-row
-.il-table-presentation-row-expanded
-.il-table-presentation-details
-.il-table-presentation-fields {
+  .il-table-presentation-row-expanded
+  .il-table-presentation-details
+  .il-table-presentation-fields {
   min-height: 20px;
   padding: 19px;
   margin-bottom: 20px;
@@ -9086,18 +9074,18 @@ fieldset[disabled] .il-table-presentation-viewcontrols .btn-default.engaged.focu
   font-size: 0.75rem;
 }
 .il-table-presentation-row
-.il-table-presentation-row-expanded
-.il-table-presentation-details
-.il-table-presentation-fields
-blockquote {
+  .il-table-presentation-row-expanded
+  .il-table-presentation-details
+  .il-table-presentation-fields
+  blockquote {
   border-color: #ddd;
   border-color: rgba(0, 0, 0, 0.15);
 }
 .il-table-presentation-row
-.il-table-presentation-row-expanded
-.il-table-presentation-details
-.il-table-presentation-fields
-.il-item-property-name {
+  .il-table-presentation-row-expanded
+  .il-table-presentation-details
+  .il-table-presentation-fields
+  .il-item-property-name {
   color: #6f6f6f;
 }
 .il-table-data {
@@ -9686,10 +9674,10 @@ footer {
     z-index: 996;
   }
   .il-layout-page.with-mainbar-slates-engaged
-  .nav.il-maincontrols
-  .il-maincontrols-mainbar
-  .il-mainbar-slates
-  .il-maincontrols-slate {
+    .nav.il-maincontrols
+    .il-maincontrols-mainbar
+    .il-mainbar-slates
+    .il-maincontrols-slate {
     overflow-y: auto;
   }
   .il-layout-page.with-mainbar-slates-engaged .nav.il-maincontrols .il-maincontrols-mainbar .il-mainbar-close-slates {
@@ -9937,10 +9925,10 @@ footer {
   width: 50%;
 }
 .il-maincontrols-slate.il-maincontrols-slate-notification
-.il-maincontrols-slate-notification-title
-.btn-bulky
-.glyph
-:before {
+  .il-maincontrols-slate-notification-title
+  .btn-bulky
+  .glyph
+  :before {
   content: ' \e605';
   font-family: 'il-icons';
   font-size: 1.0625rem;
@@ -12530,7 +12518,7 @@ td {
 }
 code {
   font-family: Pragmata, Menlo, 'DejaVu LGC Sans Mono', 'DejaVu Sans Mono', Consolas, 'Everson Mono', 'Lucida Console',
-  'Andale Mono', 'Nimbus Mono L', 'Liberation Mono', FreeMono, 'Osaka Monospaced', Courier, 'New Courier', monospace;
+    'Andale Mono', 'Nimbus Mono L', 'Liberation Mono', FreeMono, 'Osaka Monospaced', Courier, 'New Courier', monospace;
   font-size: 0.75rem;
   color: #6f6f6f;
 }

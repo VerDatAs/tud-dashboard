@@ -1,12 +1,28 @@
+/**
+ * This is a modified version of the original file from https://github.com/pinussilvestrus/postit-js (MIT).
+ *
+ * Copyright 2020 Niklas Kiefer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * -----
+ *
+ * Adjustments for Dashboard of the assistance system developed as part of the VerDatAs project
+ * Copyright (C) 2022-2024 TU Dresden (Tommy Kubica)
+ *
+ * In addition to the terms of the MIT license, this file is distributed under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+import { getLabel } from '@/util/KnowledgeGraph/features/label-editing/LabelUtil'
+import { getExternalLabelMid, isLabelExternal, hasExternalLabel, isLabel } from '@/util/KnowledgeGraph/util/LabelUtil'
+import { is } from '@/util/KnowledgeGraph/util/ModelUtil'
 import { assign } from 'min-dash'
-
-import { getLabel } from './LabelUtil'
-
-import { is } from '../../util/ModelUtil'
-
-import { getExternalLabelMid, isLabelExternal, hasExternalLabel, isLabel } from '../../util/LabelUtil'
-
-var HIGH_PRIORITY = 2000
 
 export default function LabelEditingProvider(eventBus, verDatAsFactory, canvas, directEditing, modeling, textRenderer) {
   this._verDatAsFactory = verDatAsFactory
@@ -16,12 +32,16 @@ export default function LabelEditingProvider(eventBus, verDatAsFactory, canvas, 
 
   directEditing.registerProvider(this)
 
-  // listen to dblclick on non-root elements
+  /**
+   * Listen to double-click on non-root elements to activate the direct editing.
+   */
   eventBus.on('element.dblclick', function (event) {
     activateDirectEdit(event.element, true)
   })
 
-  // complete on followup canvas operation
+  /**
+   * Complete the direct editing on followup canvas operations.
+   */
   eventBus.on(
     [
       'autoPlace.start',
@@ -39,19 +59,31 @@ export default function LabelEditingProvider(eventBus, verDatAsFactory, canvas, 
     }
   )
 
-  eventBus.on(['shape.remove', 'connection.remove'], HIGH_PRIORITY, function (event) {
+  /**
+   * Cancel the direct editing if either a shape or a connection is removed.
+   * 2000 = high priority
+   */
+  eventBus.on(['shape.remove', 'connection.remove'], 2000, function (event) {
     if (directEditing.isActive(event.element)) {
       directEditing.cancel()
     }
   })
 
-  // cancel on command stack changes
+  /**
+   * Cancel the direct editing if the command stack changes.
+   */
   eventBus.on(['commandStack.changed'], function () {
     if (directEditing.isActive()) {
       directEditing.cancel()
     }
   })
 
+  /**
+   * Function to (forcefully) activate the direct editing.
+   *
+   * @param element
+   * @param force
+   */
   function activateDirectEdit(element, force) {
     if ((force || is(element, 'verDatAs:GraphElement')) && !is(element, 'verDatAs:SequenceFlow')) {
       directEditing.activate(element)
@@ -62,32 +94,28 @@ export default function LabelEditingProvider(eventBus, verDatAsFactory, canvas, 
 LabelEditingProvider.$inject = ['eventBus', 'verDatAsFactory', 'canvas', 'directEditing', 'modeling', 'textRenderer']
 
 /**
- * Activate direct editing for activities and text annotations.
+ * Activate the direct editing.
  *
- * @param  {djs.model.Base} element
- *
- * @return {Object} an object with properties bounds (position and size), text and options
+ * @param element
  */
 LabelEditingProvider.prototype.activate = function (element) {
-  // text
-  var text = getLabel(element)
+  const text = getLabel(element)
 
   if (text === undefined) {
     return
   }
 
-  var context = {
+  const context = {
     text: text
   }
 
-  // bounds
-  var bounds = this.getEditingBBox(element)
+  const bounds = this.getEditingBBox(element)
 
   assign(context, bounds)
 
-  var options = {}
+  const options = {}
 
-  // external labels
+  // External labels
   if (isLabelExternal(element)) {
     assign(options, {
       autoResize: true
@@ -102,46 +130,44 @@ LabelEditingProvider.prototype.activate = function (element) {
 }
 
 /**
- * Get the editing bounding box based on the element's size and position
+ * Retrieve the editing bounding box based on the element's size and position.
  *
- * @param  {djs.model.Base} element
+ * @param element
  *
- * @return {Object} an object containing information about position
- *                  and size (fixed or minimum and/or maximum)
  */
 LabelEditingProvider.prototype.getEditingBBox = function (element) {
-  var canvas = this._canvas
+  const canvas = this._canvas
 
-  var target = element.label || element
+  const target = element.label || element
 
-  var bbox = canvas.getAbsoluteBBox(target)
+  const bbox = canvas.getAbsoluteBBox(target)
 
-  var mid = {
+  const mid = {
     x: bbox.x + bbox.width / 2,
     y: bbox.y + bbox.height / 2
   }
 
-  // default position
-  var bounds = { x: bbox.x, y: bbox.y }
+  // Default position
+  const bounds = { x: bbox.x, y: bbox.y }
 
-  var zoom = canvas.zoom()
+  const zoom = canvas.zoom()
 
-  var externalStyle = this._textRenderer.getExternalStyle()
+  const externalStyle = this._textRenderer.getExternalStyle()
 
-  // take zoom into account
-  var externalFontSize = externalStyle.fontSize * zoom,
-    externalLineHeight = externalStyle.lineHeight
+  // Take zoom into account
+  const externalFontSize = externalStyle.fontSize * zoom
+  const externalLineHeight = externalStyle.lineHeight
 
-  var style = {
+  const style = {
     fontFamily: this._textRenderer.getDefaultStyle().fontFamily,
     fontWeight: this._textRenderer.getDefaultStyle().fontWeight
   }
 
-  var width = 90 * zoom,
-    paddingTop = 7 * zoom,
-    paddingBottom = 4 * zoom
+  const width = 90 * zoom
+  const paddingTop = 7 * zoom
+  const paddingBottom = 4 * zoom
 
-  // external labels for events, data elements, gateways, groups and connections
+  // External labels for events, data elements, gateways, groups and connections
   if (target.labelTarget) {
     assign(bounds, {
       width: width,
@@ -158,18 +184,18 @@ LabelEditingProvider.prototype.getEditingBBox = function (element) {
     })
   }
 
-  // external label not yet created
+  // External label is not yet created
   if (isLabelExternal(target) && !hasExternalLabel(target) && !isLabel(target)) {
-    var externalLabelMid = getExternalLabelMid(element)
+    const externalLabelMid = getExternalLabelMid(element)
 
-    var absoluteBBox = canvas.getAbsoluteBBox({
+    const absoluteBBox = canvas.getAbsoluteBBox({
       x: externalLabelMid.x,
       y: externalLabelMid.y,
       width: 0,
       height: 0
     })
 
-    var height = externalFontSize + paddingTop + paddingBottom
+    const height = externalFontSize + paddingTop + paddingBottom
 
     assign(bounds, {
       width: width,
@@ -189,6 +215,12 @@ LabelEditingProvider.prototype.getEditingBBox = function (element) {
   return { bounds: bounds, style: style }
 }
 
+/**
+ * Update action for label editing.
+ *
+ * @param element
+ * @param newLabel
+ */
 LabelEditingProvider.prototype.update = function (element, newLabel) {
   if (isEmptyText(newLabel)) {
     newLabel = null
@@ -196,8 +228,6 @@ LabelEditingProvider.prototype.update = function (element, newLabel) {
 
   this._modeling.updateLabel(element, newLabel)
 }
-
-// helpers //////////////////////
 
 function isEmptyText(label) {
   return !label || !label.trim()

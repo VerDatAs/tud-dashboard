@@ -15,28 +15,43 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+<script>
+import { svgCourse, svgModule, svgChapter, svgInteractiveTask, svgDocumentationTool } from '@/util/GraphHelpers'
+export default {
+  name: 'IconLegend',
+  data: () => ({
+    svgCourse,
+    svgModule,
+    svgChapter,
+    svgInteractiveTask,
+    svgDocumentationTool
+  })
+}
+</script>
+
 <template>
-  <div id="learningState">
-    <strong>Lernstand:</strong>
+  <div id="iconLegend">
+    <strong>Legende:</strong>
     <ul>
-      <li><span class="me-1 dashed-info-border"></span> Startpunkt</li>
-      <li><span class="me-1 in-progress"></span> Bearbeitet</li>
-      <li><span class="me-1 passed"></span> Richtig beantwortet</li>
-      <li><span class="me-1 failed"></span> Falsch beantwortet</li>
+      <li><span v-html="svgCourse"></span> Kurs</li>
+      <li><span v-html="svgModule"></span> Lernmodul</li>
+      <li><span v-html="svgChapter"></span> Kapitel</li>
+      <li><span v-html="svgInteractiveTask"></span> Interaktive Aufgabe</li>
+      <li><span v-html="svgDocumentationTool"></span> Lerntagebuch</li>
     </ul>
   </div>
 </template>
 
 <style lang="scss" scoped>
-#learningState {
+#iconLegend {
   position: absolute;
   top: -1px;
-  right: -1px;
+  left: -1px;
   z-index: 6;
   background: #fff;
   padding: 10px 16px 10px 10px;
   border: 1px solid #ddd;
-  box-shadow: -3px 3px 3px rgba(0, 0, 0, 0.3);
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.3);
 
   strong {
     margin-left: 5px;
@@ -55,28 +70,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
       span {
         display: inline-block;
-        padding: 5px;
+        padding-right: 5px;
         border-radius: 5px;
         height: 10px;
-
-        &.dashed-info-border {
-          padding: 3px;
-          border-radius: 2px;
-          border: 2px dotted var(--info);
-          margin-right: 0.3rem !important;
-        }
-
-        &.in-progress {
-          background: var(--in-progress);
-        }
-
-        &.passed {
-          background: var(--passed);
-        }
-
-        &.failed {
-          background: var(--failed);
-        }
       }
     }
   }

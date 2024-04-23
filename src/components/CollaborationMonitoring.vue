@@ -1,3 +1,20 @@
+<!--
+Dashboard for the assistance system developed as part of the VerDatAs project
+Copyright (C) 2022-2024 TU Dresden (Tommy Kubica)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <script>
 import { useCollaborationsStore } from '@/stores/collaborations'
 import axios from 'axios'
@@ -18,22 +35,32 @@ export default {
     isExpanded: Boolean
   },
   computed: {
+    /**
+     * Return a stored admin token, if it is not yet expired.
+     */
     adminToken() {
       const adminToken = this.collaborationStore.adminToken
       if (adminToken && adminToken !== '') {
-        // check expire date: https://stackoverflow.com/a/69058154
-        const expiry = (JSON.parse(atob(adminToken?.split('.')?.[1])))?.exp
-        const isTokenExpired = expiry ? (Math.floor((new Date()).getTime() / 1000)) >= expiry : true
+        // Check expire date: https://stackoverflow.com/a/69058154
+        const expiry = JSON.parse(atob(adminToken?.split('.')?.[1]))?.exp
+        const isTokenExpired = expiry ? Math.floor(new Date().getTime() / 1000) >= expiry : true
         if (isTokenExpired) {
+          // eslint-disable-next-line
           this.collaborationStore.adminToken = ''
         }
         return this.collaborationStore.adminToken ?? ''
       }
       return ''
     },
+    /**
+     * Return the stored collaborations.
+     */
     collaborations() {
       return this.collaborationStore.collaborations ?? []
     },
+    /**
+     * Return, whether at least one stored collaboration exists.
+     */
     collaborationsExist() {
       return this.collaborations.length > 0
     }
@@ -42,6 +69,10 @@ export default {
     this.initCollaborationMonitoring()
   },
   methods: {
+    /**
+     * Initialize the collaboration monitoring by retrieving further information on the stored collaborations,
+     * if an admin token exists.
+     */
     initCollaborationMonitoring() {
       if (!this.collaborationsExist) {
         return
@@ -62,6 +93,9 @@ export default {
         this.adminTokenNotAvailable = true
       }
     },
+    /**
+     * Manually add an assistance ID to the stored collaborations.
+     */
     addAssistanceId() {
       if (this.assistanceId && this.assistanceId !== '') {
         this.collaborationStore.collaborations.push(this.assistanceId)
@@ -69,6 +103,11 @@ export default {
         this.initCollaborationMonitoring()
       }
     },
+    /**
+     * Remove a collaboration with a given assistance ID from the stored collaborations.
+     *
+     * @param assistanceId
+     */
     removeAssistanceId(assistanceId) {
       if (assistanceId && assistanceId !== '') {
         if (confirm('Wollen Sie diese Assistenz-ID wirklich aus dem Monitoring löschen?')) {
@@ -80,8 +119,16 @@ export default {
         }
       }
     },
+    /**
+     * Perform a login with the input credentials of an administrator role.
+     */
     adminLogin() {
-      if (!this.collaborationUserName || this.collaborationUserName === '' || !this.collaborationUserPassword || this.collaborationUserPassword === '') {
+      if (
+        !this.collaborationUserName ||
+        this.collaborationUserName === '' ||
+        !this.collaborationUserPassword ||
+        this.collaborationUserPassword === ''
+      ) {
         return
       }
       this.loginInProgress = true
@@ -91,7 +138,6 @@ export default {
         password: this.collaborationUserPassword
       }
       axios.post(url, request).then((data) => {
-        console.log('Admin login', data)
         this.collaborationStore.adminToken = data.data.token
         this.loginInProgress = false
         this.initCollaborationMonitoring()
@@ -106,7 +152,7 @@ export default {
 
 <template>
   <div id="collaboration-monitoring" :class="`${isExpanded ? 'is-expanded' : ''}`">
-    <div class="container py-4" style="max-width: 100%">
+    <div class="container py-4 mw-100">
       <h2>
         Monitoring der Kollaborationen
         <span v-if="collaborationsExist">({{ collaborations.length }})</span>
@@ -118,15 +164,11 @@ export default {
             <font-awesome-icon class="icon" icon="minus" />
           </template>
         </button>
-        <button class="btn btn-secondary ms-2 pull-right" @click="initCollaborationMonitoring">
-          Aktualisieren
-        </button>
+        <button class="btn btn-secondary ms-2 pull-right" @click="initCollaborationMonitoring">Aktualisieren</button>
       </h2>
       <div class="mt-4" v-if="addAssistanceIdFormVisible">
         <div class="form-group">
-          <label for="assistanceId" class="control-label">
-            Assistance-ID
-          </label>
+          <label for="assistanceId" class="control-label"> Assistance-ID </label>
           <input id="assistanceId" class="form-control" type="text" v-model="assistanceId" />
         </div>
         <div class="form-group">
@@ -134,74 +176,109 @@ export default {
         </div>
       </div>
       <div class="mt-4" v-if="adminTokenNotAvailable">
-        <div class="alert alert-info">
-          Es ist noch kein Admin-Token hinterlegt. Bitte loggen Sie sich ein.
-        </div>
+        <div class="alert alert-info">Es ist noch kein Admin-Token hinterlegt. Bitte loggen Sie sich ein.</div>
         <div class="form-group">
-          <label for="collborationUser" class="control-label">
-            Admin-Username
-          </label>
+          <label for="collborationUser" class="control-label"> Admin-Username </label>
           <input id="collborationUser" class="form-control" type="text" v-model="collaborationUserName" />
         </div>
         <div class="form-group">
-          <label for="collborationPassword" class="control-label">
-            Admin-Passwort
-          </label>
+          <label for="collborationPassword" class="control-label"> Admin-Passwort </label>
           <input id="collborationPassword" class="form-control" type="password" v-model="collaborationUserPassword" />
         </div>
         <div class="form-group">
-          <button class="btn btn-primary mt-2" type="button" @click="adminLogin()" :disabled="loginInProgress">Login</button>
+          <button class="btn btn-primary mt-2" type="button" @click="adminLogin()" :disabled="loginInProgress">
+            Login
+          </button>
         </div>
       </div>
       <template v-if="!adminTokenNotAvailable">
         <div v-if="collaborationsExist">
           <div v-for="(collaboration, index) in collaborations" :key="'collaboration' + index">
-            <hr>
+            <hr />
             <h3>
               AssistanceID: {{ collaboration }}
               <button class="pull-right" @click="removeAssistanceId(collaboration)">&times;</button>
             </h3>
             <ul v-if="collaborationsMap[collaboration]">
               <li v-if="collaborationsMap[collaboration].assistanceState">
-                {{ collaborationsMap[collaboration].assistanceState.step }} (Phase: {{ collaborationsMap[collaboration].assistanceState.phase }})
+                {{ collaborationsMap[collaboration].assistanceState.step }} (Phase:
+                {{ collaborationsMap[collaboration].assistanceState.phase }})
               </li>
-              <template v-if="collaborationsMap[collaboration].parameters && collaborationsMap[collaboration].parameters.find((param) => param.key === 'related_user_ids')">
-                <li v-for="(user, userIndex) in collaborationsMap[collaboration].parameters.find((param) => param.key === 'related_user_ids').value">
-                  Benutzer {{ userIndex + 1}}:
+              <template
+                v-if="
+                  collaborationsMap[collaboration].parameters &&
+                  collaborationsMap[collaboration].parameters.find((param) => param.key === 'related_user_ids')
+                "
+              >
+                <li
+                  v-for="(user, userIndex) in collaborationsMap[collaboration].parameters.find(
+                    (param) => param.key === 'related_user_ids'
+                  ).value"
+                  :key="'related_user_id' + userIndex"
+                >
+                  Benutzer {{ userIndex + 1 }}:
                   <ul>
                     <li>ID: {{ user }}</li>
-                    <li v-if="collaborationsMap[collaboration].parameters.find((param) => param.key === 'user_states') && collaborationsMap[collaboration].parameters.find((param) => param.key === 'user_states').value && collaborationsMap[collaboration].parameters.find((param) => param.key === 'user_states').value[user]">
-                      {{ collaborationsMap[collaboration].parameters.find((param) => param.key === 'user_states').value[user].step }} (Phase: {{ collaborationsMap[collaboration].parameters.find((param) => param.key === 'user_states').value[user].phase }})
+                    <li
+                      v-if="
+                        collaborationsMap[collaboration].parameters.find((param) => param.key === 'user_states') &&
+                        collaborationsMap[collaboration].parameters.find((param) => param.key === 'user_states')
+                          .value &&
+                        collaborationsMap[collaboration].parameters.find((param) => param.key === 'user_states').value[
+                          user
+                        ]
+                      "
+                    >
+                      {{
+                        collaborationsMap[collaboration].parameters.find((param) => param.key === 'user_states').value[
+                          user
+                        ].step
+                      }}
+                      (Phase:
+                      {{
+                        collaborationsMap[collaboration].parameters.find((param) => param.key === 'user_states').value[
+                          user
+                        ].phase
+                      }})
                     </li>
                     <li>Lösung:</li>
                   </ul>
-                  <div style="list-style: none;" v-if="collaborationsMap[collaboration].parameters.find((param) => param.key === 'final_solutions') && collaborationsMap[collaboration].parameters.find((param) => param.key === 'final_solutions').value && collaborationsMap[collaboration].parameters.find((param) => param.key === 'final_solutions').value[user]">
+                  <div
+                    style="list-style: none"
+                    v-if="
+                      collaborationsMap[collaboration].parameters.find((param) => param.key === 'final_solutions') &&
+                      collaborationsMap[collaboration].parameters.find((param) => param.key === 'final_solutions')
+                        .value &&
+                      collaborationsMap[collaboration].parameters.find((param) => param.key === 'final_solutions')
+                        .value[user]
+                    "
+                  >
                     <p class="solution">
-                      {{ collaborationsMap[collaboration].parameters.find((param) => param.key === 'final_solutions').value[user] }}
+                      {{
+                        collaborationsMap[collaboration].parameters.find((param) => param.key === 'final_solutions')
+                          .value[user]
+                      }}
                     </p>
                   </div>
                   <div v-else>
-                    <p class="solution">
-                      Es wurde noch keine finale Lösung eingereicht.
-                    </p>
+                    <p class="solution">Es wurde noch keine finale Lösung eingereicht.</p>
                   </div>
                 </li>
               </template>
             </ul>
-            <template v-else>
-              Die Informationen zur Kollaboration konnten nicht abgerufen werden.
-            </template>
+            <template v-else> Die Informationen zur Kollaboration konnten nicht abgerufen werden. </template>
           </div>
         </div>
         <div class="alert alert-info" v-else>
-          Es konnte keine gestartete Kollaboration gefunden werden. Sie haben jedoch die Möglichkeit über [+] die ID einer Kollaboration manuell hinzuzufügen.
+          Es konnte keine gestartete Kollaboration gefunden werden. Sie haben jedoch die Möglichkeit über [+] die ID
+          einer Kollaboration manuell hinzuzufügen.
         </div>
       </template>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 #collaboration-monitoring {
   z-index: 8;
   position: absolute;
@@ -212,18 +289,16 @@ export default {
   background: #eee;
   border: 1px solid #ccc;
   overflow-y: scroll;
-}
 
-#collaboration-monitoring.is-expanded {
-  left: calc(var(--sidebar-width) + 10px);
-  width: calc(100% - var(--sidebar-width) - 20px);
-}
+  &.is-expanded {
+    left: calc(var(--sidebar-width) + 10px);
+    width: calc(100% - var(--sidebar-width) - 20px);
+  }
 
-#collaboration-monitoring .solution {
-  white-space: pre-line;
-  padding: 7px 14px;
-  background: #fff;
+  .solution {
+    white-space: pre-line;
+    padding: 7px 14px;
+    background: #fff;
+  }
 }
 </style>
-<script setup lang="ts">
-</script>

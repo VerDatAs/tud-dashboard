@@ -1,9 +1,26 @@
+<!--
+Dashboard for the assistance system developed as part of the VerDatAs project
+Copyright (C) 2022-2024 TU Dresden (Niklas Harbig, Tommy Kubica)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <script>
 import GraphControls from './GraphControls.vue'
 import GraphViewer from './GraphViewer.vue'
-import Legend from './Legend.vue'
-import PropertiesPanel from './PropertiesPanel/PropertiesPanel.vue'
+import IconLegend from './IconLegend.vue'
 import LearningState from './LearningState.vue'
+import PropertiesPanel from './PropertiesPanel/PropertiesPanel.vue'
 import { centerCanvas } from '@/util/GraphHelpers'
 
 export default {
@@ -11,8 +28,8 @@ export default {
   components: {
     GraphControls,
     GraphViewer,
+    IconLegend,
     LearningState,
-    Legend,
     PropertiesPanel
   },
   data: () => ({
@@ -35,13 +52,13 @@ export default {
     isExpanded: Boolean,
     pseudoId: String
   },
-  emits: [
-    'loadedDiagram',
-    'setDiagram'
-  ],
+  emits: ['loadedDiagram', 'setDiagram'],
   watch: {
+    /**
+     * Watch for changes on the expansion value.
+     */
     isExpanded() {
-      // this only works when using setTimeout
+      // TODO: This only works when using setTimeout
       setTimeout(() => {
         this.diagram?.get('canvas')?.resized()
         this.centerCanvas()
@@ -49,6 +66,7 @@ export default {
     }
   },
   created() {
+    // Add a listener for detecting switching into fullscreen mode in order to apply changes to the view
     document.addEventListener('fullscreenchange', () => {
       if (!document.fullscreenElement) {
         this.isMaximized = false
@@ -58,42 +76,89 @@ export default {
     })
   },
   methods: {
+    /**
+     * Emit a given diagram value.
+     *
+     * @param diagram
+     */
     setDiagram(diagram) {
       this.$emit('setDiagram', diagram)
     },
+    /**
+     * Emit a given diagramLoaded value.
+     *
+     * @param diagramLoaded
+     */
     changeDiagramLoaded(diagramLoaded) {
       this.$emit('loadedDiagram', diagramLoaded)
     },
+    /**
+     * Set a given element as the selected element.
+     *
+     * @param element
+     */
     selectedElement(element) {
       this.elementSelected = element
     },
+    /**
+     * If a given value exists, trigger the redraw of the knowledge graph.
+     *
+     * @param value
+     */
     redrawKnowledgeGraph(value) {
       if (value) {
         this.$refs.graphViewer.redrawKnowledgeGraph()
       }
     },
+    /**
+     * If a given value exists, trigger the saving of the knowledge graph.
+     *
+     * @param value
+     */
     saveKnowledgeGraph(value) {
       if (value) {
         this.$refs.graphViewer.saveKnowledgeGraph()
       }
     },
+    /**
+     * Set a given metamodel as the current metamodel.
+     *
+     * @param metamodel
+     */
     updateMetamodel(metamodel) {
       this.metamodel = metamodel
     },
+    /**
+     * Trigger changing the input for a given parameter name into a new value.
+     *
+     * @param parameterName
+     * @param newValue
+     */
     changeInput(parameterName, newValue) {
       this.$refs.graphViewer.changeInput(parameterName, newValue)
     },
+    /**
+     * Center the canvas.
+     */
     centerCanvas() {
       const canvas = this.diagram?.get('canvas')
       if (canvas) {
         centerCanvas(canvas)
       }
     },
+    /**
+     * If a given value exists, trigger the saving as XML.
+     *
+     * @param value
+     */
     saveXML(value) {
       if (value) {
         this.$refs.graphViewer.saveXML()
       }
     },
+    /**
+     * Toggle the view of the dashboard app between normal and fullscreen mode.
+     */
     toggleView() {
       const elem = document.getElementById('dashboardApp')
       if (!this.isMaximized) {
@@ -104,6 +169,11 @@ export default {
 
       this.isMaximized = !this.isMaximized
     },
+    /**
+     * Open the fullscreen mode for a given element.
+     *
+     * @param elem
+     */
     openFullscreen(elem) {
       if (elem.requestFullscreen) {
         elem.requestFullscreen()
@@ -115,6 +185,9 @@ export default {
       document.getElementById('verdatas-dashboard').classList.add('fullViewHeight')
       this.centerCanvas()
     },
+    /**
+     * Close the fullscreen mode.
+     */
     closeFullscreen() {
       if (document.exitFullscreen) {
         document.exitFullscreen()
@@ -164,12 +237,8 @@ export default {
       :members="members"
       @changeInput="changeInput"
     />
-    <Legend
-      v-if="canViewOnly"
-    />
-    <LearningState
-      v-if="canViewOnly"
-    />
+    <IconLegend v-if="canViewOnly" />
+    <LearningState v-if="canViewOnly" />
   </div>
 </template>
 

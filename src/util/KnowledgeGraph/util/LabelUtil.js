@@ -1,56 +1,78 @@
+/**
+ * This is a modified version of the original file from https://github.com/pinussilvestrus/postit-js (MIT).
+ *
+ * Copyright 2020 Niklas Kiefer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * -----
+ *
+ * Adjustments for Dashboard of the assistance system developed as part of the VerDatAs project
+ * Copyright (C) 2022-2024 TU Dresden (Tommy Kubica)
+ *
+ * In addition to the terms of the MIT license, this file is distributed under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+import { is } from '@/util/KnowledgeGraph/util/ModelUtil'
 import { assign } from 'min-dash'
 
-import { is } from './ModelUtil'
-
+/**
+ * Specify the default size of a label.
+ */
 export var DEFAULT_LABEL_SIZE = {
   width: 90,
   height: 20
 }
 
+/**
+ * Specify the indent of a flow label.
+ */
 export var FLOW_LABEL_INDENT = 15
 
 /**
- * Returns true if the given semantic has an external label
+ * Return, whether the given semantic is an external label.
  *
- * @param {BpmnElement} semantic
- * @return {boolean} true if has label
+ * @param semantic
  */
-// TODO: Maybe readd this code
 export function isLabelExternal(semantic) {
   return is(semantic, 'verDatAs:GraphElement')
 }
 
 /**
- * Returns true if the given element has an external label
+ * Return, whether the given element has an external label.
  *
- * @param {djs.model.shape} element
- * @return {boolean} true if has label
+ * @param element
  */
 export function hasExternalLabel(element) {
   return isLabel(element.label)
 }
 
 /**
- * Get the position for sequence flow labels
+ * Retrieve the position for sequence flow labels.
  *
- * @param  {Array<Point>} waypoints
- * @return {Point} the label position
+ * @param waypoints
  */
 export function getFlowLabelPosition(waypoints) {
-  // get the waypoints mid
-  var mid = waypoints.length / 2 - 1
+  // Get the waypoints mid
+  const mid = waypoints.length / 2 - 1
 
-  var first = waypoints[Math.floor(mid)]
-  var second = waypoints[Math.ceil(mid + 0.01)]
+  const first = waypoints[Math.floor(mid)]
+  const second = waypoints[Math.ceil(mid + 0.01)]
 
-  // get position
-  var position = getWaypointsMid(waypoints)
+  // Get position
+  const position = getWaypointsMid(waypoints)
 
-  // calculate angle
-  var angle = Math.atan((second.y - first.y) / (second.x - first.x))
+  // Calculate angle
+  const angle = Math.atan((second.y - first.y) / (second.x - first.x))
 
-  var x = position.x,
-    y = position.y
+  let x = position.x
+  let y = position.y
 
   if (Math.abs(angle) < Math.PI / 2) {
     y -= FLOW_LABEL_INDENT
@@ -62,16 +84,15 @@ export function getFlowLabelPosition(waypoints) {
 }
 
 /**
- * Get the middle of a number of waypoints
+ * Retrieve the middle of a number of waypoints.
  *
- * @param  {Array<Point>} waypoints
- * @return {Point} the mid point
+ * @param waypoints
  */
 export function getWaypointsMid(waypoints) {
-  var mid = waypoints.length / 2 - 1
+  const mid = waypoints.length / 2 - 1
 
-  var first = waypoints[Math.floor(mid)]
-  var second = waypoints[Math.ceil(mid + 0.01)]
+  const first = waypoints[Math.floor(mid)]
+  const second = waypoints[Math.ceil(mid + 0.01)]
 
   return {
     x: first.x + (second.x - first.x) / 2,
@@ -79,6 +100,11 @@ export function getWaypointsMid(waypoints) {
   }
 }
 
+/**
+ * Retrieve the middle of an external label.
+ *
+ * @param element
+ */
 export function getExternalLabelMid(element) {
   if (element.waypoints) {
     return getFlowLabelPosition(element.waypoints)
@@ -91,17 +117,16 @@ export function getExternalLabelMid(element) {
 }
 
 /**
- * Returns the bounds of an elements label, parsed from the elements DI or
- * generated from its bounds.
+ * Return the bounds of an element's label, parsed from the elements DI or generated from its bounds.
  *
- * @param {BpmndDi} di
- * @param {djs.model.Base} element
+ * @param di
+ * @param element
  */
 export function getExternalLabelBounds(di, element) {
-  var mid,
-    size,
-    bounds,
-    label = di.label
+  let mid
+  let size
+  let bounds
+  const label = di.label
 
   if (label && label.bounds) {
     bounds = label.bounds
@@ -130,6 +155,11 @@ export function getExternalLabelBounds(di, element) {
   )
 }
 
+/**
+ * Check, whether a given element is a label.
+ *
+ * @param element
+ */
 export function isLabel(element) {
   return element && !!element.labelTarget
 }

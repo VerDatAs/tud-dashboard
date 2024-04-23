@@ -1,20 +1,35 @@
-import inherits from 'inherits-browser'
-
+/**
+ * This is a modified version of the original file from https://github.com/pinussilvestrus/postit-js (MIT).
+ *
+ * Copyright 2020 Niklas Kiefer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * -----
+ *
+ * Adjustments for Dashboard of the assistance system developed as part of the VerDatAs project
+ * Copyright (C) 2022-2024 TU Dresden (Tommy Kubica)
+ *
+ * In addition to the terms of the MIT license, this file is distributed under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 import BaseModeling from 'diagram-js/lib/features/modeling/Modeling'
-
-// import UpdateModdlePropertiesHandler from './cmd/UpdateModdlePropertiesHandler';
-import UpdatePropertiesHandler from './cmd/UpdatePropertiesHandler'
-// import UpdateCanvasRootHandler from './cmd/UpdateCanvasRootHandler';
-
-import UpdateLabelHandler from '../label-editing/cmd/UpdateLabelHandler'
+import inherits from 'inherits-browser'
+import UpdateLabelHandler from '@/util/KnowledgeGraph/features/label-editing/cmd/UpdateLabelHandler'
+import UpdatePropertiesHandler from '@/util/KnowledgeGraph/features/modeling/cmd/UpdatePropertiesHandler'
 
 /**
- * BPMN 2.0 modeling features activator
+ * VerDatAs modeling features activator.
  *
- * @param {EventBus} eventBus
- * @param {ElementFactory} elementFactory
- * @param {CommandStack} commandStack
- * @param {BpmnRules} bpmnRules
+ * @param eventBus
+ * @param elementFactory
+ * @param commandStack
  */
 export default function Modeling(eventBus, elementFactory, commandStack) {
   BaseModeling.call(this, eventBus, elementFactory, commandStack)
@@ -24,18 +39,26 @@ inherits(Modeling, BaseModeling)
 
 Modeling.$inject = ['eventBus', 'elementFactory', 'commandStack']
 
+/**
+ * Retrieve specified handlers.
+ */
 Modeling.prototype.getHandlers = function () {
-  var handlers = BaseModeling.prototype.getHandlers.call(this)
+  const handlers = BaseModeling.prototype.getHandlers.call(this)
 
-  // handlers['element.updateModdleProperties'] = UpdateModdlePropertiesHandler;
   handlers['element.updateProperties'] = UpdatePropertiesHandler
-  // handlers['canvas.updateRoot'] = UpdateCanvasRootHandler;
   handlers['element.updateLabel'] = UpdateLabelHandler
 
   return handlers
 }
 
-// TODO: The bounds might be too large, as the visual label is way shorter
+/**
+ * Update the label of an element.
+ *
+ * @param element
+ * @param newLabel
+ * @param newBounds
+ * @param hints
+ */
 Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) {
   this._commandStack.execute('element.updateLabel', {
     element: element,
@@ -45,132 +68,15 @@ Modeling.prototype.updateLabel = function (element, newLabel, newBounds, hints) 
   })
 }
 
-// Modeling.prototype.connect = function(source, target, attrs, hints) {
-//
-//   var bpmnRules = this._bpmnRules;
-//
-//   if (!attrs) {
-//     attrs = bpmnRules.canConnect(source, target);
-//   }
-//
-//   if (!attrs) {
-//     return;
-//   }
-//
-//   return this.createConnection(source, target, attrs, source.parent, hints);
-// };
-
-// Modeling.prototype.updateModdleProperties = function(element, moddleElement, properties) {
-//   this._commandStack.execute('element.updateModdleProperties', {
-//     element: element,
-//     moddleElement: moddleElement,
-//     properties: properties
-//   });
-// };
-
+/**
+ * Update the properties of an element.
+ *
+ * @param element
+ * @param properties
+ */
 Modeling.prototype.updateProperties = function (element, properties) {
   this._commandStack.execute('element.updateProperties', {
     element: element,
     properties: properties
   })
 }
-
-// Modeling.prototype.resizeLane = function(laneShape, newBounds, balanced) {
-//   this._commandStack.execute('lane.resize', {
-//     shape: laneShape,
-//     newBounds: newBounds,
-//     balanced: balanced
-//   });
-// };
-//
-// Modeling.prototype.addLane = function(targetLaneShape, location) {
-//   var context = {
-//     shape: targetLaneShape,
-//     location: location
-//   };
-//
-//   this._commandStack.execute('lane.add', context);
-//
-//   return context.newLane;
-// };
-//
-// Modeling.prototype.splitLane = function(targetLane, count) {
-//   this._commandStack.execute('lane.split', {
-//     shape: targetLane,
-//     count: count
-//   });
-// };
-
-/**
- * Transform the current diagram into a collaboration.
- *
- * @return {djs.model.Root} the new root element
- */
-// Modeling.prototype.makeCollaboration = function() {
-//
-//   var collaborationElement = this._create('root', {
-//     type: 'bpmn:Collaboration'
-//   });
-//
-//   var context = {
-//     newRoot: collaborationElement
-//   };
-//
-//   this._commandStack.execute('canvas.updateRoot', context);
-//
-//   return collaborationElement;
-// };
-//
-// Modeling.prototype.updateLaneRefs = function(flowNodeShapes, laneShapes) {
-//
-//   this._commandStack.execute('lane.updateRefs', {
-//     flowNodeShapes: flowNodeShapes,
-//     laneShapes: laneShapes
-//   });
-// };
-
-/**
- * Transform the current diagram into a process.
- *
- * @return {djs.model.Root} the new root element
- */
-// Modeling.prototype.makeProcess = function() {
-//
-//   var processElement = this._create('root', {
-//     type: 'bpmn:Process'
-//   });
-//
-//   var context = {
-//     newRoot: processElement
-//   };
-//
-//   this._commandStack.execute('canvas.updateRoot', context);
-// };
-//
-//
-// Modeling.prototype.claimId = function(id, moddleElement) {
-//   this._commandStack.execute('id.updateClaim', {
-//     id: id,
-//     element: moddleElement,
-//     claiming: true
-//   });
-// };
-//
-//
-// Modeling.prototype.unclaimId = function(id, moddleElement) {
-//   this._commandStack.execute('id.updateClaim', {
-//     id: id,
-//     element: moddleElement
-//   });
-// };
-//
-// Modeling.prototype.setColor = function(elements, colors) {
-//   if (!elements.length) {
-//     elements = [ elements ];
-//   }
-//
-//   this._commandStack.execute('element.setColor', {
-//     elements: elements,
-//     colors: colors
-//   });
-// };

@@ -1,48 +1,49 @@
-import VerDatAsTreeWalker from './VerDatAsTreeWalker'
-
 /**
- * The importPostitDiagram result.
+ * This is a modified version of the original file from https://github.com/pinussilvestrus/postit-js (MIT).
  *
- * @typedef {Object} importPostitDiagramResult
+ * Copyright 2020 Niklas Kiefer
  *
- * @property {Array<string>} warnings
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * -----
+ *
+ * Adjustments for Dashboard of the assistance system developed as part of the VerDatAs project
+ * Copyright (C) 2022-2024 TU Dresden (Tommy Kubica)
+ *
+ * In addition to the terms of the MIT license, this file is distributed under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-/**
- * The importPostitDiagram error.
- *
- * @typedef {Error} importPostitDiagramError
- *
- * @property {Array<string>} warnings
- */
+import VerDatAsTreeWalker from '@/util/KnowledgeGraph/import/VerDatAsTreeWalker'
 
 /**
  * Import the definitions into a diagram.
  *
- * Errors and warnings are reported through the specified callback.
- *
- * @param  {djs.Diagram} diagram
- * @param  {ModdleElement<Definitions>} definitions
- * @param  {ModdleElement<KnowledgeGraphRoot>} [graphRoot] the diagram to be rendered
- * (if not provided, the first one will be rendered)
- *
- * Returns {Promise<importPostitDiagramResult, importPostitDiagramError>}
+ * @param diagram
+ * @param definitions
+ * @param graphRoot
  */
 export function importVerDatAsDiagram(diagram, definitions, graphRoot) {
-  var importer, eventBus, translate
+  let importer
+  let eventBus
+  let translate
 
-  var error,
-    warnings = []
+  let error
+  const warnings = []
 
   /**
-   * Walk the diagram semantically, importing (=drawing)
-   * all elements you encounter.
+   * Walk the diagram semantically, importing (= drawing) all elements that are encountered.
    *
-   * @param {ModdleElement<Definitions>} definitions
-   * @param {ModdleElement<KnowledgeGraphRoot>} graphRoot
+   * @param definitions
+   * @param graphRoot
    */
   function render(definitions, graphRoot) {
-    var visitor = {
+    const visitor = {
       root: function (element) {
         return importer.add(element)
       },
@@ -56,10 +57,9 @@ export function importVerDatAsDiagram(diagram, definitions, graphRoot) {
       }
     }
 
-    var walker = new VerDatAsTreeWalker(visitor, translate)
+    const walker = new VerDatAsTreeWalker(visitor, translate)
 
-    // traverse xml document model,
-    // starting at definitions
+    // Traverse the XML document model, starting at the definitions
     walker.handleDefinitions(definitions, graphRoot)
   }
 

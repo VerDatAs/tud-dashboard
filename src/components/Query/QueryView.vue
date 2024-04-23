@@ -1,19 +1,33 @@
+<!--
+Dashboard for the assistance system developed as part of the VerDatAs project
+Copyright (C) 2022-2024 TU Dresden (Niklas Harbig, Tommy Kubica)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <script>
+import CodeEditor from '@/components/Query/CodeEditor.vue'
+import QueryBuilder from '@/components/Query/QueryBuilder.vue'
+import { aggregationOperators, comparisonOperators } from '@/util/QueryHelpers'
 import axios from 'axios'
-import CodeBuilder from './QueryBuilder.vue'
-import CodeEditor from './CodeEditor.vue'
-import { comparisonOperators, aggregationOperators, } from '@/util/QueryHelpers'
 
 export default {
   name: 'QueryView',
   components: {
-    CodeBuilder,
+    QueryBuilder,
     CodeEditor
   },
   data: () => ({
-    //backendUrl: 'http://127.0.0.1:8000', //needs to be changed later
-    //authUser: 'testuser', //later changed to Bearer Authorization with token
-    //authPassword: 'test123',
     comparisonOperators,
     aggregationOperators,
     filterAttributes: [],
@@ -29,16 +43,18 @@ export default {
   props: {
     backendUrl: String,
     isExpanded: Boolean,
-    token: String,
+    token: String
   },
   created() {
-    // Call this function to fetch the current schema for the xAPI attributes at the start of this component
+    // Call this function to fetch the current schema at the creation time of this component
     this.fetchSchema()
   },
   mounted() {
-    // Event listener to close the list of suggestion fr the attribute value if the user clicks outside of it
+    // Event listener to close the list of suggestions for the attribute value, if the user clicks outside of it
     document.getElementById('query-view').addEventListener('click', (event) => {
-      if(event.target.getAttribute("name") === 'filter-input') return
+      if (event.target.getAttribute('name') === 'filter-input') {
+        return
+      }
       const suggestionList = document.getElementsByClassName('autocomplete-items')
       if (suggestionList.length > 0) {
         for (const list of suggestionList) {
@@ -48,8 +64,10 @@ export default {
     })
   },
   methods: {
+    /**
+     * Fetch the current schema for the xAPI attributes.
+     */
     fetchSchema() {
-
       const url = this.backendUrl + '/api/v2/statement/schema'
 
       const authHeader = {
@@ -58,19 +76,18 @@ export default {
       }
 
       axios
-        //.get(url, { auth: { username: this.authUser, password: this.authPassword } })
         .get(url, { headers: authHeader })
         .then((result) => {
           console.log('Fetch xAPI statements schema', result)
 
           this.filterAttributes = result.data
 
-          // iterate over the attribute list from the backend
+          // Iterate over the attribute list from the backend
           for (const attribute of result.data) {
             if (attribute.type === 'number' || attribute.type === 'integer') {
-              // unify the 'number' and 'integer' type since we do not need to differentiate between those two
+              // Unify the 'number' and 'integer' types, since we do not need to differentiate between those two
               attribute.type = 'number'
-              // currently only attributes with the 'number' type are available for the operations
+              // Currently, only attributes with the 'number' type are available for the operations
               this.operationAttributes.push(attribute)
             }
           }
@@ -79,40 +96,39 @@ export default {
           console.error(err)
         })
     },
+    /**
+     * Send a given query to the backend.
+     *
+     * @param input
+     */
     sendQuery(input) {
-
-      // Function to send the query to the backend
-
-      // Call a separate function to check if the query is valid
+      // Call a separate function to check, whether the query is valid
       const validQuery = this.validateQuery(input)
 
-      // if function is not valid the query is not send to the backend
+      // If the query is not valid, it is not send to the backend
       if (!validQuery) {
         this.queryResult = null
         return
       }
 
-      // general information for request
+      // Prepare the general request
       const queryUrl = this.backendUrl + '/api/v2/statement/query'
       const authHeader = {
         'Content-Type': 'application/json;charset=UTF-8',
         Authorization: 'Bearer ' + this.token
       }
 
-      // to signalize to the user that the query is being processed in the backend
+      // Signalize to the user that the query is being processed in the backend
       this.queryResult = 'Suchen...'
 
       axios
-        /* .post(queryUrl, input, {
-          auth: { username: this.authUser, password: this.authPassword }
-        }) */
         .post(queryUrl, input, { headers: authHeader })
         .then((result) => {
           console.log('Query result', result)
 
           let resultObject = result.data
 
-          // if the result contains an 'aggregate' part set this as the result otherwise delete it from the query
+          // If the result contains an 'aggregate' part, set this as the result, otherwise delete it from the query
           if (resultObject['aggregate']) {
             resultObject = resultObject['aggregate']
           } else {
@@ -125,59 +141,63 @@ export default {
           this.queryResult = err
         })
     },
+    /**
+     * Validate the query syntax.
+     *
+     * @param query
+     */
     validateQuery(query) {
-
-      // Function to validate the query syntax
-
       this.errorMessages = []
 
-      // check if the 'search' part is an object
+      // Check, if the 'search' part is an object
       if (typeof query.search !== 'object') {
         this.errorMessages.push('Das search Feld sollte ein Objekt sein.')
         return false
       }
 
-       // check if the 'operations' part is an array
+      // Check, if the 'operations' part is an array
       if (!Array.isArray(query.operations)) {
         this.errorMessages.push('Das operations Feld sollte eine Liste sein.')
         return false
       }
 
-      // if search object has any filters check them
+      // If the search object has any filters, check them
       if (Object.keys(query.search).length > 0) {
         this.validateFilters(query.search)
       }
 
-      // if operations array has an entries check them
-      if(query.operations.length > 0) {
+      // If the operations array has entries, check them
+      if (query.operations.length > 0) {
         this.validateOperations(query.operations)
       }
 
       return this.errorMessages.length === 0
     },
+    /**
+     * Validate given filters.
+     *
+     * @param filter
+     */
     validateFilters(filter) {
-
-      // check if object has only one top-level entry
+      // Check, if the object has only one top-level entry
       if (Object.keys(filter).length === 1) {
-
         const filterProperty = Object.keys(filter)[0]
         const validConnections = ['$and', '$or']
 
-        // check if valid connection
+        // Check, if the connection is valid
         if (validConnections.indexOf(filterProperty) > -1) {
-          //check if the value of the connection is an array
+          // Check, if the value of the connection is an array
           if (!Array.isArray(filter[filterProperty])) {
             this.errorMessages.push('Die ' + filterProperty + ' Verknüpfung sollte eine List sein.')
             return
           }
 
-          // recursively call the function for every element in the array
+          // Recursively call the function for every element in the array
           for (const element of filter[filterProperty]) {
             this.validateFilters(element)
           }
         } else {
-
-          // if element is not a connection check if it is a valid attribute
+          // If the element is not a connection, check, if it is a valid attribute
           let found = this.isValidAttribute(filterProperty)
           if (!found) {
             this.errorMessages.push('Die Eingabe ' + filterProperty + ' im search Feld is nicht korrekt.')
@@ -186,9 +206,9 @@ export default {
 
           let propertyValue = filter[filterProperty]
           let comparisonOperator = null
-          //check if property value is an object
+          // Check, if the property value is an object
           if (typeof propertyValue === 'object') {
-            //check if valid comparison operator
+            // Check, if the comparison operator is valid
             comparisonOperator = Object.keys(propertyValue)[0]
             found = this.isValidComparisonOperator(comparisonOperator)
             if (!found) {
@@ -199,22 +219,26 @@ export default {
             propertyValue = propertyValue[comparisonOperator]
           }
 
-          // check if specified value is valid
+          // Check, if the specified value is valid
           const validValue = this.isValidAttributeValue(filterProperty, propertyValue, comparisonOperator)
-          if (!validValue) return
+          if (!validValue) {
+            console.log('Die spezifizierte Wert ist nicht valide.')
+            return
+          }
         }
       } else {
         this.errorMessages.push('Element ' + filter + ' sollte nur einen Eintrag haben.')
       }
     },
+    /**
+     * Validate given operations.
+     *
+     * @param operations
+     */
     validateOperations(operations) {
-
-      // Function to check if the operations are valid
-
       for (const operation of operations) {
-
         if ('$skip' in operation) {
-          // if the operation is $skip then check if the value is a number and greater than or equal zero
+          // If the operation is $skip, then check, if the value is a number and greater than or equal zero
           if (!isNaN(operation['$skip']) && operation['$skip'] >= 0) {
             operation['$skip'] = Number(operation['$skip'])
           } else {
@@ -225,7 +249,7 @@ export default {
         }
 
         if ('$limit' in operation) {
-          // if the operation is $limit then check if the value is a number and greater than or equal one
+          // If the operation is $limit, then check, if the value is a number and greater than or equal one
           if (!isNaN(operation['$limit']) && operation['$limit'] >= 1) {
             operation['$limit'] = Number(operation['$limit'])
           } else {
@@ -237,37 +261,36 @@ export default {
 
         if ('$group' in operation) {
           const groupObject = operation['$group']
-          // if the operation is $group check if the '_id' attribute is specified
+          // If the operation is $group, then check, if the '_id' attribute is specified
           if ('_id' in groupObject) {
-            // split value since it it specified with the MongoDB prefix
+            // Split value, since it is specified with the MongoDB prefix
             const idValue = groupObject['_id'].split('$')[1]
-            // Check if the value for '_id' attribute is an valid attribute
+            // Check, if the value for '_id' attribute is a valid attribute
             const found = this.isValidAttribute(idValue)
-            if (!found && groupObject['_id'] !== '')
+            if (!found && groupObject['_id'] !== '') {
               this.errorMessages.push('Eingabe ' + idValue + ' für das _id Feld im $group Feld ist nicht gültig.')
+            }
           } else {
             this.errorMessages.push('Das _id Feld für das $group Feld fehlt.')
           }
 
-          // iterate over the properties of the $group object
+          // Iterate over the properties of the $group object
           for (const element in groupObject) {
             if (element !== '_id') {
-
-              // create a list with valid operations
+              // Create a list with valid operations
               const validOperations = this.aggregationOperators.map((element) => element.value)
 
               // Check that the $group object only has one entry
               if (Object.keys(groupObject[element]).length > 1) {
                 this.errorMessages.push('Das Feld ' + element + ' sollte nur einen Eintrag haben.')
               } else {
-
                 const aggregationOperator = Object.keys(groupObject[element])[0]
 
-                // Check if specified operation is valid
+                // Check, if a specified operation is valid
                 if (validOperations.indexOf(aggregationOperator) > -1) {
-                  // split attribute since it it specified with the MongoDB prefix
+                  // Split attribute, since it is specified with the MongoDB prefix
                   const rawAttribute = groupObject[element][aggregationOperator].split('$')[1]
-                  // Check if it is an valid attribute
+                  // Check, if it is a valid attribute
                   const found = this.isValidAttribute(rawAttribute)
                   if (!found)
                     this.errorMessages.push(
@@ -290,13 +313,15 @@ export default {
         if ('$sort' in operation) {
           const sortObject = operation['$sort']
 
-          // since th $ sort object can have multiple entries iterate over them 
+          // Since the $sort object can have multiple entries, iterate over them
           for (const sortElement in sortObject) {
-            // Check if attribute is valid
+            // Check, if the attribute is valid
             const found = this.isValidAttribute(sortElement)
-            if (!found) this.errorMessages.push('Das Attribut ' + sortElement + ' für das $sort Feld is nicht gültig.')
+            if (!found) {
+              this.errorMessages.push('Das Attribut ' + sortElement + ' für das $sort Feld is nicht gültig.')
+            }
 
-            // Check if value is 1 or -1 to specify the sort direction
+            // Check, if the value is 1 or -1 to specify the sort direction
             if (sortObject[sortElement] !== 1 && sortObject[sortElement] !== -1) {
               this.errorMessages.push(
                 'Die Eingabe für das $sort Feld kann nur 1 oder -1, nicht ' + sortObject[sortElement] + ' sein.'
@@ -306,19 +331,23 @@ export default {
         }
       }
     },
+    /**
+     * Check, if the specified value for an attribute is valid.
+     *
+     * @param attribute
+     * @param value
+     * @param operator
+     */
     isValidAttributeValue(attribute, value, operator) {
-
-      // Function to check if the specified value for an attribute is valid
-
       const attributeObject = this.getAttribute(attribute)[0]
 
-      //TODO: check special case if attribute = timestamp
+      // TODO: Check special case if attribute = timestamp
 
-      // special case for these operators, since the require a comma separated list as a value
+      // Special case for these operators ($in, $nin), since they require a comma separated list as a value
       if (operator === '$in' || operator === '$nin') {
-        // Check if value is an array
+        // Check, if the value is an array
         if (Array.isArray(value)) {
-          // Check if the elements of the arrray are of the right type
+          // Check, whether the elements of the array have the correct type
           for (const el of value) {
             if (typeof el !== attributeObject.type) {
               this.errorMessages.push(
@@ -340,7 +369,7 @@ export default {
         }
       }
 
-      // check if the value is of the right type
+      // Check, if the value has the correct type
       if (typeof value !== attributeObject.type) {
         this.errorMessages.push(
           'Eingabe ' +
@@ -356,46 +385,83 @@ export default {
 
       return true
     },
+    /**
+     * Retrieve an attribute from the attribute list (containing the attributes type as well).
+     *
+     * @param attribute
+     */
     getAttribute(attribute) {
-      // retrieve attribute from the attribute list (contains the attributes type as well)
       return this.filterAttributes.filter((element) => element.attribute === attribute)
     },
+    /**
+     * Check, if a given attribute is in the attribute list.
+     *
+     * @param attribute
+     */
     isValidAttribute(attribute) {
-      // check if the attribute is in the attribute list
       return this.filterAttributes.find((element) => element.attribute === attribute)
     },
+    /**
+     * Check, if the operator is in the comparison operator list.
+     *
+     * @param operator
+     */
     isValidComparisonOperator(operator) {
-      // check if the operator is in the comparison operator list
       return this.comparisonOperators.find((element) => element.value === operator)
     },
+    /**
+     * Open the introduction with the current view name.
+     *
+     * @param viewName
+     */
     openIntro(viewName) {
-      // open the introduction with the current view name
       this.showIntro = true
       this.introViewName = viewName
-      // scroll to the top of the view and deactivate scrolling
-      document.getElementById('query-view').scrollTop = 0;
+      // Scroll to the top of the view and deactivate scrolling
+      document.getElementById('query-view').scrollTop = 0
       document.getElementById('query-view').style.overflow = 'hidden'
     },
+    /**
+     * Close the introduction and activate scrolling again.
+     */
     closeIntro() {
-      // close the introduction and activate scrolling again
       this.showIntro = false
       document.getElementById('query-view').style.overflow = 'auto'
     },
+    /**
+     * Forward to the Code Editor.
+     *
+     * @param input
+     */
     forwardQueryToCodeEditor(input) {
-      // to change to the Code Editor
       this.showCode = true
-      // to send the current query syntax from the Code Builder to the Code Editor
-      this.queryFromBuilder = JSON.stringify(input, null, 2);
+      // Send the current query syntax from the Code Builder to the Code Editor
+      this.queryFromBuilder = JSON.stringify(input, null, 2)
     },
+    /**
+     * Set a given result as the current query result.
+     *
+     * @param result
+     */
     setResult(result) {
       this.queryResult = result
     },
+    /**
+     * Set given messages as the current error messages.
+     *
+     * @param messages
+     */
     setErrorMessages(messages) {
       this.errorMessages = messages
     },
+    /**
+     * Remove an error message with a given index.
+     *
+     * @param index
+     */
     removeErrorMessage(index) {
       this.errorMessages.splice(index, 1)
-    },
+    }
   }
 }
 </script>
@@ -568,15 +634,15 @@ export default {
       <!-- Available Views -->
       <CodeEditor
         v-show="showCode"
-        :backendUrl="backendUrl" 
+        :backendUrl="backendUrl"
         :token="token"
         :queryFromBuilder="queryFromBuilder"
         @sendQuery="sendQuery"
         @setResult="setResult"
       />
-      <CodeBuilder
-        v-show="!showCode" 
-        :backendUrl="backendUrl" 
+      <QueryBuilder
+        v-show="!showCode"
+        :backendUrl="backendUrl"
         :token="token"
         :filterAttributes="filterAttributes"
         :operationAttributes="operationAttributes"
@@ -591,7 +657,6 @@ export default {
         <h5 class="bold-heading">Ergebnis:</h5>
         <pre>{{ queryResult }}</pre>
       </div>
-
     </div>
   </div>
 </template>
@@ -625,10 +690,7 @@ export default {
   height: 200px;
 }
 
-:deep(textarea:hover,
-input:hover,
-textarea:focus,
-input:focus) {
+:deep(textarea:hover, input:hover, textarea:focus, input:focus) {
   border-color: #c9c9c9;
 }
 

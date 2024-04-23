@@ -1,26 +1,44 @@
+/**
+ * This is a modified version of the original file from https://github.com/pinussilvestrus/postit-js (MIT).
+ *
+ * Copyright 2020 Niklas Kiefer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * -----
+ *
+ * Adjustments for Dashboard of the assistance system developed as part of the VerDatAs project
+ * Copyright (C) 2022-2024 TU Dresden (Tommy Kubica)
+ *
+ * In addition to the terms of the MIT license, this file is distributed under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+import { elementToString } from '@/util/KnowledgeGraph/import/Util'
 import { find, forEach } from 'min-dash'
-
 import Refs from 'object-refs'
 
-import { elementToString } from './Util'
-
-var diRefs = new Refs({ name: 'graphElement', enumerable: true }, { name: 'di', configurable: true })
+const diRefs = new Refs({ name: 'graphElement', enumerable: true }, { name: 'di', configurable: true })
 
 /**
- * Returns true if an element has the given meta-model type
+ * Return, whether an element has the given meta-model type.
  *
- * @param  {ModdleElement}  element
- * @param  {String}         type
- *
- * @return {Boolean}
+ * @param element
+ * @param type
  */
 function is(element, type) {
   return element.$instanceOf(type)
 }
 
 /**
- * Find a suitable display candidate for definitions where the DI does not
- * correctly specify one.
+ * Find a suitable display candidate for definitions where the DI does not correctly specify one.
+ *
+ * @param definitions
  */
 function findDisplayCandidate(definitions) {
   return find(definitions.rootElements, function (e) {
@@ -28,35 +46,56 @@ function findDisplayCandidate(definitions) {
   })
 }
 
+/**
+ * A tree walker that iterates all elements of a graph.
+ *
+ * @param handler
+ * @param translate
+ */
 export default function VerDatAsTreeWalker(handler, translate) {
-  // list of containers already walked
-  var handledElements = {}
+  // List of containers already walked
+  const handledElements = {}
 
-  // list of elements to handle deferred to ensure
-  // prerequisites are drawn
-  var deferred = []
+  // List of elements to handle deferred to ensure prerequisites are drawn
+  const deferred = []
 
-  // Helpers //////////////////////
-
+  /**
+   * Helper function to visit the root element.
+   *
+   * @param element
+   * @param diagram
+   */
   function visitRoot(element, diagram) {
     return handler.root(element, diagram)
   }
 
+  /**
+   * Helper function to visit an element.
+   *
+   * @param element
+   * @param ctx
+   */
   function visit(element, ctx) {
-    var gfx = element.gfx
+    const gfx = element.gfx
 
-    // avoid multiple rendering of elements
+    // Avoid multiple rendering of elements
     if (gfx) {
       throw new Error(translate('already rendered {element}', { element: elementToString(element) }))
     }
 
-    // call handler
+    // Call handler
     return handler.element(element, ctx)
   }
 
+  /**
+   * Helper function to visit an element if a DI exists.
+   *
+   * @param element
+   * @param ctx
+   */
   function visitIfDi(element, ctx) {
     try {
-      var gfx = element.di && visit(element, ctx)
+      const gfx = element.di && visit(element, ctx)
 
       handled(element)
 
@@ -69,18 +108,32 @@ export default function VerDatAsTreeWalker(handler, translate) {
     }
   }
 
+  /**
+   * Log an error.
+   *
+   * @param message
+   * @param context
+   */
   function logError(message, context) {
     handler.error(message, context)
   }
 
+  /**
+   * Store an element into the handled elements.
+   *
+   * @param element
+   */
   function handled(element) {
     handledElements[element.id] = element
   }
 
-  // DI handling //////////////////////
-
+  /**
+   * Register a DI.
+   *
+   * @param di
+   */
   function registerDi(di) {
-    var graphElement = di.graphElement
+    const graphElement = di.graphElement
 
     if (graphElement) {
       if (graphElement.di) {
@@ -104,34 +157,44 @@ export default function VerDatAsTreeWalker(handler, translate) {
     }
   }
 
+  /**
+   * Handle the graph of a given diagram.
+   *
+   * @param diagram
+   */
   function handleGraph(diagram) {
     handlePlane(diagram.plane)
   }
 
+  /**
+   * Handle a given plane with its elements.
+   *
+   * @param plane
+   */
   function handlePlane(plane) {
     registerDi(plane)
 
     forEach(plane.planeElement, handlePlaneElement)
   }
 
+  /**
+   * Handle a given plane element.
+   *
+   * @param planeElement
+   */
   function handlePlaneElement(planeElement) {
     registerDi(planeElement)
   }
 
-  // Semantic handling //////////////////////
-
   /**
-   * Handle definitions and return the rendered graph (if any)
+   * Handle given definitions and return the rendered graph (if any exist).
    *
-   * @param {ModdleElement} definitions to walk and import
-   * @param {ModdleElement} [graphRoot] specific graph to import and display
-   *
-   * @throws {Error} if no diagram to display could be found
+   * @param definitions
+   * @param graphRoot
    */
   function handleDefinitions(definitions, graphRoot) {
-    // make sure we walk the correct graphElement
-
-    var graphRoots = definitions.graphRoots
+    // Make sure that the correct graphElement is walked
+    const graphRoots = definitions.graphRoots
 
     if (graphRoot && graphRoots.indexOf(graphRoot) === -1) {
       throw new Error(translate('graphRoot not part of verDatAs:Definitions'))
@@ -141,24 +204,23 @@ export default function VerDatAsTreeWalker(handler, translate) {
       graphRoot = graphRoots[0]
     }
 
-    // no root graph -> nothing to import
+    // No root graph -> nothing to import
     if (!graphRoot) {
       throw new Error(translate('no graphRoot to display'))
     }
 
-    // load DI from selected root graph only
+    // Load DI from the selected root graph only
     handleGraph(graphRoot)
 
-    var plane = graphRoot.plane
+    const plane = graphRoot.plane
 
     if (!plane) {
       throw new Error(translate('no plane for {element}', { element: elementToString(graphRoot) }))
     }
 
-    var rootElement = plane.graphElement
+    let rootElement = plane.graphElement
 
-    // ensure we default to a suitable display candidate (graph),
-    // even if non is specified in DI
+    // Ensure we default to a suitable display candidate (graph), even if non is specified in DI
     if (!rootElement) {
       rootElement = findDisplayCandidate(definitions)
 
@@ -172,26 +234,29 @@ export default function VerDatAsTreeWalker(handler, translate) {
           })
         )
 
-        // correct DI on the fly
+        // Correct DI on the fly
         plane.graphElement = rootElement
         registerDi(plane)
       }
     }
 
-    var ctx = visitRoot(rootElement, plane)
+    const ctx = visitRoot(rootElement, plane)
 
     if (is(rootElement, 'verDatAs:KnowledgeGraph')) {
       handleKnowledgeGraph(rootElement, ctx)
     }
 
-    // handle all deferred elements
+    // Handle all deferred elements
     handleDeferred(deferred)
   }
 
+  /**
+   * Handle deferred elements.
+   */
   function handleDeferred() {
-    var fn
+    let fn
 
-    // drain deferred until empty
+    // Drain deferred until empty
     while (deferred.length) {
       fn = deferred.shift()
 
@@ -199,13 +264,25 @@ export default function VerDatAsTreeWalker(handler, translate) {
     }
   }
 
+  /**
+   * Handle the knowledge graph.
+   *
+   * @param graph
+   * @param context
+   */
   function handleKnowledgeGraph(graph, context) {
     handleGraphElements(graph.graphElements, context)
 
-    // log graph handled
+    // Log graph handled
     handled(graph)
   }
 
+  /**
+   * Handle a list of provided graph elements.
+   *
+   * @param graphElements
+   * @param context
+   */
   function handleGraphElements(graphElements, context) {
     forEach(graphElements, function (element) {
       if (is(element, 'verDatAs:SequenceFlow')) {
@@ -213,7 +290,7 @@ export default function VerDatAsTreeWalker(handler, translate) {
           handleSequenceFlow(element, context)
         })
       } else {
-        // TODO: Quick fix for Course, Module, Chapter, InteractiveTask, DocumentationTool
+        // TODO: Workaround for Course, Module, Chapter, InteractiveTask, DocumentationTool
         visitIfDi(element, context)
         if (element.modules) {
           handleGraphElements(element.modules, context)
@@ -235,11 +312,17 @@ export default function VerDatAsTreeWalker(handler, translate) {
     })
   }
 
+  /**
+   * Handle a given sequence flow.
+   *
+   * @param sequenceFlow
+   * @param context
+   */
   function handleSequenceFlow(sequenceFlow, context) {
     visitIfDi(sequenceFlow, context)
   }
 
-  // API //////////////////////
+  // API specific stuff
 
   return {
     handleDeferred: handleDeferred,

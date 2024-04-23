@@ -1,18 +1,33 @@
+/**
+ * This is a modified version of the original file from https://github.com/pinussilvestrus/postit-js (MIT).
+ *
+ * Copyright 2020 Niklas Kiefer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * -----
+ *
+ * Adjustments for Dashboard of the assistance system developed as part of the VerDatAs project
+ * Copyright (C) 2022-2024 TU Dresden (Tommy Kubica)
+ *
+ * In addition to the terms of the MIT license, this file is distributed under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 import { isString, assign } from 'min-dash'
-
 import { Moddle } from 'moddle'
-
 import { Reader, Writer } from 'moddle-xml'
 
 /**
- * A sub class of {@link Moddle} with support for import and export of Postit-js xml files.
+ * A sub-class of Moddle to support both importing and exporting VerDatAs XML files.
  *
- * @class PostitModdle
- *
- * @extends Moddle
- *
- * @param {Object|Array} packages to use for instantiating the model
- * @param {Object} [options] additional options to pass over
+ * @param packages
+ * @param options
  */
 export default function VerDatAsModdle(packages, options) {
   Moddle.call(this, packages, options)
@@ -21,32 +36,11 @@ export default function VerDatAsModdle(packages, options) {
 VerDatAsModdle.prototype = Object.create(Moddle.prototype)
 
 /**
- * The fromXML result.
+ * Instantiate a VerDatAs model tree from a given XML string.
  *
- * @typedef {Object} ParseResult
- *
- * @property {ModdleElement} rootElement
- * @property {Array<Object>} references
- * @property {Array<Error>} warnings
- * @property {Object} elementsById - a mapping containing each ID -> ModdleElement
- */
-
-/**
- * The fromXML error.
- *
- * @typedef {Error} ParseError
- *
- * @property {Array<Error>} warnings
- */
-
-/**
- * Instantiates a Postit model tree from a given xml string.
- *
- * @param {String}   xmlStr
- * @param {String}   [typeName='postit:Definitions'] name of the root element
- * @param {Object}   [options]  options to pass to the underlying reader
- *
- * @returns {Promise<ParseResult, ParseError>}
+ * @param xmlStr
+ * @param typeName
+ * @param options
  */
 VerDatAsModdle.prototype.fromXML = function (xmlStr, typeName, options) {
   if (!isString(typeName)) {
@@ -54,34 +48,24 @@ VerDatAsModdle.prototype.fromXML = function (xmlStr, typeName, options) {
     typeName = 'verDatAs:Definitions'
   }
 
-  var reader = new Reader(assign({ model: this, lax: true }, options))
-  var rootHandler = reader.handler(typeName)
+  const reader = new Reader(assign({ model: this, lax: true }, options))
+  const rootHandler = reader.handler(typeName)
 
   return reader.fromXML(xmlStr, rootHandler)
 }
 
 /**
- * The toXML result.
+ * Serialize a VerDatAs object tree into XML.
  *
- * @typedef {Object} SerializationResult
- *
- * @property {String} xml
- */
-
-/**
- * Serializes a Postit object tree to XML.
- *
- * @param {String}   element    the root element, typically an instance of `postit:Definitions`
- * @param {Object}   [options]  to pass to the underlying writer
- *
- * @returns {Promise<SerializationResult, Error>}
+ * @param element
+ * @param options
  */
 VerDatAsModdle.prototype.toXML = function (element, options) {
-  var writer = new Writer(options)
+  const writer = new Writer(options)
 
   return new Promise(function (resolve, reject) {
     try {
-      var result = writer.toXML(element)
+      const result = writer.toXML(element)
 
       return resolve({
         xml: result

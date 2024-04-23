@@ -1,3 +1,20 @@
+<!--
+Dashboard for the assistance system developed as part of the VerDatAs project
+Copyright (C) 2022-2024 TU Dresden (Niklas Harbig, Tommy Kubica)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <script>
 import { useSettingStore } from '@/stores/settings'
 
@@ -15,16 +32,6 @@ export default {
   <div id="settings" :class="`${isExpanded ? 'is-expanded' : ''}`">
     <div class="container py-4 mw-100">
       <h1>Einstellungen</h1>
-<!--      <div class="setting">-->
-<!--        <input id="autoSave" type="checkbox" v-model="settings.autosave" />-->
-<!--        <label for="autoSave" class="mx-1">Auto-Save</label>-->
-<!--        <font-awesome-icon-->
-<!--          class="icon"-->
-<!--          icon="circle-info"-->
-<!--          size="md"-->
-<!--          title="Dadurch wird die Funktion des automatischen Speicherns aktiviert, die Ihre Änderungen beim Arbeiten mit der Wissensstruktur speichert."-->
-<!--        />-->
-<!--      </div>-->
       <div class="setting">
         <input id="debuggingMode" type="checkbox" v-model="settings.debugging" />
         <label for="debuggingMode" class="mx-1">Debug-Modus</label>
@@ -39,7 +46,7 @@ export default {
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 #settings {
   z-index: 8;
   position: absolute;
@@ -50,18 +57,18 @@ export default {
   background: #eee;
   border: 1px solid #ccc;
   overflow-y: scroll;
-}
 
-#settings.is-expanded {
-  left: calc(var(--sidebar-width) + 10px);
-  width: calc(100% - var(--sidebar-width) - 20px);
-}
+  &.is-expanded {
+    left: calc(var(--sidebar-width) + 10px);
+    width: calc(100% - var(--sidebar-width) - 20px);
+  }
 
-.setting {
-  margin-top: 5px;
-}
+  .setting {
+    margin-top: 5px;
 
-.icon {
-  cursor: pointer;
+    .icon {
+      cursor: pointer;
+    }
+  }
 }
 </style>

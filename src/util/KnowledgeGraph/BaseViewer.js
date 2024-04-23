@@ -1,60 +1,42 @@
 /**
- * The code in the <project-logo></project-logo> area
- * must not be changed.
+ * This is a modified version of the original file from https://github.com/pinussilvestrus/postit-js (MIT).
  *
- * @see http://bpmn.io/license for more information.
+ * Copyright 2020 Niklas Kiefer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * -----
+ *
+ * Adjustments for Dashboard of the assistance system developed as part of the VerDatAs project
+ * Copyright (C) 2022-2024 TU Dresden (Tommy Kubica)
+ *
+ * In addition to the terms of the MIT license, this file is distributed under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import { importVerDatAsDiagram } from '@/util/KnowledgeGraph/import/Importer'
+import Moddle from '@/util/KnowledgeGraph/moddle'
+import { wrapForCompatibility } from '@/util/KnowledgeGraph/util/CompatibilityUtil'
+import Diagram from 'diagram-js'
+import Ids from 'ids'
+import inherits from 'inherits-browser'
 import { assign, find, isNumber, omit } from 'min-dash'
-
 import { domify, assignStyle, query as domQuery, remove as domRemove } from 'min-dom'
 
-import Diagram from 'diagram-js'
-
-import Ids from 'ids'
-
-import inherits from 'inherits-browser'
-
-import Moddle from './moddle'
-import { importVerDatAsDiagram } from './import/Importer'
-
-import { wrapForCompatibility } from './util/CompatibilityUtil'
-
 /**
- * @typedef {import('didi').ModuleDeclaration} ModuleDeclaration
+ * A base viewer for VerDatAs diagrams.
  *
- * @typedef {import('./BaseViewer').BaseModelerOptions} BaseModelerOptions
- * @typedef {import('./BaseViewer').ModdleElement} ModdleElement
- * @typedef {import('./BaseViewer').ImportXMLResult} ImportXMLResult
- * @typedef {import('./BaseViewer').ImportXMLError} ImportXMLError
- * @typedef {import('./BaseViewer').ImportDefinitionsResult} ImportDefinitionsResult
- * @typedef {import('./BaseViewer').ImportDefinitionsError} ImportDefinitionsError
- * @typedef {import('./BaseViewer').ModdleElement} ModdleElement
- * @typedef {import('./BaseViewer').ModdleElementsById} ModdleElementsById
- * @typedef {import('./BaseViewer').OpenResult} OpenResult
- * @typedef {import('./BaseViewer').OpenError} OpenError
- * @typedef {import('./BaseViewer').SaveXMLOptions} SaveXMLOptions
- * @typedef {import('./BaseViewer').SaveXMLResult} SaveXMLResult
- */
-
-/**
- * A base viewer for BPMN 2.0 diagrams.
- *
- * Have a look at {@link Viewer}, {@link NavigatedViewer} or {@link Modeler} for
- * bundles that include actual features.
- *
- * @param {BaseModelerOptions} [options] The options to configure the viewer.
+ * @param options
  */
 export default function BaseViewer(options) {
-  /**
-   * @type {BaseModelerOptions}
-   */
   options = assign({}, DEFAULT_OPTIONS, options)
 
   this._moddle = this._createModdle(options)
-
-  /**
-   * @type {HTMLElement}
-   */
   this._container = this._createContainer(options)
 
   /* <project-logo> */
@@ -69,35 +51,10 @@ export default function BaseViewer(options) {
 inherits(BaseViewer, Diagram)
 
 /**
- * Parse and render a BPMN 2.0 diagram.
+ * Parse and render a VerDatAs diagram.
  *
- * Once finished the viewer reports back the result to the
- * provided callback function with (err, warnings).
- *
- * ## Life-Cycle Events
- *
- * During import the viewer will fire life-cycle events:
- *
- *   * import.parse.start (about to read model from XML)
- *   * import.parse.complete (model read; may have worked or not)
- *   * import.render.start (graphical import start)
- *   * import.render.complete (graphical import finished)
- *   * import.done (everything done)
- *
- * You can use these events to hook into the life-cycle.
- *
- * @throws {ImportXMLError} An error thrown during the import of the XML.
- *
- * @fires BaseViewer#ImportParseStart
- * @fires BaseViewer#ImportParseComplete
- * @fires Importer#ImportRenderStart
- * @fires Importer#ImportRenderComplete
- * @fires BaseViewer#ImportDone
- *
- * @param {string} xml The BPMN 2.0 XML to be imported.
- * @param {ModdleElement|string} [bpmnDiagram] The optional diagram or Id of the BPMN diagram to open.
- *
- * @return {Promise<ImportXMLResult>} A promise resolving with warnings that were produced during the import.
+ * @param xml
+ * @param graphRoot
  */
 BaseViewer.prototype.importXML = wrapForCompatibility(async function importXML(xml, graphRoot) {
   const self = this
@@ -105,7 +62,6 @@ BaseViewer.prototype.importXML = wrapForCompatibility(async function importXML(x
   function ParseCompleteEvent(data) {
     const event = self.get('eventBus').createEvent(data)
 
-    // TODO(nikku): remove with future bpmn-js version
     Object.defineProperty(event, 'context', {
       enumerable: true,
       get: function () {
@@ -126,16 +82,7 @@ BaseViewer.prototype.importXML = wrapForCompatibility(async function importXML(x
 
   let aggregatedWarnings = []
   try {
-    // hook in pre-parse listeners +
-    // allow xml manipulation
-
-    /**
-     * A `import.parse.start` event.
-     *
-     * @event BaseViewer#ImportParseStart
-     * @type {Object}
-     * @property {string} xml The XML that is to be parsed.
-     */
+    // Hook in pre-parse listeners allow XML manipulation
     xml = this._emit('import.parse.start', { xml: xml }) || xml
 
     let parseResult
@@ -156,20 +103,7 @@ BaseViewer.prototype.importXML = wrapForCompatibility(async function importXML(x
 
     aggregatedWarnings = aggregatedWarnings.concat(parseWarnings)
 
-    // hook in post parse listeners +
-    // allow definitions manipulation
-
-    /**
-     * A `import.parse.complete` event.
-     *
-     * @event BaseViewer#ImportParseComplete
-     * @type {Object}
-     * @property {Error|null} error An error thrown when parsing the XML.
-     * @property {ModdleElement} definitions The definitions model element.
-     * @property {ModdleElementsById} elementsById The model elements by ID.
-     * @property {ModdleElement[]} references The referenced model elements.
-     * @property {string[]} warnings The warnings produced when parsing the XML.
-     */
+    // Hook in post parse listeners allow definitions manipulation
     definitions =
       this._emit(
         'import.parse.complete',
@@ -186,14 +120,6 @@ BaseViewer.prototype.importXML = wrapForCompatibility(async function importXML(x
 
     aggregatedWarnings = aggregatedWarnings.concat(importResult.warnings)
 
-    /**
-     * A `import.parse.complete` event.
-     *
-     * @event BaseViewer#ImportDone
-     * @type {Object}
-     * @property {ImportXMLError|null} error An error thrown during import.
-     * @property {string[]} warnings The warnings.
-     */
     this._emit('import.done', { error: null, warnings: aggregatedWarnings })
 
     return { warnings: aggregatedWarnings }
@@ -211,26 +137,10 @@ BaseViewer.prototype.importXML = wrapForCompatibility(async function importXML(x
 })
 
 /**
- * Import parsed definitions and render a BPMN 2.0 diagram.
+ * Import parsed definitions and render a VerDatAs diagram.
  *
- * Once finished the viewer reports back the result to the
- * provided callback function with (err, warnings).
- *
- * ## Life-Cycle Events
- *
- * During import the viewer will fire life-cycle events:
- *
- *   * import.render.start (graphical import start)
- *   * import.render.complete (graphical import finished)
- *
- * You can use these events to hook into the life-cycle.
- *
- * @throws {ImportDefinitionsError} An error thrown during the import of the definitions.
- *
- * @param {ModdleElement} definitions The definitions.
- * @param {ModdleElement|string} [bpmnDiagram] The optional diagram or ID of the BPMN diagram to open.
- *
- * @return {Promise<ImportDefinitionsResult>} A promise resolving with warnings that were produced during the import.
+ * @param definitions
+ * @param graphRoot
  */
 BaseViewer.prototype.importDefinitions = wrapForCompatibility(async function importDefinitions(definitions, graphRoot) {
   this._setDefinitions(definitions)
@@ -240,25 +150,9 @@ BaseViewer.prototype.importDefinitions = wrapForCompatibility(async function imp
 })
 
 /**
- * Open diagram of previously imported XML.
+ * Open diagram of the previously imported XML.
  *
- * Once finished the viewer reports back the result to the
- * provided callback function with (err, warnings).
- *
- * ## Life-Cycle Events
- *
- * During switch the viewer will fire life-cycle events:
- *
- *   * import.render.start (graphical import start)
- *   * import.render.complete (graphical import finished)
- *
- * You can use these events to hook into the life-cycle.
- *
- * @throws {OpenError} An error thrown during opening.
- *
- * @param {ModdleElement|string} bpmnDiagramOrId The diagram or Id of the BPMN diagram to open.
- *
- * @return {Promise<OpenResult>} A promise resolving with warnings that were produced during opening.
+ * @param graphRootOrId
  */
 BaseViewer.prototype.open = wrapForCompatibility(async function open(graphRootOrId) {
   const definitions = this._definitions
@@ -282,8 +176,8 @@ BaseViewer.prototype.open = wrapForCompatibility(async function open(graphRootOr
     }
   }
 
-  // clear existing rendered diagram
-  // catch synchronous exceptions during #clear()
+  // Clear existing rendered diagram
+  // Catch synchronous exceptions during #clear()
   try {
     this.clear()
   } catch (error) {
@@ -292,34 +186,16 @@ BaseViewer.prototype.open = wrapForCompatibility(async function open(graphRootOr
     throw error
   }
 
-  // perform graphical import
+  // Perform graphical import
   const { warnings } = await importVerDatAsDiagram(this, definitions, verDatAsDiagram)
 
   return { warnings }
 })
 
 /**
- * Export the currently displayed BPMN 2.0 diagram as
- * a BPMN 2.0 XML document.
+ * Export the currently displayed VerDatAs diagram as a VerDatAs XML document.
  *
- * ## Life-Cycle Events
- *
- * During XML saving the viewer will fire life-cycle events:
- *
- *   * saveXML.start (before serialization)
- *   * saveXML.serialized (after xml generation)
- *   * saveXML.done (everything done)
- *
- * You can use these events to hook into the life-cycle.
- *
- * @throws {Error} An error thrown during export.
- *
- * @fires BaseViewer#SaveXMLStart
- * @fires BaseViewer#SaveXMLDone
- *
- * @param {SaveXMLOptions} [options] The options.
- *
- * @return {Promise<SaveXMLResult>} A promise resolving with the XML.
+ * @param options
  */
 BaseViewer.prototype.saveXML = wrapForCompatibility(async function saveXML(options) {
   options = options || {}
@@ -333,15 +209,7 @@ BaseViewer.prototype.saveXML = wrapForCompatibility(async function saveXML(optio
       throw new Error('no definitions loaded')
     }
 
-    // allow to fiddle around with definitions
-
-    /**
-     * A `saveXML.start` event.
-     *
-     * @event BaseViewer#SaveXMLStart
-     * @type {Object}
-     * @property {ModdleElement} definitions The definitions model element.
-     */
+    // Allow to fiddle around with definitions
     definitions =
       this._emit('saveXML.start', {
         definitions
@@ -360,14 +228,6 @@ BaseViewer.prototype.saveXML = wrapForCompatibility(async function saveXML(optio
 
   const result = error ? { error } : { xml }
 
-  /**
-   * A `saveXML.done` event.
-   *
-   * @event BaseViewer#SaveXMLDone
-   * @type {Object}
-   * @property {Error} [error] An error thrown when saving the XML.
-   * @property {string} [xml] The saved XML.
-   */
   this._emit('saveXML.done', result)
 
   if (error) {
@@ -378,113 +238,16 @@ BaseViewer.prototype.saveXML = wrapForCompatibility(async function saveXML(optio
 })
 
 /**
- * Export the currently displayed BPMN 2.0 diagram as
- * an SVG image.
+ * Set the definitions to a given definitions value.
  *
- * ## Life-Cycle Events
- *
- * During SVG saving the viewer will fire life-cycle events:
- *
- *   * saveSVG.start (before serialization)
- *   * saveSVG.done (everything done)
- *
- * You can use these events to hook into the life-cycle.
- *
- * @throws {Error} An error thrown during export.
- *
- * @fires BaseViewer#SaveSVGDone
- *
- * @return {Promise<SaveSVGResult>} A promise resolving with the SVG.
+ * @param definitions
  */
-// TODO: Remove
-// BaseViewer.prototype.saveSVG = wrapForCompatibility(async function saveSVG() {
-//   this._emit('saveSVG.start');
-//
-//   let svg, err;
-//
-//   try {
-//     const canvas = this.get('canvas');
-//
-//     const contentNode = canvas.getActiveLayer(),
-//           defsNode = domQuery('defs', canvas._svg);
-//
-//     const contents = innerSVG(contentNode),
-//           defs = defsNode ? '<defs>' + innerSVG(defsNode) + '</defs>' : '';
-//
-//     const bbox = contentNode.getBBox();
-//
-//     svg =
-//       '<?xml version="1.0" encoding="utf-8"?>\n' +
-//       '<!-- created with bpmn-js / http://bpmn.io -->\n' +
-//       '<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">\n' +
-//       '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ' +
-//       'width="' + bbox.width + '" height="' + bbox.height + '" ' +
-//       'viewBox="' + bbox.x + ' ' + bbox.y + ' ' + bbox.width + ' ' + bbox.height + '" version="1.1">' +
-//       defs + contents +
-//       '</svg>';
-//   } catch (e) {
-//     err = e;
-//   }
-//
-//   /**
-//    * A `saveSVG.done` event.
-//    *
-//    * @event BaseViewer#SaveSVGDone
-//    * @type {Object}
-//    * @property {Error} [error] An error thrown when saving the SVG.
-//    * @property {string} [svg] The saved SVG.
-//    */
-//   this._emit('saveSVG.done', {
-//     error: err,
-//     svg: svg
-//   });
-//
-//   if (err) {
-//     throw err;
-//   }
-//
-//   return { svg };
-// });
-
-/**
- * Get a named diagram service.
- *
- * @example
- *
- * const elementRegistry = viewer.get('elementRegistry');
- * const startEventShape = elementRegistry.get('StartEvent_1');
- *
- * @param {string} name
- *
- * @return {Object} diagram service instance
- *
- * @method BaseViewer#get
- */
-
-/**
- * Invoke a function in the context of this viewer.
- *
- * @example
- *
- * viewer.invoke(function(elementRegistry) {
- *   const startEventShape = elementRegistry.get('StartEvent_1');
- * });
- *
- * @param {Function} fn to be invoked
- *
- * @return {Object} the functions return value
- *
- * @method BaseViewer#invoke
- */
-
 BaseViewer.prototype._setDefinitions = function (definitions) {
   this._definitions = definitions
 }
 
 /**
  * Return modules to instantiate with.
- *
- * @return {ModuleDeclaration[]} The modules.
  */
 BaseViewer.prototype.getModules = function () {
   return this._modules
@@ -492,41 +255,35 @@ BaseViewer.prototype.getModules = function () {
 
 /**
  * Remove all drawn elements from the viewer.
- *
- * After calling this method the viewer can still be reused for opening another
- * diagram.
  */
 BaseViewer.prototype.clear = function () {
   if (!this.getDefinitions()) {
-    // no diagram to clear
+    // No diagram to clear
     return
   }
 
-  // remove drawn elements
+  // Remove drawn elements
   Diagram.prototype.clear.call(this)
 }
 
 /**
- * Destroy the viewer instance and remove all its remainders from the document
- * tree.
+ * Destroy the viewer instance and remove all its remainders from the document tree.
  */
 BaseViewer.prototype.destroy = function () {
-  // diagram destroy
+  // Diagram destroy
   Diagram.prototype.destroy.call(this)
 
-  // dom detach
+  // DOM detach
   domRemove(this._container)
 }
 
 /**
  * Register an event listener.
  *
- * Remove an event listener via {@link BaseViewer#off}.
- *
- * @param {string|string[]} events The event(s) to listen to.
- * @param {number} [priority] The priority with which to listen.
- * @param {EventCallback} callback The callback.
- * @param {*} [that] Value of `this` the callback will be called with.
+ * @param events
+ * @param priority
+ * @param callback
+ * @param that
  */
 BaseViewer.prototype.on = function (events, priority, callback, that) {
   return this.get('eventBus').on(events, priority, callback, that)
@@ -535,8 +292,8 @@ BaseViewer.prototype.on = function (events, priority, callback, that) {
 /**
  * Remove an event listener.
  *
- * @param {string|string[]} events The event(s).
- * @param {Function} [callback] The callback.
+ * @param events
+ * @param callback
  */
 BaseViewer.prototype.off = function (events, callback) {
   this.get('eventBus').off(events, callback)
@@ -545,18 +302,17 @@ BaseViewer.prototype.off = function (events, callback) {
 /**
  * Attach the viewer to an HTML element.
  *
- * @param {HTMLElement} parentNode The parent node to attach to.
+ * @param parentNode
  */
 BaseViewer.prototype.attachTo = function (parentNode) {
   if (!parentNode) {
     throw new Error('parentNode required')
   }
 
-  // ensure we detach from the
-  // previous, old parent
+  // Ensure we detach from the previous, old parent
   this.detach()
 
-  // unwrap jQuery if provided
+  // Unwrap jQuery, if provided
   if (parentNode.get && parentNode.constructor.prototype.jquery) {
     parentNode = parentNode.get(0)
   }
@@ -574,8 +330,6 @@ BaseViewer.prototype.attachTo = function (parentNode) {
 
 /**
  * Get the definitions model element.
- *
- * @returns {ModdleElement} The definitions model element.
  */
 BaseViewer.prototype.getDefinitions = function () {
   return this._definitions
@@ -583,8 +337,6 @@ BaseViewer.prototype.getDefinitions = function () {
 
 /**
  * Detach the viewer.
- *
- * @fires BaseViewer#DetachEvent
  */
 BaseViewer.prototype.detach = function () {
   const container = this._container,
@@ -594,17 +346,18 @@ BaseViewer.prototype.detach = function () {
     return
   }
 
-  /**
-   * A `detach` event.
-   *
-   * @event BaseViewer#DetachEvent
-   * @type {Object}
-   */
   this._emit('detach', {})
 
   parentNode.removeChild(container)
 }
 
+/**
+ * Initialize the BaseViewer.
+ *
+ * @param container
+ * @param moddle
+ * @param options
+ */
 BaseViewer.prototype._init = function (container, moddle, options) {
   const baseModules = options.modules || this.getModules(options)
   const additionalModules = options.additionalModules || []
@@ -625,7 +378,7 @@ BaseViewer.prototype._init = function (container, moddle, options) {
     modules: diagramModules
   })
 
-  // invoke diagram constructor
+  // Invoke the diagram constructor
   Diagram.call(this, diagramOptions)
 
   if (options && options.container) {
@@ -634,17 +387,20 @@ BaseViewer.prototype._init = function (container, moddle, options) {
 }
 
 /**
- * Emit an event on the underlying {@link EventBus}
+ * Emit an event on the underlying EventBus.
  *
- * @param  {string} type
- * @param  {Object} event
- *
- * @return {Object} The return value after calling all event listeners.
+ * @param type
+ * @param event
  */
 BaseViewer.prototype._emit = function (type, event) {
   return this.get('eventBus').fire(type, event)
 }
 
+/**
+ * Create a container for the BaseViewer.
+ *
+ * @param options
+ */
 BaseViewer.prototype._createContainer = function (options) {
   const container = domify('<div class="bjs-container"></div>')
 
@@ -657,30 +413,40 @@ BaseViewer.prototype._createContainer = function (options) {
   return container
 }
 
+/**
+ * Create a moodle for the BaseViewer.
+ *
+ * @param options
+ */
 BaseViewer.prototype._createModdle = function (options) {
   const moddleOptions = assign({}, this._moddleExtensions, options.moddleExtensions)
   let moddle = new Moddle(moddleOptions)
-  // attach ids to moddle to be able to track and validated ids in the BPMN 2.0
-  // XML document tree
-  // TODO: Is this really necessary?
+  // Attach ids to moddle to be able to track and validated IDs in the VerDatAs XML document tree
   moddle.ids = new Ids([32, 36, 1])
 
-  return moddle // new Moddle(moddleOptions);
+  return moddle
 }
 
 BaseViewer.prototype._modules = []
 
-// helpers ///////////////
-
+/**
+ * Helper function to add warnings to the error.
+ *
+ * @param err
+ * @param warningsAry
+ */
 function addWarningsToError(err, warningsAry) {
   err.warnings = warningsAry
   return err
 }
 
+/**
+ * Helper function to check for validation errors.
+ *
+ * @param err
+ */
 function checkValidationError(err) {
-  // check if we can help the user by indicating wrong BPMN 2.0 xml
-  // (in case he or the exporting tool did not get that right)
-
+  // Check, whether the user can be supported by indicating wrong VerDatAs XML
   const pattern = /unparsable content <([^>]+)> detected([\s\S]*)$/
   const match = pattern.exec(err.message)
 
@@ -703,19 +469,17 @@ const DEFAULT_OPTIONS = {
 }
 
 /**
- * Ensure the passed argument is a proper unit (defaulting to px)
+ * Helper function to ensure that the passed argument has a proper unit (defaulting to px).
  */
 function ensureUnit(val) {
   return val + (isNumber(val) ? 'px' : '')
 }
 
 /**
- * Find BPMNDiagram in definitions by ID
+ * Find VerDatAsDiagram in definitions by ID.
  *
- * @param {ModdleElement<Definitions>} definitions
- * @param {string} diagramId
- *
- * @return {ModdleElement<BPMNDiagram>|null}
+ * @param definitions
+ * @param diagramId
  */
 function findVerDatAsDiagram(definitions, diagramId) {
   if (!diagramId) {
@@ -731,13 +495,11 @@ function findVerDatAsDiagram(definitions, diagramId) {
 
 /* <project-logo> */
 
-import { open as openPoweredBy, BPMNIO_IMG, LOGO_STYLES, LINK_STYLES } from './util/PoweredByUtil'
-
+import { open as openPoweredBy, BPMNIO_IMG, LOGO_STYLES, LINK_STYLES } from '@/util/KnowledgeGraph/util/PoweredByUtil'
 import { event as domEvent } from 'min-dom'
 
 /**
- * Adds the project logo to the diagram container as
- * required by the bpmn.io license.
+ * Adds the project logo to the diagram container as required by the bpmn.io license.
  *
  * @see http://bpmn.io/license
  *

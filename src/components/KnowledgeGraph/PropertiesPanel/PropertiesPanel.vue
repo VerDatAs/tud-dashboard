@@ -1,10 +1,27 @@
+<!--
+Dashboard for the assistance system developed as part of the VerDatAs project
+Copyright (C) 2022-2024 TU Dresden (Tommy Kubica)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <script>
+import BasicTypes from '@/components/KnowledgeGraph/PropertiesPanel/BasicTypes.vue'
+import { useCollaborationsStore } from '@/stores/collaborations'
+import { basicTypes, customTypes, excludedParameters, nonSelectableElements } from '@/util/GraphHelpers'
 import axios from 'axios'
 import { markRaw } from 'vue'
 import VueMultiselect from 'vue-multiselect'
-import BasicTypes from './BasicTypes.vue'
-import { basicTypes, customTypes, excludedParameters, nonSelectableElements } from '@/util/GraphHelpers'
-import { useCollaborationsStore } from '@/stores/collaborations'
 
 export default {
   name: 'PropertiesPanel',
@@ -35,22 +52,23 @@ export default {
     canViewOnly: Boolean,
     members: Array
   },
-  emits: [
-    'changeInput'
-  ],
+  emits: ['changeInput'],
   created() {
-    this.collaborationMembers = this.members;
-    // select all members by default
-    this.selectedCollaborationMembers = this.members.map((member) => member.id);
+    // Set the input members as the initial collaboration members to be modified
+    this.collaborationMembers = this.members
+    // Select all members by default
+    this.selectedCollaborationMembers = this.members.map((member) => member.id)
   },
   watch: {
-    // whenever the selected element changes, do something
-    elementSelected(newElementSelected, oldElementSelected) {
+    /**
+     * Whenever the selected element changes, do something.
+     */
+    elementSelected(newElementSelected) {
       if (newElementSelected?.id && !this.canViewOnly) {
         this.retrieveParameters(newElementSelected)
-        // load priorKnowledgeElements
-        // TODO: Redrawing the diagram will create new ID's and invalidate the parameters set
-        // As a solution, maybe use the objectId
+        // Load the prior knowledge elements
+        // TODO: Redrawing the diagram will create new IDs and invalidate the parameters set
+        // As a solution, we might use the objectId in the future
         this.parametrizedElement = newElementSelected
         const priorKnowledgeElements =
           this.parametrizedElement?.businessObject?.priorKnowledgeElements?.map(
@@ -63,6 +81,9 @@ export default {
     }
   },
   computed: {
+    /**
+     * Return all graph elements except for non-selectable elements.
+     */
     allGraphElements() {
       return (
         this.diagram
@@ -74,7 +95,8 @@ export default {
   },
   methods: {
     /**
-     * Retrieve and return parameter names of a given type definition
+     * Retrieve and return parameter names of a given type definition.
+     *
      * @param typeDefinition a type definition from the metamodel
      * @param fullElementParameters a list of already existing parameters that should be extended
      * @returns {string[]} array of parameters defined by the type
@@ -105,9 +127,9 @@ export default {
       }
       return fullElementParameters
     },
-
     /**
-     * Display the properties panel, insert title, display inputs
+     * Display the properties panel, insert title and display inputs.
+     *
      * @param element
      */
     retrieveParameters(element) {
@@ -123,28 +145,33 @@ export default {
         return
       }
 
-      // Retrieve parameters of element's type
+      // Retrieve parameters of the element's type
       this.parameters = []
       this.parameters = this.iterateProperties(typeDefinition, this.parameters)
     },
-    // Emitted event of BasicType
+    /**
+     * Emit an event that the input was changed.
+     *
+     * @param parameterName
+     * @param newValue
+     */
     changeInput(parameterName, newValue) {
       this.$emit('changeInput', parameterName, newValue)
     },
-    // Custom label for multiselect
+    /**
+     * Define a custom label for the multiselect.
+     */
     customLabel(element) {
       // This option is used for priorKnowledge, as the elements are displayed in the diagram (.businessObject)
       return element.businessObject.name ? element.businessObject.name : element.businessObject.objectId
     },
-    // Update the priorKnowledge multiselect value
+    /**
+     * Update the value of the priorKnowledge multiselect.
+     */
     updateSelectedPriorKnowledge(selectedElements, parameterName) {
       // markRaw is necessary at this point
-      // related issue: https://github.com/vuejs/core/issues/3024
+      // Related issue: https://github.com/vuejs/core/issues/3024
       this.priorKnowledgeValue = markRaw(selectedElements)
-      // TODO: Updating only works with businessObjects, e.g.,
-      // const element = this.diagram.get('moddle').create('verDatAs:InteractiveTask')
-      // const element = this.diagram.get('elementRegistry').find((element) => element.id === 'InteractiveTask_0k3e3zy').businessObject
-      // this.changeInput('priorKnowledgeElements', [element])
       const priorKnowledgeElements = []
       this.priorKnowledgeValue.forEach((elem) => {
         const element = this.diagram.get('moddle').create('verDatAs:PriorKnowledge', {
@@ -154,8 +181,16 @@ export default {
       })
       this.changeInput(parameterName, priorKnowledgeElements)
     },
+    /**
+     * Attempt to start a collaboration.
+     */
     startCollaboration() {
-      if (!this.collaborationUserName || this.collaborationUserName === '' || !this.collaborationUserPassword || this.collaborationUserPassword === '') {
+      if (
+        !this.collaborationUserName ||
+        this.collaborationUserName === '' ||
+        !this.collaborationUserPassword ||
+        this.collaborationUserPassword === ''
+      ) {
         return
       }
       this.startCollaborationInProgress = true
@@ -164,10 +199,10 @@ export default {
         actorAccountName: this.collaborationUserName,
         password: this.collaborationUserPassword
       }
+      // Retrieve a token for the administrator
       axios.post(url, request).then((data) => {
-        console.log('Admin login', data)
         const token = data.data.token
-        // store token for usage in collaboration monitoring
+        // Store token for the usage in the collaboration monitoring
         this.collaborationStore.adminToken = token
         const authHeader = {
           'Content-Type': 'application/json;charset=UTF-8',
@@ -188,21 +223,20 @@ export default {
             }
           ]
         }
+        // Request to start the collaboration
         axios.post(assistanceUrl, assistanceRequest, { headers: authHeader }).then((data) => {
-          console.log('Started collaboration', data)
           const startedAssistanceArray = data?.data?.assistance
           startedAssistanceArray?.forEach((assistance) => {
             if (assistance.aId) {
               this.collaborationStore.collaborations.push(assistance.aId)
             }
           })
-          // TODO: Handle error cases (e.g., wrong password)
           this.collaborationStartSuccessfully = true
           setTimeout(() => {
             this.startCollaborationInProgress = false
             this.collaborationStartSuccessfully = false
           }, 20000)
-        });
+        })
       })
     }
   }
@@ -246,7 +280,6 @@ export default {
                   </div>
                   <div class="col-xs-12">
                     <!-- Options retrieved from https://vue-multiselect.js.org/#sub-custom-option-template -->
-                    <!-- .map((element) => element.businessObject)" -->
                     <VueMultiselect
                       label="id"
                       track-by="id"
@@ -287,44 +320,52 @@ export default {
                   </div>
                 </template>
               </template>
-              <div class="col-xs-12" v-if="!basicTypes.includes(parameter.type) && !customTypes.includes(parameter.type)">
-                <p class="alert alert-info py-3 mt-0 mb-2">Der Parameter <span style="font-style: italic;">{{ parameter.name }}</span> wird bald unterstützt.</p>
+              <div
+                class="col-xs-12"
+                v-if="!basicTypes.includes(parameter.type) && !customTypes.includes(parameter.type)"
+              >
+                <p class="alert alert-info py-3 mt-0 mb-2">
+                  Der Parameter <span style="font-style: italic">{{ parameter.name }}</span> wird bald unterstützt.
+                </p>
               </div>
             </div>
           </template>
           <div class="col-xs-12" v-else>
-            <div class="alert alert-info">
-              Für dieses Element können keine Attribute definiert werden.
-            </div>
+            <div class="alert alert-info">Für dieses Element können keine Attribute definiert werden.</div>
           </div>
         </div>
         <div class="form-horizontal row" v-if="members && members.length > 0">
-          <hr>
+          <hr />
           <div class="col-xs-12">
-            <h6>
-              Kollaboration starten ({{ selectedCollaborationMembers.length }} Nutzer)
-            </h6>
+            <h6>Kollaboration starten ({{ selectedCollaborationMembers.length }} Nutzer)</h6>
           </div>
           <div class="form-group">
             <div class="col-xs-12">
-              <label for="collborationUser" class="control-label">
-                Admin-Username
-              </label>
+              <label for="collborationUser" class="control-label"> Admin-Username </label>
               <input id="collborationUser" class="form-control" type="text" v-model="collaborationUserName" />
             </div>
           </div>
           <div class="form-group">
             <div class="col-xs-12">
-              <label for="collborationPassword" class="control-label">
-                Admin-Passwort
-              </label>
-              <input id="collborationPassword" class="form-control" type="password" v-model="collaborationUserPassword" />
+              <label for="collborationPassword" class="control-label"> Admin-Passwort </label>
+              <input
+                id="collborationPassword"
+                class="form-control"
+                type="password"
+                v-model="collaborationUserPassword"
+              />
             </div>
           </div>
           <div class="form-group">
             <div class="col-xs-12">
               <div class="form-check" v-for="member in collaborationMembers" :key="member.id">
-                <input :id="'member_' + member.id" class="form-check-input" type="checkbox" v-model="selectedCollaborationMembers" :value="member.id"/>
+                <input
+                  :id="'member_' + member.id"
+                  class="form-check-input"
+                  type="checkbox"
+                  v-model="selectedCollaborationMembers"
+                  :value="member.id"
+                />
                 <label :for="'member_' + member.id">{{ member.username }}</label>
               </div>
             </div>
@@ -336,7 +377,14 @@ export default {
               </div>
             </div>
             <div class="col-xs-12">
-              <button class="btn btn-primary mt-2" type="button" @click="startCollaboration()" :disabled="startCollaborationInProgress">Bestätigen</button>
+              <button
+                class="btn btn-primary mt-2"
+                type="button"
+                @click="startCollaboration()"
+                :disabled="startCollaborationInProgress"
+              >
+                Bestätigen
+              </button>
             </div>
           </div>
         </div>

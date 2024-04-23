@@ -1,39 +1,52 @@
+/**
+ * This is a modified version of the original file from https://github.com/pinussilvestrus/postit-js (MIT).
+ *
+ * Copyright 2020 Niklas Kiefer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * -----
+ *
+ * Adjustments for Dashboard of the assistance system developed as part of the VerDatAs project
+ * Copyright (C) 2022-2024 TU Dresden (Tommy Kubica)
+ *
+ * In addition to the terms of the MIT license, this file is distributed under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later version.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+import { getBusinessObject, getDi, is } from '@/util/KnowledgeGraph/util/ModelUtil'
+import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor'
+import { Label } from 'diagram-js/lib/model'
+import { remove as collectionRemove } from 'diagram-js/lib/util/Collections'
+import { delta } from 'diagram-js/lib/util/PositionUtil'
+import inherits from 'inherits-browser'
 import { assign, forEach } from 'min-dash'
 
-import inherits from 'inherits-browser'
-
-import { remove as collectionRemove, add as collectionAdd } from 'diagram-js/lib/util/Collections'
-
-import { Label } from 'diagram-js/lib/model'
-
-import { getBusinessObject, getDi, is } from '../../util/ModelUtil'
-
-import { isAny } from './util/ModelingUtil'
-
-import { delta } from 'diagram-js/lib/util/PositionUtil'
-
-import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor'
-
 /**
- * A handler responsible for updating the underlying BPMN 2.0 XML + DI
- * once changes on the diagram happen
+ * A handler responsible for updating the underlying VerDatAs XML and DI once changes on the diagram happen.
  */
-// TODO: A lot of clean up to do here
 export default function VerDatAsUpdater(eventBus, verDatAsFactory, connectionDocking, translate) {
   CommandInterceptor.call(this, eventBus)
 
   this._verDatAsFactory = verDatAsFactory
   this._translate = translate
 
-  var self = this
+  const self = this
 
-  // connection cropping //////////////////////
+  // Connection cropping
 
-  // crop connection ends during create/update
+  /**
+   * Crop connection ends during create/update.
+   */
   function cropConnection(e) {
-    var context = e.context,
-      hints = context.hints || {},
-      connection
+    const context = e.context
+    const hints = context.hints || {}
+    let connection
 
     if (!context.cropped && hints.createElementsBehavior !== false) {
       connection = context.connection
@@ -48,23 +61,30 @@ export default function VerDatAsUpdater(eventBus, verDatAsFactory, connectionDoc
     delete e.context.cropped
   })
 
-  // BPMN + DI update //////////////////////
+  // VerDatAs and DI update
 
-  // update parent
+  /**
+   * Update the parent element.
+   *
+   * @param e
+   */
   function updateParent(e) {
-    var context = e.context
+    const context = e.context
 
-    self.updateParent(context.shape || context.connection, context.oldParent)
+    self.updateParent(context.shape || context.connection)
   }
 
+  /**
+   * Reverse updating the parent element.
+   *
+   * @param e
+   */
   function reverseUpdateParent(e) {
-    var context = e.context
+    const context = e.context
 
-    var element = context.shape || context.connection,
-      // oldParent is the (old) new parent, because we are undoing
-      oldParent = context.parent || context.newParent
+    const element = context.shape || context.connection
 
-    self.updateParent(element, oldParent)
+    self.updateParent(element)
   }
 
   this.executed(
@@ -77,21 +97,17 @@ export default function VerDatAsUpdater(eventBus, verDatAsFactory, connectionDoc
     ifVerDatAs(reverseUpdateParent)
   )
 
-  /*
-   * ## Updating Parent
+  /**
+   * Updating the root element.
    *
-   * When morphing a Process into a Collaboration or vice-versa,
-   * make sure that both the *semantic* and *di* parent of each element
-   * is updated.
-   *
+   * @param event
    */
   function updateRoot(event) {
-    var context = event.context,
-      oldRoot = context.oldRoot,
-      children = oldRoot.children
+    const context = event.context
+    const oldRoot = context.oldRoot
+    const children = oldRoot.children
 
     forEach(children, function (child) {
-      // TODO: This was previously bpmn:BaseElement
       if (is(child, 'verDatAs:GraphElement')) {
         self.updateParent(child)
       }
@@ -101,11 +117,14 @@ export default function VerDatAsUpdater(eventBus, verDatAsFactory, connectionDoc
   this.executed(['canvas.updateRoot'], updateRoot)
   this.reverted(['canvas.updateRoot'], updateRoot)
 
-  // update bounds
+  /**
+   * Updating the bounds of an element.
+   *
+   * @param e
+   */
   function updateBounds(e) {
-    var shape = e.context.shape
+    const shape = e.context.shape
 
-    // TODO: This was previously bpmn:BaseElement
     if (!is(shape, 'verDatAs:GraphElement')) {
       return
     }
@@ -116,7 +135,7 @@ export default function VerDatAsUpdater(eventBus, verDatAsFactory, connectionDoc
   this.executed(
     ['shape.move', 'shape.create', 'shape.resize'],
     ifVerDatAs(function (event) {
-      // exclude labels because they're handled separately during shape.changed
+      // Exclude labels because they are handled separately during shape.changed
       if (event.context.shape.type === 'label') {
         return
       }
@@ -128,7 +147,7 @@ export default function VerDatAsUpdater(eventBus, verDatAsFactory, connectionDoc
   this.reverted(
     ['shape.move', 'shape.create', 'shape.resize'],
     ifVerDatAs(function (event) {
-      // exclude labels because they're handled separately during shape.changed
+      // Exclude labels because they are handled separately during shape.changed
       if (event.context.shape.type === 'label') {
         return
       }
@@ -137,15 +156,21 @@ export default function VerDatAsUpdater(eventBus, verDatAsFactory, connectionDoc
     })
   )
 
-  // Handle labels separately. This is necessary, because the label bounds have to be updated
-  // every time its shape changes, not only on move, create and resize.
+  /**
+   * Handle labels separately. This is necessary, because the label bounds have to be updated
+   * every time its shape changes, not only on move, create and resize.
+   */
   eventBus.on('shape.changed', function (event) {
     if (event.element.type === 'label') {
       updateBounds({ context: { shape: event.element } })
     }
   })
 
-  // attach / detach connection
+  /**
+   * Attach/detach a connection.
+   *
+   * @param e
+   */
   function updateConnection(e) {
     self.updateConnection(e.context)
   }
@@ -160,7 +185,11 @@ export default function VerDatAsUpdater(eventBus, verDatAsFactory, connectionDoc
     ifVerDatAs(updateConnection)
   )
 
-  // update waypoints
+  /**
+   * Update the waypoints of a connection.
+   *
+   * @param e
+   */
   function updateConnectionWaypoints(e) {
     self.updateConnectionWaypoints(e.context.connection)
   }
@@ -175,31 +204,18 @@ export default function VerDatAsUpdater(eventBus, verDatAsFactory, connectionDoc
     ifVerDatAs(updateConnectionWaypoints)
   )
 
-  // update conditional/default flows
+  // Update conditional/default flows
   this.executed(
     'connection.reconnect',
     ifVerDatAs(function (event) {
-      var context = event.context,
-        connection = context.connection,
-        oldSource = context.oldSource,
-        newSource = context.newSource,
-        connectionBo = getBusinessObject(connection),
-        oldSourceBo = getBusinessObject(oldSource),
-        newSourceBo = getBusinessObject(newSource)
+      const context = event.context
+      const connection = context.connection
+      const oldSource = context.oldSource
+      const newSource = context.newSource
+      const connectionBo = getBusinessObject(connection)
+      const oldSourceBo = getBusinessObject(oldSource)
 
-      // remove condition from connection on reconnect to new source
-      // if new source can NOT have condional sequence flow
-      if (
-        connectionBo.conditionExpression &&
-        !isAny(newSourceBo, ['bpmn:Activity', 'bpmn:ExclusiveGateway', 'bpmn:InclusiveGateway'])
-      ) {
-        context.oldConditionExpression = connectionBo.conditionExpression
-
-        delete connectionBo.conditionExpression
-      }
-
-      // remove default from old source flow on reconnect to new source
-      // if source changed
+      // Remove default from old source flow on reconnect to new source if source changed
       if (oldSource !== newSource && oldSourceBo.default === connectionBo) {
         context.oldDefault = oldSourceBo.default
 
@@ -211,20 +227,20 @@ export default function VerDatAsUpdater(eventBus, verDatAsFactory, connectionDoc
   this.reverted(
     'connection.reconnect',
     ifVerDatAs(function (event) {
-      var context = event.context,
-        connection = context.connection,
-        oldSource = context.oldSource,
-        newSource = context.newSource,
-        connectionBo = getBusinessObject(connection),
-        oldSourceBo = getBusinessObject(oldSource),
-        newSourceBo = getBusinessObject(newSource)
+      const context = event.context
+      const connection = context.connection
+      const oldSource = context.oldSource
+      const newSource = context.newSource
+      const connectionBo = getBusinessObject(connection)
+      const oldSourceBo = getBusinessObject(oldSource)
+      const newSourceBo = getBusinessObject(newSource)
 
-      // add condition to connection on revert reconnect to new source
+      // Add condition to connection on revert reconnect to new source
       if (context.oldConditionExpression) {
         connectionBo.conditionExpression = context.oldConditionExpression
       }
 
-      // add default to old source on revert reconnect to new source
+      // Add default to old source on revert reconnect to new source
       if (context.oldDefault) {
         oldSourceBo.default = context.oldDefault
 
@@ -233,7 +249,9 @@ export default function VerDatAsUpdater(eventBus, verDatAsFactory, connectionDoc
     })
   )
 
-  // update attachments
+  /**
+   * Update the element's attachments.
+   */
   function updateAttachment(e) {
     self.updateAttachment(e.context)
   }
@@ -246,70 +264,55 @@ inherits(VerDatAsUpdater, CommandInterceptor)
 
 VerDatAsUpdater.$inject = ['eventBus', 'verDatAsFactory', 'connectionDocking', 'translate']
 
-// implementation //////////////////////
+// Actual Implementation
 
+/**
+ * Update the element's attachments.
+ *
+ * @param context
+ */
 VerDatAsUpdater.prototype.updateAttachment = function (context) {
-  var shape = context.shape,
-    businessObject = shape.businessObject,
-    host = shape.host
+  const shape = context.shape
+  const businessObject = shape.businessObject
+  const host = shape.host
 
   businessObject.attachedToRef = host && host.businessObject
 }
 
-VerDatAsUpdater.prototype.updateParent = function (element, oldParent) {
-  // do not update BPMN 2.0 label parent
+/**
+ * Update the parent element.
+ *
+ * @param element
+ */
+VerDatAsUpdater.prototype.updateParent = function (element) {
+  // Do not update label parent
   if (element instanceof Label) {
     return
   }
 
-  // data stores in collaborations are handled separately by DataStoreBehavior
-  if (is(element, 'bpmn:DataStoreReference') && element.parent && is(element.parent, 'bpmn:Collaboration')) {
-    return
-  }
+  const parentShape = element.parent
 
-  var parentShape = element.parent
-
-  var businessObject = element.businessObject,
-    di = getDi(element),
-    parentBusinessObject = parentShape && parentShape.businessObject,
-    parentDi = getDi(parentShape)
-
-  if (is(element, 'bpmn:FlowNode')) {
-    this.updateFlowNodeRefs(businessObject, parentBusinessObject, oldParent && oldParent.businessObject)
-  }
-
-  if (is(element, 'bpmn:DataOutputAssociation')) {
-    if (element.source) {
-      parentBusinessObject = element.source.businessObject
-    } else {
-      parentBusinessObject = null
-    }
-  }
-
-  if (is(element, 'bpmn:DataInputAssociation')) {
-    if (element.target) {
-      parentBusinessObject = element.target.businessObject
-    } else {
-      parentBusinessObject = null
-    }
-  }
+  const businessObject = element.businessObject
+  const di = getDi(element)
+  let parentBusinessObject = parentShape && parentShape.businessObject
+  const parentDi = getDi(parentShape)
 
   this.updateSemanticParent(businessObject, parentBusinessObject)
-
-  if (is(element, 'bpmn:DataObjectReference') && businessObject.dataObjectRef) {
-    this.updateSemanticParent(businessObject.dataObjectRef, parentBusinessObject)
-  }
-
   this.updateDiParent(di, parentDi)
 }
 
+/**
+ * Updating the bounds of an element.
+ *
+ * @param shape
+ */
 VerDatAsUpdater.prototype.updateBounds = function (shape) {
-  var di = getDi(shape),
-    embeddedLabelBounds = getEmbeddedLabelBounds(shape)
+  const di = getDi(shape)
+  const embeddedLabelBounds = getEmbeddedLabelBounds(shape)
 
-  // update embedded label bounds if possible
+  // Update the embedded label bounds, if possible
   if (embeddedLabelBounds) {
-    var embeddedLabelBoundsDelta = delta(embeddedLabelBounds, di.get('bounds'))
+    const embeddedLabelBoundsDelta = delta(embeddedLabelBounds, di.get('bounds'))
 
     assign(embeddedLabelBounds, {
       x: shape.x + embeddedLabelBoundsDelta.x,
@@ -317,9 +320,9 @@ VerDatAsUpdater.prototype.updateBounds = function (shape) {
     })
   }
 
-  var target = shape instanceof Label ? this._getLabel(di) : di
+  const target = shape instanceof Label ? this._getLabel(di) : di
 
-  var bounds = target.bounds
+  let bounds = target.bounds
 
   if (!bounds) {
     bounds = this._verDatAsFactory.createDiBounds()
@@ -334,29 +337,17 @@ VerDatAsUpdater.prototype.updateBounds = function (shape) {
   })
 }
 
-VerDatAsUpdater.prototype.updateFlowNodeRefs = function (businessObject, newContainment, oldContainment) {
-  if (oldContainment === newContainment) {
-    return
-  }
-
-  var oldRefs, newRefs
-
-  if (is(oldContainment, 'bpmn:Lane')) {
-    oldRefs = oldContainment.get('flowNodeRef')
-    collectionRemove(oldRefs, businessObject)
-  }
-
-  if (is(newContainment, 'bpmn:Lane')) {
-    newRefs = newContainment.get('flowNodeRef')
-    collectionAdd(newRefs, businessObject)
-  }
-}
-
-// update existing sourceElement and targetElement di information
+/**
+ * Update the existing sourceElement's and targetElement's DI information.
+ *
+ * @param connection
+ * @param newSource
+ * @param newTarget
+ */
 VerDatAsUpdater.prototype.updateDiConnection = function (connection, newSource, newTarget) {
-  var connectionDi = getDi(connection),
-    newSourceDi = getDi(newSource),
-    newTargetDi = getDi(newTarget)
+  const connectionDi = getDi(connection)
+  const newSourceDi = getDi(newSource)
+  const newTargetDi = getDi(newTarget)
 
   if (connectionDi.sourceElement && connectionDi.sourceElement.graphElement !== getBusinessObject(newSource)) {
     connectionDi.sourceElement = newSource && newSourceDi
@@ -367,6 +358,12 @@ VerDatAsUpdater.prototype.updateDiConnection = function (connection, newSource, 
   }
 }
 
+/**
+ * Update the DI information of the parent.
+ *
+ * @param di
+ * @param parentDi
+ */
 VerDatAsUpdater.prototype.updateDiParent = function (di, parentDi) {
   if (parentDi && !is(parentDi, 'verDatAsDi:GraphPlane')) {
     parentDi = parentDi.$parent
@@ -376,7 +373,7 @@ VerDatAsUpdater.prototype.updateDiParent = function (di, parentDi) {
     return
   }
 
-  var planeElements = (parentDi || di.$parent).get('planeElement')
+  const planeElements = (parentDi || di.$parent).get('planeElement')
 
   if (parentDi) {
     planeElements.push(di)
@@ -387,130 +384,19 @@ VerDatAsUpdater.prototype.updateDiParent = function (di, parentDi) {
   }
 }
 
-function getDefinitions(element) {
-  while (element && !is(element, 'verDatAs:Definitions')) {
-    element = element.$parent
-  }
-
-  return element
-}
-
-VerDatAsUpdater.prototype.getLaneSet = function (container) {
-  var laneSet, laneSets
-
-  // bpmn:Lane
-  if (is(container, 'bpmn:Lane')) {
-    laneSet = container.childLaneSet
-
-    if (!laneSet) {
-      laneSet = this._verDatAsFactory.create('bpmn:LaneSet')
-      container.childLaneSet = laneSet
-      laneSet.$parent = container
-    }
-
-    return laneSet
-  }
-
-  // bpmn:Participant
-  if (is(container, 'bpmn:Participant')) {
-    container = container.processRef
-  }
-
-  // bpmn:FlowElementsContainer
-  laneSets = container.get('laneSets')
-  laneSet = laneSets[0]
-
-  if (!laneSet) {
-    laneSet = this._verDatAsFactory.create('bpmn:LaneSet')
-    laneSet.$parent = container
-    laneSets.push(laneSet)
-  }
-
-  return laneSet
-}
-
+/**
+ * Update the semantic parent of an element.
+ *
+ * @param businessObject
+ * @param newParent
+ * @param visualParent
+ */
 VerDatAsUpdater.prototype.updateSemanticParent = function (businessObject, newParent, visualParent) {
-  var containment,
-    translate = this._translate
+  let containment
+  const translate = this._translate
 
   if (businessObject.$parent === newParent) {
     return
-  }
-
-  if (is(businessObject, 'bpmn:DataInput') || is(businessObject, 'bpmn:DataOutput')) {
-    if (is(newParent, 'bpmn:Participant') && 'processRef' in newParent) {
-      newParent = newParent.processRef
-    }
-
-    // already in correct ioSpecification
-    if ('ioSpecification' in newParent && newParent.ioSpecification === businessObject.$parent) {
-      return
-    }
-  }
-
-  if (is(businessObject, 'bpmn:Lane')) {
-    if (newParent) {
-      newParent = this.getLaneSet(newParent)
-    }
-
-    containment = 'lanes'
-  } else if (is(businessObject, 'bpmn:FlowElement')) {
-    if (newParent) {
-      if (is(newParent, 'bpmn:Participant')) {
-        newParent = newParent.processRef
-      } else if (is(newParent, 'bpmn:Lane')) {
-        do {
-          // unwrap Lane -> LaneSet -> (Lane | FlowElementsContainer)
-          newParent = newParent.$parent.$parent
-        } while (is(newParent, 'bpmn:Lane'))
-      }
-    }
-
-    containment = 'flowElements'
-  } else if (is(businessObject, 'bpmn:Artifact')) {
-    while (
-      newParent &&
-      !is(newParent, 'bpmn:Process') &&
-      !is(newParent, 'bpmn:SubProcess') &&
-      !is(newParent, 'bpmn:Collaboration')
-    ) {
-      if (is(newParent, 'bpmn:Participant')) {
-        newParent = newParent.processRef
-        break
-      } else {
-        newParent = newParent.$parent
-      }
-    }
-
-    containment = 'artifacts'
-  } else if (is(businessObject, 'bpmn:MessageFlow')) {
-    containment = 'messageFlows'
-  } else if (is(businessObject, 'bpmn:Participant')) {
-    containment = 'participants'
-
-    // make sure the participants process is properly attached / detached
-    // from the XML document
-
-    var process = businessObject.processRef,
-      definitions
-
-    if (process) {
-      definitions = getDefinitions(businessObject.$parent || newParent)
-
-      if (businessObject.$parent) {
-        collectionRemove(definitions.get('rootElements'), process)
-        process.$parent = null
-      }
-
-      if (newParent) {
-        collectionAdd(definitions.get('rootElements'), process)
-        process.$parent = definitions
-      }
-    }
-  } else if (is(businessObject, 'bpmn:DataOutputAssociation')) {
-    containment = 'dataOutputAssociations'
-  } else if (is(businessObject, 'bpmn:DataInputAssociation')) {
-    containment = 'dataInputAssociations'
   }
 
   if (is(businessObject, 'verDatAs:GraphElement')) {
@@ -526,12 +412,10 @@ VerDatAsUpdater.prototype.updateSemanticParent = function (businessObject, newPa
     )
   }
 
-  // TODO: This might be interesting for DI
-
-  var children
+  let children
 
   if (businessObject.$parent) {
-    // remove from old parent
+    // Remove from the old parent
     children = businessObject.$parent.get(containment)
     collectionRemove(children, businessObject)
   }
@@ -539,14 +423,14 @@ VerDatAsUpdater.prototype.updateSemanticParent = function (businessObject, newPa
   if (!newParent) {
     businessObject.$parent = null
   } else {
-    // add to new parent
+    // Add to the new parent
     children = newParent.get(containment)
     children.push(businessObject)
     businessObject.$parent = newParent
   }
 
   if (visualParent) {
-    var diChildren = visualParent.get(containment)
+    let diChildren = visualParent.get(containment)
 
     collectionRemove(children, businessObject)
 
@@ -561,70 +445,36 @@ VerDatAsUpdater.prototype.updateSemanticParent = function (businessObject, newPa
   }
 }
 
+/**
+ * Update the waypoints of a connection.
+ *
+ * @param connection
+ */
 VerDatAsUpdater.prototype.updateConnectionWaypoints = function (connection) {
-  var di = getDi(connection)
+  const di = getDi(connection)
 
   di.set('waypoint', this._verDatAsFactory.createDiWaypoints(connection.waypoints))
 }
 
+/**
+ * Attach/detach a connection.
+ *
+ * @param context
+ */
 VerDatAsUpdater.prototype.updateConnection = function (context) {
-  var connection = context.connection,
-    businessObject = getBusinessObject(connection),
-    newSource = connection.source,
-    newSourceBo = getBusinessObject(newSource),
-    newTarget = connection.target,
-    newTargetBo = getBusinessObject(connection.target),
-    visualParent
-
-  if (!is(businessObject, 'bpmn:DataAssociation')) {
-    var inverseSet = is(businessObject, 'verDatAs:SequenceFlow')
-
-    if (businessObject.sourceRef !== newSourceBo) {
-      if (inverseSet) {
-        collectionRemove(businessObject.sourceRef && businessObject.sourceRef.get('outgoing'), businessObject)
-
-        if (newSourceBo && newSourceBo.get('outgoing')) {
-          newSourceBo.get('outgoing').push(businessObject)
-        }
-      }
-
-      businessObject.sourceRef = newSourceBo
-    }
-
-    if (businessObject.targetRef !== newTargetBo) {
-      if (inverseSet) {
-        collectionRemove(businessObject.targetRef && businessObject.targetRef.get('incoming'), businessObject)
-
-        if (newTargetBo && newTargetBo.get('incoming')) {
-          newTargetBo.get('incoming').push(businessObject)
-        }
-      }
-
-      businessObject.targetRef = newTargetBo
-    }
-  } else if (is(businessObject, 'bpmn:DataInputAssociation')) {
-    // handle obnoxious isMsome sourceRef
-    businessObject.get('sourceRef')[0] = newSourceBo
-
-    visualParent = context.parent || context.newParent || newTargetBo
-
-    this.updateSemanticParent(businessObject, newTargetBo, visualParent)
-  } else if (is(businessObject, 'bpmn:DataOutputAssociation')) {
-    visualParent = context.parent || context.newParent || newSourceBo
-
-    this.updateSemanticParent(businessObject, newSourceBo, visualParent)
-
-    // targetRef = new target
-    businessObject.targetRef = newTargetBo
-  }
+  const connection = context.connection
+  const newSource = connection.source
+  const newTarget = connection.target
 
   this.updateConnectionWaypoints(connection)
-
   this.updateDiConnection(connection, newSource, newTarget)
 }
 
-// helpers //////////////////////
-
+/**
+ * Helper function to retrieve the label of a DI.
+ *
+ * @param di
+ */
 VerDatAsUpdater.prototype._getLabel = function (di) {
   if (!di.label) {
     di.label = this._verDatAsFactory.createDiLabel()
@@ -634,16 +484,14 @@ VerDatAsUpdater.prototype._getLabel = function (di) {
 }
 
 /**
- * Make sure the event listener is only called
- * if the touched element is a BPMN element.
+ * Helper function to ensure that the event listener is only called if the touched element is a VerDatAs element.
  *
- * @param  {Function} fn
- * @return {Function} guarded function
+ * @param fn
  */
 function ifVerDatAs(fn) {
   return function (event) {
-    var context = event.context,
-      element = context.shape || context.connection
+    const context = event.context
+    const element = context.shape || context.connection
 
     if (is(element, 'verDatAs:GraphElement')) {
       fn(event)
@@ -652,24 +500,18 @@ function ifVerDatAs(fn) {
 }
 
 /**
- * Return dc:Bounds of bpmndi:BPMNLabel if exists.
+ * Helper function to return the bounds of a label, if it exists.
  *
- * @param {djs.model.shape} shape
- *
- * @returns {Object|undefined}
+ * @param shape
  */
 function getEmbeddedLabelBounds(shape) {
-  if (!is(shape, 'bpmn:Activity')) {
-    return
-  }
-
-  var di = getDi(shape)
+  const di = getDi(shape)
 
   if (!di) {
     return
   }
 
-  var label = di.get('label')
+  const label = di.get('label')
 
   if (!label) {
     return

@@ -2,6 +2,24 @@
   "name": "tud-dashboard",
   "version": "0.0.1",
   "private": true,
+  "author": {
+    "name": "Tommy Kubica",
+    "email": "tommy.kubica@tu-dresden.de"
+  },
+  "contributors": [
+    {
+      "name": "Max Schaible",
+      "email": "max.schaible@mailbox.tu-dresden.de"
+    },
+    {
+      "name": "Niklas Harbig",
+      "email": "niklas.harbig@mailbox.tu-dresden.de"
+    },
+    {
+      "name": "Sebastian Kucharski",
+      "email": "sebastian.kucharski@tu-dresden.de"
+    }
+  ],
   "scripts": {
     "build": "run-p type-check build-only && npm run extract-licenses",
     "build-move": "./build_and_move.sh",

@@ -1,6 +1,24 @@
+<!--
+Dashboard for the assistance system developed as part of the VerDatAs project
+Copyright (C) 2022-2024 TU Dresden (Niklas Harbig, Sebastian Kucharski, Tommy Kubica)
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
 <script>
-import axios from 'axios'
-import { Base64 } from 'js-base64'
+import ConfirmationDialog from '@/components/shared/ConfirmationDialog.vue'
+import { useSettingStore } from '@/stores/settings'
+import { useGraphStore } from '@/stores/graph'
 import {
   attributeValue,
   centerCanvas,
@@ -15,9 +33,8 @@ import {
 } from '@/util/GraphHelpers'
 import ExtendedViewer from '@/util/KnowledgeGraph/ExtendedViewer'
 import Viewer from '@/util/KnowledgeGraph/Viewer'
-import ConfirmationDialog from '@/components/shared/ConfirmationDialog.vue'
-import { useSettingStore } from '@/stores/settings'
-import { useGraphStore } from '@/stores/graph'
+import axios from 'axios'
+import { Base64 } from 'js-base64'
 import { createConfirmDialog } from 'vuejs-confirm-dialog'
 
 export default {
@@ -41,76 +58,74 @@ export default {
     canViewOnly: Boolean,
     pseudoId: String
   },
-  emits: [
-    'loadedDiagram',
-    'selectedElement',
-    'setDiagram',
-    'updateMetamodel'
-  ],
+  emits: ['loadedDiagram', 'selectedElement', 'setDiagram', 'updateMetamodel'],
   created() {
     this.initGraphViewer()
   },
   computed: {
+    /**
+     * Return the lcoId of a potentially existing course node.
+     */
     existingLcoId() {
       return this.existingCourseNode.lcoId ?? null
     }
   },
   methods: {
-    // Handles the retrieval of the diagram and loading into the editor
+    /**
+     * Handles the retrieval of the diagram and loading into the editor.
+     */
     initGraphViewer() {
       if (!this.courseNode?.lcoType || !this.courseNode?.objectId) {
         console.log('The courseNode is incomplete (missing lcoType or objectId).')
         return
       }
 
-      // check whether knowledge_structure exist for the given ref_id
-      // yes? -> initialize modeler with the resulting diagram
-      // example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
-      // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
-      const encodedId = Base64.encodeURI(this.courseNode.objectId)
+      // Search for existing knowledge structures with a given objectId
       const knowledgeGraphUrl = this.backendUrl + '/api/v1/lco/search'
       const authHeader = {
         'Content-Type': 'application/json;charset=UTF-8',
         Authorization: 'Bearer ' + this.token
       }
-      // search for existing knowledge_graphs with a given objectId
       const request = [
         {
-          "key": "objectId",
-          "value": this.courseNode.objectId
+          key: 'objectId',
+          value: this.courseNode.objectId
         }
       ]
       axios
         .post(knowledgeGraphUrl, request, { headers: authHeader })
         .then(async (graphResponse) => {
-          // Handle response
-          // TODO: Make use of async and await functions to avoid using setTimeout multiple times
-          // console.log('graph data', graphResponse.data)
+          // TODO: Use async and await functions to avoid using setTimeout multiple times
           if (graphResponse.data?.lcos) {
             const courseTitle = attributeValue(this.courseNode, 'title')
+            // Encode the objectId using Base84
+            // Example: 'http://localhost/goto.php?target=crs_80&client_id=default&obj_id_lrs=314'
+            // base64Url: 'aHR0cDovL2xvY2FsaG9zdC9nb3RvLnBocD90YXJnZXQ9Y3JzXzgwJmNsaWVudF9pZD1kZWZhdWx0Jm9ial9pZF9scnM9MzE0'
+            const encodedId = Base64.encodeURI(this.courseNode.objectId)
             this.graph = initialModel(encodedId, courseTitle)
+            // If a knowledge structure exists, load it into the view
             if (graphResponse.data?.lcos[0]) {
               const courseNode = graphResponse.data.lcos[0]
               this.existingCourseNode = courseNode
               await this.processKnowledgeGraph(authHeader)
               this.redrawKnowledgeGraph(courseNode)
-            } else {
-              // the course node is transferred for the first time
+            }
+            // Otherwise, the course node is transferred for the first time
+            else {
               await this.processKnowledgeGraph(authHeader)
               this.redrawKnowledgeGraph(this.courseNode)
-              // if at least one attribute exists, save it initially
+              // If at least one attribute exists, save it initially
               if (this.courseNode.attributes?.length > 0) {
-                // use setTimeout, as otherwise the knowledge graph might not be ready
+                // Use setTimeout, as otherwise the knowledge graph might not be set properly
                 setTimeout(() => {
                   this.saveKnowledgeGraph()
                 }, 100)
-              }
-              else {
+              } else {
                 this.showEmptyMessage = true
               }
             }
-            // Set that the initial diagram was loaded once
-            // Add timeout to avoid loading artifacts
+            // Emit that the initial diagram was loaded once
+            // Add timeout to avoid potential loading artifacts
             setTimeout(() => {
               this.$emit('loadedDiagram', true)
             }, 250)
@@ -121,9 +136,13 @@ export default {
           console.error(err)
         })
     },
-    // Handles the entire (Extended-)Viewer creation,
-    // the definition of the metamodel,
-    // as well as the events happening after importing the diagram (centering, click, update events)
+    /**
+     * Handles the entire (Extended-)Viewer creation,
+     * the definition of the metamodel,
+     * as well as the events happening after importing the diagram (centering, click, update events).
+     *
+     * @param authHeader
+     */
     async processKnowledgeGraph(authHeader) {
       if (this.diagramLoaded || !this.graph) {
         return
@@ -150,7 +169,6 @@ export default {
       }
 
       const canvas = diagram.get('canvas')
-      const elementFactory = diagram.get('elementFactory')
       const elementRegistry = diagram.get('elementRegistry')
       const eventBus = diagram.get('eventBus')
       const modeling = diagram.get('modeling')
@@ -163,32 +181,28 @@ export default {
           }
         })
         .then(async () => {
-          // After importing xml:
-          // Center canvas
+          // After importing XML, center the canvas
           centerCanvas(canvas)
 
-          // Update objectId of course
+          // Update the objectId of the course, if edit privileges exist
           if (!this.canViewOnly) {
             const knowledgeGraphCourse = elementRegistry.filter((element) => element.type === 'verDatAs:Course')[0]
             const properties = {}
             properties['objectId'] = this.courseNode.objectId
             modeling.updateProperties(knowledgeGraphCourse, properties)
 
-            // Listen to selection changes and show propertiesPanel, inputs and listen for input changes
+            // Listen to selection changes and show the propertiesPanel with its inputs and listen for input changes
             eventBus.on('selection.changed', (e) => {
               const element = e.newSelection[0]
               if (element && !nonSelectableElements.includes(element.type)) {
                 this.$emit('selectedElement', element)
               } else {
                 this.$emit('selectedElement', null)
-                //try to auto-save the graph after not selecting another graph element if activated in the settings
-                if (this.settings.autosave && this.diagramLoaded) {
-                  console.log('auto saving')
-                  this.saveKnowledgeGraph()
-                }
               }
             })
-          } else {
+          }
+          // As a student without editing privileges, request the current progress
+          else {
             const url = this.backendUrl + '/api/v1/student/progress'
             const request = {
               subLcos: true,
@@ -196,53 +210,52 @@ export default {
               objectId: this.courseNode.objectId
             }
             const studentProgress = await axios.post(url, request, { headers: authHeader })
-            this.studentModel = iterateAndFillStudentModel(this.courseNode, studentProgress.data, this.studentModel, true)
-            // console.log('studentModel', this.studentModel)
+            this.studentModel = iterateAndFillStudentModel(
+              this.courseNode,
+              studentProgress.data,
+              this.studentModel,
+              true
+            )
 
-            // TODO: Remove, if implemented by VSG
+            // On click, open the link to the selected element
             eventBus.on('element.click', (e) => {
               const element = e.element
               if (element?.businessObject?.objectId) {
-                // Hold objectId's locally for demonstration purposes
                 const objectId = element.businessObject.objectId
                 // Check string, whether it contains a valid URL
                 if (objectId.includes('http://') || objectId.includes('https://')) {
-                  // let visitedObjects = []
-                  // if (localStorage.getItem('visitedObjects')) {
-                  //   visitedObjects = JSON.parse(localStorage.getItem('visitedObjects'))
-                  // }
-                  // if (!visitedObjects.includes(objectId)) {
-                  //   visitedObjects.push(objectId)
-                  // }
-                  // localStorage.setItem('visitedObjects', JSON.stringify(visitedObjects))
-                  // Open on click
+                  // Open the URL in the current tab
                   window.open(element.businessObject.objectId, '_self')
                 }
               }
             })
+            // Retrieve the elements that might be highlighted
             const elementsToHighlight = Object.keys(this.studentModel)
+            // If elements to highlight exist, search for them in the registry
             if (elementsToHighlight?.length > 0) {
-              // iterate elements in registry except of Labels and Connections
-              elementRegistry.filter((elem) => !['label', 'verDatAs:SequenceFlow'].includes(elem.type)).forEach((elem) => {
-                if (elem.businessObject?.objectId && elementsToHighlight.includes(elem.businessObject.objectId)) {
-                  const elementModel = this.studentModel[elem.businessObject.objectId]
-                  if (elementModel.status) {
-                    canvas.addMarker(elem, elementModel.status)
+              // Iterate elements in the registry except for Labels and Connections
+              elementRegistry
+                .filter((elem) => !['label', 'verDatAs:SequenceFlow'].includes(elem.type))
+                .forEach((elem) => {
+                  if (elem.businessObject?.objectId && elementsToHighlight.includes(elem.businessObject.objectId)) {
+                    const elementModel = this.studentModel[elem.businessObject.objectId]
+                    if (elementModel.status) {
+                      canvas.addMarker(elem, elementModel.status)
+                    }
                   }
-                }
-              })
-            } else {
-              // draw stroke around the initial object
+                })
+            }
+            // Otherwise, draw a stroke around the first object, i.e., the first module
+            else {
               const modules = elementRegistry.filter((elem) => elem.type === 'verDatAs:Module')
               if (modules?.length > 0) {
-                // find first module by sorting the modules after their names
+                // Find the first module by sorting the modules after their names
                 const sortedModules = modules.sort((a, b) => {
                   const nameA = a.businessObject?.name?.toLowerCase() ?? ''
                   const nameB = b.businessObject?.name?.toLowerCase() ?? ''
                   if (nameA < nameB) {
                     return -1
-                  }
-                  else if (nameA > nameB) {
+                  } else if (nameA > nameB) {
                     return 1
                   }
                   return 0
@@ -255,8 +268,9 @@ export default {
             }
           }
 
+          // Helper functions for debouncing and setting the encoded data
           function debounce(fn, timeout) {
-            var timer
+            let timer
 
             return function () {
               if (timer) {
@@ -267,21 +281,13 @@ export default {
           }
 
           function setEncoded(link, name, data) {
-            var encodedData = encodeURIComponent(data)
-
-            // TODO: Uncaught (in promise) TypeError: Cannot read properties of null (reading 'setAttribute'),
-            //       when label-editing an element without prior label
-            // The error above is thrown when link is undefined
             if (data && link) {
-              // link.classList.add('active');
-              link.setAttribute('href', 'data:application/xml;charset=UTF-8,' + encodedData)
+              link.setAttribute('href', 'data:application/xml;charset=UTF-8,' + encodeURIComponent(data))
               link.setAttribute('download', name)
-            } else {
-              // link.classList.remove('active');
             }
           }
 
-          // On commandStack change, save the currently modeled diagram and prepare button to load it
+          // On commandStack change, save the currently modeled diagram and prepare the button to load it
           const exportArtifacts = debounce(() => {
             diagram.saveXML({ format: true }).then(function (result) {
               setEncoded(document.getElementById('saveXML'), 'board.xml', result.xml)
@@ -291,22 +297,29 @@ export default {
           eventBus.on('commandStack.changed', exportArtifacts)
         })
     },
+    /**
+     * Attempt redrawing the knowledge graph using a given course node
+     *
+     * @param existingCourseNode
+     */
     redrawKnowledgeGraph(existingCourseNode) {
-      // depending on whether a course node exists, use this node or the node from ILIAS (this.courseNode)
+      // Depending on whether a course node was input, use this node or the node from the dashboard data (this.courseNode)
       const courseNode = existingCourseNode ? existingCourseNode : this.courseNode
-      // console.log('redrawKnowledgeGraph', courseNode)
+      // Early return, if either no lcoType or no objectId exists
       if (!courseNode?.lcoType || !courseNode?.objectId) {
         return
       }
 
+      // When having an existing course node, redraw the knowledge graph without confirming
       if (existingCourseNode) {
-        // when having an existing courseNode, redraw the knowledge graph without confirming
         this.processRedrawKnowledgeGraph(courseNode)
-      } else {
-        // in other cases, a confirmation is necessary
+      }
+      // In other cases, a confirmation is necessary
+      else {
         this.dialog = createConfirmDialog(ConfirmationDialog, {
           title: 'Graph neuzeichnen',
-          question: 'Sind Sie sich sicher, dass Sie den Graph neuzeichnen wollen? Die Parameter, die Sie definiert haben, gehen dadurch verloren.',
+          question:
+            'Sind Sie sich sicher, dass Sie den Graph neuzeichnen wollen? Die Parameter, die Sie definiert haben, gehen dadurch verloren.',
           confirmTxt: 'Bestätigen',
           cancelTxt: 'Abbrechen'
         })
@@ -319,11 +332,16 @@ export default {
         })
       }
     },
+    /**
+     * Handle the processing of the redrawing of the knowledge graph using a given course node.
+     *
+     * @param courseNode
+     */
     processRedrawKnowledgeGraph(courseNode) {
       const encodedId = Base64.encodeURI(courseNode.objectId)
       const courseName = attributeValue(courseNode, 'title') ?? 'Unknown'
 
-      // First, initialize modeler
+      // First, initialize the modeler
       this.loadInitialModel(this.diagram, encodedId, courseName).then(() => {
         // Retrieve general diagram-js controls
         const canvas = this.diagram.get('canvas')
@@ -333,22 +351,22 @@ export default {
         const elementRegistry = this.diagram.get('elementRegistry')
 
         if (modeling) {
-          // Replace objectId of the course and set its title as a label
+          // Replace the objectId of the course and set its title as a label
           const knowledgeGraphCourse = elementRegistry.find((element) => element.type === 'verDatAs:Course')
           const knowledgeGraphCourseLabel = elementRegistry.find(
-              (element) => element.id === knowledgeGraphCourse.label?.id
+            (element) => element.id === knowledgeGraphCourse.label?.id
           )
-          // Update objectId and other attributes
+          // Update the objectId and other attributes
           let properties = {}
           properties['objectId'] = courseNode.objectId
           properties = extendAttributes(properties, courseNode)
           modeling.updateProperties(knowledgeGraphCourse, properties)
 
-          // Set title of the course
+          // Set the title of the course
           const courseTitle = attributeValue(courseNode, 'title') ?? 'Course'
           modeling.updateLabel(knowledgeGraphCourse, courseTitle)
 
-          // GENERAL IDEA: Draw first and center afterward
+          // General idea: Draw first and center afterward
           // Define dimensions, offsets and initial positions
           const courseDimensions = getDefaultSize(knowledgeGraphCourse)
           const courseWidth = courseDimensions.width
@@ -356,9 +374,8 @@ export default {
 
           const offsetBetweenLayers = 75
 
-          const moduleWidth = getDefaultSize('verDatAs:Module').width
           const moduleHeight = getDefaultSize('verDatAs:Module').height
-          // TODO: It seems like the initial position y refers to the outer position and all following are the middle of the element
+          // Hint: It seems like the initial position y refers to the outer position and all following are the middle of the element
           const initialModulePosition = knowledgeGraphCourse.y + courseHeight + offsetBetweenLayers + moduleHeight / 2
 
           const chapterWidth = getDefaultSize('verDatAs:Chapter').width
@@ -374,14 +391,14 @@ export default {
           const offset = 70
           let totalWidth = 0
 
-          // Reduce list of modules to those that are currently set online
+          // Reduce the list of the modules to those that are currently set online
           let filteredModules = []
           const courseModules = attributeValue(courseNode, 'modules')
           if (courseModules?.length > 0) {
             filteredModules = courseModules.filter((m) => attributeValue(m, 'offline') === false)
           }
 
-          // Iterate remaining modules
+          // Iterate the remaining modules
           filteredModules?.forEach((module, moduleIndex) => {
             const moduleChapters = attributeValue(module, 'chapters')
             const chapterCount = moduleChapters?.length || 0
@@ -390,14 +407,13 @@ export default {
             // Add it to the total width to get the full width of the graph
             totalWidth += totalChapterWidth
 
-            // Draw module (define type, position and dimensions)
+            // Draw the module (define type, position and dimensions)
             const moduleType = {
               type: 'verDatAs:Module'
             }
             const modulePosition = {
-              // FIXME: the module position is current somehow off 7px
-              // Investigate how this happens
-              x: chapterPositionX + totalChapterWidth / 2 - 7, // "- moduleWidth / 2" is not longer necessary, as the middle has to be defined
+              // TODO: The module position is current somehow off 7px (investigate how this happens)
+              x: chapterPositionX + totalChapterWidth / 2 - 7, // "- moduleWidth / 2" is no longer necessary, as the middle has to be defined
               y: initialModulePosition
             }
             const moduleDimensions = getDefaultSize(moduleType.type)
@@ -410,25 +426,25 @@ export default {
             existingModules.push(moduleShape.businessObject)
             modeling.updateProperties(knowledgeGraphCourse, { modules: existingModules })
 
-            // Update objectId and other attributes
+            // Update the objectId and other attributes
             let moduleProperties = {}
             moduleProperties['objectId'] = module.objectId
             moduleProperties = extendAttributes(moduleProperties, module)
             modeling.updateProperties(moduleShape, moduleProperties)
 
-            // Set title of the module
+            // Set the title of the module
             const moduleTitle = attributeValue(module, 'title') ?? 'Module ' + (moduleIndex + 1)
             modeling.updateLabel(moduleShape, moduleTitle)
 
-            // Draw connection to the course
+            // Draw a connection to the course
             modeling.connect(knowledgeGraphCourse, moduleShape)
 
-            // Iterate chapters of module
+            // Iterate the chapters of the module
             moduleChapters?.forEach((chapter, chapterIndex) => {
-              // Draw chapter (define type, position and dimensions)
+              // Draw the chapter (define type, position and dimensions)
               // Take starting position + the width of the last element + offset + half to the elements width
               const currentChapterPositionX =
-                  chapterPositionX + chapterIndex * (chapterWidth + chapterOffset) + chapterWidth / 2
+                chapterPositionX + chapterIndex * (chapterWidth + chapterOffset) + chapterWidth / 2
               const chapterType = {
                 type: 'verDatAs:Chapter'
               }
@@ -446,23 +462,23 @@ export default {
               existingChapters.push(chapterShape.businessObject)
               modeling.updateProperties(moduleShape, { chapters: existingChapters })
 
-              // Update objectId and other attributes
+              // Update the objectId and other attributes
               let chapterProperties = {}
               chapterProperties['objectId'] = chapter.objectId
               chapterProperties = extendAttributes(chapterProperties, chapter)
 
-              // Set title of the chapter
+              // Set the title of the chapter
               const chapterTitle = attributeValue(chapter, 'title') ?? 'Chapter ' + (chapterIndex + 1)
               modeling.updateLabel(chapterShape, chapterTitle)
 
-              // Iterate contentPages of the chapter
+              // Iterate the contentPages of the chapter
               const contentPages = []
               let taskOrDocumentationToolIndex = 0
               attributeValue(chapter, 'contentPages')?.forEach((page, pageIndex) => {
                 let taskShapesBusinessObjects = []
                 let documentationToolShapesBusinessObjects = []
 
-                // Update objectId and other attributes
+                // Update the objectId and other attributes
                 let pageProperties = {
                   objectId: page.objectId,
                   title: attributeValue(page, 'title') || 'ContentPage ' + (pageIndex + 1)
@@ -474,8 +490,8 @@ export default {
                 let interactiveTaskIndex = 0
                 let documentationToolIndex = 0
 
-                // Iterate interactiveTasks and documentationTools of the contentPage
-                attributeInteractiveTasks.concat(attributeDocumentationTools)?.forEach((pageChild, childIndex) => {
+                // Iterate the interactiveTasks and documentationTools of the contentPage
+                attributeInteractiveTasks.concat(attributeDocumentationTools)?.forEach((pageChild) => {
                   const isInteractiveTask = questionTypes.includes(pageChild.lcoType)
                   if (isInteractiveTask) {
                     interactiveTaskIndex += 1
@@ -488,36 +504,37 @@ export default {
                   const childWidth = isInteractiveTask ? taskWidth : documentationToolWidth
                   const childHeight = isInteractiveTask ? taskHeight : documentationToolHeight
                   const childPosition = {
-                    // Hint: the children are currently centered, too. In order to remove this, add a small offset
-                    x: currentChapterPositionX + (chapterWidth / 2) - (childWidth / 2), // old solution -> x: currentChapterPositionX + 10,
+                    // Hint: The children are currently centered, too. In order to remove this, add a small offset
+                    x: currentChapterPositionX + chapterWidth / 2 - childWidth / 2, // old solution -> x: currentChapterPositionX + 10,
                     // TODO: 80 is a value that currently works good. However, this has not be the case for different knowledge structures
                     // Only use half of the offset, as no further split is made on the next level
                     y:
-                        chapterShape.y +
-                        chapterShape.height +
-                        offsetBetweenLayers / 2 +
-                        childHeight / 2 +
-                        taskOrDocumentationToolIndex * 80
+                      chapterShape.y +
+                      chapterShape.height +
+                      offsetBetweenLayers / 2 +
+                      childHeight / 2 +
+                      taskOrDocumentationToolIndex * 80
                   }
                   const childDimensions = getDefaultSize(childType.type)
                   const childAttributes = { ...childPosition, ...childDimensions, ...childType }
                   const childShape = elementFactory.createShape(childAttributes)
                   canvas.addShape(childShape)
 
-                  const defaultTypeName = isInteractiveTask ? 'Task ' + interactiveTaskIndex : 'Diary ' + documentationToolIndex
-                  // Set title of the child
-                  const childTitle =
-                      attributeValue(pageChild, 'title') ?? defaultTypeName
+                  const defaultTypeName = isInteractiveTask
+                    ? 'Task ' + interactiveTaskIndex
+                    : 'Diary ' + documentationToolIndex
+                  // Set the title of the child
+                  const childTitle = attributeValue(pageChild, 'title') ?? defaultTypeName
                   modeling.updateLabel(childShape, childTitle)
 
-                  // Update objectId and other attributes
+                  // Update the objectId and other attributes
                   let childProperties = {}
                   childProperties['objectId'] = pageChild.objectId
                   childProperties = extendAttributes(childProperties, pageChild)
 
                   modeling.updateProperties(childShape, childProperties)
 
-                  // Draw connection to the chapter
+                  // Draw a connection to the chapter
                   modeling.connect(chapterShape, childShape)
                   taskOrDocumentationToolIndex += 1
                   if (isInteractiveTask) {
@@ -536,65 +553,74 @@ export default {
 
               modeling.updateProperties(chapterShape, chapterProperties)
 
-              // Draw connection to the module
+              // Draw a connection to the module
               modeling.connect(moduleShape, chapterShape)
 
-              // Set next position
+              // Set the next chapter position
               if (chapterIndex === chapterCount - 1) {
                 chapterPositionX =
-                    chapterPositionX + chapterIndex * (chapterWidth + chapterOffset) + chapterWidth + offset
+                  chapterPositionX + chapterIndex * (chapterWidth + chapterOffset) + chapterWidth + offset
               }
             })
-            // Draw course
+            // Draw the course
             if (moduleIndex === filteredModules.length - 1) {
-              // FIXME: The totalWidth currently somehow misses the width of one chapter in order to be centered
+              // TODO: The totalWidth currently somehow misses the width of one chapter in order to be centered
               totalWidth += chapterWidth
-              // Move course
+              // Move the course
               // TODO: This somehow does not move the label of the course
               modeling.moveElements([knowledgeGraphCourse], {
                 x: totalWidth / 2 - courseWidth / 2 - knowledgeGraphCourse.x,
-                // TODO: 20 are added to reduce the distance from the course to the module
+                // Hint: 20 are added to reduce the distance from the course to the module
                 y: 90 - knowledgeGraphCourse.y + 20 // 90 is the position set on initialization
               })
-              // Move course label
+              // Move the course label
               modeling.moveElements([knowledgeGraphCourseLabel], {
                 x: totalWidth / 2 - knowledgeGraphCourseLabel.width / 2 - knowledgeGraphCourseLabel.x,
                 // TODO: Currently, no offset is used
-                // TODO: 20 are added to reduce the distance from the course to the module
+                // Hint: 20 are added to reduce the distance from the course to the module
                 y: 90 + knowledgeGraphCourse.height - knowledgeGraphCourseLabel.y + 20 // 90 + height + offset of label
               })
             } else {
-              // increase total width with offset
+              // Increase total width with offset
               totalWidth += offset
             }
           })
 
-          // hide message on successful redraw
+          // Hide the message on successful redraw
           if (this.showEmptyMessage) {
             this.showEmptyMessage = false
           }
 
-          // Center diagram in the final step
+          // Center the diagram in the final step
           centerCanvas(canvas)
         }
       }, 500)
     },
+    /**
+     * Load the initial model by importing it as XML.
+     *
+     * @param underlyingDiagram
+     * @param encodedId
+     * @param courseName
+     */
     loadInitialModel(underlyingDiagram, encodedId, courseName) {
-      // Import initial diagram into the modeler
       return underlyingDiagram.importXML(initialModel(encodedId, courseName), 'RootGraph_1').catch(function (err) {
         if (err) {
           return console.error('Could not import VerDatAs board', err)
         }
       })
     },
+    /**
+     * Save the knowledge graph as XML.
+     */
     saveXML() {
       this.diagram.saveXML({ format: true }).then((result) => {
         // Retrieved from https://stackoverflow.com/a/24191504
-        var xmltext = result.xml
+        const xmltext = result.xml
 
-        var filename = Math.floor(Date.now() / 1000) + '_verDatAs.xml'
-        var pom = document.createElement('a')
-        var bb = new Blob([xmltext], { type: 'text/plain' })
+        const filename = Math.floor(Date.now() / 1000) + '_verDatAs.xml'
+        const pom = document.createElement('a')
+        const bb = new Blob([xmltext], { type: 'text/plain' })
 
         pom.setAttribute('href', window.URL.createObjectURL(bb))
         pom.setAttribute('download', filename)
@@ -606,6 +632,9 @@ export default {
         pom.click()
       })
     },
+    /**
+     * Save the knowledge graph by converting it into the generic structure and sending it to the backend.
+     */
     saveKnowledgeGraph() {
       const elementRegistry = this.diagram.get('elementRegistry')
       const courses = elementRegistry.filter((element) => element.type === 'verDatAs:Course')
@@ -620,92 +649,60 @@ export default {
       }
       const courseBusinessObject = knowledgeGraphCourse.businessObject
 
+      // Generic format as an object
       const genericCourseFormatRequest = iterateAttributes(courseBusinessObject)
-      // console.log('1) Generic format as an object', genericCourseFormatRequest)
-      // console.log('2) Generic format as JSON', JSON.stringify(genericCourseFormatRequest))
 
       const authHeader = {
         'Content-Type': 'application/json;charset=UTF-8',
         Authorization: 'Bearer ' + this.token
       }
 
-      const url = !this.existingLcoId ? this.backendUrl + '/api/v1/lco' : this.backendUrl + '/api/v1/lco/' + this.existingLcoId
+      const url = !this.existingLcoId
+        ? this.backendUrl + '/api/v1/lco'
+        : this.backendUrl + '/api/v1/lco/' + this.existingLcoId
 
-      // if no lcoId exists, create a new lco object
+      // If no lcoId exists, create a new lco object
       if (!this.existingLcoId) {
         axios.post(url, genericCourseFormatRequest, { headers: authHeader }).then(() => {
           console.log('Save Graph')
-          //visual feedback for the user when graph is saved
+          // Visual feedback for the user, when the graph is saved
           const loading = document.getElementById('loading')
           loading.style.display = 'block'
-          // const errorMessage = document.getElementById('autosave-message')
-          // errorMessage.style.display = 'none'
           setTimeout(function () {
             loading.style.display = 'none'
-            // errorMessage.style.display = 'block'
           }, 2800)
         })
       }
-      // if a lcoId exists, update this lco object
+      // If a lcoId exists, update the according lco object
       else {
         axios.put(url, genericCourseFormatRequest, { headers: authHeader }).then(() => {
           console.log('Updating Graph')
-          //visual feedback for the user when graph is saved
+          // Visual feedback for the user when graph is saved
           const loading = document.getElementById('loading')
           loading.style.display = 'block'
-          // const errorMessage = document.getElementById('autosave-message')
-          // errorMessage.style.display = 'none'
           setTimeout(function () {
             loading.style.display = 'none'
-            // errorMessage.style.display = 'block'
           }, 2800)
         })
       }
-
-      // TODO: Remove, if transferred to adjusted functionality
-      // const graphs = this.graphStore.graphs
-
-      // this.diagram.saveXML({ format: true }).then((result) => {
-      //   console.log('Graphs', graphs)
-      //   const courseObjectId = courseNode?.objectId
-      //   if (!graphs[courseObjectId]) graphs[courseObjectId] = ''
-      //
-      //   const lastSavedGraphForCourse = graphs[courseObjectId]
-      //   // only save graph if something changed compared to the last saved graph
-      //   if (result.xml === lastSavedGraphForCourse) {
-      //     return
-      //   }
-      //
-      //   //save new graph to store
-      //   graphs[courseObjectId] = result.xml
-      //
-      //   const request = {
-      //     graph: result.xml,
-      //     format: 'XML'
-      //   }
-      //
-      //   axios.put(url, request, { headers: authHeader }).then(() => {
-      //     console.log('Save Graph')
-      //     //visual feedback for the user when graph is saved
-      //     const loading = document.getElementById('loading')
-      //     loading.style.display = 'block'
-      //     const errorMessage = document.getElementById('autosave-message')
-      //     errorMessage.style.display = 'none'
-      //     setTimeout(function () {
-      //       loading.style.display = 'none'
-      //       errorMessage.style.display = 'block'
-      //     }, 2800)
-      //   })
-      // })
     },
+    /**
+     * Center the canvas.
+     */
     centerCanvas() {
       const canvas = this.diagram.get('canvas')
       centerCanvas(canvas)
     },
+    /**
+     * Change the input of a given parameter name and value.
+     *
+     * @param parameterName
+     * @param newValue
+     */
     changeInput(parameterName, newValue) {
       const propertyToDefine = {}
       propertyToDefine[parameterName] = newValue
-      // TODO: Quick fix, as it is not allowed to modify this.elementSelected itself
+      // TODO: This is a workaround, as it is not allowed to modify this.elementSelected itself
       const elementToUpdate = this.diagram
         .get('elementRegistry')
         .find((element) => element.id === this.elementSelected.id)
@@ -723,32 +720,30 @@ export default {
       </p>
     </div>
     <div v-if="!canViewOnly" class="autosave">
-<!--      <p id="autosave-message" class="autosave-message">-->
-<!--        {{ settings.autosave ? 'Auto-Save ist aktiviert.' : 'Auto-Save ist deaktiviert.' }}-->
-<!--      </p>-->
       <p id="loading" class="loading" style="display: none">Speichern<span>.</span><span>.</span><span>.</span></p>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 #graph-viewer {
   position: relative;
   height: 100%;
   z-index: 5;
 }
+
 .rasterBackground {
   background-color: #fff;
   background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDEwLjU4MyAxMC41ODMiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGc+PHBhdGggZD0ibTAuMDAxMjA4MyAxMC41ODN2LTEwLjU4MyIgZmlsbD0iIzgwODA4MCIgc3Ryb2tlPSIjZGVkZWRlIiBzdHJva2Utd2lkdGg9Ii4yNjciLz48cGF0aCBkPSJtMS4zMjUzZS00IC0wLjAwNDk1NzIgMTAuNTgzIDAuMDA5OTE0MyIgc3Ryb2tlPSIjZGVkZWRlIiBzdHJva2Utd2lkdGg9Ii4yNTQ2N3B4Ii8+PC9nPjwvc3ZnPg==');
   background-position: -1px -1px;
   overflow: hidden;
-}
 
-.rasterBackground svg.djs-drag-active:not(.drop-not-ok) {
-  background-color: #fff !important;
-  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDEwLjU4MyAxMC41ODMiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiA8Zz4KICA8cGF0aCBkPSJtMC4wMDEyMDgzIDEwLjU4M3YtMTAuNTgzIiBmaWxsPSIjODA4MDgwIiBzdHJva2U9IiNkZWRlZGUiIHN0cm9rZS13aWR0aD0iLjI2NyIvPgogIDxnIGZpbGw9Im5vbmUiPgogICA8cGF0aCBkPSJtMS4zMjUzZS00IC0wLjAwNDk1NzIgMTAuNTgzIDAuMDA5OTE0MyIgc3Ryb2tlPSIjZGVkZWRlIiBzdHJva2Utd2lkdGg9Ii4yNTQ2N3B4Ii8+CiAgIDxwYXRoIGQ9Im01LjIyNjMgMC4xMzIyOXYxMC40NTEiIHN0cm9rZT0iI2Y3ZjdmNyIgc3Ryb2tlLXdpZHRoPSIuMjY0NDVweCIvPgogICA8cGF0aCBkPSJtMC4xMzIyOSA1LjIyNTVoMTAuNDUxIiBzdHJva2U9IiNmN2Y3ZjciIHN0cm9rZS13aWR0aD0iLjI2NDg3cHgiLz4KICA8L2c+CiA8L2c+Cjwvc3ZnPgo=') !important;
-  background-position: -1px -1px !important;
-  overflow: hidden !important;
+  svg.djs-drag-active:not(.drop-not-ok) {
+    background-color: #fff !important;
+    background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDEwLjU4MyAxMC41ODMiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CiA8Zz4KICA8cGF0aCBkPSJtMC4wMDEyMDgzIDEwLjU4M3YtMTAuNTgzIiBmaWxsPSIjODA4MDgwIiBzdHJva2U9IiNkZWRlZGUiIHN0cm9rZS13aWR0aD0iLjI2NyIvPgogIDxnIGZpbGw9Im5vbmUiPgogICA8cGF0aCBkPSJtMS4zMjUzZS00IC0wLjAwNDk1NzIgMTAuNTgzIDAuMDA5OTE0MyIgc3Ryb2tlPSIjZGVkZWRlIiBzdHJva2Utd2lkdGg9Ii4yNTQ2N3B4Ii8+CiAgIDxwYXRoIGQ9Im01LjIyNjMgMC4xMzIyOXYxMC40NTEiIHN0cm9rZT0iI2Y3ZjdmNyIgc3Ryb2tlLXdpZHRoPSIuMjY0NDVweCIvPgogICA8cGF0aCBkPSJtMC4xMzIyOSA1LjIyNTVoMTAuNDUxIiBzdHJva2U9IiNmN2Y3ZjciIHN0cm9rZS13aWR0aD0iLjI2NDg3cHgiLz4KICA8L2c+CiA8L2c+Cjwvc3ZnPgo=') !important;
+    background-position: -1px -1px !important;
+    overflow: hidden !important;
+  }
 }
 
 .empty {
@@ -757,6 +752,7 @@ export default {
   position: absolute;
   top: 20%;
 }
+
 .empty-message {
   border: 1px solid #ddd;
   border-radius: 3px;
@@ -765,19 +761,21 @@ export default {
   margin: 0 auto !important;
   padding: 3%;
 }
+
 .autosave {
   text-align: center;
   width: 100%;
   position: absolute;
   bottom: 1%;
-}
-.autosave p {
-  border: 1px solid #ddd;
-  border-radius: 3px;
-  width: 200px;
-  background: white;
-  margin: auto;
-  padding: 1%;
+
+  p {
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    width: 200px;
+    background: white;
+    margin: auto;
+    padding: 1%;
+  }
 }
 
 @keyframes saving {
@@ -791,16 +789,19 @@ export default {
     opacity: 0.2;
   }
 }
+
 .loading span {
   animation-name: saving;
   animation-duration: 1.4s;
   animation-iteration-count: 2;
   animation-fill-mode: both;
-}
-.loading span:nth-child(2) {
-  animation-delay: 0.2s;
-}
-.loading span:nth-child(3) {
-  animation-delay: 0.4s;
+
+  &:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  &:nth-child(3) {
+    animation-delay: 0.4s;
+  }
 }
 </style>
