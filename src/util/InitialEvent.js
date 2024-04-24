@@ -19,9 +19,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+const courseObjectId = import.meta.env.VITE_COURSE_ID || 'http://localhost:5173/goto.php?target=crs_90&client_id=default&obj_id_lrs=336'
 export const localNode = {
   lcoType: 'ILIAS_COURSE',
-  objectId: 'http://localhost:5173/goto.php?target=crs_90&client_id=default&obj_id_lrs=336',
+  objectId: courseObjectId,
   attributes: [
     {
       key: 'title',

@@ -11,7 +11,21 @@ nvm use
 npm install
 ```
 
-### Compile and hot-reload for development
+### Local development
+
+Create a `.env.development` file in order to specify values for the following variables:
+
+```
+VITE_BACKEND_URL=TAS_BACKEND_URL # the URL of the tud-tas-backend
+VITE_PSEUDO_ID=LMS_PSEUDO_ID # the user identification specified by the LMS that is used within the statements
+VITE_COURSE_ID=LMS_COURSE_OBJECT_ID # the objectId of the LMS course
+VITE_CAN_VIEW_ONLY=true|false # the decision, whether the student or the lecturer view should be displayed
+VITE_PREVIEW_MODE=true|false # the decision, whether the preview of the dashboard should be shown (locally, use false)
+```
+
+In order to modify the generic course format that is used for redrawing the knowledge graph, navigate into `./src/utl/InitialEvent.js`.
+
+Start compile and hot-reload for development:
 
 ```sh
 npm run dev
