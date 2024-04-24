@@ -1,0 +1,244 @@
+{
+  "name": "VerDatAs",
+  "uri": "http://verdatas.de/schema/verDatAs",
+  "prefix": "verDatAs",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "types": [
+    {
+      "name": "Definitions",
+      "superClass": ["GraphElement"],
+      "properties": [
+        {
+          "name": "targetNamespace",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "expressionLanguage",
+          "default": "http://www.w3.org/1999/XPath",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "typeLanguage",
+          "default": "http://www.w3.org/2001/XMLSchema",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "rootElements",
+          "type": "RootElement",
+          "isMany": true
+        },
+        {
+          "name": "graphRoots",
+          "isMany": true,
+          "type": "verDatAsDi:KnowledgeGraphRoot"
+        },
+        {
+          "name": "exporter",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "exporterVersion",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "KnowledgeGraph",
+      "superClass": ["RootElement"],
+      "properties": [
+        {
+          "name": "graphElements",
+          "isMany": true,
+          "type": "GraphElement"
+        }
+      ]
+    },
+    {
+      "name": "RootElement",
+      "isAbstract": true,
+      "superClass": ["GraphElement"]
+    },
+    {
+      "name": "GraphElement",
+      "isAbstract": true,
+      "properties": [
+        {
+          "name": "id",
+          "isAttr": true,
+          "type": "String",
+          "isId": true
+        },
+        {
+          "name": "name",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "GraphNodeElement",
+      "isAbstract": true,
+      "properties": [
+        {
+          "name": "objectId",
+          "isAttr": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "PriorKnowledgeElement",
+      "isAbstract": true,
+      "properties": [
+        {
+          "name": "priorKnowledgeElements",
+          "isMany": true,
+          "type": "PriorKnowledge"
+        }
+      ]
+    },
+    {
+      "name": "PriorKnowledge",
+      "properties": [
+        {
+          "name": "elementId",
+          "isBody": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Course",
+      "superClass": ["GraphElement", "GraphNodeElement"],
+      "properties": [
+        {
+          "name": "lecturerDashboardLink",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "modules",
+          "isMany": true,
+          "type": "Module"
+        }
+      ]
+    },
+    {
+      "name": "Module",
+      "superClass": ["GraphElement", "GraphNodeElement", "PriorKnowledgeElement"],
+      "properties": [
+        {
+          "name": "processingTime",
+          "isAttr": true,
+          "type": "Integer"
+        },
+        {
+          "name": "chapters",
+          "isMany": true,
+          "type": "Chapter"
+        }
+      ]
+    },
+    {
+      "name": "Chapter",
+      "superClass": ["GraphElement", "GraphNodeElement", "PriorKnowledgeElement"],
+      "properties": [
+        {
+          "name": "contentPages",
+          "isMany": true,
+          "type": "ContentPage"
+        }
+      ]
+    },
+    {
+      "name": "ContentPage",
+      "properties": [
+        {
+          "name": "objectId",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "title",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "interactiveTasks",
+          "isMany": true,
+          "type": "InteractiveTask"
+        },
+        {
+          "name": "documentationTools",
+          "isMany": true,
+          "type": "DocumentationTool"
+        }
+      ]
+    },
+    {
+      "name": "InteractiveTask",
+      "superClass": ["GraphElement", "GraphNodeElement", "PriorKnowledgeElement"],
+      "properties": [
+        {
+          "name": "isEntryTest",
+          "isAttr": true,
+          "type": "Boolean"
+        },
+        {
+          "name": "isFinalTest",
+          "isAttr": true,
+          "type": "Boolean"
+        }
+      ]
+    },
+    {
+      "name": "DocumentationTool",
+      "superClass": ["GraphElement", "GraphNodeElement", "PriorKnowledgeElement"],
+      "properties": []
+    },
+    {
+      "name": "SequenceFlow",
+      "superClass": ["GraphElement"],
+      "properties": [
+        {
+          "name": "sourceRef",
+          "type": "FlowNode",
+          "isAttr": true,
+          "isReference": true
+        },
+        {
+          "name": "targetRef",
+          "type": "FlowNode",
+          "isAttr": true,
+          "isReference": true
+        }
+      ]
+    },
+    {
+      "name": "FlowNode",
+      "isAbstract": true,
+      "superClass": ["GraphElement"],
+      "properties": [
+        {
+          "name": "incoming",
+          "type": "SequenceFlow",
+          "isMany": true,
+          "isReference": true
+        },
+        {
+          "name": "outgoing",
+          "type": "SequenceFlow",
+          "isMany": true,
+          "isReference": true
+        }
+      ]
+    }
+  ]
+}

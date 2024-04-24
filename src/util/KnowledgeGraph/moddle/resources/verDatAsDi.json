@@ -1,0 +1,309 @@
+{
+  "name": "VerDatAsDi",
+  "uri": "http://verdatas.de/schema/verDatAsDi",
+  "prefix": "verDatAsDi",
+  "xml": {
+    "tagAlias": "lowerCase"
+  },
+  "types": [
+    {
+      "name": "KnowledgeGraphRoot",
+      "properties": [
+        {
+          "name": "plane",
+          "type": "GraphPlane",
+          "redefines": "Graph#rootElement"
+        },
+        {
+          "name": "labelStyle",
+          "type": "GraphLabelStyle",
+          "isMany": true
+        }
+      ],
+      "superClass": ["Graph"]
+    },
+    {
+      "name": "GraphPlane",
+      "properties": [
+        {
+          "name": "graphElement",
+          "isAttr": true,
+          "isReference": true,
+          "type": "verDatAs:GraphElement",
+          "redefines": "GraphElement#modelElement"
+        }
+      ],
+      "superClass": ["Plane"]
+    },
+    {
+      "name": "GraphShape",
+      "properties": [
+        {
+          "name": "graphElement",
+          "isAttr": true,
+          "isReference": true,
+          "type": "verDatAs:GraphElement",
+          "redefines": "GraphElement#modelElement"
+        },
+        {
+          "name": "label",
+          "type": "GraphLabel"
+        }
+      ],
+      "superClass": ["LabeledShape"]
+    },
+    {
+      "name": "GraphLabel",
+      "properties": [
+        {
+          "name": "labelStyle",
+          "type": "GraphLabelStyle",
+          "isAttr": true,
+          "isReference": true,
+          "redefines": "GraphElement#style"
+        }
+      ],
+      "superClass": ["Label"]
+    },
+    {
+      "name": "GraphLabelStyle",
+      "properties": [
+        {
+          "name": "font",
+          "type": "dc:Font"
+        }
+      ],
+      "superClass": ["Style"]
+    },
+    {
+      "name": "GraphElement",
+      "isAbstract": true,
+      "properties": [
+        {
+          "name": "id",
+          "isAttr": true,
+          "isId": true,
+          "type": "String"
+        },
+        {
+          "name": "owningGraph",
+          "type": "Graph",
+          "isReadOnly": true,
+          "isVirtual": true,
+          "isReference": true
+        },
+        {
+          "name": "owningElement",
+          "type": "GraphElement",
+          "isReadOnly": true,
+          "isVirtual": true,
+          "isReference": true
+        },
+        {
+          "name": "modelElement",
+          "isReadOnly": true,
+          "isVirtual": true,
+          "isReference": true,
+          "type": "Element"
+        },
+        {
+          "name": "style",
+          "type": "Style",
+          "isReadOnly": true,
+          "isVirtual": true,
+          "isReference": true
+        }
+      ]
+    },
+    {
+      "name": "Node",
+      "isAbstract": true,
+      "superClass": ["GraphElement"]
+    },
+    {
+      "name": "Graph",
+      "isAbstract": true,
+      "properties": [
+        {
+          "name": "id",
+          "isAttr": true,
+          "isId": true,
+          "type": "String"
+        },
+        {
+          "name": "rootElement",
+          "type": "GraphElement",
+          "isReadOnly": true,
+          "isVirtual": true
+        },
+        {
+          "name": "name",
+          "isAttr": true,
+          "type": "String"
+        },
+        {
+          "name": "resolution",
+          "isAttr": true,
+          "type": "Real"
+        },
+        {
+          "name": "ownedStyle",
+          "type": "Style",
+          "isReadOnly": true,
+          "isMany": true,
+          "isVirtual": true
+        }
+      ]
+    },
+    {
+      "name": "Shape",
+      "isAbstract": true,
+      "superClass": ["Node"],
+      "properties": [
+        {
+          "name": "bounds",
+          "type": "dc:Bounds"
+        }
+      ]
+    },
+    {
+      "name": "Plane",
+      "isAbstract": true,
+      "superClass": ["Node"],
+      "properties": [
+        {
+          "name": "planeElement",
+          "type": "GraphElement",
+          "subsettedProperty": "GraphElement-ownedElement",
+          "isMany": true
+        }
+      ]
+    },
+    {
+      "name": "LabeledEdge",
+      "isAbstract": true,
+      "superClass": ["Edge"],
+      "properties": [
+        {
+          "name": "ownedLabel",
+          "type": "Label",
+          "isReadOnly": true,
+          "subsettedProperty": "GraphElement-ownedElement",
+          "isMany": true,
+          "isVirtual": true
+        }
+      ]
+    },
+    {
+      "name": "LabeledShape",
+      "isAbstract": true,
+      "superClass": ["Shape"],
+      "properties": [
+        {
+          "name": "ownedLabel",
+          "type": "Label",
+          "isReadOnly": true,
+          "subsettedProperty": "GraphElement-ownedElement",
+          "isMany": true,
+          "isVirtual": true
+        }
+      ]
+    },
+    {
+      "name": "Label",
+      "isAbstract": true,
+      "superClass": ["Node"],
+      "properties": [
+        {
+          "name": "bounds",
+          "type": "dc:Bounds"
+        }
+      ]
+    },
+    {
+      "name": "Style",
+      "isAbstract": true,
+      "properties": [
+        {
+          "name": "id",
+          "isAttr": true,
+          "isId": true,
+          "type": "String"
+        }
+      ]
+    },
+    {
+      "name": "Extension",
+      "properties": [
+        {
+          "name": "values",
+          "isMany": true,
+          "type": "Element"
+        }
+      ]
+    },
+    {
+      "name": "Edge",
+      "isAbstract": true,
+      "superClass": ["GraphElement"],
+      "properties": [
+        {
+          "name": "source",
+          "type": "GraphElement",
+          "isReadOnly": true,
+          "isVirtual": true,
+          "isReference": true
+        },
+        {
+          "name": "target",
+          "type": "GraphElement",
+          "isReadOnly": true,
+          "isVirtual": true,
+          "isReference": true
+        },
+        {
+          "name": "waypoint",
+          "isUnique": false,
+          "isMany": true,
+          "type": "dc:Point",
+          "xml": {
+            "serialize": "xsi:type"
+          }
+        }
+      ]
+    },
+    {
+      "name": "GraphEdge",
+      "properties": [
+        {
+          "name": "label",
+          "type": "Label"
+        },
+        {
+          "name": "graphElement",
+          "isAttr": true,
+          "isReference": true,
+          "type": "verDatAs:GraphElement",
+          "redefines": "GraphElement#modelElement"
+        },
+        {
+          "name": "sourceElement",
+          "isAttr": true,
+          "isReference": true,
+          "type": "verDatAs:GraphElement",
+          "redefines": "Edge#source"
+        },
+        {
+          "name": "targetElement",
+          "isAttr": true,
+          "isReference": true,
+          "type": "verDatAs:GraphElement",
+          "redefines": "Edge#target"
+        }
+      ],
+      "superClass": ["LabeledEdge"]
+    }
+  ],
+  "enumerations": [],
+  "associations": []
+}
