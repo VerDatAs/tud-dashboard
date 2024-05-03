@@ -16,12 +16,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <script>
-import { useCollaborationsStore } from '@/stores/collaborations'
+import { useAdministrationStore } from '@/stores/administration'
 import axios from 'axios'
 
 export default {
   data: () => ({
-    collaborationStore: useCollaborationsStore(),
+    administrationStore: useAdministrationStore(),
     adminTokenNotAvailable: false,
     assistanceId: '',
     addAssistanceIdFormVisible: false,
@@ -39,16 +39,16 @@ export default {
      * Return a stored admin token, if it is not yet expired.
      */
     adminToken() {
-      const adminToken = this.collaborationStore.adminToken
+      const adminToken = this.administrationStore.adminToken
       if (adminToken && adminToken !== '') {
         // Check expire date: https://stackoverflow.com/a/69058154
         const expiry = JSON.parse(atob(adminToken?.split('.')?.[1]))?.exp
         const isTokenExpired = expiry ? Math.floor(new Date().getTime() / 1000) >= expiry : true
         if (isTokenExpired) {
           // eslint-disable-next-line
-          this.collaborationStore.adminToken = ''
+          this.administrationStore.adminToken = ''
         }
-        return this.collaborationStore.adminToken ?? ''
+        return this.administrationStore.adminToken ?? ''
       }
       return ''
     },
@@ -56,7 +56,7 @@ export default {
      * Return the stored collaborations.
      */
     collaborations() {
-      return this.collaborationStore.collaborations ?? []
+      return this.administrationStore.collaborations ?? []
     },
     /**
      * Return, whether at least one stored collaboration exists.
@@ -98,7 +98,7 @@ export default {
      */
     addAssistanceId() {
       if (this.assistanceId && this.assistanceId !== '') {
-        this.collaborationStore.collaborations.push(this.assistanceId)
+        this.administrationStore.collaborations.push(this.assistanceId)
         this.assistanceId = ''
         this.initCollaborationMonitoring()
       }
@@ -111,9 +111,9 @@ export default {
     removeAssistanceId(assistanceId) {
       if (assistanceId && assistanceId !== '') {
         if (confirm('Wollen Sie diese Assistenz-ID wirklich aus dem Monitoring löschen?')) {
-          const index = this.collaborationStore.collaborations.indexOf(assistanceId)
+          const index = this.administrationStore.collaborations.indexOf(assistanceId)
           if (index > -1) {
-            this.collaborationStore.collaborations.splice(index, 1)
+            this.administrationStore.collaborations.splice(index, 1)
           }
           this.initCollaborationMonitoring()
         }
@@ -138,9 +138,13 @@ export default {
         password: this.collaborationUserPassword
       }
       axios.post(url, request).then((data) => {
-        this.collaborationStore.adminToken = data.data.token
-        this.loginInProgress = false
-        this.initCollaborationMonitoring()
+        const token = data.data.token
+        const roles = JSON.parse(atob(token?.split('.')?.[1]))?.roles
+        if (roles?.includes('ADMIN')) {
+          this.administrationStore.adminToken = data.data.token
+          this.loginInProgress = false
+          this.initCollaborationMonitoring()
+        }
       })
       setTimeout(() => {
         this.loginInProgress = false
