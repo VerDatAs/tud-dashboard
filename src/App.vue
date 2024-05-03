@@ -23,6 +23,7 @@ import NavigationView from '@/components/NavigationView.vue'
 import PreviewContainer from '@/components/PreviewContainer.vue'
 import QueryView from '@/components/Query/QueryView.vue'
 import Settings from '@/components/SettingsView.vue'
+import StatementSimulation from '@/components/StatementSimulation.vue'
 import { useDashboardDataStore } from '@/stores/dashboardData'
 import { ref } from 'vue'
 
@@ -35,7 +36,8 @@ export default {
     NavigationView,
     PreviewContainer,
     QueryView,
-    Settings
+    Settings,
+    StatementSimulation
   },
   data() {
     return {
@@ -159,6 +161,11 @@ export default {
       v-if="currentView === 'collaborationMonitoring'"
     />
     <QueryView :backendUrl="backendUrl" :isExpanded="isExpanded" :token="token" v-if="currentView === 'query'" />
+    <StatementSimulation
+      :backendUrl="backendUrl"
+      :isExpanded="isExpanded"
+      v-if="currentView === 'statementSimulation'"
+    />
     <Settings :isExpanded="isExpanded" v-if="currentView === 'settings'" />
     <DialogsWrapper />
   </div>

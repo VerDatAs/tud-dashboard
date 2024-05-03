@@ -220,6 +220,7 @@ After that the list of libraries used can be found in `dist/THIRD-PARTY-tud-dash
 | vue-demi | 0.13.11 | MIT | https://github.com/antfu/vue-demi |
 | vue-demi | 0.14.5 | MIT | https://github.com/antfu/vue-demi |
 | vue-demi | 0.14.6 | MIT | https://github.com/antfu/vue-demi |
+| vue-json-pretty | 2.4.0 | MIT | https://github.com/leezng/vue-json-pretty |
 | vue-multiselect | 3.0.0-beta.2 | MIT | https://github.com/suadelabs/vue-multiselect |
 | vue-template-compiler | 2.7.14 | MIT | https://github.com/vuejs/vue |
 | vue | 3.3.4 | MIT | https://github.com/vuejs/core |

@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <script>
 import BasicTypes from '@/components/KnowledgeGraph/PropertiesPanel/BasicTypes.vue'
-import { useCollaborationsStore } from '@/stores/collaborations'
+import { useAdministrationStore } from '@/stores/administration'
 import { basicTypes, customTypes, excludedParameters, nonSelectableElements } from '@/util/GraphHelpers'
 import axios from 'axios'
 import { markRaw } from 'vue'
@@ -42,7 +42,7 @@ export default {
     selectedCollaborationMembers: [],
     startCollaborationInProgress: false,
     collaborationStartSuccessfully: false,
-    collaborationStore: useCollaborationsStore()
+    administrationStore: useAdministrationStore()
   }),
   props: {
     backendUrl: String,
@@ -203,7 +203,7 @@ export default {
       axios.post(url, request).then((data) => {
         const token = data.data.token
         // Store token for the usage in the collaboration monitoring
-        this.collaborationStore.adminToken = token
+        this.administrationStore.adminToken = token
         const authHeader = {
           'Content-Type': 'application/json;charset=UTF-8',
           Authorization: 'Bearer ' + token
@@ -228,7 +228,7 @@ export default {
           const startedAssistanceArray = data?.data?.assistance
           startedAssistanceArray?.forEach((assistance) => {
             if (assistance.aId) {
-              this.collaborationStore.collaborations.push(assistance.aId)
+              this.administrationStore.collaborations.push(assistance.aId)
             }
           })
           this.collaborationStartSuccessfully = true

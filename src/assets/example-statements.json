@@ -1,0 +1,6338 @@
+[
+  {
+    "authority": {
+      "objectType": "Agent",
+      "name": "New Client",
+      "mbox": "mailto:hello@learninglocker.net"
+    },
+    "actor": {
+      "objectType": "Agent",
+      "account": {
+        "homePage": "https://lms-example.verdatas.de",
+        "name": "test_user1"
+      },
+      "name": "-"
+    },
+    "verb": {
+      "id": "https://brindlewaye.com/xAPITerms/verbs/loggedin/",
+      "display": {
+        "en-US": "loggedin"
+      }
+    },
+    "object": {
+      "id": "https://lms-example.verdatas.de",
+      "definition": {
+        "name": {
+          "en-US": "VerDatAs"
+        },
+        "type": "http://id.tincanapi.com/activitytype/lms",
+        "description": {
+          "en-US": "VerDatAs"
+        }
+      },
+      "objectType": "Activity"
+    },
+    "timestamp": "2024-05-16T13:00:00.000000+01:00"
+  },
+  {
+    "actor": {
+      "objectType": "Agent",
+      "account": {
+        "homePage": "https://lms-example.verdatas.de",
+        "name": "test_user1"
+      },
+      "name": "-"
+    },
+    "verb": {
+      "id": "http://adlnet.gov/expapi/verbs/launched",
+      "display": {
+        "en-US": "launched"
+      }
+    },
+    "object": {
+      "id": "https://lms-example.verdatas.de/goto.php?target=xayc_134&client_id=client0&obj_id_lrs=492",
+      "definition": {
+        "name": {
+          "en-US": "Testplayer"
+        },
+        "type": "http://adlnet.gov/expapi/activities/module"
+      }
+    },
+    "context": {
+      "contextActivities": {
+        "parent": {
+          "id": "https://lms-example.verdatas.de/goto.php?target=cat_84&client_id=client0&obj_id_lrs=314",
+          "definition": {
+            "name": {
+              "en-US": "AnyContent"
+            },
+            "type": "http://adlnet.gov/expapi/activities/module"
+          }
+        },
+        "grouping": [
+          {
+            "id": "https://lms-example.verdatas.de/goto.php?target=root_1&client_id=client0&obj_id_lrs=1",
+            "definition": {
+              "name": {
+                "en-US": "ILIAS"
+              },
+              "type": "http://adlnet.gov/expapi/activities/module",
+              "description": {
+                "en-US": "This is the root node of the system!!!"
+              }
+            }
+          },
+          {
+            "id": "https://lms-example.verdatas.de/goto.php?target=cat_83&client_id=client0&obj_id_lrs=313",
+            "definition": {
+              "name": {
+                "en-US": "Development"
+              },
+              "type": "http://adlnet.gov/expapi/activities/module"
+            }
+          }
+        ]
+      },
+      "extensions": {
+        "http://ilias.version": "8.5 2023-09-13",
+        "http://ilias.component": "TestPlayer",
+        "https://w3id.org/xapi/lms/extensions/sessionid": "37f677060c5e301c4b39e1875a57f1c328c891316a68a0a8cb6e0949eb538067",
+        "https://verdatas.de/test_player/user_data": {
+          "answers": [],
+          "show_hint": 0,
+          "show_feedback": 0,
+          "chapter": "0",
+          "index": 0
+        },
+        "https://verdatas.de/test_player/test_data": {
+          "id": "6",
+          "test_id": "96e91faa248d812c2e76f9aff42c92ddf31f733cc3e02a1cc8e65c6005ff8da2",
+          "object_id": null,
+          "created": "1710512662",
+          "title": "cnc_1",
+          "questions": [
+            {
+              "chapter": "0",
+              "type": "content_page",
+              "title": "Grundlagen",
+              "content": "0_.html",
+              "index": 0
+            },
+            {
+              "chapter": "0.1",
+              "type": "content_page",
+              "title": "CNC-Grundlagen",
+              "content": "0.1_.html",
+              "index": 1
+            },
+            {
+              "chapter": "0.1.1",
+              "type": "content_page",
+              "title": "Maschinenaufbau",
+              "content": "0.1.1_.html",
+              "index": 2
+            },
+            {
+              "chapter": "0.1.2",
+              "type": "content_page",
+              "title": "Nullpunkte",
+              "content": "0.1.2_.html",
+              "index": 3
+            },
+            {
+              "chapter": "0.1.3",
+              "type": "content_page",
+              "title": "Koordinaten",
+              "content": "0.1.3_.html",
+              "index": 4
+            },
+            {
+              "chapter": "0.1.4",
+              "type": "content_page",
+              "title": "Bemaßung",
+              "content": "0.1.4_.html",
+              "index": 5
+            },
+            {
+              "chapter": "0.1.5",
+              "type": "content_page",
+              "title": "Bewegungs (Steuerungs-) arten",
+              "content": "0.1.5_.html",
+              "index": 6
+            },
+            {
+              "chapter": "0.2",
+              "type": "content_page",
+              "title": "Technologiegrundlagen",
+              "content": "0.2_.html",
+              "index": 7
+            },
+            {
+              "chapter": "0.2.1",
+              "type": "content_page",
+              "title": "Spanungstechnische Grundlagen",
+              "content": "0.2.1_.html",
+              "index": 8
+            },
+            {
+              "chapter": "0.2.1.1",
+              "type": "content_page",
+              "title": "Faserrichtung des Holzes",
+              "content": "0.2.1.1_.html",
+              "index": 9
+            },
+            {
+              "chapter": "0.2.1.2",
+              "type": "content_page",
+              "title": "Werkzeugbezogene Fräsrichtung",
+              "content": "0.2.1.2_.html",
+              "index": 10
+            },
+            {
+              "chapter": "0.2.1.3",
+              "type": "content_page",
+              "title": "Startpunkt",
+              "content": "0.2.1.3_.html",
+              "index": 11
+            },
+            {
+              "chapter": "0.2.2",
+              "type": "content_page",
+              "title": "Werkzeug",
+              "content": "0.2.2_.html",
+              "index": 12
+            },
+            {
+              "chapter": "0.2.2.1",
+              "type": "content_page",
+              "title": "Werkzeugaufnahme",
+              "content": "0.2.2.1_.html",
+              "index": 13
+            },
+            {
+              "chapter": "0.2.2.2",
+              "type": "content_page",
+              "title": "Fräser",
+              "content": "0.2.2.2_.html",
+              "index": 14
+            },
+            {
+              "chapter": "0.2.2.3",
+              "type": "content_page",
+              "title": "Bohrwerkzeug",
+              "content": "0.2.2.3_.html",
+              "index": 15
+            },
+            {
+              "chapter": "0.2.2.4",
+              "type": "content_page",
+              "title": "Werkzeug 3D und Aggregate",
+              "content": "0.2.2.4_.html",
+              "index": 16
+            },
+            {
+              "chapter": "0.3",
+              "type": "content_page",
+              "title": "Mathematik-Grundlagen",
+              "content": "0.3_.html",
+              "index": 17
+            },
+            {
+              "chapter": "0.3.1",
+              "type": "content_page",
+              "title": "Koordinaten",
+              "content": "0.3.1_.html",
+              "index": 18
+            },
+            {
+              "chapter": "0.3.2",
+              "type": "content_page",
+              "title": "Pythagoras",
+              "content": "0.3.2_.html",
+              "index": 19
+            },
+            {
+              "chapter": "0.3.2.1",
+              "type": "content_page",
+              "title": "Formel",
+              "content": "0.3.2.1_.html",
+              "index": 20
+            },
+            {
+              "chapter": "0.3.2.2",
+              "type": "content_page",
+              "title": "Erklärung",
+              "content": "0.3.2.2_.html",
+              "index": 21
+            },
+            {
+              "chapter": "0.3.3",
+              "type": "content_page",
+              "title": "Winkelfunktion",
+              "content": "0.3.3_.html",
+              "index": 22
+            },
+            {
+              "chapter": "0.3.3.1",
+              "type": "content_page",
+              "title": "Tangens",
+              "content": "0.3.3.1_.html",
+              "index": 23
+            },
+            {
+              "chapter": "0.3.3.2",
+              "type": "content_page",
+              "title": "Sinus",
+              "content": "0.3.3.2_.html",
+              "index": 24
+            },
+            {
+              "chapter": "0.3.3.3",
+              "type": "content_page",
+              "title": "Cosinus",
+              "content": "0.3.3.3_.html",
+              "index": 25
+            },
+            {
+              "chapter": "0.3.4",
+              "type": "content_page",
+              "title": "Polarkoordinaten",
+              "content": "0.3.4_.html",
+              "index": 26
+            },
+            {
+              "chapter": "0.3.4.1",
+              "type": "content_page",
+              "title": "Einheitskreis",
+              "content": "0.3.4.1_.html",
+              "index": 27
+            },
+            {
+              "chapter": "0.3.4.2",
+              "type": "content_page",
+              "title": "Abhängigkeiten von den Winkelfunktionen",
+              "content": "0.3.4.2_.html",
+              "index": 28
+            },
+            {
+              "chapter": "0.3.5",
+              "type": "content_page",
+              "title": "Bögen",
+              "content": "0.3.5_.html",
+              "index": 29
+            },
+            {
+              "chapter": "0.3.5.1",
+              "type": "content_page",
+              "title": "Rechnung und Zeichnung",
+              "content": "0.3.5.1_.html",
+              "index": 30
+            },
+            {
+              "chapter": "0.3.5.2",
+              "type": "content_page",
+              "title": "Zeichnerische Lösung",
+              "content": "0.3.5.2_.html",
+              "index": 31
+            },
+            {
+              "chapter": "0.3.5.3",
+              "type": "content_page",
+              "title": "Abhängigkeiten vom Pythagoras",
+              "content": "0.3.5.3_.html",
+              "index": 32
+            },
+            {
+              "chapter": "0.4",
+              "type": "content_page",
+              "title": "HOPS-Grundlagen",
+              "content": "0.4_.html",
+              "index": 33
+            },
+            {
+              "chapter": "0.4.1",
+              "type": "content_page",
+              "title": "Bildschirm",
+              "content": "0.4.1_.html",
+              "index": 34
+            },
+            {
+              "chapter": "0.4.2",
+              "type": "content_page",
+              "title": "Editorenbereich",
+              "content": "0.4.2_.html",
+              "index": 35
+            },
+            {
+              "chapter": "0.4.3",
+              "type": "content_page",
+              "title": "Zeichnungsbereich",
+              "content": "0.4.3_.html",
+              "index": 36
+            },
+            {
+              "chapter": "0.4.4",
+              "type": "content_page",
+              "title": "Variablenbereich",
+              "content": "0.4.4_.html",
+              "index": 37
+            },
+            {
+              "chapter": "0.4.5",
+              "type": "content_page",
+              "title": "Bearbeitungs- und Hilfsregister",
+              "content": "0.4.5_.html",
+              "index": 38
+            },
+            {
+              "chapter": "0.4.6",
+              "type": "content_page",
+              "title": "Dateizeile",
+              "content": "0.4.6_.html",
+              "index": 39
+            },
+            {
+              "chapter": "0.4.7",
+              "type": "content_page",
+              "title": "Programmschritte",
+              "content": "0.4.7_.html",
+              "index": 40
+            },
+            {
+              "chapter": "0.4.7.1",
+              "type": "content_page",
+              "title": "Ablaufschema",
+              "content": "0.4.7.1_.html",
+              "index": 41
+            },
+            {
+              "chapter": "0.4.7.2",
+              "type": "content_page",
+              "title": "Änderung",
+              "content": "0.4.7.2_.html",
+              "index": 42
+            },
+            {
+              "chapter": "0.4.7.3",
+              "type": "content_page",
+              "title": "Vorlage öffnen und abspeichern",
+              "content": "0.4.7.3_.html",
+              "index": 43
+            },
+            {
+              "chapter": "0.4.8",
+              "type": "content_page",
+              "title": "ProgrammStart",
+              "content": "0.4.8_.html",
+              "index": 44
+            },
+            {
+              "chapter": "0.4.8.1",
+              "type": "content_page",
+              "title": "Werkstück festlegen",
+              "content": "0.4.8.1_.html",
+              "index": 45
+            },
+            {
+              "chapter": "0.4.8.2",
+              "type": "content_page",
+              "title": "Gegebenenfalls Nullpunkt verschieben",
+              "content": "0.4.8.2_.html",
+              "index": 46
+            },
+            {
+              "chapter": "0.4.9",
+              "type": "content_page",
+              "title": "MODULE auswählen",
+              "content": "0.4.9_.html",
+              "index": 47
+            },
+            {
+              "chapter": "0.4.9.1",
+              "type": "content_page",
+              "title": "Modul Fräsen",
+              "content": "0.4.9.1_.html",
+              "index": 48
+            },
+            {
+              "chapter": "0.4.9.1.1",
+              "type": "content_page",
+              "title": "Werkzeug auswählen",
+              "content": "0.4.9.1.1_.html",
+              "index": 49
+            },
+            {
+              "chapter": "0.4.9.1.2",
+              "type": "content_page",
+              "title": "Startpunkt festlegen",
+              "content": "0.4.9.1.2_.html",
+              "index": 50
+            },
+            {
+              "chapter": "0.4.9.1.3",
+              "type": "content_page",
+              "title": "Startwerte Koordinaten Zustellung",
+              "content": "0.4.9.1.3_.html",
+              "index": 51
+            },
+            {
+              "chapter": "0.4.9.1.4",
+              "type": "content_page",
+              "title": "Anfahrbewegung",
+              "content": "0.4.9.1.4_.html",
+              "index": 52
+            },
+            {
+              "chapter": "0.4.9.1.5",
+              "type": "content_page",
+              "title": "Fräserradiuskorrektur",
+              "content": "0.4.9.1.5_.html",
+              "index": 53
+            },
+            {
+              "chapter": "0.4.9.1.6",
+              "type": "content_page",
+              "title": "Geraden programmieren",
+              "content": "0.4.9.1.6_.html",
+              "index": 54
+            },
+            {
+              "chapter": "0.4.9.1.7",
+              "type": "content_page",
+              "title": "Kurven programmieren",
+              "content": "0.4.9.1.7_.html",
+              "index": 55
+            },
+            {
+              "chapter": "0.4.9.1.8",
+              "type": "content_page",
+              "title": "SNAP-ON",
+              "content": "0.4.9.1.8_.html",
+              "index": 56
+            },
+            {
+              "chapter": "0.4.9.1.9",
+              "type": "content_page",
+              "title": "Endpunkt festlegen",
+              "content": "0.4.9.1.9_.html",
+              "index": 57
+            },
+            {
+              "chapter": "0.4.9.2",
+              "type": "content_page",
+              "title": "Modul Taschen und Fräsmakros",
+              "content": "0.4.9.2_.html",
+              "index": 58
+            },
+            {
+              "chapter": "0.4.9.2.1",
+              "type": "content_page",
+              "title": "Werkzeug auswählen",
+              "content": "0.4.9.2.1_.html",
+              "index": 59
+            },
+            {
+              "chapter": "0.4.9.2.2",
+              "type": "content_page",
+              "title": "Mittelpunkt, Tiefen, Radien und Winkel angeben",
+              "content": "0.4.9.2.2_.html",
+              "index": 60
+            },
+            {
+              "chapter": "0.4.9.3",
+              "type": "content_page",
+              "title": "Modul Bohren",
+              "content": "0.4.9.3_.html",
+              "index": 61
+            },
+            {
+              "chapter": "0.4.9.3.1",
+              "type": "content_page",
+              "title": "Werkzeug auswählen",
+              "content": "0.4.9.3.1_.html",
+              "index": 62
+            },
+            {
+              "chapter": "0.4.9.3.2",
+              "type": "content_page",
+              "title": "Bohrart auswählen",
+              "content": "0.4.9.3.2_.html",
+              "index": 63
+            },
+            {
+              "chapter": "0.4.9.3.3",
+              "type": "content_page",
+              "title": "Punkte, Abstände, Bohrtiefe und Bohrtyp angeben",
+              "content": "0.4.9.3.3_.html",
+              "index": 64
+            },
+            {
+              "chapter": "0.4.9.4",
+              "type": "content_page",
+              "title": "Modul sägen",
+              "content": "0.4.9.4_.html",
+              "index": 65
+            },
+            {
+              "chapter": "0.4.9.4.1",
+              "type": "content_page",
+              "title": "Werkzeug auswählen",
+              "content": "0.4.9.4.1_.html",
+              "index": 66
+            },
+            {
+              "chapter": "0.4.9.4.2",
+              "type": "content_page",
+              "title": "Sägeart auswählen",
+              "content": "0.4.9.4.2_.html",
+              "index": 67
+            },
+            {
+              "chapter": "0.4.9.4.3",
+              "type": "content_page",
+              "title": "Eintauchpunkte, Abstände, Eintauchtiefen angeben",
+              "content": "0.4.9.4.3_.html",
+              "index": 68
+            },
+            {
+              "chapter": "0.4.9.5",
+              "type": "content_page",
+              "title": "Modul Konturfräsen",
+              "content": "0.4.9.5_.html",
+              "index": 69
+            },
+            {
+              "chapter": "0.4.9.5.1",
+              "type": "content_page",
+              "title": "Konturen vorzeichnen",
+              "content": "0.4.9.5.1_.html",
+              "index": 70
+            },
+            {
+              "chapter": "0.4.9.5.2",
+              "type": "content_page",
+              "title": "Fräsen oder Teil Fräsen der Konturen",
+              "content": "0.4.9.5.2_.html",
+              "index": 71
+            },
+            {
+              "chapter": "0.5",
+              "type": "content_page",
+              "title": "Simulationen",
+              "content": "0.5_.html",
+              "index": 72
+            },
+            {
+              "chapter": "0.5.1",
+              "type": "content_page",
+              "title": "SIMU (einfache Simulation)",
+              "content": "0.5.1_.html",
+              "index": 73
+            },
+            {
+              "chapter": "0.5.2",
+              "type": "content_page",
+              "title": "BetterSIM (Abtragssimulation)",
+              "content": "0.5.2_.html",
+              "index": 74
+            },
+            {
+              "chapter": "1",
+              "type": "content_page",
+              "title": "Kreuzsymbol für Apothekerschränkchen",
+              "content": "1_.html",
+              "index": 75
+            },
+            {
+              "chapter": "1.1",
+              "type": "content_page",
+              "title": "Aufgabe 1a Kreuzsymbol",
+              "content": "1.1_.html",
+              "index": 76
+            },
+            {
+              "chapter": "1.1.1",
+              "type": "content_page",
+              "title": "Auftragsbeschreibung Absolutbemaßung",
+              "content": "1.1.1_.html",
+              "index": 77
+            },
+            {
+              "chapter": "1.1.2",
+              "type": "content_page",
+              "title": "Zeichnung",
+              "content": "1.1.2_.html",
+              "index": 78
+            },
+            {
+              "chapter": "1.1.3",
+              "type": "content_page",
+              "title": "Skizze Absolutbemaßung",
+              "content": "1.1.3_.html",
+              "index": 79
+            },
+            {
+              "chapter": "1.1.4",
+              "type": "content_page",
+              "title": "Ablauf / Schritte",
+              "content": "1.1.4_.html",
+              "index": 80
+            },
+            {
+              "chapter": "1.1.5",
+              "type": "content_page",
+              "title": "Vorlage öffnen und abspeichern",
+              "content": "1.1.5_.html",
+              "index": 81
+            },
+            {
+              "chapter": "1.2",
+              "type": "content_page",
+              "title": "Variante 1 (absolut)",
+              "content": "1.2_.html",
+              "index": 82
+            },
+            {
+              "chapter": "1.2.1",
+              "type": "content_page",
+              "title": "Werkstück festlegen",
+              "content": "1.2.1_.html",
+              "index": 83
+            },
+            {
+              "chapter": "1.2.2",
+              "type": "content_page",
+              "title": "Werkzeug auswählen",
+              "content": "1.2.2_.html",
+              "index": 84
+            },
+            {
+              "chapter": "1.2.3",
+              "type": "content_page",
+              "title": "Startpunkt eingeben",
+              "content": "1.2.3_.html",
+              "index": 85
+            },
+            {
+              "chapter": "1.2.3.1",
+              "type": "table",
+              "title": "Aufgabe: Startpunkt eingeben",
+              "question": "Ergänzen Sie folgende Lücken:",
+              "image": {
+                "path": "images/1.2.3_startpunkt_eingeben_img_0.png",
+                "width": "500px",
+                "height": ""
+              },
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "Werkzeug",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "228",
+                  "score": "1"
+                },
+                {
+                  "row": "1",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "Profilfräser",
+                  "score": "1"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "Startpunkt",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "text": "X",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "text": "Y",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "1",
+                  "text": "SP=P1",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "150",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "250",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "1",
+                  "text": "Eintauchtiefe",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "2",
+                  "text": "Z",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-3",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "1",
+                  "text": "Anfahrtsbewegung",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "keine",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "3",
+                  "text": "0",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "1",
+                  "text": "Radiuskorrektur",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "Mitte",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "3",
+                  "text": "0",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "1",
+                  "text": "Anfahrfaktor",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "2",
+                  "text": "_ANF",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "3",
+                  "text": "unverändert",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "1",
+                  "text": "Abstand zur Kontur",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "2",
+                  "text": "0",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "3",
+                  "text": "unverändert",
+                  "input": "0"
+                }
+              ],
+              "index": 86
+            },
+            {
+              "chapter": "1.2.4",
+              "type": "content_page",
+              "title": "Geraden oder Bögen programmieren",
+              "content": "1.2.4_.html",
+              "index": 87
+            },
+            {
+              "chapter": "1.2.4.1",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 1/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 2, Linie über Punkt G01:",
+              "image": {
+                "path": "images/1.2.4.1_aufgabe_geraden_programmieren.jpg",
+                "width": "400px",
+                "height": ""
+              },
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "150",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "220",
+                  "score": "1"
+                }
+              ],
+              "index": 88
+            },
+            {
+              "chapter": "1.2.4.2",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 2/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 3, Kreisbogen L Mittelpunkt G03:",
+              "image": {
+                "path": "images/1.2.4.2_aufgabe_geraden_programmieren.jpg",
+                "width": "300px",
+                "height": ""
+              },
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "170",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "200",
+                  "score": "1"
+                },
+                {
+                  "text": "MX",
+                  "solution": "170",
+                  "score": "1"
+                },
+                {
+                  "text": "MY",
+                  "solution": "220",
+                  "score": "1"
+                }
+              ],
+              "index": 89
+            },
+            {
+              "chapter": "1.2.4.3",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 3/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 4, Linie über Punkt G01:",
+              "image": {
+                "path": "images/1.2.4.3_aufgabe_geraden_programmieren.jpg",
+                "width": "400px",
+                "height": ""
+              },
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "200",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "200",
+                  "score": "1"
+                }
+              ],
+              "index": 90
+            },
+            {
+              "chapter": "1.2.4.4",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 4/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 5, Kreisbogen R Radius G02M:",
+              "image": {
+                "path": "images/1.2.4.4_aufgabe_geraden_programmieren.jpg",
+                "width": "300px",
+                "height": ""
+              },
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "200",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "160",
+                  "score": "1"
+                },
+                {
+                  "text": "MX",
+                  "solution": "200",
+                  "score": "1"
+                },
+                {
+                  "text": "MY",
+                  "solution": "180",
+                  "score": "1"
+                }
+              ],
+              "index": 91
+            },
+            {
+              "chapter": "1.2.4.5",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 5/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 6, Linie über Punkt G01:",
+              "image": {
+                "path": "images/1.2.4.5_aufgabe_geraden_programmieren.jpg",
+                "width": "400px",
+                "height": ""
+              },
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "170",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "160",
+                  "score": "1"
+                }
+              ],
+              "index": 92
+            },
+            {
+              "chapter": "1.2.4.6",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 6/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 7, Kreisbogen L Mittelpunkt G03M:",
+              "image": {
+                "path": "images/1.2.4.5_aufgabe_geraden_programmieren.jpg",
+                "width": "400px",
+                "height": ""
+              },
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "150",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "140",
+                  "score": "1"
+                },
+                {
+                  "text": "MX",
+                  "solution": "170",
+                  "score": "1"
+                },
+                {
+                  "text": "MY",
+                  "solution": "140",
+                  "score": "1"
+                }
+              ],
+              "index": 93
+            },
+            {
+              "chapter": "1.2.4.7",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 7/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 8, Linie über Punkt G01:",
+              "image": {
+                "path": "images/1.2.4.7_aufgabe_geraden_programmieren.jpg",
+                "width": "400px",
+                "height": ""
+              },
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "150",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "110",
+                  "score": "1"
+                }
+              ],
+              "index": 94
+            },
+            {
+              "chapter": "1.2.4.8",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 8/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 9, Kreisbogen R Mittelpunkt G02M:",
+              "image": {
+                "path": "images/1.2.4.8_aufgabe_geraden_programmieren.jpg",
+                "width": "300px",
+                "height": ""
+              },
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "110",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "110",
+                  "score": "1"
+                },
+                {
+                  "text": "MX",
+                  "solution": "130",
+                  "score": "1"
+                },
+                {
+                  "text": "MY",
+                  "solution": "110",
+                  "score": "1"
+                }
+              ],
+              "index": 95
+            },
+            {
+              "chapter": "1.2.4.9",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 9/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 10, Linie über Punkt G01:",
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "110",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "140",
+                  "score": "1"
+                }
+              ],
+              "index": 96
+            },
+            {
+              "chapter": "1.2.4.10",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 10/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 11, Kreisbogen L Mittelpunkt G03M:",
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "90",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "160",
+                  "score": "1"
+                },
+                {
+                  "text": "MX",
+                  "solution": "90",
+                  "score": "1"
+                },
+                {
+                  "text": "MY",
+                  "solution": "140",
+                  "score": "1"
+                }
+              ],
+              "index": 97
+            },
+            {
+              "chapter": "1.2.4.11",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 11/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 12, Linie über Punkt G01:",
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "60",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "160",
+                  "score": "1"
+                }
+              ],
+              "index": 98
+            },
+            {
+              "chapter": "1.2.4.12",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 12/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 13, Kreisbogen R Mittelpunkt G02M:",
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "60",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "200",
+                  "score": "1"
+                },
+                {
+                  "text": "MX",
+                  "solution": "60",
+                  "score": "1"
+                },
+                {
+                  "text": "MY",
+                  "solution": "180",
+                  "score": "1"
+                }
+              ],
+              "index": 99
+            },
+            {
+              "chapter": "1.2.4.13",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 13/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 14, Linie über Punkt G01:",
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "90",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "200",
+                  "score": "1"
+                }
+              ],
+              "index": 100
+            },
+            {
+              "chapter": "1.2.4.14",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 14/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 15, Kreisbogen L Mittelpunkt G03M:",
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "110",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "220",
+                  "score": "1"
+                },
+                {
+                  "text": "MX",
+                  "solution": "90",
+                  "score": "1"
+                },
+                {
+                  "text": "MY",
+                  "solution": "220",
+                  "score": "1"
+                }
+              ],
+              "index": 101
+            },
+            {
+              "chapter": "1.2.4.15",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 15/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 16, Linie über Punkt G01:",
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "110",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "250",
+                  "score": "1"
+                }
+              ],
+              "index": 102
+            },
+            {
+              "chapter": "1.2.4.16",
+              "type": "text_input",
+              "title": "Aufgabe: Geraden und Bögen programmieren 16/16",
+              "question": "Ergänzen Sie folgende Werte: bis zum Punkt 1 = SP, Kreisbogen R Mittelpunkt G02M:",
+              "options": [
+                {
+                  "text": "X",
+                  "solution": "150",
+                  "score": "1"
+                },
+                {
+                  "text": "Y",
+                  "solution": "250",
+                  "score": "1"
+                },
+                {
+                  "text": "MX",
+                  "solution": "130",
+                  "score": "1"
+                },
+                {
+                  "text": "MY",
+                  "solution": "250",
+                  "score": "1"
+                }
+              ],
+              "index": 103
+            },
+            {
+              "chapter": "1.2.5",
+              "type": "content_page",
+              "title": "Endpunkt eingeben",
+              "content": "1.2.5_.html",
+              "index": 104
+            },
+            {
+              "chapter": "1.2.6",
+              "type": "content_page",
+              "title": "Mögliche Fehler",
+              "content": "1.2.6_.html",
+              "index": 105
+            },
+            {
+              "chapter": "1.2.6.1",
+              "type": "table",
+              "title": "Aufgabe: Mögliche Fehler",
+              "question": "In den drei vorgegebenen Dialogfeldern haben sich möglicherweise Fehler eingeschlichen. Bitte ergänzen Sie die richtigen und vollständigen Werte in folgender Tabelle:",
+              "image": {
+                "path": "images/1.2.6.1_moegliche_fehler.png",
+                "width": "600px",
+                "height": ""
+              },
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "text": "X bzw. MX",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "3",
+                  "text": "Y bzw. MY",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "G01",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "170",
+                  "score": "1"
+                },
+                {
+                  "row": "2",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "160",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "1",
+                  "text": "G03M Zielp",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "150",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "140",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "1",
+                  "text": "G03M Mittelp",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "170",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "140",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "1",
+                  "text": "G01",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "150",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "110",
+                  "score": "1"
+                }
+              ],
+              "index": 106
+            },
+            {
+              "chapter": "1.2.7",
+              "type": "content_page",
+              "title": "Simulation",
+              "content": "1.2.7_.html",
+              "index": 107
+            },
+            {
+              "chapter": "1.3",
+              "type": "content_page",
+              "title": "Variante 2 Nullpunkt Verschiebung",
+              "content": "1.3_.html",
+              "index": 108
+            },
+            {
+              "chapter": "1.3.1",
+              "type": "content_page",
+              "title": "Werkstück festlegen",
+              "content": "1.3.1_.html",
+              "index": 109
+            },
+            {
+              "chapter": "1.3.2",
+              "type": "content_page",
+              "title": "Nullpunktverschiebung",
+              "content": "1.3.2_.html",
+              "index": 110
+            },
+            {
+              "chapter": "1.3.3",
+              "type": "content_page",
+              "title": "Werkzeug auswählen",
+              "content": "1.3.3_.html",
+              "index": 111
+            },
+            {
+              "chapter": "1.3.4",
+              "type": "content_page",
+              "title": "Startpunkt eingeben",
+              "content": "1.3.4_.html",
+              "index": 112
+            },
+            {
+              "chapter": "1.3.4.1",
+              "type": "table",
+              "title": "Aufgabe: Startpunkt eingeben",
+              "question": "Ergänzen Sie folgende Tabelle:",
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "Werkzeug",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "228",
+                  "score": "1"
+                },
+                {
+                  "row": "1",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "Profilfräser",
+                  "score": "1"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "Startpunkt",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "text": "X",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "3",
+                  "text": "Y",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "1",
+                  "text": "SP = P1",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "80",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "1",
+                  "text": "Eintauchtiefe",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "2",
+                  "text": "Z",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-3",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "1",
+                  "text": "Anfahrtsbewegung",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "keine",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "3",
+                  "text": "0",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "1",
+                  "text": "Radiuskorrektur",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "Mitte",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "3",
+                  "text": "0",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "1",
+                  "text": "Anfahrfaktor",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "2",
+                  "text": "_ANF",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "3",
+                  "text": "unverändert",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "1",
+                  "text": "Abstand zur Kontur",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "2",
+                  "text": "0",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "3",
+                  "text": "unverändert",
+                  "input": "0"
+                }
+              ],
+              "index": 113
+            },
+            {
+              "chapter": "1.3.5",
+              "type": "content_page",
+              "title": "Geraden oder Bögen programmieren",
+              "content": "1.3.5_.html",
+              "index": 114
+            },
+            {
+              "chapter": "1.3.5.1",
+              "type": "table",
+              "title": "Aufgabe: Geraden oder Bögen programmieren",
+              "question": "Tragen Sie in der folgenden Tabelle die Werte der 16 Punkte und der 8 Mittelpunkte ein:",
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "Punkte",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "text": "X",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "3",
+                  "text": "Y",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "4",
+                  "text": "Mittelpunkte",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "5",
+                  "text": "MX",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "6",
+                  "text": "MY",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "P1 = SP",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "2",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "80",
+                  "score": "1"
+                },
+                {
+                  "row": "2",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "1",
+                  "text": "P2",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "40",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "4",
+                  "text": "M1",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "5",
+                  "input": "1",
+                  "solution": "40",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "6",
+                  "input": "1",
+                  "solution": "40",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "1",
+                  "text": "P3",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "40",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "1",
+                  "text": "P4",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "80",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "4",
+                  "text": "M2",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "5",
+                  "input": "1",
+                  "solution": "80",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "6",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "1",
+                  "text": "P5",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "80",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "1",
+                  "text": "P6",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "40",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "4",
+                  "text": "M3",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "5",
+                  "input": "1",
+                  "solution": "40",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "6",
+                  "input": "1",
+                  "solution": "-40",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "1",
+                  "text": "P7",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-40",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "9",
+                  "col": "1",
+                  "text": "P8",
+                  "input": "0"
+                },
+                {
+                  "row": "9",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-80",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "4",
+                  "text": "M4",
+                  "input": "0"
+                },
+                {
+                  "row": "9",
+                  "col": "5",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "6",
+                  "input": "1",
+                  "solution": "-80",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "1",
+                  "text": "P9",
+                  "input": "0"
+                },
+                {
+                  "row": "10",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-80",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "10",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "10",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "1",
+                  "text": "P10",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "11",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-40",
+                  "score": "1"
+                },
+                {
+                  "row": "11",
+                  "col": "4",
+                  "text": "M5",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "5",
+                  "input": "1",
+                  "solution": "-40",
+                  "score": "1"
+                },
+                {
+                  "row": "11",
+                  "col": "6",
+                  "input": "1",
+                  "solution": "-40",
+                  "score": "1"
+                },
+                {
+                  "row": "12",
+                  "col": "1",
+                  "text": "P11",
+                  "input": "0"
+                },
+                {
+                  "row": "12",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-40",
+                  "score": "1"
+                },
+                {
+                  "row": "12",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "12",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "12",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "12",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "13",
+                  "col": "1",
+                  "text": "P12",
+                  "input": "0"
+                },
+                {
+                  "row": "13",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-80",
+                  "score": "1"
+                },
+                {
+                  "row": "13",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "13",
+                  "col": "4",
+                  "text": "M6",
+                  "input": "0"
+                },
+                {
+                  "row": "13",
+                  "col": "5",
+                  "input": "1",
+                  "solution": "-80",
+                  "score": "1"
+                },
+                {
+                  "row": "13",
+                  "col": "6",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "14",
+                  "col": "1",
+                  "text": "P13",
+                  "input": "0"
+                },
+                {
+                  "row": "14",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-80",
+                  "score": "1"
+                },
+                {
+                  "row": "14",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "14",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "14",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "14",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "15",
+                  "col": "1",
+                  "text": "P14",
+                  "input": "0"
+                },
+                {
+                  "row": "15",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-40",
+                  "score": "1"
+                },
+                {
+                  "row": "15",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "15",
+                  "col": "4",
+                  "text": "M7",
+                  "input": "0"
+                },
+                {
+                  "row": "15",
+                  "col": "5",
+                  "input": "1",
+                  "solution": "-40",
+                  "score": "1"
+                },
+                {
+                  "row": "15",
+                  "col": "6",
+                  "input": "1",
+                  "solution": "40",
+                  "score": "1"
+                },
+                {
+                  "row": "16",
+                  "col": "1",
+                  "text": "P15",
+                  "input": "0"
+                },
+                {
+                  "row": "16",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "16",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "40",
+                  "score": "1"
+                },
+                {
+                  "row": "16",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "16",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "16",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "17",
+                  "col": "1",
+                  "text": "P16",
+                  "input": "0"
+                },
+                {
+                  "row": "17",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "17",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "80",
+                  "score": "1"
+                },
+                {
+                  "row": "17",
+                  "col": "4",
+                  "text": "M8",
+                  "input": "0"
+                },
+                {
+                  "row": "17",
+                  "col": "5",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "17",
+                  "col": "6",
+                  "input": "1",
+                  "solution": "80",
+                  "score": "1"
+                },
+                {
+                  "row": "18",
+                  "col": "1",
+                  "text": "P1 = SP",
+                  "input": "0"
+                },
+                {
+                  "row": "18",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "18",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "80",
+                  "score": "1"
+                },
+                {
+                  "row": "18",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "18",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "18",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                }
+              ],
+              "index": 115
+            },
+            {
+              "chapter": "1.3.6",
+              "type": "content_page",
+              "title": "Endpunkt eingeben",
+              "content": "1.3.6_.html",
+              "index": 116
+            },
+            {
+              "chapter": "1.3.7",
+              "type": "content_page",
+              "title": "Simulation",
+              "content": "1.3.7_.html",
+              "index": 117
+            },
+            {
+              "chapter": "1.4",
+              "type": "content_page",
+              "title": "Aufgabe 1b Kreuzsymbol",
+              "content": "1.4_.html",
+              "index": 118
+            },
+            {
+              "chapter": "1.4.1",
+              "type": "content_page",
+              "title": "Auftragsbeschreibung Relativbemaßung",
+              "content": "1.4.1_.html",
+              "index": 119
+            },
+            {
+              "chapter": "1.4.2",
+              "type": "content_page",
+              "title": "Zeichnung",
+              "content": "1.4.2_.html",
+              "index": 120
+            },
+            {
+              "chapter": "1.4.3",
+              "type": "content_page",
+              "title": "Ablauf / Schritt",
+              "content": "1.4.3_.html",
+              "index": 121
+            },
+            {
+              "chapter": "1.5",
+              "type": "content_page",
+              "title": "Variante 3 (relativ)",
+              "content": "1.5_.html",
+              "index": 122
+            },
+            {
+              "chapter": "1.5.1",
+              "type": "content_page",
+              "title": "Werkstück festlegen",
+              "content": "1.5.1_.html",
+              "index": 123
+            },
+            {
+              "chapter": "1.5.1.1",
+              "type": "table",
+              "title": "Aufgabe: Werkstück festlegen",
+              "image": {
+                "path": "images/1.5.1_werkstueck.png",
+                "width": "900px",
+                "height": ""
+              },
+              "question": "Ergänzen Sie folgende Wert:",
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "text": "Startwert",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "DX",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "160",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "1",
+                  "text": "DY",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "210",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "1",
+                  "text": "DZ",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "10",
+                  "score": "1"
+                }
+              ],
+              "index": 124
+            },
+            {
+              "chapter": "1.5.2",
+              "type": "content_page",
+              "title": "Werkzeug auswählen",
+              "content": "1.5.2_.html",
+              "index": 125
+            },
+            {
+              "chapter": "1.5.3",
+              "type": "content_page",
+              "title": "Startpunkt eingeben",
+              "content": "1.5.3_.html",
+              "index": 126
+            },
+            {
+              "chapter": "1.5.3.1",
+              "type": "table",
+              "title": "Aufgabe: Startpunkt eingeben",
+              "question": "Ergänzen Sie folgende Lücken:",
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "Werkzeug",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "228",
+                  "score": "1"
+                },
+                {
+                  "row": "1",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "Profilfräser",
+                  "score": "1"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "Startpunkt",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "text": "X",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "text": "Y",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "1",
+                  "text": "SP=P1",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "15",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "100",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "1",
+                  "text": "Eintauchtiefe",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "2",
+                  "text": "Z",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-3",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "1",
+                  "text": "Anfahrtsbewegung",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "keine",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "3",
+                  "text": "0",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "1",
+                  "text": "Radiuskorrektur",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "Mitte",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "3",
+                  "text": "0",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "1",
+                  "text": "Anfahrfaktor",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "2",
+                  "text": "_ANF",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "3",
+                  "text": "unverändert",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "1",
+                  "text": "Abstand zur Kontur",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "2",
+                  "text": "0",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "3",
+                  "text": "unverändert",
+                  "input": "0"
+                }
+              ],
+              "index": 127
+            },
+            {
+              "chapter": "1.5.4",
+              "type": "content_page",
+              "title": "Geraden oder Bögen programmieren",
+              "content": "1.5.4_.html",
+              "index": 128
+            },
+            {
+              "chapter": "1.5.4.1",
+              "type": "table",
+              "title": "Aufgabe: Geraden oder Bögen programmieren",
+              "question": "Tragen Sie in der folgenden Tabelle die Werte der 24 Punkte und der 8 Mittelpunkte ein:",
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "Punkte",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "text": "X",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "3",
+                  "text": "Y",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "P1 = SP",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "15",
+                  "score": "1"
+                },
+                {
+                  "row": "2",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "100",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "1",
+                  "text": "P2",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "1",
+                  "text": "P3",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-30",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "1",
+                  "text": "P4",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "1",
+                  "text": "P5",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "30",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "1",
+                  "text": "P6",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "1",
+                  "text": "P7",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-30",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "1",
+                  "text": "P8",
+                  "input": "0"
+                },
+                {
+                  "row": "9",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "1",
+                  "text": "P9",
+                  "input": "0"
+                },
+                {
+                  "row": "10",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-30",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "11",
+                  "col": "1",
+                  "text": "P10",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "11",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "12",
+                  "col": "1",
+                  "text": "P11",
+                  "input": "0"
+                },
+                {
+                  "row": "12",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "12",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-30",
+                  "score": "1"
+                },
+                {
+                  "row": "13",
+                  "col": "1",
+                  "text": "P12",
+                  "input": "0"
+                },
+                {
+                  "row": "13",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "13",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "14",
+                  "col": "1",
+                  "text": "P13",
+                  "input": "0"
+                },
+                {
+                  "row": "14",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-30",
+                  "score": "1"
+                },
+                {
+                  "row": "14",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "15",
+                  "col": "1",
+                  "text": "P14",
+                  "input": "0"
+                },
+                {
+                  "row": "15",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "15",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "16",
+                  "col": "1",
+                  "text": "P15",
+                  "input": "0"
+                },
+                {
+                  "row": "16",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "16",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "30",
+                  "score": "1"
+                },
+                {
+                  "row": "17",
+                  "col": "1",
+                  "text": "P16",
+                  "input": "0"
+                },
+                {
+                  "row": "17",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "17",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "18",
+                  "col": "1",
+                  "text": "P17",
+                  "input": "0"
+                },
+                {
+                  "row": "18",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-30",
+                  "score": "1"
+                },
+                {
+                  "row": "18",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "19",
+                  "col": "1",
+                  "text": "P18",
+                  "input": "0"
+                },
+                {
+                  "row": "19",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "-20",
+                  "score": "1"
+                },
+                {
+                  "row": "19",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "20",
+                  "col": "1",
+                  "text": "P19",
+                  "input": "0"
+                },
+                {
+                  "row": "20",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "20",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "30",
+                  "score": "1"
+                },
+                {
+                  "row": "21",
+                  "col": "1",
+                  "text": "P20",
+                  "input": "0"
+                },
+                {
+                  "row": "21",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "21",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "22",
+                  "col": "1",
+                  "text": "P21",
+                  "input": "0"
+                },
+                {
+                  "row": "22",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "30",
+                  "score": "1"
+                },
+                {
+                  "row": "22",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "23",
+                  "col": "1",
+                  "text": "P22",
+                  "input": "0"
+                },
+                {
+                  "row": "23",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "23",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "24",
+                  "col": "1",
+                  "text": "P23",
+                  "input": "0"
+                },
+                {
+                  "row": "24",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "24",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "30",
+                  "score": "1"
+                },
+                {
+                  "row": "25",
+                  "col": "1",
+                  "text": "P24",
+                  "input": "0"
+                },
+                {
+                  "row": "25",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "25",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "26",
+                  "col": "1",
+                  "text": "P1 = SP",
+                  "input": "0"
+                },
+                {
+                  "row": "26",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "30",
+                  "score": "1"
+                },
+                {
+                  "row": "26",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                }
+              ],
+              "index": 129
+            },
+            {
+              "chapter": "1.5.5",
+              "type": "content_page",
+              "title": "Endpunkt eingeben",
+              "content": "1.5.5_.html",
+              "index": 130
+            },
+            {
+              "chapter": "1.5.6",
+              "type": "content_page",
+              "title": "Simulation",
+              "content": "1.5.6_.html",
+              "index": 131
+            },
+            {
+              "chapter": "1.6",
+              "type": "content_page",
+              "title": "Variante 4 SNAP-ON",
+              "content": "1.6_.html",
+              "index": 132
+            },
+            {
+              "chapter": "1.6.1",
+              "type": "content_page",
+              "title": "Datei unter einem anderen Namen abspeichern",
+              "content": "1.6.1_.html",
+              "index": 133
+            },
+            {
+              "chapter": "1.6.2",
+              "type": "table",
+              "title": "Aufgabe: Startpunkt ändern",
+              "question": "Aufgabe:",
+              "image": {
+                "path": "images/1.6.2_startpunkt.png",
+                "width": "900px",
+                "height": ""
+              },
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "text": "X - Wert",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "3",
+                  "text": "Y - Wert",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "SP / Startpunkt",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "15",
+                  "score": "1"
+                },
+                {
+                  "row": "2",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "100",
+                  "score": "1"
+                }
+              ],
+              "index": 134
+            },
+            {
+              "chapter": "1.6.3",
+              "type": "content_page",
+              "title": "Simulation",
+              "content": "1.6.3_.html",
+              "index": 135
+            },
+            {
+              "chapter": "2",
+              "type": "content_page",
+              "title": "Aufgabe 2a rechteckiges Brotzeitbrett mit Saftrille",
+              "content": "2_.html",
+              "index": 136
+            },
+            {
+              "chapter": "2.1",
+              "type": "content_page",
+              "title": "Auftrag",
+              "content": "2.1_.html",
+              "index": 137
+            },
+            {
+              "chapter": "2.1.1",
+              "type": "content_page",
+              "title": "Auftragsbeschreibung",
+              "content": "2.1.1_.html",
+              "index": 138
+            },
+            {
+              "chapter": "2.1.2",
+              "type": "content_page",
+              "title": "Zeichnung",
+              "content": "2.1.2_.html",
+              "index": 139
+            },
+            {
+              "chapter": "2.1.3",
+              "type": "content_page",
+              "title": "Skizze Absolutbemaßung",
+              "content": "2.1.3_.html",
+              "index": 140
+            },
+            {
+              "chapter": "2.1.4",
+              "type": "content_page",
+              "title": "Ablauf",
+              "content": "2.1.4_.html",
+              "index": 141
+            },
+            {
+              "chapter": "2.1.5",
+              "type": "content_page",
+              "title": "Vorlage öffnen und abspeichern",
+              "content": "2.1.5_.html",
+              "index": 142
+            },
+            {
+              "chapter": "2.2",
+              "type": "content_page",
+              "title": "Variante 1 außen kantig",
+              "content": "2.2_.html",
+              "index": 143
+            },
+            {
+              "chapter": "2.2.1",
+              "type": "content_page",
+              "title": "Einrichten des Werkstückes",
+              "content": "2.2.1_.html",
+              "index": 144
+            },
+            {
+              "chapter": "2.2.2",
+              "type": "content_page",
+              "title": "Werkzeug für das Formatfräsen Außenkontur",
+              "content": "2.2.2_.html",
+              "index": 145
+            },
+            {
+              "chapter": "2.2.3",
+              "type": "content_page",
+              "title": "Startpunkt festlegen",
+              "content": "2.2.3_.html",
+              "index": 146
+            },
+            {
+              "chapter": "2.2.4",
+              "type": "content_page",
+              "title": "Werte für Geraden eintragen",
+              "content": "2.2.4_.html",
+              "index": 147
+            },
+            {
+              "chapter": "2.2.4.1",
+              "type": "table",
+              "title": "Aufgabe: Werte für Geraden eintragen",
+              "question": "5 x Linie über Punkt G01: Tragen Sie in der untern Tabelle die entsprechenden X- und Y- Koordinaten des Startpunktes und der Punkte 1 bis 5 ein.",
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "Punkte",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "text": "X",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "3",
+                  "text": "Y",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "SP",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "150",
+                  "score": "1"
+                },
+                {
+                  "row": "2",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "1",
+                  "text": "P1",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "300",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "1",
+                  "text": "P2",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "300",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "200",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "1",
+                  "text": "P3",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "200",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "1",
+                  "text": "P4",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "1",
+                  "text": "P5 = EP +",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "150+10",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                }
+              ],
+              "index": 148
+            },
+            {
+              "chapter": "2.2.5",
+              "type": "content_page",
+              "title": "Mit Endpunkt beenden",
+              "content": "2.2.5_.html",
+              "index": 149
+            },
+            {
+              "chapter": "2.2.6",
+              "type": "content_page",
+              "title": "Werkzeug für die Saftrille Oberflächenkontur",
+              "content": "2.2.6_.html",
+              "index": 150
+            },
+            {
+              "chapter": "2.2.7",
+              "type": "content_page",
+              "title": "Startpunkt festlegen",
+              "content": "2.2.7_.html",
+              "index": 151
+            },
+            {
+              "chapter": "2.2.8",
+              "type": "content_page",
+              "title": "Werte für Geraden oder Bögen eintragen",
+              "content": "2.2.8_.html",
+              "index": 152
+            },
+            {
+              "chapter": "2.2.8.1",
+              "type": "table",
+              "title": "Aufgabe: Werte für Geraden oder Bögen eintragen",
+              "question": "5 x Linie über Punkt G01 und 4 x Boten mit Mittelpunkt: Tragen Sie in der untern Tabelle die entsprechenden X- und Y- Koordinaten des Startpunktes und der Punkte 1 bis 9 ein, sowie die entsprechenden Mittelpunktkoordinaten (MX und MY) der Kreisbögen.",
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "Punkte",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "text": "X",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "3",
+                  "text": "Y",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "4",
+                  "text": "Mittelpunkte",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "5",
+                  "text": "MX",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "6",
+                  "text": "Y",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "SP",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "200",
+                  "score": "1"
+                },
+                {
+                  "row": "2",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "2",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "1",
+                  "text": "P1",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "255",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "1",
+                  "text": "P2",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "280",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "4",
+                  "text": "M1",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "5",
+                  "input": "1",
+                  "solution": "255",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "6",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "1",
+                  "text": "P3",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "280",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "155",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "1",
+                  "text": "P4",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "255",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "180",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "4",
+                  "text": "M2",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "5",
+                  "input": "1",
+                  "solution": "280",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "6",
+                  "input": "1",
+                  "solution": "180",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "1",
+                  "text": "P5",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "180",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "1",
+                  "text": "P6",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "155",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "4",
+                  "text": "M3",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "5",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "6",
+                  "input": "1",
+                  "solution": "155",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "1",
+                  "text": "P7",
+                  "input": "0"
+                },
+                {
+                  "row": "9",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "9",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "9",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "10",
+                  "col": "1",
+                  "text": "P8",
+                  "input": "0"
+                },
+                {
+                  "row": "10",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "4",
+                  "text": "M4",
+                  "input": "0"
+                },
+                {
+                  "row": "10",
+                  "col": "5",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "6",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "11",
+                  "col": "1",
+                  "text": "P9=EP",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "200+10",
+                  "score": "1"
+                },
+                {
+                  "row": "11",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "11",
+                  "col": "4",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                }
+              ],
+              "index": 153
+            },
+            {
+              "chapter": "2.2.9",
+              "type": "content_page",
+              "title": "Mit Endpunkt beenden",
+              "content": "2.2.9_.html",
+              "index": 154
+            },
+            {
+              "chapter": "2.2.10",
+              "type": "content_page",
+              "title": "Zum ausprobieren",
+              "content": "2.2.10_.html",
+              "index": 155
+            },
+            {
+              "chapter": "2.3",
+              "type": "content_page",
+              "title": "Variante 2 abgerundet mit Griffmulde",
+              "content": "2.3_.html",
+              "index": 156
+            },
+            {
+              "chapter": "2.3.1",
+              "type": "content_page",
+              "title": "Datei unter neuem Namen abspeichern",
+              "content": "2.3.1_.html",
+              "index": 157
+            },
+            {
+              "chapter": "2.3.1.1",
+              "type": "table",
+              "title": "Aufgabe: Datei abspeichern",
+              "question": "Wenn Sie aber komplett eine neue Datei anlegen wollen, in welcher Reihenfolge müssen Sie vorgehen? Ordnen Sie für die Außenkontur folgende 'Symbole' in die richtige Reihenfolge, indem Sie hinter das Symbol jeweils eine Ziffer schreiben von 1 bis 20. (Beide sind schon angegeben). Wird ein Befehl mehrmals gebraucht, so geben Sie die einzelnen Ziffern der Reihenfolge durch Komma getrennt an. Wird ein Befehl nicht gebraucht, so geben Sie ein x ein.",
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_0.jpg",
+                    "width": "2.24cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "x",
+                  "score": "1"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_1.jpg",
+                    "width": "2.09cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "19",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_2.jpg",
+                    "width": "1.99cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "2",
+                  "input": "0",
+                  "text": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_3.jpg",
+                    "width": "2.24cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "8,10,12,14,16",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_4.png",
+                    "width": "3.1cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "4",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_5.jpg",
+                    "width": "1.83cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "9,11,13,15",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_6.jpg",
+                    "width": "2.03cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "6",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_7.jpg",
+                    "width": "1.99cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "2",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_8.jpg",
+                    "width": "3.72cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "9",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "3",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_9.png",
+                    "width": "1.67cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "10",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "18",
+                  "score": "1"
+                },
+                {
+                  "row": "11",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_10.jpg",
+                    "width": "1.81cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "2",
+                  "input": "0",
+                  "text": "20"
+                },
+                {
+                  "row": "12",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_11.jpg",
+                    "width": "1.9cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "12",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "x",
+                  "score": "1"
+                },
+                {
+                  "row": "13",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_12.jpg",
+                    "width": "1.65cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "13",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "17",
+                  "score": "1"
+                },
+                {
+                  "row": "14",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_13.jpg",
+                    "width": "3.87cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "14",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "5",
+                  "score": "1"
+                },
+                {
+                  "row": "15",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_14.jpg",
+                    "width": "1.38cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "15",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "7",
+                  "score": "1"
+                },
+                {
+                  "row": "16",
+                  "col": "1",
+                  "text": "",
+                  "img": {
+                    "path": "images/2.3.1.1_15.jpg",
+                    "width": "3.93cm"
+                  },
+                  "input": "0"
+                },
+                {
+                  "row": "16",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "x",
+                  "score": "1"
+                }
+              ],
+              "index": 158
+            },
+            {
+              "chapter": "2.3.2",
+              "type": "content_page",
+              "title": "Geraden programmieren für die Außenkontur durch Verändern der Werte",
+              "content": "2.3.2_.html",
+              "index": 159
+            },
+            {
+              "chapter": "2.3.3",
+              "type": "content_page",
+              "title": "Geraden oder Bögen für die Saftrille verändern",
+              "content": "2.3.3_.html",
+              "index": 160
+            },
+            {
+              "chapter": "2.3.3.1",
+              "type": "table",
+              "title": "Aufgabe: Ziel- und Mittelpunkte eintragen",
+              "question": "Tragen Sie als Zusammenfassung für die Saftrille die X- und Y-Werte der jeweiligen Zielpunkte sowie der Mittelpunkte ein. Für das SNAP-ON geben Sie die Ziffer links davon ein. Saftrille:",
+              "image": {
+                "path": "images/2.3.3.1.jpg",
+                "width": "10.32cm",
+                "height": ""
+              },
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "Punkte",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "text": "SNAP-ON",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "3",
+                  "text": "X",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "4",
+                  "text": "Y",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "5",
+                  "text": "SNAP-ON",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "6",
+                  "text": "Mittelpunkte",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "7",
+                  "text": "MX",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "8",
+                  "text": "MY",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "SP",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "text": "2",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "3",
+                  "text": "0",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "4",
+                  "text": "20",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "7",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "8",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "1",
+                  "text": "P1",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "3",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "4",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "7",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "8",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "1",
+                  "text": "P2",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "3",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "4",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "5",
+                  "text": "3",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "6",
+                  "text": "M1",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "7",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "8",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "1",
+                  "text": "P3",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "5",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "4",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "7",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "8",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "1",
+                  "text": "P4",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "5",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "4",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "6",
+                  "text": "M2",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "7",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "8",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "1",
+                  "text": "P5",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "7",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "4",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "7",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "7",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "8",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "1",
+                  "text": "P6",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "7",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "4",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "6",
+                  "text": "M3",
+                  "input": "0"
+                },
+                {
+                  "row": "8",
+                  "col": "7",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "8",
+                  "col": "8",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "1",
+                  "text": "P7",
+                  "input": "0"
+                },
+                {
+                  "row": "9",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "1",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "4",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "9",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "9",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "9",
+                  "col": "7",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "9",
+                  "col": "8",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "10",
+                  "col": "1",
+                  "text": "P8",
+                  "input": "0"
+                },
+                {
+                  "row": "10",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "1",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "4",
+                  "input": "1",
+                  "solution": "20",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "10",
+                  "col": "6",
+                  "text": "M4",
+                  "input": "0"
+                },
+                {
+                  "row": "10",
+                  "col": "7",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "10",
+                  "col": "8",
+                  "input": "1",
+                  "solution": "45",
+                  "score": "1"
+                },
+                {
+                  "row": "11",
+                  "col": "1",
+                  "text": "P9=EP",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "2",
+                  "text": "2",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "3",
+                  "text": "0+10",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "4",
+                  "text": "20",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "6",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "7",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "11",
+                  "col": "8",
+                  "text": "",
+                  "input": "0"
+                }
+              ],
+              "index": 161
+            },
+            {
+              "chapter": "2.3.3.2",
+              "type": "table",
+              "title": "Aufgabe: Ziel- und Mittelpunkte eintragen",
+              "question": "Tragen Sie als Zusammenfassung für die Außenkontur die X- und Y-Werte der jeweiligen Zielpunkte sowie der Mittelpunkte ein. Für das SNAP-ON geben Sie die Ziffer links davon ein. Außenkontur: der Rundungsradius r = 45 mm wird generell im Feld VERRUNDUNG eingegeben und ist hier nicht in der Tabelle.",
+              "image": {
+                "path": "images/2.3.3.1.jpg",
+                "width": "10.32cm",
+                "height": ""
+              },
+              "options": [
+                {
+                  "row": "1",
+                  "col": "1",
+                  "text": "Punkte",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "2",
+                  "text": "SNAP-ON",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "3",
+                  "text": "X",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "4",
+                  "text": "Y",
+                  "input": "0"
+                },
+                {
+                  "row": "1",
+                  "col": "5",
+                  "text": "Rundung r",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "1",
+                  "text": "SP",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "2",
+                  "text": "2",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "3",
+                  "text": "0",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "4",
+                  "text": "20",
+                  "input": "0"
+                },
+                {
+                  "row": "2",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "1",
+                  "text": "P1",
+                  "input": "0"
+                },
+                {
+                  "row": "3",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "3",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "4",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "3",
+                  "col": "5",
+                  "text": "45",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "1",
+                  "text": "P2",
+                  "input": "0"
+                },
+                {
+                  "row": "4",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "5",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "4",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "4",
+                  "col": "5",
+                  "text": "45",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "1",
+                  "text": "P3",
+                  "input": "0"
+                },
+                {
+                  "row": "5",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "7",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "4",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "5",
+                  "col": "5",
+                  "text": "45",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "1",
+                  "text": "P4",
+                  "input": "0"
+                },
+                {
+                  "row": "6",
+                  "col": "2",
+                  "input": "1",
+                  "solution": "1",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "3",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "4",
+                  "input": "1",
+                  "solution": "0",
+                  "score": "1"
+                },
+                {
+                  "row": "6",
+                  "col": "5",
+                  "text": "45",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "1",
+                  "text": "P5=EP",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "2",
+                  "text": "2",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "3",
+                  "text": "0+10",
+                  "input": "0"
+                },
+                {
+                  "row": "7",
+                  "col": "4",
+                  "text": "",
+                  "input": "20"
+                },
+                {
+                  "row": "7",
+                  "col": "5",
+                  "text": "",
+                  "input": "0"
+                }
+              ],
+              "index": 162
+            },
+            {
+              "chapter": "2.3.4",
+              "type": "content_page",
+              "title": "Variablen einfügen",
+              "content": "2.3.4_.html",
+              "index": 163
+            },
+            {
+              "chapter": "2.3.5",
+              "type": "content_page",
+              "title": "Seitliche Griffmulde",
+              "content": "2.3.5_.html",
+              "index": 164
+            },
+            {
+              "chapter": "2.3.6",
+              "type": "content_page",
+              "title": "Simulation",
+              "content": "2.3.6_.html",
+              "index": 165
+            },
+            {
+              "chapter": "2.4",
+              "type": "content_page",
+              "title": "Variante 3 Konturfräsen und seitliche Nut",
+              "content": "2.4_.html",
+              "index": 166
+            },
+            {
+              "chapter": "2.4.1",
+              "type": "content_page",
+              "title": "Datei unter neuem Namen abspeichern",
+              "content": "2.4.1_.html",
+              "index": 167
+            },
+            {
+              "chapter": "2.4.2",
+              "type": "content_page",
+              "title": "Außenkontur zeichnen",
+              "content": "2.4.2_.html",
+              "index": 168
+            },
+            {
+              "chapter": "2.4.3",
+              "type": "content_page",
+              "title": "Außenkontur dreimal Fräsen",
+              "content": "2.4.3_.html",
+              "index": 169
+            },
+            {
+              "chapter": "2.4.4",
+              "type": "content_page",
+              "title": "Saftrille zeichnen",
+              "content": "2.4.4_.html",
+              "index": 170
+            },
+            {
+              "chapter": "2.4.5",
+              "type": "content_page",
+              "title": "Saftrille fräsen",
+              "content": "2.4.5_.html",
+              "index": 171
+            },
+            {
+              "chapter": "2.5",
+              "type": "content_page",
+              "title": "Variante 4 außen schräg",
+              "content": "2.5_.html",
+              "index": 172
+            },
+            {
+              "chapter": "2.5.1",
+              "type": "content_page",
+              "title": "Datei unter neuem Namen abspeichern",
+              "content": "2.5.1_.html",
+              "index": 173
+            },
+            {
+              "chapter": "2.5.2",
+              "type": "content_page",
+              "title": "Rechnerische Lösung (Winkelfunktion)",
+              "content": "2.5.2_.html",
+              "index": 174
+            },
+            {
+              "chapter": "2.5.2.1",
+              "type": "single_choice",
+              "title": "Aufgabe Rechnerische Lösung: Gehrungswinkel",
+              "question": "Wählen Sie den Gehrungswinkel:",
+              "options": [
+                {
+                  "text": "45",
+                  "score": "0"
+                },
+                {
+                  "text": "22,5",
+                  "score": "0"
+                },
+                {
+                  "text": "112,5",
+                  "score": "0"
+                },
+                {
+                  "text": "67,5",
+                  "score": "1"
+                }
+              ],
+              "index": 175
+            },
+            {
+              "chapter": "2.5.2.2",
+              "type": "single_choice",
+              "title": "Aufgabe Rechnerische Lösung: Winkelfunktion",
+              "question": "Wählen Sie die Winkelfunktion",
+              "options": [
+                {
+                  "text": "Sinus",
+                  "score": "0"
+                },
+                {
+                  "text": "Tangens",
+                  "score": "1"
+                },
+                {
+                  "text": "Cosinus",
+                  "score": "0"
+                }
+              ],
+              "index": 176
+            },
+            {
+              "chapter": "2.5.2.3",
+              "type": "single_choice",
+              "title": "Aufgabe Rechnerische Lösung: Fehlende Strecke",
+              "question": "Wählen Sie die fehlende Strecke:",
+              "options": [
+                {
+                  "text": "4,828",
+                  "score": "0"
+                },
+                {
+                  "text": "8,284",
+                  "score": "1"
+                },
+                {
+                  "text": "2,414",
+                  "score": "0"
+                },
+                {
+                  "text": "0,120",
+                  "score": "0"
+                }
+              ],
+              "hint": "Wir haben den Winkel und wir haben die Gegenkathete. Wir suchen die Ankathete. Welche Winkelfunktion könnte dies ausrechnen?",
+              "index": 177
+            },
+            {
+              "chapter": "2.5.3",
+              "type": "content_page",
+              "title": "Zeichnerische Lösung (Hilfsgeometrien)",
+              "content": "2.5.3_.html",
+              "index": 178
+            },
+            {
+              "chapter": "2.5.4",
+              "type": "content_page",
+              "title": "Teilkontur fräsen",
+              "content": "2.5.4_.html",
+              "index": 179
+            },
+            {
+              "chapter": "2.6",
+              "type": "content_page",
+              "title": "Variante 5 oben unten abgefast",
+              "content": "2.6_.html",
+              "index": 180
+            },
+            {
+              "chapter": "2.6.1",
+              "type": "content_page",
+              "title": "Alte Datei unter neuem Namen abspeichern",
+              "content": "2.6.1_.html",
+              "index": 181
+            },
+            {
+              "chapter": "2.6.2",
+              "type": "content_page",
+              "title": "Saftrille mit Kreis erweitern",
+              "content": "2.6.2_.html",
+              "index": 182
+            },
+            {
+              "chapter": "2.6.3",
+              "type": "content_page",
+              "title": "Zwei Kreistaschen einfügen",
+              "content": "2.6.3_.html",
+              "index": 183
+            },
+            {
+              "chapter": "2.6.4",
+              "type": "content_page",
+              "title": "Oben und unten fasen",
+              "content": "2.6.4_.html",
+              "index": 184
+            },
+            {
+              "chapter": "2.6.5",
+              "type": "content_page",
+              "title": "Mit einfacher Simulation prüfen",
+              "content": "2.6.5_.html",
+              "index": 185
+            },
+            {
+              "chapter": "2.7",
+              "type": "content_page",
+              "title": "Variante 6 mit CAD Import",
+              "content": "2.7_.html",
+              "index": 186
+            },
+            {
+              "chapter": "2.7.1",
+              "type": "content_page",
+              "title": "DXF - Datei öffnen und als Hops-Datei speichern",
+              "content": "2.7.1_.html",
+              "index": 187
+            },
+            {
+              "chapter": "2.7.2",
+              "type": "content_page",
+              "title": "Werte ändern und unnötige Variablen löschen",
+              "content": "2.7.2_.html",
+              "index": 188
+            },
+            {
+              "chapter": "2.7.3",
+              "type": "content_page",
+              "title": "Simulation",
+              "content": "2.7.3_.html",
+              "index": 189
+            },
+            {
+              "chapter": "7",
+              "type": "content_page",
+              "title": "Vesperbrett als Hilfestellung oder Komplettaufgabe",
+              "content": "7_.html",
+              "index": 190
+            },
+            {
+              "chapter": "7.1",
+              "type": "content_page",
+              "title": "DER AUFTRAG",
+              "content": "7.1_.html",
+              "index": 191
+            },
+            {
+              "chapter": "7.1.1",
+              "type": "content_page",
+              "title": "Zeichnung lesen",
+              "content": "7.1.1_.html",
+              "index": 192
+            },
+            {
+              "chapter": "7.1.2",
+              "type": "content_page",
+              "title": "Skizze Absolutbemaßung / Koordinaten erstellen",
+              "content": "7.1.2_.html",
+              "index": 193
+            },
+            {
+              "chapter": "7.1.3",
+              "type": "content_page",
+              "title": "DAS PROGRAMM starten und EINE DATEI anlegen",
+              "content": "7.1.3_.html",
+              "index": 194
+            },
+            {
+              "chapter": "7.2",
+              "type": "content_page",
+              "title": "PROGRAMMIERUNG mit ABSOLUTKOORDINATEN",
+              "content": "7.2_.html",
+              "index": 195
+            },
+            {
+              "chapter": "7.2.1",
+              "type": "content_page",
+              "title": "WERKSTÜCK festlegen",
+              "content": "7.2.1_.html",
+              "index": 196
+            },
+            {
+              "chapter": "7.2.2",
+              "type": "content_page",
+              "title": "AUSSENKONTUR fräsen",
+              "content": "7.2.2_.html",
+              "index": 197
+            },
+            {
+              "chapter": "7.2.2.1",
+              "type": "content_page",
+              "title": "Werkzeug auswählen",
+              "content": "7.2.2.1_.html",
+              "index": 198
+            },
+            {
+              "chapter": "7.2.2.2",
+              "type": "content_page",
+              "title": "Startpunkt",
+              "content": "7.2.2.2_.html",
+              "index": 199
+            },
+            {
+              "chapter": "7.2.2.3",
+              "type": "content_page",
+              "title": "Gerade / Kurven",
+              "content": "7.2.2.3_.html",
+              "index": 200
+            },
+            {
+              "chapter": "7.2.2.4",
+              "type": "content_page",
+              "title": "Endpunkt",
+              "content": "7.2.2.4_.html",
+              "index": 201
+            },
+            {
+              "chapter": "7.2.3",
+              "type": "content_page",
+              "title": "mit einfacher SIMULATION (Simu) prüfen",
+              "content": "7.2.3_.html",
+              "index": 202
+            },
+            {
+              "chapter": "7.3",
+              "type": "content_page",
+              "title": "PROGRAMMIERUNG mit RELATIVKOORDINATEN",
+              "content": "7.3_.html",
+              "index": 203
+            },
+            {
+              "chapter": "7.3.1",
+              "type": "content_page",
+              "title": "Eine ZWEITE DATEI anlegen",
+              "content": "7.3.1_.html",
+              "index": 204
+            },
+            {
+              "chapter": "7.3.2",
+              "type": "content_page",
+              "title": "AUSSENKONTUR fräsen",
+              "content": "7.3.2_.html",
+              "index": 205
+            },
+            {
+              "chapter": "7.3.2.1",
+              "type": "content_page",
+              "title": "Werkzeug auswählen",
+              "content": "7.3.2.1_.html",
+              "index": 206
+            },
+            {
+              "chapter": "7.3.2.2",
+              "type": "content_page",
+              "title": "Startpunkt",
+              "content": "7.3.2.2_.html",
+              "index": 207
+            },
+            {
+              "chapter": "7.3.2.3",
+              "type": "content_page",
+              "title": "Gerade / Kurve",
+              "content": "7.3.2.3_.html",
+              "index": 208
+            },
+            {
+              "chapter": "7.3.2.4",
+              "type": "content_page",
+              "title": "Endpunkt",
+              "content": "7.3.2.4_.html",
+              "index": 209
+            },
+            {
+              "chapter": "7.3.3",
+              "type": "content_page",
+              "title": "SYMBOL einfügen",
+              "content": "7.3.3_.html",
+              "index": 210
+            },
+            {
+              "chapter": "7.3.4",
+              "type": "content_page",
+              "title": "mit Maschinenabtragssimulation (BetterSIM) prüfen",
+              "content": "7.3.4_.html",
+              "index": 211
+            },
+            {
+              "chapter": "7.4",
+              "type": "content_page",
+              "title": "PROGRAMMIERUNG mit VARIABLEN WERKSTÜCKMASSEN",
+              "content": "7.4_.html",
+              "index": 212
+            },
+            {
+              "chapter": "7.4.1",
+              "type": "content_page",
+              "title": "Eine dritte Datei anlegen",
+              "content": "7.4.1_.html",
+              "index": 213
+            },
+            {
+              "chapter": "7.4.2",
+              "type": "content_page",
+              "title": "AUSSENKONTUR fräsen",
+              "content": "7.4.2_.html",
+              "index": 214
+            },
+            {
+              "chapter": "7.4.2.1",
+              "type": "content_page",
+              "title": "Gleiche Werkstückgröße",
+              "content": "7.4.2.1_.html",
+              "index": 215
+            },
+            {
+              "chapter": "7.4.2.2",
+              "type": "content_page",
+              "title": "Im Startpunkt einen Wert ändern",
+              "content": "7.4.2.2_.html",
+              "index": 216
+            },
+            {
+              "chapter": "7.4.2.3",
+              "type": "content_page",
+              "title": "Ändern der Linien und Kurvenprogrammierung",
+              "content": "7.4.2.3_.html",
+              "index": 217
+            },
+            {
+              "chapter": "7.4.2.4",
+              "type": "content_page",
+              "title": "Endpunkt bleibt gleich",
+              "content": "7.4.2.4_.html",
+              "index": 218
+            },
+            {
+              "chapter": "7.4.3",
+              "type": "content_page",
+              "title": "Simulieren (Simu)",
+              "content": "7.4.3_.html",
+              "index": 219
+            },
+            {
+              "chapter": "7.4.4",
+              "type": "content_page",
+              "title": "Werkstückmaße ändern",
+              "content": "7.4.4_.html",
+              "index": 220
+            },
+            {
+              "chapter": "7.5",
+              "type": "content_page",
+              "title": "PROGRAMMIERUNG mit Module und SNAP-ON",
+              "content": "7.5_.html",
+              "index": 221
+            },
+            {
+              "chapter": "7.5.1",
+              "type": "content_page",
+              "title": "Zeichnung lesen und eine VIERTE DATEI anlegen",
+              "content": "7.5.1_.html",
+              "index": 222
+            },
+            {
+              "chapter": "7.5.2",
+              "type": "content_page",
+              "title": "AUSSENKONTUR fräsen",
+              "content": "7.5.2_.html",
+              "index": 223
+            },
+            {
+              "chapter": "7.5.2.1",
+              "type": "content_page",
+              "title": "Werkstückgröße bleibt vorerst gleich",
+              "content": "7.5.2.1_.html",
+              "index": 224
+            },
+            {
+              "chapter": "7.5.2.2",
+              "type": "content_page",
+              "title": "Werkzeug",
+              "content": "7.5.2.2_.html",
+              "index": 225
+            },
+            {
+              "chapter": "7.5.2.3",
+              "type": "content_page",
+              "title": "Startpunkt",
+              "content": "7.5.2.3_.html",
+              "index": 226
+            },
+            {
+              "chapter": "7.5.2.4",
+              "type": "content_page",
+              "title": "Gerade / Kurve",
+              "content": "7.5.2.4_.html",
+              "index": 227
+            },
+            {
+              "chapter": "7.5.2.5",
+              "type": "content_page",
+              "title": "Endpunkt",
+              "content": "7.5.2.5_.html",
+              "index": 228
+            },
+            {
+              "chapter": "7.5.3",
+              "type": "content_page",
+              "title": "Programmierschritte kopieren",
+              "content": "7.5.3_.html",
+              "index": 229
+            },
+            {
+              "chapter": "7.5.4",
+              "type": "content_page",
+              "title": "MODUL FRÄSMAKRO Tasche fräsen",
+              "content": "7.5.4_.html",
+              "index": 230
+            },
+            {
+              "chapter": "7.5.5",
+              "type": "content_page",
+              "title": "BOHRMODUL Bohrung für die Aufhängung",
+              "content": "7.5.5_.html",
+              "index": 231
+            },
+            {
+              "chapter": "7.5.6",
+              "type": "content_page",
+              "title": "mit SIMULATION prüfen",
+              "content": "7.5.6_.html",
+              "index": 232
+            },
+            {
+              "chapter": "7.6",
+              "type": "content_page",
+              "title": "PROGRAMMIERUNG mit VARIABLEN GRÖSSEN (rechnerisch)",
+              "content": "7.6_.html",
+              "index": 233
+            },
+            {
+              "chapter": "7.6.1",
+              "type": "content_page",
+              "title": "Eine VIERTE DATEI anlegen",
+              "content": "7.6.1_.html",
+              "index": 234
+            },
+            {
+              "chapter": "7.6.2",
+              "type": "content_page",
+              "title": "FRÄSMODUL",
+              "content": "7.6.2_.html",
+              "index": 235
+            },
+            {
+              "chapter": "7.6.3",
+              "type": "content_page",
+              "title": "FRÄSMODUL",
+              "content": "7.6.3_.html",
+              "index": 236
+            },
+            {
+              "chapter": "7.6.3.1",
+              "type": "content_page",
+              "title": "Werkzeug",
+              "content": "7.6.3.1_.html",
+              "index": 237
+            },
+            {
+              "chapter": "7.6.3.2",
+              "type": "content_page",
+              "title": "Startpunkt",
+              "content": "7.6.3.2_.html",
+              "index": 238
+            },
+            {
+              "chapter": "7.6.3.3",
+              "type": "content_page",
+              "title": "Gerade / Kurve",
+              "content": "7.6.3.3_.html",
+              "index": 239
+            },
+            {
+              "chapter": "7.6.3.3",
+              "type": "content_page",
+              "title": "mit SIMULATION prüfen",
+              "content": "7.6.4_.html",
+              "index": 240
+            },
+            {
+              "chapter": "7.7",
+              "type": "content_page",
+              "title": "PROGRAMMIERUNG mit HILFSGEOMETRIE (zeichnerisch)",
+              "content": "7.7_.html",
+              "index": 241
+            },
+            {
+              "chapter": "7.7.1",
+              "type": "content_page",
+              "title": "Ablauf",
+              "content": "7.7.1_.html",
+              "index": 242
+            },
+            {
+              "chapter": "7.7.2",
+              "type": "content_page",
+              "title": "HILFSGEOMETRIE starten",
+              "content": "7.7.2_.html",
+              "index": 243
+            },
+            {
+              "chapter": "7.7.3",
+              "type": "content_page",
+              "title": "FRÄSMODUL",
+              "content": "7.7.3_.html",
+              "index": 244
+            },
+            {
+              "chapter": "7.7.3.1",
+              "type": "content_page",
+              "title": "Werkzeug",
+              "content": "7.7.3.1_.html",
+              "index": 245
+            },
+            {
+              "chapter": "7.7.3.2",
+              "type": "content_page",
+              "title": "Startpunkt",
+              "content": "7.7.3.2_.html",
+              "index": 246
+            },
+            {
+              "chapter": "7.7.3.3",
+              "type": "content_page",
+              "title": "Geraden / Kurven programmieren",
+              "content": "7.7.3.3_.html",
+              "index": 247
+            },
+            {
+              "chapter": "7.7.4",
+              "type": "content_page",
+              "title": "mit SIMULATION prüfen",
+              "content": "7.7.4_.html",
+              "index": 248
+            },
+            {
+              "chapter": "7.8",
+              "type": "content_page",
+              "title": "PROGRAMMIERUNG mit HOPS KONTURFRÄSEN durch DXF-IMPORT",
+              "content": "7.8_.html",
+              "index": 249
+            },
+            {
+              "chapter": "7.8.1",
+              "type": "content_page",
+              "title": "Ablauf",
+              "content": "7.8.1_.html",
+              "index": 250
+            },
+            {
+              "chapter": "7.8.2",
+              "type": "content_page",
+              "title": "KONTURMODUL KONTUR ZEICHNEN",
+              "content": "7.8.2_.html",
+              "index": 251
+            },
+            {
+              "chapter": "7.8.3",
+              "type": "content_page",
+              "title": "KONTURMODUL KONTUR ABFAHREN",
+              "content": "7.8.3_.html",
+              "index": 252
+            },
+            {
+              "chapter": "7.8.3.1",
+              "type": "content_page",
+              "title": "Werkzeug",
+              "content": "7.8.3.1_.html",
+              "index": 253
+            },
+            {
+              "chapter": "7.8.3.2",
+              "type": "content_page",
+              "title": "Startpunkt",
+              "content": "7.8.3.2_.html",
+              "index": 254
+            },
+            {
+              "chapter": "7.8.3.3",
+              "type": "content_page",
+              "title": "Kontur",
+              "content": "7.8.3.3_.html",
+              "index": 255
+            },
+            {
+              "chapter": "7.8.3.4",
+              "type": "content_page",
+              "title": "Endpunkt",
+              "content": "7.8.3.4_.html",
+              "index": 256
+            },
+            {
+              "chapter": "7.9",
+              "type": "content_page",
+              "title": "PROGRAMMIERUNG durch DXF-IMPORT",
+              "content": "7.9_.html",
+              "index": 257
+            },
+            {
+              "chapter": "7.9.1",
+              "type": "content_page",
+              "title": "Mit einem CAD Programm das Werkstück und die Kontur zeichnen und als DXF Datei abspeichern",
+              "content": "7.9.1_.html",
+              "index": 258
+            },
+            {
+              "chapter": "7.9.2",
+              "type": "content_page",
+              "title": "DFX-DATEI ÖFFNEN und ANPASSEN",
+              "content": "7.9.2_.html",
+              "index": 259
+            },
+            {
+              "chapter": "7.9.3",
+              "type": "content_page",
+              "title": "Schruppen- Schlichten",
+              "content": "7.9.3_.html",
+              "index": 260
+            },
+            {
+              "chapter": "7.9.4",
+              "type": "content_page",
+              "title": "Als SIEBTE DATEI abspeichern",
+              "content": "7.9.4_.html",
+              "index": 261
+            },
+            {
+              "chapter": "7.10",
+              "type": "content_page",
+              "title": "PROGRAMMIERUNG der KANTEN (3D EBENEN)",
+              "content": "7.10_.html",
+              "index": 262
+            },
+            {
+              "chapter": "7.10.1",
+              "type": "content_page",
+              "title": "Zeichnung lesen",
+              "content": "7.10.1_.html",
+              "index": 263
+            },
+            {
+              "chapter": "7.10.2",
+              "type": "content_page",
+              "title": "Eine ACHTE DATEI anlegen",
+              "content": "7.10.2_.html",
+              "index": 264
+            },
+            {
+              "chapter": "7.10.3",
+              "type": "content_page",
+              "title": "Aussenkontur",
+              "content": "7.10.3_.html",
+              "index": 265
+            },
+            {
+              "chapter": "7.10.4",
+              "type": "content_page",
+              "title": "EBENEN hinzufügen",
+              "content": "7.10.4_.html",
+              "index": 266
+            },
+            {
+              "chapter": "7.10.5",
+              "type": "content_page",
+              "title": "mit SIMULATION prüfen",
+              "content": "7.10.5_.html",
+              "index": 267
+            },
+            {
+              "chapter": "7.11",
+              "type": "content_page",
+              "title": "PROGRAMMIERUNG der KANTEN (3D C-ACHSE)",
+              "content": "7.11_.html",
+              "index": 268
+            },
+            {
+              "chapter": "7.11.1",
+              "type": "content_page",
+              "title": "Zeichnung lesen",
+              "content": "7.11.1_.html",
+              "index": 269
+            },
+            {
+              "chapter": "7.11.2",
+              "type": "content_page",
+              "title": "Eine NEUNTE Datei anlegen",
+              "content": "7.11.2_.html",
+              "index": 270
+            },
+            {
+              "chapter": "7.11.3",
+              "type": "content_page",
+              "title": "Ablauf",
+              "content": "7.11.3_.html",
+              "index": 271
+            },
+            {
+              "chapter": "7.11.4",
+              "type": "content_page",
+              "title": "FRÄSMODUL",
+              "content": "7.11.4_.html",
+              "index": 272
+            },
+            {
+              "chapter": "7.11.4.1",
+              "type": "content_page",
+              "title": "Startpunkt + ERWEITERUNG",
+              "content": "7.11.4.1_.html",
+              "index": 273
+            },
+            {
+              "chapter": "7.11.4.2",
+              "type": "content_page",
+              "title": "Neigung wählen",
+              "content": "7.11.4.2_.html",
+              "index": 274
+            },
+            {
+              "chapter": "7.11.5",
+              "type": "content_page",
+              "title": "mit SIMULATION prüfen",
+              "content": "7.11.5_.html",
+              "index": 275
+            },
+            {
+              "chapter": "7.12",
+              "type": "content_page",
+              "title": "POSITIONIERUNG UND ERSTELLEN DES NC-CODES",
+              "content": "7.12_.html",
+              "index": 276
+            },
+            {
+              "chapter": "7.12.1",
+              "type": "content_page",
+              "title": "Arbeiten mit dem WORKCENTER",
+              "content": "7.12.1_.html",
+              "index": 277
+            },
+            {
+              "chapter": "7.12.2",
+              "type": "content_page",
+              "title": "AUSWAHL DES PROGRAMMS",
+              "content": "7.12.2_.html",
+              "index": 278
+            },
+            {
+              "chapter": "7.12.3",
+              "type": "content_page",
+              "title": "PLATZIEREN DES WERKSTÜCKS",
+              "content": "7.12.3_.html",
+              "index": 279
+            },
+            {
+              "chapter": "7.12.4",
+              "type": "content_page",
+              "title": "PLATZIEREN DER RÜSTHILFEN",
+              "content": "7.12.4_.html",
+              "index": 280
+            },
+            {
+              "chapter": "7.12.5",
+              "type": "content_page",
+              "title": "GENERIEREN DES NC-CODES",
+              "content": "7.12.5_.html",
+              "index": 281
+            }
+          ],
+          "active": "1",
+          "use_lrs": "1"
+        }
+      }
+    },
+    "timestamp": "2024-05-16T13:00:10.000000+01:00"
+  },
+  {
+    "actor": {
+      "objectType": "Agent",
+      "account": {
+        "homePage": "https://lms-example.verdatas.de",
+        "name": "test_user1"
+      },
+      "name": "-"
+    },
+    "verb": {
+      "id": "http://adlnet.gov/expapi/verbs/experienced",
+      "display": {
+        "en-US": "experienced"
+      }
+    },
+    "object": {
+      "id": "https://lms-example.verdatas.de/goto.php?target=xayc_134&client_id=client0&chapter_id=175&obj_id_lrs=492",
+      "definition": {
+        "name": {
+          "en-US": "Testplayer"
+        },
+        "type": "http://adlnet.gov/expapi/activities/module"
+      }
+    },
+    "context": {
+      "contextActivities": {
+        "parent": {
+          "id": "https://lms-example.verdatas.de/goto.php?target=cat_84&client_id=client0&obj_id_lrs=314",
+          "definition": {
+            "name": {
+              "en-US": "AnyContent"
+            },
+            "type": "http://adlnet.gov/expapi/activities/module"
+          }
+        },
+        "grouping": [
+          {
+            "id": "https://lms-example.verdatas.de/goto.php?target=root_1&client_id=client0&obj_id_lrs=1",
+            "definition": {
+              "name": {
+                "en-US": "ILIAS"
+              },
+              "type": "http://adlnet.gov/expapi/activities/module",
+              "description": {
+                "en-US": "This is the root node of the system!!!"
+              }
+            }
+          },
+          {
+            "id": "https://lms-example.verdatas.de/goto.php?target=cat_83&client_id=client0&obj_id_lrs=313",
+            "definition": {
+              "name": {
+                "en-US": "Development"
+              },
+              "type": "http://adlnet.gov/expapi/activities/module"
+            }
+          }
+        ]
+      },
+      "extensions": {
+        "http://ilias.version": "8.5 2023-09-13",
+        "http://ilias.component": "TestPlayer",
+        "https://w3id.org/xapi/lms/extensions/sessionid": "37f677060c5e301c4b39e1875a57f1c328c891316a68a0a8cb6e0949eb538067",
+        "https://verdatas.de/test_player/user_data": {
+          "answers": [],
+          "show_hint": 0,
+          "show_feedback": 0,
+          "chapter": "2.5.2.1",
+          "index": 175
+        }
+      }
+    },
+    "timestamp": "2024-05-16T13:00:20.000000+01:00"
+  },
+  {
+    "actor": {
+      "objectType": "Agent",
+      "account": {
+        "homePage": "https://lms-example.verdatas.de",
+        "name": "test_user1"
+      },
+      "name": "-"
+    },
+    "verb": {
+      "id": "http://adlnet.gov/expapi/verbs/completed",
+      "display": {
+        "en-US": "completed"
+      }
+    },
+    "object": {
+      "id": "https://lms-example.verdatas.de/goto.php?target=xayc_134&client_id=client0&chapter_id=175&obj_id_lrs=492",
+      "definition": {
+        "name": {
+          "en-US": "Testplayer"
+        },
+        "type": "http://adlnet.gov/expapi/activities/module"
+      }
+    },
+    "context": {
+      "contextActivities": {
+        "parent": {
+          "id": "https://lms-example.verdatas.de/goto.php?target=cat_84&client_id=client0&obj_id_lrs=314",
+          "definition": {
+            "name": {
+              "en-US": "AnyContent"
+            },
+            "type": "http://adlnet.gov/expapi/activities/module"
+          }
+        },
+        "grouping": [
+          {
+            "id": "https://lms-example.verdatas.de/goto.php?target=root_1&client_id=client0&obj_id_lrs=1",
+            "definition": {
+              "name": {
+                "en-US": "ILIAS"
+              },
+              "type": "http://adlnet.gov/expapi/activities/module",
+              "description": {
+                "en-US": "This is the root node of the system!!!"
+              }
+            }
+          },
+          {
+            "id": "https://lms-example.verdatas.de/goto.php?target=cat_83&client_id=client0&obj_id_lrs=313",
+            "definition": {
+              "name": {
+                "en-US": "Development"
+              },
+              "type": "http://adlnet.gov/expapi/activities/module"
+            }
+          },
+          {
+            "id": "https://lms-example.verdatas.de/goto.php?target=cat_84&client_id=client0&obj_id_lrs=314",
+            "definition": {
+              "name": {
+                "en-US": "AnyContent"
+              },
+              "type": "http://adlnet.gov/expapi/activities/module"
+            }
+          }
+        ]
+      },
+      "extensions": {
+        "http://ilias.version": "8.5 2023-09-13",
+        "http://ilias.component": "TestPlayer",
+        "https://w3id.org/xapi/lms/extensions/sessionid": "37f677060c5e301c4b39e1875a57f1c328c891316a68a0a8cb6e0949eb538067",
+        "https://verdatas.de/test_player/user_data": {
+          "answers": [
+            {
+              "answers": ["45"],
+              "tp_timestamp": 1712566776
+            }
+          ],
+          "show_hint": 0,
+          "show_feedback": 0,
+          "chapter": "2.5.2.1",
+          "index": 175
+        }
+      }
+    },
+    "result": {
+      "score": {
+        "min": 0,
+        "max": 1,
+        "raw": 0,
+        "scaled": 0
+      },
+      "success": false,
+      "completion": true
+    },
+    "timestamp": "2024-05-16T13:00:30.000000+01:00"
+  },
+  {
+    "actor": {
+      "objectType": "Agent",
+      "account": {
+        "homePage": "https://lms-example.verdatas.de",
+        "name": "test_user1"
+      },
+      "name": "-"
+    },
+    "verb": {
+      "id": "http://adlnet.gov/expapi/verbs/interacted",
+      "display": {
+        "en-US": "interacted"
+      }
+    },
+    "object": {
+      "id": "https://lms-example.verdatas.de/goto.php?target=xayc_134&client_id=client0&chapter_id=175&obj_id_lrs=492",
+      "definition": {
+        "name": {
+          "en-US": "Testplayer"
+        },
+        "type": "http://adlnet.gov/expapi/activities/module"
+      }
+    },
+    "context": {
+      "contextActivities": {
+        "parent": {
+          "id": "https://lms-example.verdatas.de/goto.php?target=cat_84&client_id=client0&obj_id_lrs=314",
+          "definition": {
+            "name": {
+              "en-US": "AnyContent"
+            },
+            "type": "http://adlnet.gov/expapi/activities/module"
+          }
+        },
+        "grouping": [
+          {
+            "id": "https://lms-example.verdatas.de/goto.php?target=root_1&client_id=client0&obj_id_lrs=1",
+            "definition": {
+              "name": {
+                "en-US": "ILIAS"
+              },
+              "type": "http://adlnet.gov/expapi/activities/module",
+              "description": {
+                "en-US": "This is the root node of the system!!!"
+              }
+            }
+          },
+          {
+            "id": "https://lms-example.verdatas.de/goto.php?target=cat_83&client_id=client0&obj_id_lrs=313",
+            "definition": {
+              "name": {
+                "en-US": "Development"
+              },
+              "type": "http://adlnet.gov/expapi/activities/module"
+            }
+          }
+        ]
+      },
+      "extensions": {
+        "http://ilias.version": "8.5 2023-09-13",
+        "http://ilias.component": "TestPlayer",
+        "https://w3id.org/xapi/lms/extensions/sessionid": "37f677060c5e301c4b39e1875a57f1c328c891316a68a0a8cb6e0949eb538067",
+        "https://verdatas.de/test_player/user_data": {
+          "answers": [
+            {
+              "answers": ["45"],
+              "tp_timestamp": 1712566776
+            }
+          ],
+          "show_hint": 1,
+          "show_feedback": 2,
+          "chapter": "2.5.2.1",
+          "index": 175
+        }
+      }
+    },
+    "timestamp": "2024-05-16T13:00:40.000000+01:00"
+  },
+  {
+    "actor": {
+      "objectType": "Agent",
+      "account": {
+        "homePage": "https://lms-example.verdatas.de",
+        "name": "test_user1"
+      },
+      "name": "-"
+    },
+    "verb": {
+      "id": "http://adlnet.gov/expapi/verbs/completed",
+      "display": {
+        "en-US": "completed"
+      }
+    },
+    "object": {
+      "id": "https://lms-example.verdatas.de/goto.php?target=xayc_134&client_id=client0&chapter_id=175&obj_id_lrs=492",
+      "definition": {
+        "name": {
+          "en-US": "Testplayer"
+        },
+        "type": "http://adlnet.gov/expapi/activities/module"
+      }
+    },
+    "context": {
+      "contextActivities": {
+        "parent": {
+          "id": "https://lms-example.verdatas.de/goto.php?target=cat_84&client_id=client0&obj_id_lrs=314",
+          "definition": {
+            "name": {
+              "en-US": "AnyContent"
+            },
+            "type": "http://adlnet.gov/expapi/activities/module"
+          }
+        },
+        "grouping": [
+          {
+            "id": "https://lms-example.verdatas.de/goto.php?target=root_1&client_id=client0&obj_id_lrs=1",
+            "definition": {
+              "name": {
+                "en-US": "ILIAS"
+              },
+              "type": "http://adlnet.gov/expapi/activities/module",
+              "description": {
+                "en-US": "This is the root node of the system!!!"
+              }
+            }
+          },
+          {
+            "id": "https://lms-example.verdatas.de/goto.php?target=cat_83&client_id=client0&obj_id_lrs=313",
+            "definition": {
+              "name": {
+                "en-US": "Development"
+              },
+              "type": "http://adlnet.gov/expapi/activities/module"
+            }
+          },
+          {
+            "id": "https://lms-example.verdatas.de/goto.php?target=cat_84&client_id=client0&obj_id_lrs=314",
+            "definition": {
+              "name": {
+                "en-US": "AnyContent"
+              },
+              "type": "http://adlnet.gov/expapi/activities/module"
+            }
+          }
+        ]
+      },
+      "extensions": {
+        "http://ilias.version": "8.5 2023-09-13",
+        "http://ilias.component": "TestPlayer",
+        "https://w3id.org/xapi/lms/extensions/sessionid": "37f677060c5e301c4b39e1875a57f1c328c891316a68a0a8cb6e0949eb538067",
+        "https://verdatas.de/test_player/user_data": {
+          "answers": [
+            {
+              "answers": ["45"],
+              "tp_timestamp": 1712566776
+            },
+            {
+              "answers": ["67,5"],
+              "tp_timestamp": 1712566925
+            }
+          ],
+          "show_hint": 0,
+          "show_feedback": 2,
+          "chapter": "2.5.2.1",
+          "index": 175
+        }
+      }
+    },
+    "result": {
+      "score": {
+        "min": 0,
+        "max": 1,
+        "raw": 1,
+        "scaled": 1
+      },
+      "success": true,
+      "completion": true
+    },
+    "timestamp": "2024-05-16T13:00:50.000000+01:00"
+  }
+]
