@@ -18,10 +18,10 @@
 import { defineStore } from 'pinia'
 
 /**
- * Pinia store for holding all collaboration data related information.
+ * Pinia store for holding all administration related information.
  */
-export const useCollaborationsStore = defineStore({
-  id: 'collaborations',
+export const useAdministrationStore = defineStore({
+  id: 'administration',
   state: () => ({
     adminToken: '' as string,
     collaborations: [] as string[]
