@@ -30,4 +30,10 @@ export class DashboardData {
     this.token = token
     this.backendUrl = backendUrl
   }
+
+  getWebsocketUrl(): string {
+    let wsUrl = this.backendUrl.replace('https', 'wss');
+    wsUrl = wsUrl.replace('http', 'ws');
+    return wsUrl + '/api/v1/websocket';
+  }
 }
