@@ -24,6 +24,7 @@ import PreviewContainer from '@/components/PreviewContainer.vue'
 import QueryView from '@/components/Query/QueryView.vue'
 import Settings from '@/components/SettingsView.vue'
 import StatementSimulation from '@/components/StatementSimulation.vue'
+import StatementVisualization from "@/components/StatementVisualization.vue";
 import { useDashboardDataStore } from '@/stores/dashboardData'
 import { ref } from 'vue'
 
@@ -37,7 +38,8 @@ export default {
     PreviewContainer,
     QueryView,
     Settings,
-    StatementSimulation
+    StatementSimulation,
+    StatementVisualization
   },
   data() {
     return {
@@ -166,6 +168,11 @@ export default {
       :isExpanded="isExpanded"
       v-if="currentView === 'statementSimulation'"
     />
+    <StatementVisualization
+      :backendUrl="backendUrl"
+      :isExpanded="isExpanded"
+      v-if="currentView === 'statementVisualization'"
+      />
     <Settings :isExpanded="isExpanded" v-if="currentView === 'settings'" />
     <DialogsWrapper />
   </div>

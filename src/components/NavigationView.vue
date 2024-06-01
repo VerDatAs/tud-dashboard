@@ -62,6 +62,10 @@ export default {
         <font-awesome-icon class="icon" icon="magnifying-glass" />
         <span class="text">Datenabfrage</span>
       </div>
+      <div class="tab" @click="setCurrentView($event, 'statementVisualization')" title="Visualisierung">
+        <font-awesome-icon class="icon" icon="chart-simple" />
+        <span class="text">Visualisierung</span>
+      </div>
       <div class="tab" @click="setCurrentView($event, 'statementSimulation')" title="Simulation">
         <font-awesome-icon class="icon" icon="play-circle" />
         <span class="text">Simulation</span>
