@@ -137,11 +137,16 @@ onUnmounted(() => {
           </thead>
           <tbody>
           <tr v-for="statement in statements" :key="statement.id">
-            <td style="text-transform: capitalize">
-              {{ statement.verb }}
+            <td>
+              <p style="text-transform: capitalize">
+                {{ statement.verb }}
+              </p>
               <div class="tooltip-container">
                 <font-awesome-icon class="icon ht" icon="circle-info" />
-                <span class="tooltip-text">Tooltip text</span>
+                <span class="tooltip-text">
+                  <p style="font-weight: bold">{{ $t(`_verb.${statement.verb}`) }} - ({{statement.verb}})</p>
+                  <p>{{ $t(`_verb._description.${statement.verb}`) }}</p>
+                </span>
               </div>
             </td>
             <td>{{ statement.definition }}</td>
@@ -190,12 +195,12 @@ onUnmounted(() => {
 
 /* Tooltip text */
 .tooltip-container .tooltip-text {
+  padding-left: 1em;
+  padding-right: 1em;
   visibility: hidden;
-  width: 120px;
+  width: 300px;
   background-color: #555;
   color: #fff;
-  text-align: center;
-  padding: 5px 0;
   border-radius: 6px;
 
   /* Position the tooltip text */

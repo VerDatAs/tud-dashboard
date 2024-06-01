@@ -1,3 +1,20 @@
 {
-  "hello": "Hallo"
+  "_verb": {
+    "experienced": "Erfahren",
+    "launched": "Gestarted",
+    "completed": "Beendet",
+    "interacted": "Interagiert",
+    "loggedin": "Eingeloggt",
+    "answered": "Beantwortet",
+    "attempted": "Versucht",
+    "_description": {
+      "experienced": "Dieses Verb wird gesendet, wenn ein Lernender eine Erfahrung gemacht oder an einer Aktivität teilgenommen hat. Es wird verwendet, um zu protokollieren, dass der Lernende eine bestimmte Lernressource oder ein Lernobjekt betrachtet oder konsumiert hat.",
+      "launched": "Dieses Verb wird gesendet, wenn ein Lernender eine Aktivität oder Ressource gestartet hat. Dies kann das Öffnen eines Kurses, das Starten einer Lektion oder das Initiieren eines interaktiven Moduls sein.",
+      "completed": "Dieses Verb wird gesendet, wenn ein Lernender eine Aktivität oder Ressource abgeschlossen hat. Dies zeigt an, dass der Lernende alle erforderlichen Schritte oder Aufgaben innerhalb einer Lernressource abgeschlossen hat.",
+      "interacted": "Dieses Verb wird gesendet, wenn ein Lernender mit einer Aktivität oder Ressource interagiert hat. Dies kann das Klicken auf Elemente, die Teilnahme an einem interaktiven Inhalt oder das Ausführen bestimmter Aktionen innerhalb der Lernumgebung beinhalten.",
+      "loggedin": "Dieses Verb wird gesendet, wenn ein Lernender sich in ein System oder eine Lernplattform eingeloggt hat. Dies markiert den Beginn einer Lernsitzung und das Zugreifen auf Lerninhalte.",
+      "answered": "Dieses Verb wird gesendet, wenn ein Lernender eine Frage beantwortet hat. Dies wird oft in Prüfungen, Quizzen oder interaktiven Lernmodulen verwendet, um die Reaktion des Lernenden auf spezifische Fragen zu verfolgen.",
+      "attempted": "Dieses Verb wird gesendet, wenn ein Lernender einen Versuch unternommen hat, eine Aktivität zu absolvieren. Es wird verwendet, um zu protokollieren, dass der Lernende sich an einer Aufgabe oder einem Lernziel versucht hat, unabhängig davon, ob er es abgeschlossen hat oder nicht."
+    }
+  }
 }
