@@ -85,8 +85,10 @@ import {createPinia} from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 import {createApp} from 'vue'
 import * as ConfirmDialog from 'vuejs-confirm-dialog'
+import de from './lang/de.json'
 
 import './assets/main.scss'
+import {createI18n} from "vue-i18n";
 
 function isDevelopmentBuild(): boolean {
     return import.meta.env.MODE != 'production'
@@ -105,6 +107,17 @@ function initDashboard(initDashboardData: DashboardData) {
     const pinia = createPinia()
     pinia.use(piniaPluginPersistedstate)
     app.use(pinia)
+
+    const i18n = createI18n(
+        {
+        locale: 'de',
+        fallbackLocale: 'de',
+        messages: {
+            de: de
+        }}
+    )
+    app.use(i18n)
+
 
     app.component('font-awesome-icon', FontAwesomeIcon)
 
