@@ -15,8 +15,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<script setup lang="ts">
+<script setup>
 import Graph from '@/components/Charts/Graph.vue'
+import Dialog from '@/components/shared/Dialog.vue'
 import {useSettingStore} from '@/stores/settings'
 import {useDashboardDataStore} from "@/stores/dashboardData";
 import {computed, onMounted, onUnmounted, ref} from "vue";
@@ -26,11 +27,38 @@ const settings = useSettingStore()
 const dashboardDataStore = useDashboardDataStore()
 
 const page = ref(1)
+const showFilterDialog = ref(false)
+const filterDialogFilter = ref("")
 const filteredVerbs = ref([])
 const filteredUsers = ref([])
 const filteredDefinitions = ref([])
 
-const statements = ref<Array<XapiStatement>>([])
+function checkboxClicked(id, event, type) {
+  console.log(id, event, type)
+  if (type === 'verb') {
+    if (event.target.checked) {
+      filteredVerbs.value.push(id)
+    } else {
+      filteredVerbs.value = filteredVerbs.value.filter(v => v !== id)
+    }
+  }
+  if (type === 'actor') {
+    if (event.target.checked) {
+      filteredUsers.value.push(id)
+    } else {
+      filteredUsers.value = filteredUsers.value.filter(v => v !== id)
+    }
+  }
+  if (type === 'definition') {
+    if (event.target.checked) {
+      filteredDefinitions.value.push(id)
+    } else {
+      filteredDefinitions.value = filteredDefinitions.value.filter(v => v !== id)
+    }
+  }
+}
+
+const statements = ref([])
 
 const paginatedStatements = computed(() => {
   let stmts = statements.value
@@ -50,9 +78,9 @@ const paginatedStatements = computed(() => {
 })
 
 
-const graphNodes = ref<Array<Object>>([])
-const graphLinks = ref<Array<Object>>([])
-const graphCategories = ref<Array<Object>>([])
+const graphNodes = ref([])
+const graphLinks = ref([])
+const graphCategories = ref([])
 graphCategories.value.push({"name": "Nutzer"})
 
 
@@ -65,7 +93,7 @@ defineProps({
 const webSocketUrl = dashboardDataStore.data.getWebsocketUrl();
 const webSocket = ref(new WebSocket(webSocketUrl));
 
-function newStatement(statement: XapiStatement) {
+function newStatement(statement) {
   statements.value.unshift(statement);
 
   // Definition Node
@@ -143,6 +171,28 @@ onUnmounted(() => {
 
 <template>
   <div id="settings" :class="`${isExpanded ? 'is-expanded' : ''}`">
+    <Dialog :show="showFilterDialog" @close="showFilterDialog = false">
+      <template #body>
+        <div v-if="filterDialogFilter === 'verb'">
+          <div v-for="verb in [...new Set(statements.map(stmt => stmt.verb))]">
+            <input type="checkbox" :id="verb" :name="verb" :checked="filteredVerbs.includes(verb)" @input="checkboxClicked(verb, $event, 'verb')">
+            <label style="margin-left: 5px; text-transform: capitalize" :for="verb">{{ verb }}</label><br>
+          </div>
+        </div>
+        <div v-if="filterDialogFilter === 'definition'">
+          <div v-for="def in [...new Set(statements.map(stmt => stmt.definition))]">
+            <input type="checkbox" :id="def" :name="def" :checked="filteredDefinitions.includes(def)" @input="checkboxClicked(def, $event, 'definition')">
+            <label style="margin-left: 5px; text-transform: capitalize" :for="def">{{ def }}</label><br>
+          </div>
+        </div>
+        <div v-if="filterDialogFilter === 'actor'">
+          <div v-for="actor in [...new Set(statements.map(stmt => stmt.actorName))]">
+            <input type="checkbox" :id="actor" :name="actor" :checked="filteredUsers.includes(actor)" @input="checkboxClicked(actor, $event, 'actor')">
+            <label style="margin-left: 5px; text-transform: capitalize" :for="actor">{{ actor }}</label><br>
+          </div>
+        </div>
+      </template>
+    </Dialog>
     <div class="container py-4 mw-100">
       <h1>Visualisierung</h1>
       <div v-if="webSocket.OPEN" style="color: green">Verbunden</div>
@@ -154,10 +204,24 @@ onUnmounted(() => {
         <table class="table table-striped">
           <thead>
           <tr>
-            <th scope="col">Verb</th>
-            <th scope="col">Objekt</th>
-            <th scope="col">Akteur</th>
-            <th scope="col">Zeit</th>
+            <th scope="col">
+              Verb
+              <font-awesome-icon v-if="filteredVerbs.length === 0" @click="showFilterDialog = true; filterDialogFilter = 'verb'" class="icon" style="cursor: pointer" icon="filter" />
+              <font-awesome-icon v-else @click="showFilterDialog = true; filterDialogFilter = 'verb'" class="icon" style="cursor: pointer" icon="filter-circle-xmark" />
+            </th>
+            <th scope="col">
+              Objekt
+              <font-awesome-icon v-if="filteredDefinitions.length === 0" @click="showFilterDialog = true; filterDialogFilter = 'definition'" class="icon" style="cursor: pointer" icon="filter" />
+              <font-awesome-icon v-else @click="showFilterDialog = true; filterDialogFilter = 'definition'" class="icon" style="cursor: pointer" icon="filter-circle-xmark" />
+            </th>
+            <th scope="col">
+              Akteur
+              <font-awesome-icon v-if="filteredUsers.length === 0" @click="showFilterDialog = true; filterDialogFilter = 'actor'" class="icon" style="cursor: pointer" icon="filter" />
+              <font-awesome-icon v-else @click="showFilterDialog = true; filterDialogFilter = 'definition'" class="icon" style="cursor: pointer" icon="filter-circle-xmark" />
+            </th>
+            <th scope="col">
+              Zeit
+            </th>
           </tr>
           </thead>
           <tbody>

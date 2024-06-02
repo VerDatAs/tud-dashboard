@@ -51,7 +51,9 @@ import {
     faXmark,
     faChartSimple,
     faCircleChevronLeft,
-    faCircleChevronRight
+    faCircleChevronRight,
+    faFilter,
+    faFilterCircleXmark
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -85,7 +87,9 @@ library.add(
     faXmark,
     faChartSimple,
     faCircleChevronLeft,
-    faCircleChevronRight
+    faCircleChevronRight,
+    faFilter,
+    faFilterCircleXmark,
 )
 import {createPinia} from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
