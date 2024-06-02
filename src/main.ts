@@ -24,6 +24,7 @@ import {
     faAnglesRight,
     faBezierCurve,
     faChevronRight,
+    faChevronLeft,
     faChevronDown,
     faChevronUp,
     faCircleInfo,
@@ -49,11 +50,14 @@ import {
     faUsers,
     faXmark,
     faChartSimple,
+    faCircleChevronLeft,
+    faCircleChevronRight
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
     faAnglesRight,
     faBezierCurve,
+    faChevronLeft,
     faChevronRight,
     faChevronDown,
     faChevronUp,
@@ -79,7 +83,9 @@ library.add(
     faUpload,
     faUsers,
     faXmark,
-    faChartSimple
+    faChartSimple,
+    faCircleChevronLeft,
+    faCircleChevronRight
 )
 import {createPinia} from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'

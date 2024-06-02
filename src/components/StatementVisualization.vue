@@ -19,18 +19,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import Graph from '@/components/Charts/Graph.vue'
 import {useSettingStore} from '@/stores/settings'
 import {useDashboardDataStore} from "@/stores/dashboardData";
-import {onMounted, onUnmounted, ref} from "vue";
+import {computed, onMounted, onUnmounted, ref} from "vue";
 import {XapiStatement} from "@/types/xapi-statement";
 
 const settings = useSettingStore()
 const dashboardDataStore = useDashboardDataStore()
 
+const page = ref(1)
+const filteredVerbs = ref([])
+const filteredUsers = ref([])
+const filteredDefinitions = ref([])
+
 const statements = ref<Array<XapiStatement>>([])
+
+const paginatedStatements = computed(() => {
+  let stmts = statements.value
+  if (filteredVerbs.value.length > 0) {
+    stmts = stmts.filter(stmt => filteredVerbs.value.includes(stmt.verb))
+  }
+  if (filteredUsers.value.length > 0) {
+    stmts = stmts.filter(stmt => filteredUsers.value.includes(stmt.actorName))
+  }
+  if (filteredDefinitions.value.length > 0) {
+    stmts = stmts.filter(stmt => filteredDefinitions.value.includes(stmt.definition))
+  }
+
+  const pageSize = 20;
+  const start = (page.value - 1) * pageSize
+  return stmts.slice(start, start + pageSize)
+})
+
 
 const graphNodes = ref<Array<Object>>([])
 const graphLinks = ref<Array<Object>>([])
 const graphCategories = ref<Array<Object>>([])
 graphCategories.value.push({"name": "Nutzer"})
+
+
 
 defineProps({
   isExpanded: Boolean
@@ -136,12 +161,12 @@ onUnmounted(() => {
           </tr>
           </thead>
           <tbody>
-          <tr v-for="statement in statements" :key="statement.id">
-            <td>
+          <tr v-for="statement in paginatedStatements" :key="statement.id">
+            <td style="display: flex; align-content: center">
               <p style="text-transform: capitalize">
                 {{ statement.verb }}
               </p>
-              <div class="tooltip-container">
+              <div class="tooltip-container" style="margin-left: 5px">
                 <font-awesome-icon class="icon ht" icon="circle-info" />
                 <span class="tooltip-text">
                   <p style="font-weight: bold">{{ $t(`_verb.${statement.verb}`) }} - ({{statement.verb}})</p>
@@ -154,6 +179,15 @@ onUnmounted(() => {
             <td>{{ statement.timestamp.toLocaleTimeString() }}</td>
           </tr>
           </tbody>
+          <tfoot>
+          <tr>
+            <td colspan="4" style="text-align: right">
+              {{ page }} / {{ Math.ceil(statements.length / 20)}}
+              <font-awesome-icon @click="page=page-1" class="icon fa-xl" style="cursor: pointer" icon="circle-chevron-left" />
+              <font-awesome-icon @click="page=page+1" style="margin-left: 5px; cursor: pointer" class="icon fa-xl"  icon="circle-chevron-right" />
+            </td>
+          </tr>
+          </tfoot>
         </table>
       </div>
     </div>
@@ -190,7 +224,7 @@ onUnmounted(() => {
 .tooltip-container {
   position: relative;
   display: inline-block;
-  border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+  // border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
 }
 
 /* Tooltip text */
