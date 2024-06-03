@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script setup>
 import Graph from '@/components/Charts/Graph.vue'
 import Dialog from '@/components/shared/Dialog.vue'
+import Table from '@/components/VisualizationView/Table.vue'
 import {useSettingStore} from '@/stores/settings'
 import {useDashboardDataStore} from "@/stores/dashboardData";
 import {computed, onMounted, onUnmounted, ref} from "vue";
@@ -171,28 +172,9 @@ onUnmounted(() => {
 
 <template>
   <div id="settings" :class="`${isExpanded ? 'is-expanded' : ''}`">
-    <Dialog :show="showFilterDialog" @close="showFilterDialog = false">
-      <template #body>
-        <div v-if="filterDialogFilter === 'verb'">
-          <div v-for="verb in [...new Set(statements.map(stmt => stmt.verb))]">
-            <input type="checkbox" :id="verb" :name="verb" :checked="filteredVerbs.includes(verb)" @input="checkboxClicked(verb, $event, 'verb')">
-            <label style="margin-left: 5px; text-transform: capitalize" :for="verb">{{ verb }}</label><br>
-          </div>
-        </div>
-        <div v-if="filterDialogFilter === 'definition'">
-          <div v-for="def in [...new Set(statements.map(stmt => stmt.definition))]">
-            <input type="checkbox" :id="def" :name="def" :checked="filteredDefinitions.includes(def)" @input="checkboxClicked(def, $event, 'definition')">
-            <label style="margin-left: 5px; text-transform: capitalize" :for="def">{{ def }}</label><br>
-          </div>
-        </div>
-        <div v-if="filterDialogFilter === 'actor'">
-          <div v-for="actor in [...new Set(statements.map(stmt => stmt.actorName))]">
-            <input type="checkbox" :id="actor" :name="actor" :checked="filteredUsers.includes(actor)" @input="checkboxClicked(actor, $event, 'actor')">
-            <label style="margin-left: 5px; text-transform: capitalize" :for="actor">{{ actor }}</label><br>
-          </div>
-        </div>
-      </template>
-    </Dialog>
+    <div style="display: flex; justify-content: right">
+      Test
+    </div>
     <div class="container py-4 mw-100">
       <h1>Visualisierung</h1>
       <div v-if="webSocket.OPEN" style="color: green">Verbunden</div>
@@ -202,59 +184,7 @@ onUnmounted(() => {
         <div style="background-color: #e0e0e0; padding: 5px">
           <Graph :categories="graphCategories" :links="graphLinks" :nodes="graphNodes"/>
         </div>
-        <!-- Create a table with an xapi statement in each row -->
-        <table class="table table-striped" style="margin-top: 10px">
-          <thead>
-          <tr>
-            <th scope="col">
-              Verb
-              <font-awesome-icon v-if="filteredVerbs.length === 0" @click="showFilterDialog = true; filterDialogFilter = 'verb'" class="icon" style="cursor: pointer" icon="filter" />
-              <font-awesome-icon v-else @click="showFilterDialog = true; filterDialogFilter = 'verb'" class="icon" style="cursor: pointer" icon="filter-circle-xmark" />
-            </th>
-            <th scope="col">
-              Objekt
-              <font-awesome-icon v-if="filteredDefinitions.length === 0" @click="showFilterDialog = true; filterDialogFilter = 'definition'" class="icon" style="cursor: pointer" icon="filter" />
-              <font-awesome-icon v-else @click="showFilterDialog = true; filterDialogFilter = 'definition'" class="icon" style="cursor: pointer" icon="filter-circle-xmark" />
-            </th>
-            <th scope="col">
-              Akteur
-              <font-awesome-icon v-if="filteredUsers.length === 0" @click="showFilterDialog = true; filterDialogFilter = 'actor'" class="icon" style="cursor: pointer" icon="filter" />
-              <font-awesome-icon v-else @click="showFilterDialog = true; filterDialogFilter = 'definition'" class="icon" style="cursor: pointer" icon="filter-circle-xmark" />
-            </th>
-            <th scope="col">
-              Zeit
-            </th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="statement in paginatedStatements" :key="statement.id">
-            <td style="display: flex; align-content: center">
-              <p style="text-transform: capitalize">
-                {{ statement.verb }}
-              </p>
-              <div class="tooltip-container" style="margin-left: 5px">
-                <font-awesome-icon class="icon ht" icon="circle-info" />
-                <span class="tooltip-text">
-                  <p style="font-weight: bold">{{ $t(`_verb.${statement.verb}`) }} - ({{statement.verb}})</p>
-                  <p>{{ $t(`_verb._description.${statement.verb}`) }}</p>
-                </span>
-              </div>
-            </td>
-            <td>{{ statement.definition }}</td>
-            <td>{{ statement.actorName }}</td>
-            <td>{{ statement.timestamp.toLocaleTimeString() }}</td>
-          </tr>
-          </tbody>
-          <tfoot>
-          <tr>
-            <td colspan="4" style="text-align: right">
-              {{ page }} / {{ Math.ceil(statements.length / 20)}}
-              <font-awesome-icon @click="page=page-1" class="icon fa-xl" style="cursor: pointer" icon="circle-chevron-left" />
-              <font-awesome-icon @click="page=page+1" style="margin-left: 5px; cursor: pointer" class="icon fa-xl"  icon="circle-chevron-right" />
-            </td>
-          </tr>
-          </tfoot>
-        </table>
+          <Table :statements="statements"/>
       </div>
     </div>
   </div>
