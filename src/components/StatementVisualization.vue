@@ -199,9 +199,11 @@ onUnmounted(() => {
       <div v-else style="color: red">Keine Verbindung</div>
       <div class="mt-5">
         <!-- Display Graph View -->
-        <Graph :categories="graphCategories" :links="graphLinks" :nodes="graphNodes"/>
+        <div style="background-color: #e0e0e0; padding: 5px">
+          <Graph :categories="graphCategories" :links="graphLinks" :nodes="graphNodes"/>
+        </div>
         <!-- Create a table with an xapi statement in each row -->
-        <table class="table table-striped">
+        <table class="table table-striped" style="margin-top: 10px">
           <thead>
           <tr>
             <th scope="col">
