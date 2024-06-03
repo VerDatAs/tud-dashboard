@@ -17,7 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <script setup>
 import Graph from '@/components/Charts/Graph.vue'
-import Dialog from '@/components/shared/Dialog.vue'
+import DebugData from "@/components/VisualizationView/DebugData.vue";
 import Table from '@/components/VisualizationView/Table.vue'
 import {useSettingStore} from '@/stores/settings'
 import {useDashboardDataStore} from "@/stores/dashboardData";
@@ -27,64 +27,12 @@ import {XapiStatement} from "@/types/xapi-statement";
 const settings = useSettingStore()
 const dashboardDataStore = useDashboardDataStore()
 
-const page = ref(1)
-const showFilterDialog = ref(false)
-const filterDialogFilter = ref("")
-const filteredVerbs = ref([])
-const filteredUsers = ref([])
-const filteredDefinitions = ref([])
-
-function checkboxClicked(id, event, type) {
-  console.log(id, event, type)
-  if (type === 'verb') {
-    if (event.target.checked) {
-      filteredVerbs.value.push(id)
-    } else {
-      filteredVerbs.value = filteredVerbs.value.filter(v => v !== id)
-    }
-  }
-  if (type === 'actor') {
-    if (event.target.checked) {
-      filteredUsers.value.push(id)
-    } else {
-      filteredUsers.value = filteredUsers.value.filter(v => v !== id)
-    }
-  }
-  if (type === 'definition') {
-    if (event.target.checked) {
-      filteredDefinitions.value.push(id)
-    } else {
-      filteredDefinitions.value = filteredDefinitions.value.filter(v => v !== id)
-    }
-  }
-}
-
 const statements = ref([])
-
-const paginatedStatements = computed(() => {
-  let stmts = statements.value
-  if (filteredVerbs.value.length > 0) {
-    stmts = stmts.filter(stmt => filteredVerbs.value.includes(stmt.verb))
-  }
-  if (filteredUsers.value.length > 0) {
-    stmts = stmts.filter(stmt => filteredUsers.value.includes(stmt.actorName))
-  }
-  if (filteredDefinitions.value.length > 0) {
-    stmts = stmts.filter(stmt => filteredDefinitions.value.includes(stmt.definition))
-  }
-
-  const pageSize = 20;
-  const start = (page.value - 1) * pageSize
-  return stmts.slice(start, start + pageSize)
-})
-
 
 const graphNodes = ref([])
 const graphLinks = ref([])
 const graphCategories = ref([])
 graphCategories.value.push({"name": "Nutzer"})
-
-
 
 defineProps({
   isExpanded: Boolean
@@ -172,13 +120,12 @@ onUnmounted(() => {
 
 <template>
   <div id="settings" :class="`${isExpanded ? 'is-expanded' : ''}`">
-    <div style="display: flex; justify-content: right">
-      Test
-    </div>
     <div class="container py-4 mw-100">
       <h1>Visualisierung</h1>
       <div v-if="webSocket.OPEN" style="color: green">Verbunden</div>
       <div v-else style="color: red">Keine Verbindung</div>
+      <!-- Debug Demo Data Button -->
+      <DebugData />
       <div class="mt-5">
         <!-- Display Graph View -->
         <div style="background-color: #e0e0e0; padding: 5px">
