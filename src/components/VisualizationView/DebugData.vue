@@ -63,6 +63,7 @@ function sendDebugData() {
   rawStatement.value.statement.verb.display['en-US'] = randomVerbs[randomVerbIndex]
   rawStatement.value.statement.object.definition.name['en-US'] = randomDefinitions[randomDefinitionIndex]
   rawStatement.value.statement.object.id = randomDefinitions[randomDefinitionIndex]
+  rawStatement.value.statement.timestamp = new Date().toUTCString()
 
   console.log(rawStatement.value)
 
