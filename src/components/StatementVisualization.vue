@@ -90,6 +90,17 @@ function newStatement(statement) {
   }
 }
 
+const graphKey = ref(1)
+
+function resetData() {
+  statements.value = []
+  graphNodes.value = []
+  graphLinks.value = []
+  graphCategories.value = []
+  graphCategories.value.push({"name": "Nutzer"})
+  graphKey.value += 1;
+}
+
 onMounted(() => {
   console.log('Mounted');
 
@@ -124,12 +135,17 @@ onUnmounted(() => {
       <h1>Visualisierung</h1>
       <div v-if="webSocket.OPEN" style="color: green">Verbunden</div>
       <div v-else style="color: red">Keine Verbindung</div>
-      <!-- Debug Demo Data Button -->
-      <DebugData />
+      <div style="display: flex">
+        <!-- Debug Demo Data Button -->
+        <DebugData />
+        <div @click="resetData" style="background-color: #e0e0e0; padding: 3px; margin: 3px; cursor: pointer; width: 140px">
+          Daten Zurücksetzen
+        </div>
+      </div>
       <div class="mt-5">
         <!-- Display Graph View -->
         <div style="background-color: #e0e0e0; padding: 5px">
-          <Graph :categories="graphCategories" :links="graphLinks" :nodes="graphNodes"/>
+          <Graph :key="graphKey" ref="graph" :categories="graphCategories" :links="graphLinks" :nodes="graphNodes"/>
         </div>
           <Table :statements="statements"/>
       </div>
