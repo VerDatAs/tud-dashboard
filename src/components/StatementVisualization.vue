@@ -44,7 +44,12 @@ const webSocket = ref(new WebSocket(webSocketUrl));
 
 function newStatement(statement) {
   statements.value.unshift(statement);
-
+  // Category
+  let category = graphCategories.value.find(category => category.name === statement.definition);
+  if (!category) {
+    graphCategories.value.push({name: statement.definition})
+    console.log('New Category Pushed')
+  }
   // Definition Node
   let definitionNode = graphNodes.value.find(node => node.id === statement.definitionId);
   if (!definitionNode) {
@@ -72,12 +77,6 @@ function newStatement(statement) {
     graphNodes.value.push(userNode)
     console.log('New User Node Pushed')
   }
-  // Category
-  let category = graphCategories.value.find(category => category.name === statement.definition);
-  if (!category) {
-    graphCategories.value.push({name: statement.definition})
-    console.log('New Category Pushed')
-  }
   // Link
   let link = graphLinks.value.find(link => link.source === statement.actorName && link.target === statement.definitionId);
   if (!link) {
@@ -90,15 +89,12 @@ function newStatement(statement) {
   }
 }
 
-const graphKey = ref(1)
-
 function resetData() {
   statements.value = []
   graphNodes.value = []
   graphLinks.value = []
   graphCategories.value = []
   graphCategories.value.push({"name": "Nutzer"})
-  graphKey.value += 1;
 }
 
 onMounted(() => {
@@ -145,7 +141,7 @@ onUnmounted(() => {
       <div class="mt-5">
         <!-- Display Graph View -->
         <div style="background-color: #e0e0e0; padding: 5px">
-          <Graph :key="graphKey" ref="graph" :categories="graphCategories" :links="graphLinks" :nodes="graphNodes"/>
+          <Graph ref="graph" :categories="graphCategories" :links="graphLinks" :nodes="graphNodes"/>
         </div>
           <Table :statements="statements"/>
       </div>

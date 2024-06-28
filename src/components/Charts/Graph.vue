@@ -21,6 +21,7 @@ import {CanvasRenderer} from "echarts/renderers";
 import {BarChart, GraphChart} from "echarts/charts";
 import {GridComponent, DatasetComponent, TooltipComponent, LegendComponent} from "echarts/components";
 import VChart from "vue-echarts";
+import {ref, watch} from "vue";
 
 use([BarChart, GraphChart, DatasetComponent, GridComponent, CanvasRenderer, TooltipComponent, LegendComponent]);
 
@@ -30,63 +31,70 @@ const props = defineProps({
   links: Array, // [{ "source": "Source-Node-ID", "target": "Target-Node-ID", "label": "Label" }]
 })
 
-const option = {
-  tooltip: {},
-  legend: [
-    {
-      data: props.categories.map(function (a) {
-        return a.name;
-      })
-    }
-  ],
-  animationDuration: 1500,
-  animationEasingUpdate: 'quinticInOut',
-  series: [
-    {
-      name: 'xAPI statements',
-      type: 'graph',
-      layout: 'force',
-      force: {
-        // Parameters for the force simulation
-        repulsion: 1000,
-        edgeLength: 150,
-      },
-      data: props.nodes,
-      links: props.links,
-      categories: props.categories,
-      roam: true,
-      label: {
-        show: true,
-        position: 'right',
-        formatter: '{b}'
-      },
-      labelLayout: {
-        hideOverlap: true
-      },
-      scaleLimit: {
-        min: 0.4,
-        max: 2
-      },
-      lineStyle: {
-        color: 'target',
-        curveness: 0.3
-      },
-      edgeLabel: {
-        show: true,
-        formatter: function(params) {
-          return params.data.label ? params.data.label.formatter : '';
+const option = ref({})
+
+watch(() => props, () => {
+  updateOptions()
+}, {deep: true})
+
+function updateOptions() {
+  option.value = {
+    tooltip: {},
+    legend: [
+      {
+        data: props.categories.map(function (a) {
+          return a.name;
+        })
+      }
+    ],
+    animationDuration: 1500,
+    animationEasingUpdate: 'quinticInOut',
+    series: [
+      {
+        name: 'xAPI statements',
+        type: 'graph',
+        layout: 'force',
+        force: {
+          // Parameters for the force simulation
+          repulsion: 1000,
+          edgeLength: 150,
         },
-      },
-      emphasis: {
-        focus: 'adjacency',
+        data: props.nodes,
+        links: props.links,
+        categories: props.categories,
+        roam: true,
+        label: {
+          show: true,
+          position: 'right',
+          formatter: '{b}'
+        },
+        labelLayout: {
+          hideOverlap: true
+        },
+        scaleLimit: {
+          min: 0.4,
+          max: 2
+        },
         lineStyle: {
-          width: 10
+          color: 'target',
+          curveness: 0.3
+        },
+        edgeLabel: {
+          show: true,
+          formatter: function(params) {
+            return params.data.label ? params.data.label.formatter : '';
+          },
+        },
+        emphasis: {
+          focus: 'adjacency',
+          lineStyle: {
+            width: 10
+          }
         }
       }
-    }
-  ]
-};
-
+    ]
+  }
+}
 </script>
 
 <template>
