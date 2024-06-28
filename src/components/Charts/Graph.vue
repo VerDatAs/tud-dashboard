@@ -110,7 +110,7 @@ function updateOptions() {
         v-if="nodes"
         :option="option"
         autoresize
-        style="height: 400px"
+        style="height: 500px"
     />
   </div>
 </template>

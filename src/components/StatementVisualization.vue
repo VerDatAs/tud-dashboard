@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import Graph from '@/components/Charts/Graph.vue'
 import DebugData from "@/components/VisualizationView/DebugData.vue";
 import Table from '@/components/VisualizationView/Table.vue'
+import FullscreenButton from "@/components/shared/FullscreenButton.vue";
 import {useSettingStore} from '@/stores/settings'
 import {useDashboardDataStore} from "@/stores/dashboardData";
 import {computed, onMounted, onUnmounted, ref} from "vue";
@@ -128,7 +129,11 @@ onUnmounted(() => {
 <template>
   <div id="settings" :class="`${isExpanded ? 'is-expanded' : ''}`">
     <div class="container py-4 mw-100">
-      <h1>Visualisierung</h1>
+      <div style="display: flex">
+        <h1>Visualisierung</h1>
+        <div style="flex-grow: 1" />
+        <FullscreenButton />
+      </div>
       <div v-if="webSocket.OPEN" style="color: green">Verbunden</div>
       <div v-else style="color: red">Keine Verbindung</div>
       <div style="display: flex">
@@ -175,49 +180,4 @@ onUnmounted(() => {
   }
 }
 
-/* Tooltip container */
-.tooltip-container {
-  position: relative;
-  display: inline-block;
-  // border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
-}
-
-/* Tooltip text */
-.tooltip-container .tooltip-text {
-  padding-left: 1em;
-  padding-right: 1em;
-  visibility: hidden;
-  width: 300px;
-  background-color: #555;
-  color: #fff;
-  border-radius: 6px;
-
-  /* Position the tooltip text */
-  position: absolute;
-  z-index: 1;
-  top: -5px;
-  left: 125%;
-  margin-left: 5px;
-
-  /* Fade in tooltip */
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-
-/* Tooltip arrow */
-.tooltip-container .tooltip-text::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 100%;
-  margin-top: -5px;
-  border-width: 5px;
-  border-style: solid;
-  border-color: transparent #555 transparent transparent;
-}
-
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip-container:hover .tooltip-text {
-  visibility: visible;
-  opacity: 1;
-} </style>
+</style>
