@@ -24,11 +24,15 @@ import {useSettingStore} from '@/stores/settings'
 import {useDashboardDataStore} from "@/stores/dashboardData";
 import {computed, onMounted, onUnmounted, ref} from "vue";
 import {XapiStatement} from "@/types/xapi-statement";
+import Dialog from "@/components/shared/Dialog.vue";
 
 const settings = useSettingStore()
 const dashboardDataStore = useDashboardDataStore()
 
 const statements = ref([])
+
+const showUserFilterDialog = ref(false)
+const filteredUserId = ref(null)
 
 const graphNodes = ref([])
 const graphLinks = ref([])
@@ -41,7 +45,7 @@ defineProps({
 
 // in production, the encrypted protocol wss:// should be used
 const webSocketUrl = dashboardDataStore.data.getWebsocketUrl();
-const webSocket = ref(new WebSocket(webSocketUrl));
+const webSocket = ref(null);
 
 function newStatement(statement) {
   statements.value.unshift(statement);
@@ -98,13 +102,49 @@ function resetData() {
   graphCategories.value.push({"name": "Nutzer"})
 }
 
+function openWebsocket(user) {
+  if (webSocket.value) {
+    webSocket.value.close();
+  }
+  webSocket.value = new WebSocket(webSocketUrl)
+
+  const jwtToken = dashboardDataStore.data.token;
+  if (user) {
+    webSocket.value.onopen = (event) => {
+      webSocket.value.send("CONNECT\ntoken:" + jwtToken + "\naccept-version:1.2\n\n\0");
+      // there is only one destination that needs to be subscribed: /statement/user_id
+      webSocket.value.send(`SUBSCRIBE\nid:sub-0\ndestination:/statement/${user}\n\n\0`);
+    };
+  } else {
+    webSocket.value.onopen = (event) => {
+      webSocket.value.send("CONNECT\ntoken:" + jwtToken + "\naccept-version:1.2\n\n\0");
+      // there is only one destination that needs to be subscribed: /statement
+      webSocket.value.send("SUBSCRIBE\nid:sub-0\ndestination:/statement\n\n\0");
+    };
+  }
+
+  webSocket.value.onmessage = (event) => {
+    // extract content between \n\n and \0
+    const body = event.data.substring(event.data.indexOf('\n\n') + 2, event.data.lastIndexOf("\0"));
+    // send JSON data in body of STOMP messages that can be deserialized
+    if (body) {
+      const bodyParsed = JSON.parse(body);
+      const statement = new XapiStatement(bodyParsed);
+      newStatement(statement)
+    }
+  }
+
+}
+
 onMounted(() => {
   console.log('Mounted');
 
-  const jwtToken = dashboardDataStore.data.token;
+  openWebsocket();
+
+  /*const jwtToken = dashboardDataStore.data.token;
   webSocket.value.onopen = (event) => {
     webSocket.value.send("CONNECT\ntoken:" + jwtToken + "\naccept-version:1.2\n\n\0");
-    // there is only one destination that needs to be subscribed: /user/queue/chat
+    // there is only one destination that needs to be subscribed: /statement
     webSocket.value.send("SUBSCRIBE\nid:sub-0\ndestination:/statement\n\n\0");
   };
 
@@ -117,12 +157,14 @@ onMounted(() => {
       const statement = new XapiStatement(bodyParsed);
       newStatement(statement)
     }
-  }
+  }*/
 })
 
 onUnmounted(() => {
   console.log('Unmounted');
-  webSocket.value.close();
+  if (webSocket.value) {
+    webSocket.value.close();
+  }
 })
 </script>
 
@@ -134,7 +176,7 @@ onUnmounted(() => {
         <div style="flex-grow: 1" />
         <FullscreenButton />
       </div>
-      <div v-if="webSocket.OPEN" style="color: green">Verbunden</div>
+      <div v-if="webSocket && webSocket.OPEN" style="color: green">Verbunden</div>
       <div v-else style="color: red">Keine Verbindung</div>
       <div style="display: flex">
         <!-- Debug Demo Data Button -->
@@ -142,6 +184,29 @@ onUnmounted(() => {
         <div @click="resetData" style="background-color: #e0e0e0; padding: 3px; margin: 3px; cursor: pointer; width: 140px">
           Daten Zurücksetzen
         </div>
+      </div>
+      <div>
+        <div @click="showUserFilterDialog = true"
+             style="background-color: #e0e0e0; padding: 3px; margin: 3px; cursor: pointer; display: inline-block">
+          <span v-if="!filteredUserId">Filter nach Nutzer</span>
+          <span v-else>Filter nach {{filteredUserId}}</span>
+          <font-awesome-icon v-if="!filteredUserId"
+                             @click="showUserFilterDialog = true;" class="icon"
+                             style="cursor: pointer; margin-left: 3px" icon="filter"/>
+          <font-awesome-icon v-else @click="showUserFilterDialog = true;" class="icon"
+                             style="cursor: pointer; margin-left: 3px;" icon="filter-circle-xmark"/>
+        </div>
+        <Dialog :show="showUserFilterDialog" @close="showUserFilterDialog = false">
+          <template #body>
+            <div @click="openWebsocket(); filteredUserId = null; resetData(); showUserFilterDialog = false;"
+                 style="cursor: pointer">Alle Nutzer</div>
+            <div @click="openWebsocket(user); filteredUserId = user; resetData(); showUserFilterDialog = false;"
+                 style="cursor: pointer"
+                 v-for="user in [...new Set(statements.map(stmt => stmt.actorName))]">
+              {{ user }}
+            </div>
+          </template>
+        </Dialog>
       </div>
       <div class="mt-5">
         <!-- Display Graph View -->
