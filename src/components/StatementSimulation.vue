@@ -659,7 +659,6 @@ export default {
     z-index: 8;
     position: relative;
     top: 50px;
-    left: 50px;
     height: calc(100% - 100px);
     width: calc(100% - 100px);
     border-radius: 10px;
