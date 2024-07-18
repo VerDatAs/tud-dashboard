@@ -26,7 +26,6 @@ import {computed, onMounted, onUnmounted, ref} from "vue";
 import {XapiStatement} from "@/types/xapi-statement";
 import Dialog from "@/components/shared/Dialog.vue";
 
-const settings = useSettingStore()
 const dashboardDataStore = useDashboardDataStore()
 
 const statements = ref([])
@@ -46,7 +45,7 @@ const props = defineProps({
 })
 
 // in production, the encrypted protocol wss:// should be used
-const webSocketUrl = dashboardDataStore.data.getWebsocketUrl();
+const webSocketUrl = dashboardDataStore.data.backendUrl.replace('http', 'ws').replace('https', 'wss') + '/api/v2/websocket';
 const webSocket = ref(null);
 
 function newStatement(statement) {
