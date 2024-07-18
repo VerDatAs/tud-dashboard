@@ -332,7 +332,7 @@ export default {
       // Prepare the request
       const currentFilterValue = filter.selectedValueFilter ? filter.selectedValueFilter : ''
       const url =
-        this.backendUrl + '/api/v2/statement/' + filter.selectedAttribute + '/suggestions?suggest=' + currentFilterValue
+        this.backendUrl + '/api/v1/statement/' + filter.selectedAttribute + '/suggestions?suggest=' + currentFilterValue
 
       filter.suggestions = []
 

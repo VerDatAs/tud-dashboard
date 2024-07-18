@@ -68,7 +68,7 @@ export default {
      * Fetch the current schema for the xAPI attributes.
      */
     fetchSchema() {
-      const url = this.backendUrl + '/api/v2/statement/schema'
+      const url = this.backendUrl + '/api/v1/statement/schema'
 
       const authHeader = {
         'Content-Type': 'application/json;charset=UTF-8',
@@ -112,7 +112,7 @@ export default {
       }
 
       // Prepare the general request
-      const queryUrl = this.backendUrl + '/api/v2/statement/query'
+      const queryUrl = this.backendUrl + '/api/v1/statement/query'
       const authHeader = {
         'Content-Type': 'application/json;charset=UTF-8',
         Authorization: 'Bearer ' + this.token

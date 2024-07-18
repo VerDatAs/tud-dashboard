@@ -65,7 +65,7 @@ const rawStatement = ref({
 }
 )
 
-const queryUrl = dashboardDataStore.data.backendUrl + '/api/v1/statement'
+const queryUrl = dashboardDataStore.data.backendUrl + '/api/v1/statements'
 const authHeader = {
   'Content-Type': 'application/json;charset=UTF-8',
   Authorization: 'Bearer ' + dashboardDataStore.data.token

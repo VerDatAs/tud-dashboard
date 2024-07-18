@@ -86,7 +86,7 @@ export default {
           const requests = []
 
           // Prepare the general request
-          const queryUrl = this.backendUrl + '/api/v2/statement/query'
+          const queryUrl = this.backendUrl + '/api/v1/statement/query'
           const authHeader = {
             'Content-Type': 'application/json;charset=UTF-8',
             Authorization: 'Bearer ' + this.token
