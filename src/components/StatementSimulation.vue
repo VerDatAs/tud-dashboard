@@ -18,7 +18,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 <script>
 import exampleStatements from '@/assets/example-statements.json'
 import ConfirmationDialog from '@/components/shared/ConfirmationDialog.vue'
-import { useAdministrationStore } from '@/stores/administration'
 import axios from 'axios'
 import VueJsonPretty from 'vue-json-pretty'
 import 'vue-json-pretty/lib/styles.css'
@@ -34,10 +33,6 @@ export default {
     dialog: null,
     statements: exampleStatements,
     requestInProgress: false,
-    administrationStore: useAdministrationStore(),
-    adminTokenNotAvailable: false,
-    adminUserName: '',
-    adminUserPassword: '',
     userId: null,
     timeFactor: null,
     simulationStarted: false,
@@ -49,27 +44,11 @@ export default {
     VueJsonPretty
   },
   props: {
+    adminToken: String,
     backendUrl: String,
     isExpanded: Boolean
   },
   computed: {
-    /**
-     * Return a stored admin token, if it is not yet expired.
-     */
-    adminToken() {
-      const adminToken = this.administrationStore.adminToken
-      if (adminToken && adminToken !== '') {
-        // Check expire date: https://stackoverflow.com/a/69058154
-        const expiry = JSON.parse(atob(adminToken?.split('.')?.[1]))?.exp
-        const isTokenExpired = expiry ? Math.floor(new Date().getTime() / 1000) >= expiry : true
-        if (isTokenExpired) {
-          // eslint-disable-next-line
-          this.administrationStore.adminToken = ''
-        }
-        return this.administrationStore.adminToken ?? ''
-      }
-      return ''
-    },
     /**
      * Return, whether an error was detected.
      */
@@ -92,60 +71,26 @@ export default {
      * Initialize the statement simulation by retrieving the assistance type keys, if an admin token exists.
      */
     initStatementSimulation() {
-      if (this.adminToken !== '') {
-        this.adminTokenNotAvailable = false
-        // Only request the assistance types once
-        if (this.assistanceTypeKeys?.length === 0) {
-          this.requestInProgress = true
-          const authHeader = {
-            'Content-Type': 'application/json;charset=UTF-8',
-            Authorization: 'Bearer ' + this.adminToken
-          }
-          const url = this.backendUrl + '/api/v1/assistance/types'
-          axios.get(url, { headers: authHeader }).then((data) => {
-            const assistanceTypesResponse = data.data
-            this.assistanceTypeKeys = assistanceTypesResponse.map((assistanceType) => {
-              return { key: assistanceType.key }
-            })
-            this.supportedAssistanceTypes = this.assistanceTypeKeys
-            this.requestInProgress = false
-          })
-        }
-      } else {
-        this.adminTokenNotAvailable = true
-      }
-    },
-    /**
-     * Perform a login with the input credentials of an administrator role.
-     */
-    adminLogin() {
-      if (
-        !this.adminUserName ||
-        this.adminUserName === '' ||
-        !this.adminUserPassword ||
-        this.adminUserPassword === ''
-      ) {
+      if (this.adminToken === '') {
         return
       }
-      this.requestInProgress = true
-      const url = this.backendUrl + '/api/v1/auth/login'
-      const request = {
-        actorAccountName: this.adminUserName,
-        password: this.adminUserPassword
-      }
-      axios.post(url, request).then((data) => {
-        const token = data.data.token
-        // Check for the correct role
-        const roles = JSON.parse(atob(token?.split('.')?.[1]))?.roles
-        if (roles?.includes('ADMIN')) {
-          this.administrationStore.adminToken = token
-          this.requestInProgress = false
-          this.initStatementSimulation()
+      // Only request the assistance types once
+      if (this.assistanceTypeKeys?.length === 0) {
+        this.requestInProgress = true
+        const authHeader = {
+          'Content-Type': 'application/json;charset=UTF-8',
+          Authorization: 'Bearer ' + this.adminToken
         }
-      })
-      setTimeout(() => {
-        this.requestInProgress = false
-      }, 2000)
+        const url = this.backendUrl + '/api/v1/assistance/types'
+        axios.get(url, { headers: authHeader }).then((data) => {
+          const assistanceTypesResponse = data.data
+          this.assistanceTypeKeys = assistanceTypesResponse.map((assistanceType) => {
+            return { key: assistanceType.key }
+          })
+          this.supportedAssistanceTypes = this.assistanceTypeKeys
+          this.requestInProgress = false
+        })
+      }
     },
     /**
      * Update the statements variable, if an input change on the textarea was detected.
@@ -490,70 +435,42 @@ export default {
           </div>
         </template>
         <hr />
-        <div class="mt-4" v-if="adminTokenNotAvailable">
-          <div class="alert alert-info">Es ist noch kein Admin-Token hinterlegt. Bitte loggen Sie sich ein.</div>
-          <div class="form-group">
-            <label for="adminUserName" class="control-label">Admin-Username</label>
+        <div class="form-group">
+          <label for="userId" class="control-label">(Optional) Benutzer-ID</label>
+          <input id="userId" class="form-control" type="text" v-model="userId" :disabled="requestInProgress" />
+        </div>
+        <div class="form-group">
+          <label for="timeFactor" class="control-label">(Optional) Zeitfaktor</label>
+          <input
+            id="timeFactor"
+            class="form-control"
+            type="number"
+            v-model="timeFactor"
+            :disabled="requestInProgress"
+          />
+        </div>
+        <div class="form-group">
+          <label class="control-label mb-2">Unterstützte Assistenztypen</label>
+          <div
+            class="ms-1 mb-1"
+            v-for="(assistanceType, index) in assistanceTypeKeys"
+            :key="'assistance-type-key-' + index"
+          >
             <input
-              id="adminUserName"
-              class="form-control"
-              type="text"
-              v-model="adminUserName"
+              :id="'assistanceType' + index"
+              class="checkbox-input"
+              type="checkbox"
+              :value="assistanceType"
+              v-model="supportedAssistanceTypes"
               :disabled="requestInProgress"
             />
-          </div>
-          <div class="form-group">
-            <label for="adminUserPassword" class="control-label">Admin-Passwort</label>
-            <input
-              id="adminUserPassword"
-              class="form-control"
-              type="password"
-              v-model="adminUserPassword"
-              :disabled="requestInProgress"
-            />
-          </div>
-          <div class="form-group">
-            <button class="btn" @click="adminLogin()" :disabled="requestInProgress">Einloggen</button>
+            <label class="ms-1" :for="'assistanceType' + index">{{ assistanceType.key }}</label>
           </div>
         </div>
-        <template v-else>
-          <div class="form-group">
-            <label for="userId" class="control-label">(Optional) Benutzer-ID</label>
-            <input id="userId" class="form-control" type="text" v-model="userId" :disabled="requestInProgress" />
-          </div>
-          <div class="form-group">
-            <label for="timeFactor" class="control-label">(Optional) Zeitfaktor</label>
-            <input
-              id="timeFactor"
-              class="form-control"
-              type="number"
-              v-model="timeFactor"
-              :disabled="requestInProgress"
-            />
-          </div>
-          <div class="form-group">
-            <label class="control-label mb-2">Unterstützte Assistenztypen</label>
-            <div
-              class="ms-1 mb-1"
-              v-for="(assistanceType, index) in assistanceTypeKeys"
-              :key="'assistance-type-key-' + index"
-            >
-              <input
-                :id="'assistanceType' + index"
-                class="checkbox-input"
-                type="checkbox"
-                :value="assistanceType"
-                v-model="supportedAssistanceTypes"
-                :disabled="requestInProgress"
-              />
-              <label class="ms-1" :for="'assistanceType' + index">{{ assistanceType.key }}</label>
-            </div>
-          </div>
-          <div class="alert alert-success" v-if="simulationStarted">Die Simulation wurde erfolgreich gestartet.</div>
-          <div class="form-group">
-            <button class="btn" @click="startSimulation()" :disabled="requestInProgress">Simulation starten</button>
-          </div>
-        </template>
+        <div class="alert alert-success" v-if="simulationStarted">Die Simulation wurde erfolgreich gestartet.</div>
+        <div class="form-group">
+          <button class="btn" @click="startSimulation()" :disabled="requestInProgress">Simulation starten</button>
+        </div>
       </div>
       <div v-if="!!selectedStatement" class="modal-backdrop">
         <div class="modal-container">

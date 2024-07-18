@@ -16,14 +16,82 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <script>
+import { useAdministrationStore } from '@/stores/administration'
 import { useSettingStore } from '@/stores/settings'
+import axios from 'axios'
 
 export default {
   data: () => ({
+    administrationStore: useAdministrationStore(),
+    adminUserName: '',
+    adminUserPassword: '',
+    errorMsg: '',
+    requestInProgress: false,
     settings: useSettingStore()
   }),
   props: {
+    adminTokenAvailable: Boolean,
+    backendUrl: String,
     isExpanded: Boolean
+  },
+  methods: {
+    /**
+     * Perform a login with the input credentials of an administrator role.
+     */
+    adminLogin() {
+      if (
+          !this.adminUserName ||
+          this.adminUserName === '' ||
+          !this.adminUserPassword ||
+          this.adminUserPassword === ''
+      ) {
+        this.errorMsg = true
+        setTimeout(() => {
+          this.errorMsg = false
+        }, 5000)
+        return
+      }
+      this.requestInProgress = true
+      const url = this.backendUrl + '/api/v1/auth/login'
+      const request = {
+        actorAccountName: this.adminUserName,
+        password: this.adminUserPassword
+      }
+      axios.post(url, request).then((data) => {
+        const token = data.data.token
+        // Check for the correct role
+        const roles = JSON.parse(atob(token?.split('.')?.[1]))?.roles
+        if (roles?.includes('ADMIN')) {
+          this.administrationStore.adminToken = token
+          this.adminUserName = ''
+          this.adminUserPassword = ''
+          this.requestInProgress = false
+        } else {
+          this.errorMsg = true
+          setTimeout(() => {
+            this.errorMsg = false
+          }, 5000)
+        }
+      },
+      () => {
+        this.errorMsg = true
+        setTimeout(() => {
+          this.errorMsg = false
+        }, 5000)
+      })
+      setTimeout(() => {
+        this.requestInProgress = false
+      }, 2500)
+    },
+    adminLogout() {
+      if (this.adminTokenAvailable && confirm('Sind Sie sich sicher, dass Sie sich ausloggen wollen?')) {
+        this.requestInProgress = true
+        this.administrationStore.adminToken = ''
+        setTimeout(() => {
+          this.requestInProgress = false
+        }, 2500)
+      }
+    }
   }
 }
 </script>
@@ -41,6 +109,49 @@ export default {
           size="md"
           title="Dadurch wird der Debugging-Modus aktiviert, der es Ihnen derzeit ermöglicht, das Diagramm in der Komponente der Wissensstruktur herunterzuladen und neu zu zeichnen."
         />
+      </div>
+      <hr>
+      <h2>
+        Administrator-Login
+        <font-awesome-icon
+          class="icon"
+          icon="circle-info"
+          size="md"
+          title="Dadurch werden erweiterte Einstellungen sichtbar, wie das Monitoring von Assistenzprozessen."
+        />
+      </h2>
+      <div class="setting">
+        <div class="mt-4" v-if="!adminTokenAvailable">
+          <div class="alert alert-info" v-if="!errorMsg">Es ist noch kein Admin-Token hinterlegt. Bitte loggen Sie sich ein, wenn Sie über diese Rechte verfügen.</div>
+          <div class="alert alert-warning" v-if="errorMsg">Der Login war nicht erfolgreich. Bitte überprüfen Sie Ihre Eingabe.</div>
+          <div class="form-group">
+            <label for="adminUserName" class="control-label">Admin-Username</label>
+            <input
+                id="adminUserName"
+                class="form-control"
+                type="text"
+                v-model="adminUserName"
+                :disabled="requestInProgress"
+            />
+          </div>
+          <div class="form-group">
+            <label for="adminUserPassword" class="control-label">Admin-Passwort</label>
+            <input
+                id="adminUserPassword"
+                class="form-control"
+                type="password"
+                v-model="adminUserPassword"
+                :disabled="requestInProgress"
+            />
+          </div>
+          <div class="form-group">
+            <button class="btn btn-primary" @click="adminLogin()" :disabled="requestInProgress">Einloggen</button>
+          </div>
+        </div>
+        <div v-else>
+          <div class="mt-4 alert alert-info">Sie sind aktuell als Administrator eingeloggt.</div>
+          <button class="btn btn-primary" @click="adminLogout()" :disabled="requestInProgress">Ausloggen</button>
+        </div>
       </div>
     </div>
   </div>

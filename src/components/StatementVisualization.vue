@@ -40,6 +40,7 @@ const graphCategories = ref([])
 graphCategories.value.push({"name": "Nutzer"})
 
 defineProps({
+  adminToken: String,
   isExpanded: Boolean
 })
 

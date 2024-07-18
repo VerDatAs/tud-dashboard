@@ -24,7 +24,8 @@ import PreviewContainer from '@/components/PreviewContainer.vue'
 import QueryView from '@/components/Query/QueryView.vue'
 import Settings from '@/components/SettingsView.vue'
 import StatementSimulation from '@/components/StatementSimulation.vue'
-import StatementVisualization from "@/components/StatementVisualization.vue";
+import StatementVisualization from '@/components/StatementVisualization.vue'
+import { useAdministrationStore } from '@/stores/administration'
 import { useDashboardDataStore } from '@/stores/dashboardData'
 import { ref } from 'vue'
 
@@ -43,6 +44,7 @@ export default {
   },
   data() {
     return {
+      administrationStore: useAdministrationStore(),
       dashboardDataStore: useDashboardDataStore(),
       diagram: null,
       diagramLoaded: false,
@@ -60,6 +62,33 @@ export default {
   },
   created() {
     this.initDashboardApp()
+  },
+  computed: {
+    /**
+     * Return a stored admin token, if it is not yet expired.
+     */
+    adminToken() {
+      const adminToken = this.administrationStore.adminToken
+      if (adminToken && adminToken !== '') {
+        // Check expire date: https://stackoverflow.com/a/69058154
+        const parsedToken = JSON.parse(atob(adminToken?.split('.')?.[1]))
+        const expiry = parsedToken?.exp
+        const isTokenExpired = expiry ? Math.floor(new Date().getTime() / 1000) >= expiry : true
+        const isAdministrator = parsedToken?.roles?.includes('ADMIN') ?? false
+        if (isTokenExpired || !isAdministrator) {
+          // eslint-disable-next-line
+          this.administrationStore.adminToken = ''
+        }
+        return this.administrationStore.adminToken ?? ''
+      }
+      return ''
+    },
+    /**
+     * Return, whether an admin token is stored and valid
+     */
+    adminTokenAvailable() {
+      return this.adminToken !== ''
+    }
   },
   methods: {
     /**
@@ -135,6 +164,7 @@ export default {
     <LoadingScreen :diagramLoaded="diagramLoaded" :path="path" v-if="!previewMode" />
     <NavigationView
       v-if="!canViewOnly"
+      :adminTokenAvailable="adminTokenAvailable"
       :currentView="currentView"
       :isExpanded="isExpanded"
       @setCurrentView="setCurrentView"
@@ -158,22 +188,35 @@ export default {
       @setDiagram="setDiagram"
     />
     <CollaborationMonitoring
+      :adminToken="adminToken"
       :backendUrl="backendUrl"
       :isExpanded="isExpanded"
-      v-if="currentView === 'collaborationMonitoring'"
+      v-if="adminTokenAvailable && currentView === 'collaborationMonitoring'"
     />
-    <QueryView :backendUrl="backendUrl" :isExpanded="isExpanded" :token="token" v-if="currentView === 'query'" />
-    <StatementSimulation
+    <QueryView
       :backendUrl="backendUrl"
       :isExpanded="isExpanded"
-      v-if="currentView === 'statementSimulation'"
+      :token="token"
+      v-if="adminTokenAvailable && currentView === 'query'"
+    />
+    <StatementSimulation
+      :adminToken="adminToken"
+      :backendUrl="backendUrl"
+      :isExpanded="isExpanded"
+      v-if="adminTokenAvailable && currentView === 'statementSimulation'"
     />
     <StatementVisualization
+      :adminToken="adminToken"
       :backendUrl="backendUrl"
       :isExpanded="isExpanded"
-      v-if="currentView === 'statementVisualization'"
+      v-if="adminTokenAvailable && currentView === 'statementVisualization'"
       />
-    <Settings :isExpanded="isExpanded" v-if="currentView === 'settings'" />
+    <Settings
+      :adminTokenAvailable="adminTokenAvailable"
+      :backendUrl="backendUrl"
+      :isExpanded="isExpanded"
+      v-if="currentView === 'settings'"
+    />
     <DialogsWrapper />
   </div>
 </template>
