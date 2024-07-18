@@ -82,7 +82,7 @@ function sendDebugData() {
   const randomVerbIndex = Math.floor(Math.random() * randomVerbs.length);
   const randomDefinitionIndex = Math.floor(Math.random() * randomDefinitions.length);
 
-  rawStatement.value.statement.actor.account.name = props.pseudoId
+  rawStatement.value.statement.actor.account.name = props.pseudoId ?? ''
   rawStatement.value.statement.verb.display['en-US'] = randomVerbs[randomVerbIndex]
   rawStatement.value.statement.object.definition.name['en-US'] = randomDefinitions[randomDefinitionIndex]
   rawStatement.value.statement.object.id = randomDefinitions[randomDefinitionIndex]
