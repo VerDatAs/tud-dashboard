@@ -43,6 +43,7 @@ export default {
   }),
   props: {
     backendUrl: String,
+    currentView: String,
     diagram: Object,
     diagramLoaded: Boolean,
     courseNode: Object,
@@ -54,6 +55,19 @@ export default {
   },
   emits: ['loadedDiagram', 'setDiagram'],
   watch: {
+    /**
+     * Watch for currentView being set to knowledgeStructure, so the component gets visible.
+     */
+    currentView(newValue) {
+      if (newValue === 'knowledgeStructure') {
+        // TODO: This only works when using setTimeout
+        // resize the canvas due to bugs caused by NavigationView being expanded
+        setTimeout(() => {
+          this.diagram?.get('canvas')?.resized()
+          this.centerCanvas()
+        }, 1)
+      }
+    },
     /**
      * Watch for changes on the expansion value.
      */
