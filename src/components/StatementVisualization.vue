@@ -222,7 +222,7 @@ onUnmounted(() => {
         <div style="background-color: #e0e0e0; padding: 5px">
           <Graph ref="graph" :categories="graphCategories" :links="graphLinks" :nodes="graphNodes"/>
         </div>
-          <Table :statements="statements"/>
+        <Table :statements="statements"/>
       </div>
     </div>
   </div>

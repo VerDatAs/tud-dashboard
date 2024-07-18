@@ -105,7 +105,8 @@ const paginatedStatements = computed(() => {
     <div class="container py-4 mw-100">
       <!-- Display Graph View -->
       <!-- Create a table with an xapi statement in each row -->
-      <table class="table table-striped" style="margin-top: 10px">
+      <!-- max-width: 100% does not work -> https://stackoverflow.com/a/27276818 -->
+      <table class="table table-striped" style="display: table; table-layout: fixed; margin-top: 10px">
         <thead>
         <tr>
           <th scope="col">
