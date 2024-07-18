@@ -41,7 +41,8 @@ graphCategories.value.push({"name": "Nutzer"})
 
 defineProps({
   adminToken: String,
-  isExpanded: Boolean
+  isExpanded: Boolean,
+  pseudoId: String
 })
 
 // in production, the encrypted protocol wss:// should be used
@@ -109,20 +110,27 @@ function openWebsocket(user) {
   }
   webSocket.value = new WebSocket(webSocketUrl)
 
-  const jwtToken = dashboardDataStore.data.token;
-  if (user) {
-    webSocket.value.onopen = (event) => {
-      webSocket.value.send("CONNECT\ntoken:" + jwtToken + "\naccept-version:1.2\n\n\0");
-      // there is only one destination that needs to be subscribed: /statement/user_id
-      webSocket.value.send(`SUBSCRIBE\nid:sub-0\ndestination:/statement/${user}\n\n\0`);
-    };
-  } else {
-    webSocket.value.onopen = (event) => {
-      webSocket.value.send("CONNECT\ntoken:" + jwtToken + "\naccept-version:1.2\n\n\0");
-      // there is only one destination that needs to be subscribed: /statement
-      webSocket.value.send("SUBSCRIBE\nid:sub-0\ndestination:/statement\n\n\0");
-    };
-  }
+  webSocket.value.onopen = () => {
+    webSocket.value.send("CONNECT\ntoken:" + this.adminToken + "\naccept-version:1.2\n\n\0");
+    // there is only one destination that needs to be subscribed: /statement/user_id
+    webSocket.value.send(`SUBSCRIBE\nid:sub-0\ndestination:/statement/${this.pseudoId}\n\n\0`);
+  };
+
+  // TODO: Remove, if not used anymore
+  // const jwtToken = dashboardDataStore.data.token;
+  // if (user) {
+  //   webSocket.value.onopen = (event) => {
+  //     webSocket.value.send("CONNECT\ntoken:" + jwtToken + "\naccept-version:1.2\n\n\0");
+  //     // there is only one destination that needs to be subscribed: /statement/user_id
+  //     webSocket.value.send(`SUBSCRIBE\nid:sub-0\ndestination:/statement/${user}\n\n\0`);
+  //   };
+  // } else {
+  //   webSocket.value.onopen = (event) => {
+  //     webSocket.value.send("CONNECT\ntoken:" + jwtToken + "\naccept-version:1.2\n\n\0");
+  //     // there is only one destination that needs to be subscribed: /statement
+  //     webSocket.value.send("SUBSCRIBE\nid:sub-0\ndestination:/statement\n\n\0");
+  //   };
+  // }
 
   webSocket.value.onmessage = (event) => {
     // extract content between \n\n and \0
