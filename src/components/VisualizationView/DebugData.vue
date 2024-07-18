@@ -19,8 +19,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import {ref} from "vue";
 import axios from "axios";
 import {useDashboardDataStore} from "@/stores/dashboardData";
+import {useSettingStore} from "@/stores/settings";
 
 const dashboardDataStore = useDashboardDataStore()
+const settings = useSettingStore()
+
+const props = defineProps({
+  adminToken: String,
+  pseudoId: String
+})
 
 const randomUsers = ['Sebastian', 'Franz', 'Jasmin', 'Paul', 'Marie']
 const randomVerbs = ['experienced', 'loggedin', 'launched', 'completed', 'interacted', 'answered']
@@ -62,13 +69,12 @@ const rawStatement = ref({
       "key": "debug"
     }
   ]
-}
-)
+})
 
 const queryUrl = dashboardDataStore.data.backendUrl + '/api/v1/statements'
 const authHeader = {
   'Content-Type': 'application/json;charset=UTF-8',
-  Authorization: 'Bearer ' + dashboardDataStore.data.token
+  Authorization: 'Bearer ' + props.adminToken
 }
 
 function sendDebugData() {
@@ -76,7 +82,7 @@ function sendDebugData() {
   const randomVerbIndex = Math.floor(Math.random() * randomVerbs.length);
   const randomDefinitionIndex = Math.floor(Math.random() * randomDefinitions.length);
 
-  rawStatement.value.statement.actor.account.name = randomUsers[randomUserIndex]
+  rawStatement.value.statement.actor.account.name = props.pseudoId
   rawStatement.value.statement.verb.display['en-US'] = randomVerbs[randomVerbIndex]
   rawStatement.value.statement.object.definition.name['en-US'] = randomDefinitions[randomDefinitionIndex]
   rawStatement.value.statement.object.id = randomDefinitions[randomDefinitionIndex]
@@ -84,13 +90,17 @@ function sendDebugData() {
 
   console.log(rawStatement.value)
 
-  axios.post(queryUrl, rawStatement.value, { headers: authHeader }).then((data) => {})
+  axios.post(queryUrl, rawStatement.value.statement, { headers: authHeader }).then((data) => {})
 }
 </script>
 
 <template>
 <div>
-  <div @click="sendDebugData" style="background-color: #e0e0e0; padding: 3px; margin: 3px; cursor: pointer; width: 90px">
+  <div
+    v-if="settings.debugging"
+    @click="sendDebugData"
+    style="background-color: #e0e0e0; padding: 3px; margin: 3px; cursor: pointer; width: 90px"
+  >
     Demo Daten
   </div>
 </div>

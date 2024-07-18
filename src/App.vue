@@ -210,7 +210,7 @@ export default {
       :backendUrl="backendUrl"
       :isExpanded="isExpanded"
       :pseudoId="pseudoId"
-      v-if="adminTokenAvailable && currentView === 'statementVisualization'"
+      v-show="adminTokenAvailable && currentView === 'statementVisualization'"
       />
     <Settings
       :adminTokenAvailable="adminTokenAvailable"

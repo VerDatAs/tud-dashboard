@@ -39,7 +39,7 @@ const graphLinks = ref([])
 const graphCategories = ref([])
 graphCategories.value.push({"name": "Nutzer"})
 
-defineProps({
+const props = defineProps({
   adminToken: String,
   isExpanded: Boolean,
   pseudoId: String
@@ -111,9 +111,9 @@ function openWebsocket(user) {
   webSocket.value = new WebSocket(webSocketUrl)
 
   webSocket.value.onopen = () => {
-    webSocket.value.send("CONNECT\ntoken:" + this.adminToken + "\naccept-version:1.2\n\n\0");
+    webSocket.value.send("CONNECT\ntoken:" + props.adminToken + "\naccept-version:1.2\n\n\0");
     // there is only one destination that needs to be subscribed: /statement/user_id
-    webSocket.value.send(`SUBSCRIBE\nid:sub-0\ndestination:/statement/${this.pseudoId}\n\n\0`);
+    webSocket.value.send(`SUBSCRIBE\nid:sub-0\ndestination:/statement/${props.pseudoId}\n\n\0`);
   };
 
   // TODO: Remove, if not used anymore
@@ -189,9 +189,9 @@ onUnmounted(() => {
       <div v-else style="color: red">Keine Verbindung</div>
       <div style="display: flex">
         <!-- Debug Demo Data Button -->
-        <DebugData />
+        <DebugData :adminToken="adminToken" :pseudoId="pseudoId" />
         <div @click="resetData" style="background-color: #e0e0e0; padding: 3px; margin: 3px; cursor: pointer; width: 140px">
-          Daten Zurücksetzen
+          Daten zurücksetzen
         </div>
       </div>
       <div>
