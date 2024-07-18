@@ -194,8 +194,9 @@ onUnmounted(() => {
         </div>
       </div>
       <div>
+        <!-- TODO: Remove, if not used anymore -->
         <div @click="showUserFilterDialog = true"
-             style="background-color: #e0e0e0; padding: 3px; margin: 3px; cursor: pointer; display: inline-block">
+             style="background-color: #e0e0e0; padding: 3px; margin: 3px; cursor: pointer; display: none;">
           <span v-if="!filteredUserId">Filter nach Nutzer</span>
           <span v-else>Filter nach {{filteredUserId}}</span>
           <font-awesome-icon v-if="!filteredUserId"
