@@ -73,10 +73,11 @@ function newStatement(statement) {
   }
   // User Node
   let userNode = graphNodes.value.find(node => node.id === statement.actorName);
+  let displayName = props.pseudoId === statement.actorName ? 'Du selbst' : statement.actorName.substring(0,9);
   if (!userNode) {
     userNode = {
       id: statement.actorName,
-      name: statement.actorName,
+      name: displayName,
       symbolSize: 20,
       category: "Nutzer"
     }
@@ -149,23 +150,6 @@ onMounted(() => {
 
   openWebsocket();
 
-  /*const jwtToken = dashboardDataStore.data.token;
-  webSocket.value.onopen = (event) => {
-    webSocket.value.send("CONNECT\ntoken:" + jwtToken + "\naccept-version:1.2\n\n\0");
-    // there is only one destination that needs to be subscribed: /statement
-    webSocket.value.send("SUBSCRIBE\nid:sub-0\ndestination:/statement\n\n\0");
-  };
-
-  webSocket.value.onmessage = (event) => {
-    // extract content between \n\n and \0
-    const body = event.data.substring(event.data.indexOf('\n\n') + 2, event.data.lastIndexOf("\0"));
-    // send JSON data in body of STOMP messages that can be deserialized
-    if (body) {
-      const bodyParsed = JSON.parse(body);
-      const statement = new XapiStatement(bodyParsed);
-      newStatement(statement)
-    }
-  }*/
 })
 
 onUnmounted(() => {
@@ -188,9 +172,12 @@ onUnmounted(() => {
       <div v-else style="color: red">Keine Verbindung</div>
       <div style="display: flex">
         <!-- Debug Demo Data Button -->
-        <DebugData :adminToken="adminToken" :pseudoId="pseudoId" />
+        <!--<DebugData :adminToken="adminToken" :pseudoId="pseudoId" /> TODO Only for testing purposes-->
         <div @click="resetData" style="background-color: #e0e0e0; padding: 3px; margin: 3px; cursor: pointer; width: 140px">
           Daten zurücksetzen
+        </div>
+        <div @click="openWebsocket" style="background-color: #e0e0e0; padding: 3px; margin: 3px; cursor: pointer; width: 165px">
+          Verbindung neustarten
         </div>
       </div>
       <div>
