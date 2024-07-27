@@ -1,0 +1,35 @@
+:root {
+  --vf-node-color-bg: #fff;
+  --vf-node-color-text: #222;
+
+  --vf-connection-path-color: #b1b1b7;
+
+  --vf-handle-color: #555;
+  --vf-handle-size: 10px;
+}
+
+.vue-flow__node {
+  cursor: grab;
+}
+
+.vue-flow__node-default,
+.vue-flow__node-input,
+.vue-flow__node-output {
+  padding: 10px;
+  border-radius: 3px;
+  width: 150px;
+  font-size: 12px;
+  text-align: center;
+  border-width: 1px;
+  border-style: solid;
+  color: var(--vf-node-text);
+  background-color: var(--vf-node-color-bg);
+  border-color: var(--vf-node-color);
+}
+
+.vue-flow__handle {
+  width: var(--vf-handle-size);
+  height: var(--vf-handle-size);
+  background: var(--vf-handle-color);
+  border-radius: 100%;
+}

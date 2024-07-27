@@ -39,6 +39,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@fortawesome/vue-fontawesome": "^3.0.3",
+    "@vue-flow/core": "^1.39.0",
     "@vueuse/core": "^10.5.0",
     "axios": "^1.3.4",
     "diagram-js": "^11.11.0",
