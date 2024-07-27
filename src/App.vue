@@ -28,6 +28,7 @@ import StatementVisualization from '@/components/StatementVisualization.vue'
 import { useAdministrationStore } from '@/stores/administration'
 import { useDashboardDataStore } from '@/stores/dashboardData'
 import { ref } from 'vue'
+import AssistanceTypeView from './components/AssistanceTypeView.vue'
 
 export default {
   name: 'VerDatAsDashboard',
@@ -40,7 +41,8 @@ export default {
     QueryView,
     Settings,
     StatementSimulation,
-    StatementVisualization
+    StatementVisualization,
+    AssistanceTypeView
   },
   data() {
     return {
@@ -48,7 +50,7 @@ export default {
       dashboardDataStore: useDashboardDataStore(),
       diagram: null,
       diagramLoaded: false,
-      currentView: 'knowledgeStructure',
+      currentView: 'assistanceType',
       isExpanded: ref(localStorage.getItem('is_expanded') === 'true'),
       courseNode: {},
       token: '',
@@ -211,13 +213,14 @@ export default {
       :isExpanded="isExpanded"
       :pseudoId="pseudoId"
       v-show="adminTokenAvailable && currentView === 'statementVisualization'"
-      />
+    />
     <Settings
       :adminTokenAvailable="adminTokenAvailable"
       :backendUrl="backendUrl"
       :isExpanded="isExpanded"
       v-if="currentView === 'settings'"
     />
+    <AssistanceTypeView :isExpanded="isExpanded" v-if="currentView === 'assistanceType'" />
     <DialogsWrapper />
   </div>
 </template>

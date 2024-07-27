@@ -53,7 +53,8 @@ import {
     faCircleChevronLeft,
     faCircleChevronRight,
     faFilter,
-    faFilterCircleXmark
+    faFilterCircleXmark,
+    faBarsStaggered
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
@@ -90,6 +91,7 @@ library.add(
     faCircleChevronRight,
     faFilter,
     faFilterCircleXmark,
+    faBarsStaggered
 )
 import {createPinia} from 'pinia'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'

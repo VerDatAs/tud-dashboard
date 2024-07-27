@@ -75,6 +75,10 @@ export default {
         <font-awesome-icon class="icon" icon="gear" />
         <span class="text">Einstellungen</span>
       </div>
+      <div class="tab" @click="setCurrentView($event, 'assistanceType')" title="Assistenztypen">
+        <font-awesome-icon class="icon" icon="bars-staggered" />
+        <span class="text">Assistenztypen</span>
+      </div>
     </div>
 
     <div class="flex"></div>
