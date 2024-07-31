@@ -47,6 +47,7 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
     isDragging.value = true
 
     document.addEventListener('drop', onDragEnd)
+    document.addEventListener('dragend', onDragEnd)
   }
 
   /**
@@ -75,6 +76,7 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
     isDragOver.value = false
     draggedType.value = undefined
     document.removeEventListener('drop', onDragEnd)
+    document.removeEventListener('dragend', onDragEnd)
   }
 
   /**
