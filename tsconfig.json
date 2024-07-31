@@ -7,7 +7,7 @@
     "noImplicitAny": false,
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
   },
   "references": [
     {

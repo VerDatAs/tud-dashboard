@@ -21,6 +21,7 @@ import type { DashboardData } from '@/types/dashboard-data'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faAnglesRight,
+  faArrowLeft,
   faBarsStaggered,
   faBezierCurve,
   faChartSimple,
@@ -65,6 +66,7 @@ import de from './lang/de.json'
 
 library.add(
   faAnglesRight,
+  faArrowLeft,
   faBezierCurve,
   faChevronLeft,
   faChevronRight,

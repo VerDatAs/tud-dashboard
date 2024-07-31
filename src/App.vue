@@ -234,5 +234,8 @@ export default {
   height: 550px;
   width: 100%;
   margin-bottom: 10px;
+
+  /* For Assistance Type Full Screen when Browser is in dark mode */
+  background-color: #fff;
 }
 </style>

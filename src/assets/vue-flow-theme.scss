@@ -6,6 +6,14 @@
 
   --vf-handle-color: #555;
   --vf-handle-size: 10px;
+
+  --vf-flow-color-bg: #eee;
+}
+
+.vue-flow {
+  width: 100%;
+  height: 100%;
+  background-color: var(--vf-flow-color-bg);
 }
 
 .vue-flow__node {
