@@ -1,0 +1,103 @@
+[
+    {
+        "id": "asd123",
+        "name": "Nachricht senden",
+        "description": "Sendet eine Nachricht an den Benutzer",
+        "inputs": [
+            {
+                "name": "message",
+                "type": "string",
+                "description": "Die Nachricht, die gesendet werden soll"
+            },
+            {
+                "name": "user",
+                "type": "string",
+                "description": "Der Benutzer, an den die Nachricht gesendet werden soll"
+            },
+            {
+                "name": "channel",
+                "type": "string",
+                "description": "Der Kanal, über den die Nachricht gesendet werden soll. Auswahl zwischen 'chat' und 'email'."
+            }
+        ],
+        "outputs": [
+            {
+                "name": "success",
+                "type": "boolean",
+                "description": "Gibt an, ob die Nachricht erfolgreich gesendet wurde"
+            }
+        ]
+    },
+    {
+        "id": "qwe456",
+        "name": "Benutzerdaten abrufen",
+        "description": "Ruft die Daten eines Benutzers ab",
+        "inputs": [
+            {
+                "name": "user",
+                "type": "string",
+                "description": "Der Benutzer, dessen Daten abgerufen werden sollen"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "name",
+                "type": "string",
+                "description": "Der Name des Benutzers"
+            },
+            {
+                "name": "email",
+                "type": "string",
+                "description": "Die E-Mail-Adresse des Benutzers"
+            }
+        ]
+    },
+    {
+        "id": "zxc789",
+        "name": "Benutzerdaten aktualisieren",
+        "description": "Aktualisiert die Daten eines Benutzers",
+        "inputs": [
+            {
+                "name": "user",
+                "type": "string",
+                "description": "Der Benutzer, dessen Daten aktualisiert werden sollen"
+            },
+            {
+                "name": "name",
+                "type": "string",
+                "description": "Der neue Name des Benutzers"
+            },
+            {
+                "name": "email",
+                "type": "string",
+                "description": "Die neue E-Mail-Adresse des Benutzers"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "success",
+                "type": "boolean",
+                "description": "Gibt an, ob die Daten erfolgreich aktualisiert wurden"
+            }
+        ]
+    },
+    {
+        "id": "rty012",
+        "name": "Benutzerdaten löschen langer Titel",
+        "description": "Löscht die Daten eines Benutzers",
+        "inputs": [
+            {
+                "name": "user",
+                "type": "string",
+                "description": "Der Benutzer, dessen Daten gelöscht werden sollen"
+            }
+        ],
+        "outputs": [
+            {
+                "name": "success",
+                "type": "boolean",
+                "description": "Gibt an, ob die Daten erfolgreich gelöscht wurden"
+            }
+        ]
+    }
+]

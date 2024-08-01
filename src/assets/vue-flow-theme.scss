@@ -1,13 +1,17 @@
 :root {
-  --vf-node-color-bg: #fff;
-  --vf-node-color-text: #222;
-
+  --vf-flow-color-bg: #eee;
   --vf-connection-path-color: #b1b1b7;
-
+  
   --vf-handle-color: #555;
   --vf-handle-size: 10px;
 
-  --vf-flow-color-bg: #eee;
+
+  --vf-operation-color-bg: rgb(216, 239, 250);
+  --vf-operation-color-text: #222;
+  --vf-operation-color-handle: rgb(59, 115, 138);
+
+  --vf-io-color-bg: #fff;
+  --vf-io-color-text: var(--vf-operation-color-text);
 }
 
 .vue-flow {
@@ -20,19 +24,43 @@
   cursor: grab;
 }
 
-.vue-flow__node-default,
-.vue-flow__node-input,
-.vue-flow__node-output {
-  padding: 10px;
-  border-radius: 3px;
-  width: 150px;
+.vue-flow__node-datainput,
+.vue-flow__node-dataoutput {
   font-size: 12px;
-  text-align: center;
+  padding: 3px;
+  border-radius: 3px;
   border-width: 1px;
   border-style: solid;
-  color: var(--vf-node-text);
-  background-color: var(--vf-node-color-bg);
+  text-align: center;
+  color: var(--vf-io-text);
+  background-color: var(--vf-io-color-bg);
+  // border-color: var(--vf-io-color);
+
+  p {
+    margin: 0
+  }
+}
+
+.vue-flow__node-operation {
+  font-size: 0.8em;
+  padding: 5px 10px 15px 10px;
+  border-radius: 3px;
+  width: 300px;
+  border-width: 1px;
+  border-style: solid;
+  color: var(--vf-operation-color-text);
+  background-color: var(--vf-operation-color-bg);
   border-color: var(--vf-node-color);
+
+  .vue-flow__handle {
+    background: var(--vf-operation-color-handle)
+  }
+  .vue-flow__handle-top {
+    left: 20px;
+  }
+  .vue-flow__handle-bottom {
+    left: 20px;
+  }
 }
 
 .vue-flow__handle {

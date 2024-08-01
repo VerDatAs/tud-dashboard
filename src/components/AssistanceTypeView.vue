@@ -26,6 +26,10 @@ function onSelection(id: string | undefined) {
   </div>
 </template>
 
+<style>
+@import '@/assets/assistance-type-view.scss';
+</style>
+
 <style scoped lang="scss">
 #assistanceTypesContainer {
   --sidebar-min-width: 50px;
@@ -50,5 +54,9 @@ function onSelection(id: string | undefined) {
   width: 100%;
   background-color: #aaa;
   margin: 10px 0;
+}
+
+:deep(.pointer) {
+  cursor: pointer;
 }
 </style>

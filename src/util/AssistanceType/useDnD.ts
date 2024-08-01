@@ -1,4 +1,5 @@
 import type { TDnD, TDnDState } from '@/types/AssistanceType/dnd'
+import type { TOperation } from '@/types/AssistanceType/operation'
 import { useVueFlow } from '@vue-flow/core'
 import { ref, watch } from 'vue'
 
@@ -7,17 +8,17 @@ import { ref, watch } from 'vue'
  *
  * @returns {string} Unique ID
  */
-function getId() {
-  return `dndnode_${Math.random().toString(36).substring(2, 9)}`
+function getId(): string {
+  return Math.random().toString(36).substring(2, 9)
 }
 
 export class CDnDState implements TDnDState {
-  draggedType: TDnDState['draggedType']
+  draggedOperation: TDnDState['draggedOperation']
   isDragOver: TDnDState['isDragOver']
   isDragging: TDnDState['isDragging']
 
   constructor(state: TDnDState | undefined = undefined) {
-    this.draggedType = state?.draggedType ?? ref<string | undefined>(undefined)
+    this.draggedOperation = state?.draggedOperation ?? ref<TOperation | undefined>(undefined)
     this.isDragOver = state?.isDragOver ?? ref(false)
     this.isDragging = state?.isDragging ?? ref(false)
   }
@@ -29,21 +30,21 @@ export class CDnDState implements TDnDState {
  * @returns
  */
 export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD {
-  const { draggedType, isDragOver, isDragging } = state
+  const { draggedOperation, isDragOver, isDragging } = state
 
-  const { addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode } = useVueFlow()
+  const { addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode, findNode } = useVueFlow()
 
   watch(isDragging, (dragging) => {
     document.body.style.userSelect = dragging ? 'none' : ''
   })
 
-  function onDragStart(event: DragEvent, type: TDnDState['draggedType']['value']) {
-    if (event.dataTransfer && type) {
-      event.dataTransfer.setData('application/vueflow', type)
+  function onDragStart(event: DragEvent, operation: TOperation) {
+    if (event.dataTransfer) {
+      event.dataTransfer.setData('application/vueflow', operation.id)
       event.dataTransfer.effectAllowed = 'move'
     }
 
-    draggedType.value = type
+    draggedOperation.value = operation
     isDragging.value = true
 
     document.addEventListener('drop', onDragEnd)
@@ -58,7 +59,7 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
   function onDragOver(event: DragEvent) {
     event.preventDefault()
 
-    if (draggedType.value) {
+    if (draggedOperation.value) {
       isDragOver.value = true
 
       if (event.dataTransfer) {
@@ -74,7 +75,7 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
   function onDragEnd() {
     isDragging.value = false
     isDragOver.value = false
-    draggedType.value = undefined
+    draggedOperation.value = undefined
     document.removeEventListener('drop', onDragEnd)
     document.removeEventListener('dragend', onDragEnd)
   }
@@ -90,13 +91,22 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
       y: event.clientY
     })
 
-    const nodeId = getId()
+    if (!draggedOperation.value) return
+
+    // For absolute security that no node will have already used ID
+    let nodeId: string
+    do {
+      nodeId = draggedOperation.value.id + '_' + getId()
+    } while (findNode(nodeId) != undefined)
 
     const newNode = {
       id: nodeId,
-      type: draggedType.value,
+      type: 'operation',
       position,
-      data: { label: nodeId }
+      data: {
+        label: draggedOperation.value.name,
+        operation: draggedOperation.value
+      }
     }
 
     /**
@@ -116,7 +126,7 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
   }
 
   return {
-    draggedType,
+    draggedOperation,
     isDragOver,
     isDragging,
     onDragStart,
