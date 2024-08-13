@@ -175,7 +175,7 @@ After that the list of libraries used can be found in `dist/THIRD-PARTY-tud-dash
 | @vueuse/shared | 10.5.0 | MIT | https://github.com/vueuse/vueuse |
 | @vueuse/shared | 7.7.1 | MIT | https://github.com/vueuse/vueuse |
 | asynckit | 0.4.0 | MIT | https://github.com/alexindigo/asynckit |
-| axios | 1.4.0 | MIT | https://github.com/axios/axios |
+| axios | 1.7.4 | MIT | https://github.com/axios/axios |
 | clsx | 1.2.1 | MIT | https://github.com/lukeed/clsx |
 | combined-stream | 1.0.8 | MIT | https://github.com/felixge/node-combined-stream |
 | component-event | 0.2.1 | MIT | https://github.com/component/event |
@@ -187,7 +187,7 @@ After that the list of libraries used can be found in `dist/THIRD-PARTY-tud-dash
 | didi | 9.0.2 | MIT | https://github.com/nikku/didi |
 | domify | 1.4.1 | MIT | https://github.com/component/domify |
 | estree-walker | 2.0.2 | MIT | https://github.com/Rich-Harris/estree-walker |
-| follow-redirects | 1.15.2 | MIT | https://github.com/follow-redirects/follow-redirects |
+| follow-redirects | 1.15.6 | MIT | https://github.com/follow-redirects/follow-redirects |
 | form-data | 4.0.0 | MIT | https://github.com/form-data/form-data |
 | hammerjs | 2.0.8 | MIT | https://github.com/hammerjs/hammer.js |
 | he | 1.2.0 | MIT | https://github.com/mathiasbynens/he |
