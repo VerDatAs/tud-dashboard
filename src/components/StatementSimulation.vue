@@ -347,7 +347,7 @@ export default {
         simulationRequest.timeFactor = this.timeFactor
       }
 
-      axios.post(simulationUrl, simulationRequest, { headers: authHeader }).then((data) => {
+      axios.post(simulationUrl, simulationRequest, { headers: authHeader }).then(() => {
         this.simulationStarted = true
         setTimeout(() => {
           this.requestInProgress = false

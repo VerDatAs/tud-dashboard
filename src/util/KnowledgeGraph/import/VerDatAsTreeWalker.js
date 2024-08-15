@@ -21,7 +21,7 @@
  */
 import { elementToString } from '@/util/KnowledgeGraph/import/Util'
 import { find, forEach } from 'min-dash'
-import Refs from 'object-refs'
+import { Refs } from 'object-refs'
 
 const diRefs = new Refs({ name: 'graphElement', enumerable: true }, { name: 'di', configurable: true })
 

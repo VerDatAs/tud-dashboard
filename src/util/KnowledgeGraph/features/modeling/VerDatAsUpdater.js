@@ -21,7 +21,6 @@
  */
 import { getBusinessObject, getDi, is } from '@/util/KnowledgeGraph/util/ModelUtil'
 import CommandInterceptor from 'diagram-js/lib/command/CommandInterceptor'
-import { Label } from 'diagram-js/lib/model'
 import { remove as collectionRemove } from 'diagram-js/lib/util/Collections'
 import { delta } from 'diagram-js/lib/util/PositionUtil'
 import inherits from 'inherits-browser'
@@ -286,7 +285,7 @@ VerDatAsUpdater.prototype.updateAttachment = function (context) {
  */
 VerDatAsUpdater.prototype.updateParent = function (element) {
   // Do not update label parent
-  if (element instanceof Label) {
+  if (element.type === 'label') {
     return
   }
 
@@ -320,7 +319,7 @@ VerDatAsUpdater.prototype.updateBounds = function (shape) {
     })
   }
 
-  const target = shape instanceof Label ? this._getLabel(di) : di
+  const target = shape.type === 'label' ? this._getLabel(di) : di
 
   let bounds = target.bounds
 

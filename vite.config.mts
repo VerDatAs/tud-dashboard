@@ -47,6 +47,9 @@ export default defineConfig({
   ],
   assetsInclude: ['**/*.xml'],
   build: {
+    commonjsOptions: {
+      esmExternals: true
+    },
     lib: {
       entry: fileURLToPath(new URL('./src/main.ts', import.meta.url)),
       name: 'VerDatAsDashboard',
