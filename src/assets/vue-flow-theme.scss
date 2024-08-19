@@ -9,9 +9,14 @@
   --vf-operation-color-bg: rgb(216, 239, 250);
   --vf-operation-color-text: #222;
   --vf-operation-color-handle: rgb(59, 115, 138);
+  --vf-operation-color-edge: var(--vf-operation-color-handle);
 
+  
   --vf-io-color-bg: #fff;
   --vf-io-color-text: var(--vf-operation-color-text);
+  --vf-io-color-handle: rgb(161, 62, 218);
+  --vf-io-color-edge: var(--vf-io-color-handle);
+  --vf-io-handle-multiplier: 0.7;
 }
 
 .vue-flow {
@@ -38,6 +43,12 @@
 
   p {
     margin: 0
+  }
+
+  .vue-flow__handle {
+    width: calc(var(--vf-handle-size) * var(--vf-io-handle-multiplier));
+    height: calc(var(--vf-handle-size) * var(--vf-io-handle-multiplier));
+    background: var(--vf-io-color-handle)
   }
 }
 
@@ -68,4 +79,12 @@
   height: var(--vf-handle-size);
   background: var(--vf-handle-color);
   border-radius: 100%;
+}
+
+.vue-flow__edge-control .vue-flow__edge-path {
+  stroke: var(--vf-operation-color-edge);
+}
+
+.vue-flow__edge-data .vue-flow__edge-path {
+  stroke: var(--vf-io-color-edge);
 }

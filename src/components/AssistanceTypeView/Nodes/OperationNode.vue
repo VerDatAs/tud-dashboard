@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Handle, type NodeProps, Position, useNodeId, useVueFlow } from '@vue-flow/core'
+// import { NodeResizer } from '@vue-flow/node-resizer';
 import { ref, watch } from 'vue'
 
 const props = defineProps<NodeProps>()

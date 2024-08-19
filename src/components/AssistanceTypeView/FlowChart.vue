@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { useVueFlowStore } from '@/stores/AssistanceTypes/vueflow'
 import type { TDnD } from '@/types/AssistanceType/dnd'
+import useEdgeCreationHandler from '@/util/AssistanceType/edgeCreationHandler'
 import { SDnDKey } from '@/util/AssistanceType/injectionkeys'
 import useNodeSizeHandler from '@/util/AssistanceType/nodeSizeHandler'
 import useDragAndDrop from '@/util/AssistanceType/useDnD'
-import { useVueFlow, VueFlow } from '@vue-flow/core'
+import { VueFlow } from '@vue-flow/core'
 import { inject } from 'vue'
 import DropzoneBackground from './DropzoneBackground.vue'
+import ControlEdge from './Edges/ControlEdge.vue'
+import DataEdge from './Edges/DataEdge.vue'
 import DataInputNode from './Nodes/DataInputNode.vue'
 import DataOutputNode from './Nodes/DataOutputNode.vue'
 import OperationNode from './Nodes/OperationNode.vue'
@@ -19,14 +22,13 @@ const { onDragOver, onDragLeave, onDrop, isDragOver } = inject<TDnD>(SDnDKey, ()
 /*
  *    Node Size Handler
  */
-const nodeSizeHandler = useNodeSizeHandler()
+useNodeSizeHandler()
 
 /*
  *    Vue Flow
  */
 const flowStore = useVueFlowStore()
-const { onConnect, addEdges } = useVueFlow()
-onConnect(addEdges)
+useEdgeCreationHandler()
 </script>
 
 <template>
@@ -54,6 +56,12 @@ onConnect(addEdges)
     </template>
     <template #node-dataoutput="nodeProps">
       <data-output-node v-bind="nodeProps"></data-output-node>
+    </template>
+    <template #edge-control="edgeProps">
+      <control-edge v-bind="edgeProps"></control-edge>
+    </template>
+    <template #edge-data="edgeProps">
+      <data-edge v-bind="edgeProps"></data-edge>
     </template>
   </vue-flow>
 </template>
