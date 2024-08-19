@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useATEventStore } from '@/stores/AssistanceTypes/events'
+import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { SFullscreenMode } from '@/util/AssistanceType/injectionkeys'
 import { closeFullscreen, openFullscreen } from '@/util/SiteHelpers'
 import { onMounted, provide, ref } from 'vue'
@@ -12,8 +12,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'backAction'): void
 }>()
-
-const atEventStore = useATEventStore()
 
 function backAction() {
   if (confirm('Ihre ungespeicherten Änderungen gehen verloren. Möchten Sie wirklich zurück zur Assistenztyp-Auswahl?'))
@@ -41,6 +39,8 @@ onMounted(() => {
   updateDashboardElement()
   isFullscreen.value = false
 })
+
+const sidebarStore = useSidebarStore()
 
 /*
  *    Helper Functions
@@ -71,7 +71,7 @@ function updateDashboardElement() {
           icon="house"
           size="lg"
           title="Assistenztyp anzeigen"
-          @click="atEventStore.clickSidebarShowAssistanceType.trigger"
+          @click="sidebarStore.setAssistanceType()"
         />
         <font-awesome-icon
           class="icon pointer"

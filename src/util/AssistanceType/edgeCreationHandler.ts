@@ -21,6 +21,7 @@ export default function useEdgeCreationHandler() {
   function addControlEdge(e: Connection, source: GraphNode, target: GraphNode) {
     // Just connect, no checks needed
     addEdges({
+      id: `e__${source.id}-${target.id}`,
       ...e,
       type: 'control'
     })
@@ -34,6 +35,7 @@ export default function useEdgeCreationHandler() {
     if (source.data.variable.type !== target.data.variable.type) return
     // Add edge
     addEdges({
+      id: `e__${source.id}-${target.id}`,
       ...e,
       type: 'data'
     })

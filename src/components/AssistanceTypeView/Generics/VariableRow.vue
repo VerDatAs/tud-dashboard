@@ -1,10 +1,10 @@
 <script setup lang="ts">
+import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import type { TInput, TOutput } from '@/types/AssistanceType/operation'
 import { createVariableNodeID } from '@/util/AssistanceType/AssistanceTypeHelper'
 import { createVariableNode } from '@/util/AssistanceType/createVariableNodes'
-import { SCurrentSelectedObject } from '@/util/AssistanceType/injectionkeys'
 import { useVueFlow } from '@vue-flow/core'
-import { computed, inject, type Ref, ref } from 'vue'
+import { computed, ref } from 'vue'
 
 const props = defineProps<{
   variable: TInput | TOutput
@@ -13,26 +13,21 @@ const props = defineProps<{
 
 const showDescription = ref<boolean>(false)
 
-const { currentOperationNodeID } = inject<{ currentOperationNodeID: Ref<undefined | string> }>(
-  SCurrentSelectedObject,
-  () => ({ currentOperationNodeID: ref(undefined) }),
-  true
-)
+const sidebarStore = useSidebarStore()
 const { addNodes, findNode, removeNodes } = useVueFlow()
 
 function addVariable() {
-  if (currentOperationNodeID.value)
-    createVariableNode(currentOperationNodeID.value, props.variable, props.type, addNodes)
+  if (sidebarStore.currentId) createVariableNode(sidebarStore.currentId, props.variable, props.type, addNodes)
 }
 
 function removeVariable() {
-  if (currentOperationNodeID.value && variableAlreadyExists.value)
-    removeNodes(createVariableNodeID(currentOperationNodeID.value, props.type, props.variable.name))
+  if (sidebarStore.currentId && variableAlreadyExists.value)
+    removeNodes(createVariableNodeID(sidebarStore.currentId, props.type, props.variable.name))
 }
 
 const variableAlreadyExists = computed(() =>
-  currentOperationNodeID.value != undefined
-    ? findNode(createVariableNodeID(currentOperationNodeID.value, props.type, props.variable.name)) != undefined
+  sidebarStore.currentId != undefined
+    ? findNode(createVariableNodeID(sidebarStore.currentId, props.type, props.variable.name)) != undefined
     : false
 )
 </script>

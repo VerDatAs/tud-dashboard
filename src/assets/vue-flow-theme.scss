@@ -10,6 +10,7 @@
   --vf-operation-color-text: #222;
   --vf-operation-color-handle: rgb(59, 115, 138);
   --vf-operation-color-edge: var(--vf-operation-color-handle);
+  --vf-operation-color-border: var(--vf-operation-color-text);
 
   
   --vf-io-color-bg: #fff;
@@ -17,6 +18,10 @@
   --vf-io-color-handle: rgb(161, 62, 218);
   --vf-io-color-edge: var(--vf-io-color-handle);
   --vf-io-handle-multiplier: 0.7;
+
+
+  --vf-selected-color-values: 9, 112, 9;
+  --vf-selected-color: rgb(var(--vf-selected-color-values));
 }
 
 .vue-flow {
@@ -32,7 +37,7 @@
 .vue-flow__node-datainput,
 .vue-flow__node-dataoutput {
   font-size: 12px;
-  padding: 3px;
+  padding: 5px;
   border-radius: 3px;
   border-width: 1px;
   border-style: solid;
@@ -61,7 +66,14 @@
   border-style: solid;
   color: var(--vf-operation-color-text);
   background-color: var(--vf-operation-color-bg);
-  border-color: var(--vf-node-color);
+  border-color: var(--vf-operation-color-border);
+
+  &:has(.my-custom-currently-selected) {
+    border-style: solid;
+    border-width: 1px;
+    border-color: var(--vf-selected-color);
+    box-shadow: 0 0 10px 0 rgba(var(--vf-selected-color-values), 0.4)
+  }
 
   .vue-flow__handle {
     background: var(--vf-operation-color-handle)
@@ -81,10 +93,14 @@
   border-radius: 100%;
 }
 
-.vue-flow__edge-control .vue-flow__edge-path {
+// .vue-flow__edge-control.selected .my-custom-currently-selected {
+  // stroke: var(--vf-selected-color);
+// }
+
+.vue-flow__edge-control .vue-flow__edge-path, .vue-flow__edge-control.selected .vue-flow__edge-path {
   stroke: var(--vf-operation-color-edge);
 }
 
-.vue-flow__edge-data .vue-flow__edge-path {
+.vue-flow__edge-data .vue-flow__edge-path, .vue-flow__edge-data.selected .vue-flow__edge-path {
   stroke: var(--vf-io-color-edge);
 }

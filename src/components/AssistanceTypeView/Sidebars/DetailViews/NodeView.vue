@@ -1,25 +1,29 @@
 <script setup lang="ts">
-import type { TOperation } from '@/types/AssistanceType/operation'
-import { ref } from 'vue'
+import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
+import { type TOperation } from '@/types/AssistanceType/operation'
+import { computed, ref } from 'vue'
 import ListVariables from '../../Generics/ListVariables.vue'
+const sidebarStore = useSidebarStore()
 
-defineProps<{
-  operation: TOperation
-}>()
+const operation = computed((): TOperation | undefined => sidebarStore.currentObject?.data.operation)
 
 const showInputs = ref<boolean>(true)
 const showOutputs = ref<boolean>(true)
 </script>
 
 <template>
-  <div class="sidebar-node-view">
+  <div class="sidebar-node-view" v-if="operation">
     <div>
       <div class="heading">
         <p>{{ operation.name }}</p>
       </div>
       <div class="subheading">
-        <p>ID: {{ operation.id }}</p>
-        <p>{{ operation.description }}</p>
+        <p>
+          ID: <i>{{ operation.id }}</i>
+        </p>
+        <p>
+          <i>{{ operation.description }}</i>
+        </p>
       </div>
     </div>
     <div>

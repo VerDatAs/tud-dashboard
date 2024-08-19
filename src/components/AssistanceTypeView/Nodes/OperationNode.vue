@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import { Handle, type NodeProps, Position, useNodeId, useVueFlow } from '@vue-flow/core'
+import { SidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
+import { Handle, type NodeProps, Position, useNodeId } from '@vue-flow/core'
 // import { NodeResizer } from '@vue-flow/node-resizer';
-import { ref, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 
 const props = defineProps<NodeProps>()
+const sidebarStore = useSidebarStore()
 const nodeId = useNodeId()
 
-const { removeNodes } = useVueFlow()
-
-function removeSelf() {
-  if (confirm(`Möchten Sie die Operation "${props.data.label}" wirklich entfernen?`)) removeNodes(nodeId)
-}
+const nodeSelected = computed(() => nodeId === sidebarStore.currentId && sidebarStore.currentType === SidebarType.Node)
 
 const nodeContent = ref<HTMLElement | undefined>()
 
@@ -25,14 +23,11 @@ watch(
 </script>
 
 <template>
-  <div>
+  <div :class="{ 'my-custom-currently-selected': nodeSelected }">
     <!-- <NodeResizer :min-width="300" :min-height="50" /> -->
     <Handle type="target" :position="Position.Top"></Handle>
     <Handle type="source" :position="Position.Bottom"></Handle>
     <div ref="nodeContent" class="node-content">
-      <div title="Operation entfernen" @click="removeSelf" class="remove-icon pointer">
-        <font-awesome-icon class="icon" icon="xmark"></font-awesome-icon>
-      </div>
       <p class="title">{{ props.data.label }}</p>
       <p class="description">{{ props.data.operation.description }}</p>
     </div>
