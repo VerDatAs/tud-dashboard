@@ -59,6 +59,10 @@ const showOutputs = ref<boolean>(true)
   display: flex;
   flex-direction: column;
   gap: 20px;
+
+  .underheading {
+    margin-bottom: 0 !important;
+  }
 }
 
 .addIO {

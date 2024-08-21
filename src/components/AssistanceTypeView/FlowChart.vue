@@ -70,6 +70,7 @@ onEdgesChange((edges) => {
     @drop="onDrop"
     elevate-edges-on-select
     :connectionRadius="15"
+    :min-zoom="0.1"
   >
     <dropzone-background
       :style="{

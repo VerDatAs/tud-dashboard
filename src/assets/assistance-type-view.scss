@@ -1,3 +1,14 @@
 .icon.rotated {
-    rotate: 90deg;
-  }
+  rotate: 90deg;
+}
+
+.duoGrid {
+  display: grid;
+  grid-template-columns: fit-content(100%) 1fr;
+  gap: 2px 8px;
+}
+
+.oneRow {
+  display: flex;
+  flex-direction: row;
+}

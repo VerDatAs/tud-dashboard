@@ -85,6 +85,8 @@ function removeObject() {
   .underheading {
     font-size: 1em;
     font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 8px;
   }
 }
 </style>

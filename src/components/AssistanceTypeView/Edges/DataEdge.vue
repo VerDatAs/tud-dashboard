@@ -5,5 +5,5 @@ const props = defineProps<EdgeProps>()
 </script>
 
 <template>
-  <MyDefaultEdge v-bind="props" />
+  <MyDefaultEdge :edgeProps="props" />
 </template>

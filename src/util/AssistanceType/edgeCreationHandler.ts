@@ -25,7 +25,6 @@ export default function useEdgeCreationHandler() {
       ...e,
       type: 'control'
     })
-    console.log('Created')
   }
 
   function addDataEdge(e: Connection, source: GraphNode, target: GraphNode) {
