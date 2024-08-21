@@ -54,6 +54,7 @@ import {
   faRefresh,
   faShare,
   faSitemap,
+  faTrash,
   faUpload,
   faUsers,
   faXmark
@@ -95,6 +96,7 @@ library.add(
   faRefresh,
   faShare,
   faSitemap,
+  faTrash,
   faUpload,
   faUsers,
   faXmark,

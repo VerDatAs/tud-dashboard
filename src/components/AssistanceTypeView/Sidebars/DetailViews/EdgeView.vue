@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
-import { computed, ref } from 'vue'
+import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar';
+import { computed, ref } from 'vue';
 const sidebarStore = useSidebarStore()
 
 const edge = computed((): any => sidebarStore.currentObject)
@@ -57,24 +57,5 @@ const showOutputs = ref<boolean>(true)
       white-space: nowrap;
     }
   }
-}
-
-.addIO {
-  padding-top: 5px;
-  padding-left: 10px;
-}
-
-.collapsable {
-  font-size: 1em;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 5px;
-  margin-block: 8px 3px;
-}
-
-.io-list {
-  font-size: 0.9em;
-  padding-left: 20px;
 }
 </style>

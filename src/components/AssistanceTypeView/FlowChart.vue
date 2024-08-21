@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import { SidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { useVueFlowStore } from '@/stores/AssistanceTypes/vueflow'
 import type { TDnD } from '@/types/AssistanceType/dnd'
 import useEdgeCreationHandler from '@/util/AssistanceType/edgeCreationHandler'
 import { SDnDKey } from '@/util/AssistanceType/injectionkeys'
 import useNodeSizeHandler from '@/util/AssistanceType/nodeSizeHandler'
 import useDragAndDrop from '@/util/AssistanceType/useDnD'
-import { VueFlow } from '@vue-flow/core'
+import { useVueFlow, VueFlow } from '@vue-flow/core'
 import { inject } from 'vue'
 import DropzoneBackground from './DropzoneBackground.vue'
 import ControlEdge from './Edges/ControlEdge.vue'
@@ -29,6 +30,35 @@ useNodeSizeHandler()
  */
 const flowStore = useVueFlowStore()
 useEdgeCreationHandler()
+const { onNodesChange, onEdgesChange } = useVueFlow()
+const sidebarStore = useSidebarStore()
+
+/* Set Sidebar to Assistance Type when currently selected node gets removed */
+onNodesChange((nodes) => {
+  for (const node of nodes) {
+    if (node.type === 'remove' && sidebarStore.currentType === SidebarType.Node && sidebarStore.currentId === node.id) {
+      sidebarStore.setAssistanceType()
+    }
+  }
+})
+
+/* Set Sidebar to Assistance Type when currently selected edge gets removed */
+onEdgesChange((edges) => {
+  for (const edge of edges) {
+    if (edge.type === 'remove' && sidebarStore.currentType === SidebarType.Edge && sidebarStore.currentId === edge.id) {
+      sidebarStore.setAssistanceType()
+    }
+  }
+})
+
+// Just for testing stuff
+// watch(
+//   () => flowStore,
+//   () => {
+//     console.log(flowStore.nodes, flowStore.edges)
+//   },
+//   { deep: true }
+// )
 </script>
 
 <template>
@@ -39,6 +69,7 @@ useEdgeCreationHandler()
     @dragleave="onDragLeave"
     @drop="onDrop"
     elevate-edges-on-select
+    :connectionRadius="15"
   >
     <dropzone-background
       :style="{
