@@ -63,6 +63,8 @@ function removeObject() {
 <style scoped lang="scss">
 .details-sidebar {
   width: 300px;
+  overflow: scroll;
+
   &.fullscreen {
     width: 400px;
   }
@@ -79,7 +81,7 @@ function removeObject() {
   }
 }
 :deep(.sidebar-view) {
-  font-size: 0.8em;
+  font-size: 0.9em;
 
   .heading {
     font-size: 1.2em;

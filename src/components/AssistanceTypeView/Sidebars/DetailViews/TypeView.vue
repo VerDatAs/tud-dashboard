@@ -6,11 +6,13 @@ const atStore = useAssistanceTypeStore()
 
 <template>
   <div class="sidebar-type-view">
-    <div class="heading">
-      <p>Assistenztyp</p>
-    </div>
-    <div class="subheading">
-      <p>ID: {{ atStore.id }}</p>
+    <div>
+      <div class="heading">
+        <p>Assistenztyp</p>
+      </div>
+      <div class="subheading">
+        <p>ID: {{ atStore.id }}</p>
+      </div>
     </div>
     <div>
       <p class="underheading">Daten</p>
@@ -37,5 +39,8 @@ const atStore = useAssistanceTypeStore()
 }
 .duoGrid {
   gap: 5px 5px;
+}
+textarea {
+  resize: vertical;
 }
 </style>
