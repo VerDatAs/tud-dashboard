@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import EditorView from './AssistanceTypeView/EditorView.vue'
 import SelectView from './AssistanceTypeView/SelectView.vue'
+import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     /** Whether the sidebar is expanded or not */
     isExpanded: boolean
@@ -13,16 +13,25 @@ const props = withDefaults(
   }
 )
 
-const currentTypeID = ref<string | undefined>(undefined)
+const atStore = useAssistanceTypeStore()
+
 function onSelection(id: string | undefined) {
-  currentTypeID.value = id
+  // currentTypeID.value = id
+}
+
+function onCreation() {
+  atStore.createAssistanceType()
 }
 </script>
 
 <template>
   <div id="assistanceTypesContainer" :class="{ expanded: isExpanded }">
-    <SelectView v-if="currentTypeID === undefined" @assistanceTypeSelected="onSelection"></SelectView>
-    <EditorView v-else @backAction="onSelection(undefined)" :typeId="currentTypeID"></EditorView>
+    <SelectView
+      v-if="atStore.id === undefined"
+      @assistanceTypeSelected="onSelection"
+      @newAssistanceType="onCreation"
+    ></SelectView>
+    <EditorView v-else @backAction="atStore.unsetAssistanceType()"></EditorView>
   </div>
 </template>
 

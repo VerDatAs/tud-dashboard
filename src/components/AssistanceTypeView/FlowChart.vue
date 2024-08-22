@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
+import { ESidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { useVueFlowStore } from '@/stores/AssistanceTypes/vueflow'
 import type { TDnD } from '@/types/AssistanceType/dnd'
 import useEdgeCreationHandler from '@/util/AssistanceType/edgeCreationHandler'
@@ -36,7 +36,7 @@ const sidebarStore = useSidebarStore()
 /* Set Sidebar to Assistance Type when currently selected node gets removed */
 onNodesChange((nodes) => {
   for (const node of nodes) {
-    if (node.type === 'remove' && sidebarStore.currentType === SidebarType.Node && sidebarStore.currentId === node.id) {
+    if (node.type === 'remove' && sidebarStore.currentType === ESidebarType.Node && sidebarStore.currentId === node.id) {
       sidebarStore.setAssistanceType()
     }
   }
@@ -45,7 +45,7 @@ onNodesChange((nodes) => {
 /* Set Sidebar to Assistance Type when currently selected edge gets removed */
 onEdgesChange((edges) => {
   for (const edge of edges) {
-    if (edge.type === 'remove' && sidebarStore.currentType === SidebarType.Edge && sidebarStore.currentId === edge.id) {
+    if (edge.type === 'remove' && sidebarStore.currentType === ESidebarType.Edge && sidebarStore.currentId === edge.id) {
       sidebarStore.setAssistanceType()
     }
   }

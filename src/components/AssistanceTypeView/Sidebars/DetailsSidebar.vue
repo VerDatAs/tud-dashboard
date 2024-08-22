@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
+import { ESidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { SFullscreenMode } from '@/util/AssistanceType/injectionkeys'
 import { useVueFlow } from '@vue-flow/core'
 import { computed, inject, ref } from 'vue'
@@ -26,9 +26,9 @@ onPaneClick(() => {
   sidebarStore.setAssistanceType()
 })
 
-const isNode = computed(() => sidebarStore.currentType === SidebarType.Node)
-const isEdge = computed(() => sidebarStore.currentType === SidebarType.Edge)
-const isAType = computed(() => sidebarStore.currentType === SidebarType.AssistanceType)
+const isNode = computed(() => sidebarStore.currentType === ESidebarType.Node)
+const isEdge = computed(() => sidebarStore.currentType === ESidebarType.Edge)
+const isAType = computed(() => sidebarStore.currentType === ESidebarType.AssistanceType)
 const currentObjectString = computed(() => (isNode.value ? 'Operation' : isEdge.value ? 'Verbindung' : ''))
 
 function removeObject() {
@@ -70,6 +70,7 @@ function removeObject() {
     gap: 0px;
   }
   .toolbar {
+    font-size: 1em;
     margin-top: 20px;
     margin-right: 10px;
     display: flex;
@@ -78,12 +79,18 @@ function removeObject() {
   }
 }
 :deep(.sidebar-view) {
+  font-size: 0.8em;
+
+  .heading {
+    font-size: 1.2em;
+  }
+
   .subheading {
-    font-size: 0.8em;
+    font-size: 0.9em;
   }
 
   .underheading {
-    font-size: 1em;
+    font-size: 1.1em;
     font-weight: bold;
     margin-top: 10px;
     margin-bottom: 8px;

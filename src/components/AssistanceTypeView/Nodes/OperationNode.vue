@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
+import { ESidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { Handle, type NodeProps, Position, useNodeId } from '@vue-flow/core'
 // import { NodeResizer } from '@vue-flow/node-resizer';
 import { computed, ref, watch } from 'vue'
@@ -8,7 +8,7 @@ const props = defineProps<NodeProps>()
 const sidebarStore = useSidebarStore()
 const nodeId = useNodeId()
 
-const nodeSelected = computed(() => nodeId === sidebarStore.currentId && sidebarStore.currentType === SidebarType.Node)
+const nodeSelected = computed(() => nodeId === sidebarStore.currentId && sidebarStore.currentType === ESidebarType.Node)
 
 const nodeContent = ref<HTMLElement | undefined>()
 

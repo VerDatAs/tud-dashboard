@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
+import { ESidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { BaseEdge, EdgeLabelRenderer, getBezierPath, useVueFlow, type EdgeProps } from '@vue-flow/core'
 import { computed, watch } from 'vue'
 const props = withDefaults(
@@ -16,7 +16,7 @@ const { findEdge } = useVueFlow()
 const sidebarStore = useSidebarStore()
 
 const edgeSelected = computed(
-  () => props.edgeProps.id === sidebarStore.currentId && sidebarStore.currentType === SidebarType.Edge
+  () => props.edgeProps.id === sidebarStore.currentId && sidebarStore.currentType === ESidebarType.Edge
 )
 
 const mainColor = computed(() =>

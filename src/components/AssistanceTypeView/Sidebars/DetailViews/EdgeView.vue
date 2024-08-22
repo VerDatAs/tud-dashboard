@@ -2,10 +2,10 @@
 import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { type GraphNode, type GraphEdge, useVueFlow } from '@vue-flow/core'
 import { watchArray } from '@vueuse/core'
-import { computed, nextTick, ref } from 'vue'
-import { Milliseconds, MillisecondsUtils } from '@/util/AssistanceType/millisecondHelper'
+import { computed, ref } from 'vue'
+import { EMilliseconds, CMillisecondsUtils } from '@/util/AssistanceType/millisecondHelper'
 const sidebarStore = useSidebarStore()
-const { findNode, updateEdgeData, applyNodeChanges } = useVueFlow()
+const { findNode, updateEdgeData } = useVueFlow()
 
 const edge = computed((): GraphEdge => sidebarStore.currentObject as GraphEdge)
 
@@ -22,7 +22,7 @@ function selectNode(node: GraphNode) {
 }
 
 const trigger = ref(edge.value.data.trigger ?? 'direct')
-const { timeNumber: tn, timeUnit: tu } = MillisecondsUtils.loadMilisecondsToProperValue(edge.value.data.schedule ?? 1)
+const { timeNumber: tn, timeUnit: tu } = CMillisecondsUtils.loadMilisecondsToProperValue(edge.value.data.schedule ?? 1)
 const timeNumber = ref(tn)
 const timeUnit = ref(tu)
 
@@ -31,7 +31,7 @@ watchArray(
   () => {
     if (isControl.value) {
       if (trigger.value === 'scheduled') {
-        edge.value.label = `${timeNumber.value}${MillisecondsUtils.toString(timeUnit.value)}`
+        edge.value.label = `${timeNumber.value}${CMillisecondsUtils.toString(timeUnit.value)}`
       } else {
         edge.value.label = ''
       }
@@ -111,10 +111,10 @@ watchArray(
         <div class="oneRow timing" v-if="trigger === 'scheduled'">
           <input type="number" min="1" step="1" v-model="timeNumber" />
           <select name="timeUnit" v-model="timeUnit">
-            <option :value="Milliseconds.MILLISECOND">Millisekunden</option>
-            <option :value="Milliseconds.SECOND" selected>Sekunden</option>
-            <option :value="Milliseconds.MINUTE">Minuten</option>
-            <option :value="Milliseconds.HOUR">Stunden</option>
+            <option :value="EMilliseconds.MILLISECOND">Millisekunden</option>
+            <option :value="EMilliseconds.SECOND" selected>Sekunden</option>
+            <option :value="EMilliseconds.MINUTE">Minuten</option>
+            <option :value="EMilliseconds.HOUR">Stunden</option>
           </select>
         </div>
       </div>

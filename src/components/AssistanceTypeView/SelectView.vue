@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const emit = defineEmits<{
   (e: 'assistanceTypeSelected', id: string): void
+  (e: 'newAssistanceType'): void
 }>()
 </script>
 
@@ -12,7 +13,7 @@ const emit = defineEmits<{
     <div>
       <button class="btn btn-primary">
         <font-awesome-icon class="icon" icon="plus" size="md" />
-        <p @click.prevent="emit('assistanceTypeSelected', '')">Neuer Assistenztyp</p>
+        <p @click.prevent="emit('newAssistanceType')">Neuer Assistenztyp</p>
       </button>
     </div>
     <div class="divider"></div>

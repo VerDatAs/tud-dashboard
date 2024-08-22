@@ -5,10 +5,6 @@ import { closeFullscreen, openFullscreen } from '@/util/SiteHelpers'
 import { onMounted, provide, ref } from 'vue'
 import EditorMainView from './EditorMainView.vue'
 
-const props = defineProps<{
-  typeId: string
-}>()
-
 const emit = defineEmits<{
   (e: 'backAction'): void
 }>()
