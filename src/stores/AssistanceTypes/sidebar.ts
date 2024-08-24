@@ -1,3 +1,4 @@
+import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { useVueFlow, type GraphEdge, type GraphNode } from '@vue-flow/core'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
@@ -29,7 +30,7 @@ export const useSidebarStore = defineStore('at/sidebar', () => {
   }
 
   const currentObject = computed((): GraphNode | GraphEdge | undefined => {
-    const { findNode, findEdge } = useVueFlow('vue-flow-0')
+    const { findNode, findEdge } = useVueFlow(CVueFlowStoreId)
     return _currentType.value === ESidebarType.Node
       ? findNode(_currentId.value)
       : _currentType.value === ESidebarType.Edge

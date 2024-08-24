@@ -1,4 +1,7 @@
+import { serializeControlEdge, serializeDataEdge, serializeOperation } from '@/util/AssistanceType/serialization'
+import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { getId } from '@/util/AssistanceType/useDnD'
+import { useVueFlow } from '@vue-flow/core'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
@@ -29,12 +32,36 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     description.value = ''
   }
 
+  /** Save the current assistance type to json format */
+  function saveAssistanceType() {
+    const { getNodes, getEdges } = useVueFlow(CVueFlowStoreId)
+
+    const operations = getNodes.value.filter((node) => node.type == 'operation').map(serializeOperation)
+    const resObj = {
+      id: _id.value,
+      name: name.value,
+      description: description.value,
+      trigger: {
+        type: trigger.value,
+        definition: {}
+      },
+      inputs: [],
+      operations: operations,
+      connectors: {
+        control: getEdges.value.filter((edge) => edge.type == 'control').map(serializeControlEdge),
+        data: getEdges.value.filter((edge) => edge.type == 'data').map(serializeDataEdge)
+      }
+    }
+    console.log(resObj)
+  }
+
   return {
     id,
     name,
     description,
     trigger,
     createAssistanceType,
-    unsetAssistanceType
+    unsetAssistanceType,
+    saveAssistanceType
   }
 })

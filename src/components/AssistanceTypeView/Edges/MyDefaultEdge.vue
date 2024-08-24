@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ESidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
+import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { BaseEdge, EdgeLabelRenderer, getBezierPath, useVueFlow, type EdgeProps } from '@vue-flow/core'
 import { computed, watch } from 'vue'
 const props = withDefaults(
@@ -12,7 +13,7 @@ const props = withDefaults(
   }
 )
 const path = computed(() => getBezierPath(props.edgeProps))
-const { findEdge } = useVueFlow()
+const { findEdge } = useVueFlow(CVueFlowStoreId)
 const sidebarStore = useSidebarStore()
 
 const edgeSelected = computed(

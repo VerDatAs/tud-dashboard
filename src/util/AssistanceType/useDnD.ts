@@ -2,6 +2,7 @@ import type { TDnD, TDnDState } from '@/types/AssistanceType/dnd'
 import type { TOperation } from '@/types/AssistanceType/operation'
 import { useVueFlow } from '@vue-flow/core'
 import { ref, watch } from 'vue'
+import { CVueFlowStoreId } from './statics'
 
 /**
  * Return unique ID for a node.
@@ -32,7 +33,7 @@ export class CDnDState implements TDnDState {
 export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD {
   const { draggedOperation, isDragOver, isDragging } = state
 
-  const { addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode, findNode } = useVueFlow()
+  const { addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode, findNode } = useVueFlow(CVueFlowStoreId)
 
   watch(isDragging, (dragging) => {
     document.body.style.userSelect = dragging ? 'none' : ''

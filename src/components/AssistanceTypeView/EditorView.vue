@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { SFullscreenMode } from '@/util/AssistanceType/injectionkeys'
 import { closeFullscreen, openFullscreen } from '@/util/SiteHelpers'
 import { onMounted, provide, ref } from 'vue'
 import EditorMainView from './EditorMainView.vue'
+const atStore = useAssistanceTypeStore()
 
 const emit = defineEmits<{
   (e: 'backAction'): void
@@ -29,6 +31,10 @@ function toggleFullscreen() {
   } else {
     isFullscreen.value = openFullscreen(elem)
   }
+}
+
+function saveAssistanceType() {
+  atStore.saveAssistanceType()
 }
 
 onMounted(() => {
@@ -61,7 +67,7 @@ function updateDashboardElement() {
         <h1>Editor für Assistenztypen</h1>
       </div>
       <div class="actions">
-        <font-awesome-icon class="icon pointer" icon="save" size="lg" title="Speichern" />
+        <font-awesome-icon class="icon pointer" icon="save" size="lg" title="Speichern" @click="saveAssistanceType" />
         <font-awesome-icon
           class="icon pointer"
           icon="house"

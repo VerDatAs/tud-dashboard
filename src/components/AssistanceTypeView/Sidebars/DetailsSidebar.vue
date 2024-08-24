@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ESidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { SFullscreenMode } from '@/util/AssistanceType/injectionkeys'
+import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { useVueFlow } from '@vue-flow/core'
 import { computed, inject, ref } from 'vue'
 import EdgeView from './DetailViews/EdgeView.vue'
@@ -9,7 +10,7 @@ import TypeView from './DetailViews/TypeView.vue'
 
 const isFullscreen = inject(SFullscreenMode, () => ref(false), true)
 
-const { onNodeClick, onEdgeClick, onPaneClick, removeNodes, removeEdges } = useVueFlow()
+const { onNodeClick, onEdgeClick, onPaneClick, removeNodes, removeEdges } = useVueFlow(CVueFlowStoreId)
 const sidebarStore = useSidebarStore()
 
 onNodeClick((e) => {

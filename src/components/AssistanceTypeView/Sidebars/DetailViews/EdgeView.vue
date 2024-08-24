@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
-import { type GraphNode, type GraphEdge, useVueFlow } from '@vue-flow/core'
+import { CMillisecondsUtils, EMilliseconds } from '@/util/AssistanceType/millisecondHelper'
+import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
+import { type GraphEdge, type GraphNode, useVueFlow } from '@vue-flow/core'
 import { watchArray } from '@vueuse/core'
 import { computed, ref } from 'vue'
-import { EMilliseconds, CMillisecondsUtils } from '@/util/AssistanceType/millisecondHelper'
 const sidebarStore = useSidebarStore()
-const { findNode, updateEdgeData } = useVueFlow()
+const { findNode, updateEdgeData } = useVueFlow(CVueFlowStoreId)
 
 const edge = computed((): GraphEdge => sidebarStore.currentObject as GraphEdge)
 

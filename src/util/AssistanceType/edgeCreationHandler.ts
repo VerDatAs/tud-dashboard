@@ -1,11 +1,12 @@
 import { type Connection, type GraphNode, useVueFlow } from '@vue-flow/core'
+import { CVueFlowStoreId } from './statics'
 
 const OPERATION_TYPE = 'operation'
 const DATA_INPUT_TYPE = 'datainput'
 const DATA_OUTPUT_TYPE = 'dataoutput'
 
 export default function useEdgeCreationHandler() {
-  const { onConnect, findNode, addEdges } = useVueFlow()
+  const { onConnect, findNode, addEdges } = useVueFlow(CVueFlowStoreId)
 
   onConnect((e) => {
     const source = findNode(e.source)
