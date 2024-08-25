@@ -2,7 +2,7 @@
 import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import type { TInput, TOutput } from '@/types/AssistanceType/operation'
 import { createVariableNodeID } from '@/util/AssistanceType/AssistanceTypeHelper'
-import { createVariableNode } from '@/util/AssistanceType/createVariableNodes'
+import { createVariableNode } from '@/util/AssistanceType/nodeCreationHandler'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { useVueFlow } from '@vue-flow/core'
 import { computed, ref } from 'vue'
@@ -15,10 +15,10 @@ const props = defineProps<{
 const showDescription = ref<boolean>(false)
 
 const sidebarStore = useSidebarStore()
-const { addNodes, findNode, removeNodes } = useVueFlow(CVueFlowStoreId)
+const { findNode, removeNodes } = useVueFlow(CVueFlowStoreId)
 
 function addVariable() {
-  if (sidebarStore.currentId) createVariableNode(sidebarStore.currentId, props.variable, props.type, addNodes)
+  if (sidebarStore.currentId) createVariableNode(sidebarStore.currentId, props.variable, props.type)
 }
 
 function removeVariable() {

@@ -13,6 +13,7 @@ export type TFlowContext = {
 
 export type TIONode = {
   id: string
+  name: string
   type: 'input' | 'output' | 'error'
   flowContext: TFlowContext
 }
@@ -42,3 +43,19 @@ export type TControlEdge =
       trigger: 'scheduled'
       schedule: number
     }
+
+export type TAssistanceType = {
+  id: string
+  name: string
+  description: string
+  trigger: {
+    type: string
+    definition: object
+  }
+  inputs: never[]
+  operations: TOperationNode[]
+  connectors: {
+    control: TControlEdge[]
+    data: TDataEdge[]
+  }
+}

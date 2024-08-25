@@ -3,6 +3,7 @@ import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { SFullscreenMode } from '@/util/AssistanceType/injectionkeys'
 import { closeFullscreen, openFullscreen } from '@/util/SiteHelpers'
+import axios from 'axios'
 import { onMounted, provide, ref } from 'vue'
 import EditorMainView from './EditorMainView.vue'
 const atStore = useAssistanceTypeStore()
@@ -36,6 +37,11 @@ function toggleFullscreen() {
 function saveAssistanceType() {
   atStore.saveAssistanceType()
 }
+function loadAssistanceType() {
+  axios.get('/example-type.json').then((response) => {
+    atStore.loadAssistanceType(response.data)
+  })
+}
 
 onMounted(() => {
   updateDashboardElement()
@@ -67,6 +73,7 @@ function updateDashboardElement() {
         <h1>Editor für Assistenztypen</h1>
       </div>
       <div class="actions">
+        <font-awesome-icon class="icon pointer" icon="clock" size="lg" title="Laden" @click="loadAssistanceType" />
         <font-awesome-icon class="icon pointer" icon="save" size="lg" title="Speichern" @click="saveAssistanceType" />
         <font-awesome-icon
           class="icon pointer"

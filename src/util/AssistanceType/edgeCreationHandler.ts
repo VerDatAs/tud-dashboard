@@ -1,12 +1,63 @@
-import { type Connection, type GraphNode, useVueFlow } from '@vue-flow/core'
+import { useVueFlow } from '@vue-flow/core'
 import { CVueFlowStoreId } from './statics'
 
 const OPERATION_TYPE = 'operation'
 const DATA_INPUT_TYPE = 'datainput'
 const DATA_OUTPUT_TYPE = 'dataoutput'
 
+export function addControlEdge(
+  sourceId: string,
+  targetId: string,
+  data: {
+    id?: string
+    trigger?: {
+      trigger?: 'direct' | 'scheduled'
+      schedule?: number
+    }
+  } = {}
+) {
+  // Just connect, no checks needed
+  const { addEdges } = useVueFlow(CVueFlowStoreId)
+
+  addEdges({
+    id: data?.id ?? `e__${sourceId}-${targetId}`,
+    source: sourceId,
+    target: targetId,
+    type: 'control',
+    data: {
+      trigger: data?.trigger?.trigger ?? 'direct',
+      schedule: data?.trigger?.schedule ?? 0
+    }
+  })
+}
+
+export function addDataEdge(
+  sourceId: string,
+  targetId: string,
+  data: {
+    id?: string
+  } = {}
+) {
+  const { findNode, addEdges } = useVueFlow(CVueFlowStoreId)
+  const source = findNode(sourceId)
+  const target = findNode(targetId)
+  if (!source || !target) return
+
+  // Dont connect data nodes from same operation
+  if (source.parentNode === target.parentNode) return
+  // Dont connect data nodes from different types
+  if (source.data.variable.type !== target.data.variable.type) return
+  // Add edge
+  addEdges({
+    id: data?.id ?? `e__${source.id}-${target.id}`,
+    source: sourceId,
+    target: targetId,
+    type: 'data'
+  })
+}
+
 export default function useEdgeCreationHandler() {
-  const { onConnect, findNode, addEdges } = useVueFlow(CVueFlowStoreId)
+  const { onConnect, findNode } = useVueFlow(CVueFlowStoreId)
 
   onConnect((e) => {
     const source = findNode(e.source)
@@ -14,30 +65,8 @@ export default function useEdgeCreationHandler() {
     if (!source || !target) return
     // Connect operation nodes
     // Connecting own output to own input doesnt work by default
-    if (source.type === OPERATION_TYPE && target.type === OPERATION_TYPE) addControlEdge(e, source, target)
+    if (source.type === OPERATION_TYPE && target.type === OPERATION_TYPE) addControlEdge(source.id, target.id)
     // Connect data nodes
-    else if (source.type === DATA_OUTPUT_TYPE && target.type === DATA_INPUT_TYPE) addDataEdge(e, source, target)
+    else if (source.type === DATA_OUTPUT_TYPE && target.type === DATA_INPUT_TYPE) addDataEdge(source.id, target.id)
   })
-
-  function addControlEdge(e: Connection, source: GraphNode, target: GraphNode) {
-    // Just connect, no checks needed
-    addEdges({
-      id: `e__${source.id}-${target.id}`,
-      ...e,
-      type: 'control'
-    })
-  }
-
-  function addDataEdge(e: Connection, source: GraphNode, target: GraphNode) {
-    // Dont connect data nodes from same operation
-    if (source.parentNode === target.parentNode) return
-    // Dont connect data nodes from different types
-    if (source.data.variable.type !== target.data.variable.type) return
-    // Add edge
-    addEdges({
-      id: `e__${source.id}-${target.id}`,
-      ...e,
-      type: 'data'
-    })
-  }
 }

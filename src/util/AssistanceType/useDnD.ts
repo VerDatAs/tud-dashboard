@@ -2,6 +2,7 @@ import type { TDnD, TDnDState } from '@/types/AssistanceType/dnd'
 import type { TOperation } from '@/types/AssistanceType/operation'
 import { useVueFlow } from '@vue-flow/core'
 import { ref, watch } from 'vue'
+import { createOperationNode } from './nodeCreationHandler'
 import { CVueFlowStoreId } from './statics'
 
 /**
@@ -100,16 +101,6 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
       nodeId = draggedOperation.value.id + '_' + getId()
     } while (findNode(nodeId) != undefined)
 
-    const newNode = {
-      id: nodeId,
-      type: 'operation',
-      position,
-      data: {
-        label: draggedOperation.value.name,
-        operation: draggedOperation.value
-      }
-    }
-
     /**
      * Align node position after drop, so it's centered to the mouse
      *
@@ -123,7 +114,7 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
       off()
     })
 
-    addNodes(newNode)
+    createOperationNode(nodeId, draggedOperation.value.id, position)
   }
 
   return {

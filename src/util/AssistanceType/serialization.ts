@@ -11,6 +11,7 @@ import { CVueFlowStoreId } from './statics'
 export function serializeIO(node: GraphNode): TIONode {
   return {
     id: node.id,
+    name: node.data.variable.name,
     type: node.type == 'datainput' ? 'input' : node.type == 'dataoutput' ? 'output' : 'error',
     flowContext: serializeFlowContext(node)
   }

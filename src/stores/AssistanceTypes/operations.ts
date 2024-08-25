@@ -1,9 +1,10 @@
+import type { TOperation } from '@/types/AssistanceType/operation'
 import axios, { type AxiosResponse } from 'axios'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 
 export const useOperationStore = defineStore('at/operations', () => {
-  const _operations = ref<Array<any>>([])
+  const _operations = ref<Array<TOperation>>([])
   const _searchTerm = ref<string>('')
   const operations = computed(() => _operations.value)
   const searchTerm = computed(() => _searchTerm.value)
@@ -16,6 +17,18 @@ export const useOperationStore = defineStore('at/operations', () => {
       )
     })
   })
+
+  function getOperationById(id: string): TOperation | undefined {
+    return _operations.value.find((operation) => operation.id === id)
+  }
+
+  function getVariableById(operationId: string, variableName: string, variableType: 'input' | 'output') {
+    const operation = getOperationById(operationId)
+    if (!operation) return
+    return variableType == 'input'
+      ? operation.inputs.find((input) => input.name === variableName)
+      : operation.outputs.find((output) => output.name === variableName)
+  }
 
   function setSearchTerm(term: string) {
     _searchTerm.value = term
@@ -40,6 +53,8 @@ export const useOperationStore = defineStore('at/operations', () => {
     operations,
     searchTerm,
     searchedOperations,
+    getOperationById,
+    getVariableById,
     setSearchTerm,
     clearSearchTerm,
     requestOperations
