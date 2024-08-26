@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
+import { setLabelForControlEdge } from '@/util/AssistanceType/edgeCreationHandler'
 import { CMillisecondsUtils, EMilliseconds } from '@/util/AssistanceType/millisecondHelper'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { type GraphEdge, type GraphNode, useVueFlow } from '@vue-flow/core'
 import { watchArray } from '@vueuse/core'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 const sidebarStore = useSidebarStore()
 const { findNode, updateEdgeData } = useVueFlow(CVueFlowStoreId)
 
@@ -27,14 +28,24 @@ const { timeNumber: tn, timeUnit: tu } = CMillisecondsUtils.loadMilisecondsToPro
 const timeNumber = ref(tn)
 const timeUnit = ref(tu)
 
+watch(
+  () => edge.value,
+  () => {
+    const { timeNumber: tn, timeUnit: tu } = CMillisecondsUtils.loadMilisecondsToProperValue(
+      edge.value.data.schedule ?? 1
+    )
+    trigger.value = edge.value.data.trigger ?? 'direct'
+    timeNumber.value = tn
+    timeUnit.value = tu
+  }
+)
+
 watchArray(
   [trigger, timeNumber, timeUnit],
   () => {
     if (isControl.value) {
       if (trigger.value === 'scheduled') {
-        edge.value.label = `${timeNumber.value}${CMillisecondsUtils.toString(timeUnit.value)}`
-      } else {
-        edge.value.label = ''
+        setLabelForControlEdge(edge.value.id)
       }
       updateEdgeData(edge.value.id, {
         trigger: trigger.value,

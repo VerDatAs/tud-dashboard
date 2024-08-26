@@ -1,3 +1,5 @@
+import type { TAssistanceTypeInput } from './operation'
+
 type TPosition = {
   x: number
   y: number
@@ -15,6 +17,12 @@ export type TIONode = {
   id: string
   name: string
   type: 'input' | 'output' | 'error'
+  flowContext: TFlowContext
+}
+
+export type TATInputNode = {
+  id: string
+  name: string
   flowContext: TFlowContext
 }
 
@@ -52,7 +60,10 @@ export type TAssistanceType = {
     type: string
     definition: object
   }
-  inputs: never[]
+  inputs: {
+    definitions: TAssistanceTypeInput[]
+    nodes: TATInputNode[]
+  }
   operations: TOperationNode[]
   connectors: {
     control: TControlEdge[]

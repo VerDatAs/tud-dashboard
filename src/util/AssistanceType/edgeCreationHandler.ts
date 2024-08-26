@@ -1,5 +1,6 @@
 import { useVueFlow } from '@vue-flow/core'
 import { toast } from 'vue3-toastify'
+import { CMillisecondsUtils } from './millisecondHelper'
 import { CVueFlowStoreId } from './statics'
 
 const START_TYPE = 'start'
@@ -22,8 +23,9 @@ export function addControlEdge(
   // Just connect, no checks needed
   const { addEdges } = useVueFlow(CVueFlowStoreId)
 
+  const id = data?.id ?? `e__${sourceId}-${targetId}`
   addEdges({
-    id: data?.id ?? `e__${sourceId}-${targetId}`,
+    id: id,
     source: sourceId,
     target: targetId,
     type: 'control',
@@ -32,6 +34,19 @@ export function addControlEdge(
       schedule: data?.trigger?.schedule ?? 0
     }
   })
+  setLabelForControlEdge(id)
+}
+
+export function setLabelForControlEdge(edgeId: string) {
+  const { findEdge } = useVueFlow(CVueFlowStoreId)
+  const edge = findEdge(edgeId)
+  if (!edge) return
+  if (edge.data.trigger === 'scheduled') {
+    const { timeNumber, timeUnit } = CMillisecondsUtils.loadMilisecondsToProperValue(edge.data.schedule)
+    edge.label = `${timeNumber}${CMillisecondsUtils.toString(timeUnit)}`
+  } else {
+    edge.label = ''
+  }
 }
 
 export function addDataEdge(

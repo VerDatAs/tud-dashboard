@@ -62,7 +62,7 @@ watch(
       }"
       class="nodrag nopan edge-label"
       v-if="props.edgeProps.label"
-      :title="`Verzögerung von ${props.edgeProps.label}`"
+      :title="`Verzögerung von ${props.edgeProps.data.label}`"
       @click="onClickLabel"
     >
       <font-awesome-icon class="icon" icon="clock" v-if="props.showClock"></font-awesome-icon>

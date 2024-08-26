@@ -2,8 +2,17 @@ import type { TAssistanceTypeInput } from '@/types/AssistanceType/operation'
 import type { TAssistanceType, TIONode, TOperationNode } from '@/types/AssistanceType/serialization'
 import type { TIOTypes } from '@/types/AssistanceType/variableTypes'
 import { addControlEdge, addDataEdge } from '@/util/AssistanceType/edgeCreationHandler'
-import { createOperationNode, createVariableNode } from '@/util/AssistanceType/nodeCreationHandler'
-import { serializeControlEdge, serializeDataEdge, serializeOperation } from '@/util/AssistanceType/serialization'
+import {
+  createATVariableNode,
+  createOperationNode,
+  createVariableNode
+} from '@/util/AssistanceType/nodeCreationHandler'
+import {
+  serializeATInputNode,
+  serializeControlEdge,
+  serializeDataEdge,
+  serializeOperation
+} from '@/util/AssistanceType/serialization'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { getId } from '@/util/AssistanceType/useDnD'
 import { useVueFlow } from '@vue-flow/core'
@@ -78,7 +87,10 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
         type: trigger.value,
         definition: {}
       },
-      inputs: [],
+      inputs: {
+        definitions: _inputs.value,
+        nodes: getNodes.value.filter((node) => node.type == 'at-input').map(serializeATInputNode)
+      },
       operations: operations,
       connectors: {
         control: getEdges.value.filter((edge) => edge.type == 'control').map(serializeControlEdge),
@@ -86,6 +98,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
       }
     }
     console.log(resObj)
+    console.log(JSON.stringify(resObj))
   }
 
   /** Load the assistance type from json format */
@@ -100,14 +113,15 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     _id.value = data.id
     name.value = data.name
     description.value = data.description
-    trigger.value = EAssistanceTypeTrigger[data.trigger.type]
+    trigger.value = EAssistanceTypeTrigger[data.trigger.type.toUpperCase()]
+    _inputs.value = data.inputs.definitions
 
     for (const operation of data.operations as TOperationNode[]) {
       createOperationNode(
         operation.id,
         operation.operation,
-        operation.flowContext?.position ?? { x: 0, y: 0 },
-        operation.flowContext?.dimensions
+        operation?.flowContext?.position ?? { x: 0, y: 0 }
+        // operation?.flowContext?.dimensions
       )
       for (const io of operation.io as TIONode[]) {
         if (io.type == 'error') continue
@@ -115,10 +129,21 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
         if (!variable) continue
         createVariableNode(operation.id, variable, io.type, {
           id: io.id,
-          position: io?.flowContext?.position,
-          dimensions: io?.flowContext?.dimensions
+          position: io?.flowContext?.position
+          // dimensions: io?.flowContext?.dimensions
         })
       }
+    }
+
+    for (const input of data.inputs.nodes) {
+      const i = getInputVariable(input.name)
+      if (!i) {
+        console.error('Input variable not found in input definitions', input.name)
+        continue
+      }
+      createATVariableNode(input.id, i, input?.flowContext?.position ?? { x: 0, y: 0 }, {
+        // dimensions: input?.flowContext?.dimensions
+      })
     }
 
     for (const edge of data.connectors.control) {

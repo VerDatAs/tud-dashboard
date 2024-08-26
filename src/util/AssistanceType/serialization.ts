@@ -1,4 +1,5 @@
 import type {
+  TATInputNode,
   TControlEdge,
   TDataEdge,
   TFlowContext,
@@ -7,6 +8,14 @@ import type {
 } from '@/types/AssistanceType/serialization'
 import { useVueFlow, type GraphEdge, type GraphNode } from '@vue-flow/core'
 import { CVueFlowStoreId } from './statics'
+
+export function serializeATInputNode(node: GraphNode): TATInputNode {
+  return {
+    id: node.id,
+    name: node.data.variable.name,
+    flowContext: serializeFlowContext(node)
+  }
+}
 
 export function serializeIO(node: GraphNode): TIONode {
   return {
