@@ -8,6 +8,9 @@
     "paths": {
       "@/*": ["./src/*"]
     },
+    "types": [
+      "vue3-toastify/global"
+    ]
   },
   "references": [
     {

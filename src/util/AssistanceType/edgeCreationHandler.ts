@@ -1,4 +1,5 @@
 import { useVueFlow } from '@vue-flow/core'
+import { toast } from 'vue3-toastify'
 import { CVueFlowStoreId } from './statics'
 
 const OPERATION_TYPE = 'operation'
@@ -41,12 +42,28 @@ export function addDataEdge(
   const { findNode, addEdges } = useVueFlow(CVueFlowStoreId)
   const source = findNode(sourceId)
   const target = findNode(targetId)
-  if (!source || !target) return
+  if (!source || !target) {
+    toast.error('Der Output oder Input wurde nicht gefunden.')
+    console.error(
+      'Der Output oder Input wurde nicht gefunden. Eine ID ist nicht korrekt.',
+      sourceId,
+      source,
+      targetId,
+      target
+    )
+    return
+  }
 
   // Dont connect data nodes from same operation
-  if (source.parentNode === target.parentNode) return
+  if (source.parentNode === target.parentNode) {
+    toast.error('Es können keine Datenknoten innerhalb derselben Operation verbunden werden.')
+    return
+  }
   // Dont connect data nodes from different types
-  if (source.data.variable.type !== target.data.variable.type) return
+  if (source.data.variable.type !== target.data.variable.type) {
+    toast.error('Es können keine Datenknoten unterschiedlicher Typen verbunden werden.')
+    return
+  }
   // Add edge
   addEdges({
     id: data?.id ?? `e__${source.id}-${target.id}`,
@@ -68,5 +85,8 @@ export default function useEdgeCreationHandler() {
     if (source.type === OPERATION_TYPE && target.type === OPERATION_TYPE) addControlEdge(source.id, target.id)
     // Connect data nodes
     else if (source.type === DATA_OUTPUT_TYPE && target.type === DATA_INPUT_TYPE) addDataEdge(source.id, target.id)
+    else {
+      toast.error('Es können nur Datenknoten mit Eingabeknoten und Operationen mit Operationen verbunden werden.')
+    }
   })
 }

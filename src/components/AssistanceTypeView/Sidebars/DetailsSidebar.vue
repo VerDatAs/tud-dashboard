@@ -2,7 +2,8 @@
 import { ESidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { SFullscreenMode } from '@/util/AssistanceType/injectionkeys'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
-import { useVueFlow } from '@vue-flow/core'
+import { getChildrenFromParentId } from '@/util/AssistanceType/vueFlowHelper'
+import { type GraphNode, useVueFlow } from '@vue-flow/core'
 import { computed, inject, ref } from 'vue'
 import EdgeView from './DetailViews/EdgeView.vue'
 import NodeView from './DetailViews/NodeView.vue'
@@ -10,7 +11,7 @@ import TypeView from './DetailViews/TypeView.vue'
 
 const isFullscreen = inject(SFullscreenMode, () => ref(false), true)
 
-const { onNodeClick, onEdgeClick, onPaneClick, removeNodes, removeEdges } = useVueFlow(CVueFlowStoreId)
+const { onNodeClick, onEdgeClick, onPaneClick, removeNodes, removeEdges, findNode } = useVueFlow(CVueFlowStoreId)
 const sidebarStore = useSidebarStore()
 
 onNodeClick((e) => {
@@ -38,6 +39,9 @@ function removeObject() {
   if (!sidebarStore.currentId) return
 
   if (isNode.value) {
+    const obj = sidebarStore.currentObject as GraphNode
+    // Remove all children nodes (variables)
+    if (obj.isParent) removeNodes(getChildrenFromParentId(obj.id))
     removeNodes(sidebarStore.currentId)
   } else if (isEdge.value) {
     removeEdges(sidebarStore.currentId)

@@ -1,7 +1,7 @@
 <script setup lang="ts">
+import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 import EditorView from './AssistanceTypeView/EditorView.vue'
 import SelectView from './AssistanceTypeView/SelectView.vue'
-import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 
 withDefaults(
   defineProps<{
@@ -33,10 +33,12 @@ function onCreation() {
     ></SelectView>
     <EditorView v-else @backAction="atStore.unsetAssistanceType()"></EditorView>
   </div>
+  <div class="Toastify"></div>
 </template>
 
 <style>
 @import '@/assets/assistance-type-view.scss';
+@import 'vue3-toastify/dist/index.css';
 </style>
 
 <style scoped lang="scss">

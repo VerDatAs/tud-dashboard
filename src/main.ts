@@ -117,6 +117,9 @@ function isDevelopmentBuild(): boolean {
   return import.meta.env.MODE != 'production'
 }
 
+/* Toast Notifications */
+import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify'
+
 /**
  * Initialize the dashboard with the provided data.
  *
@@ -124,6 +127,11 @@ function isDevelopmentBuild(): boolean {
  */
 function initDashboard(initDashboardData: DashboardData) {
   const app = createApp(App)
+
+  app.use(Vue3Toastify, {
+    autoClose: 3000,
+    position: 'top-right'
+  } as ToastContainerOptions)
 
   app.use(ConfirmDialog)
 
