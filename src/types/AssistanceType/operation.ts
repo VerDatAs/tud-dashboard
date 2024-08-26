@@ -1,6 +1,8 @@
+import type { TIOTypes } from './variableTypes'
+
 export type TIOVariable = {
   name: string
-  type: string
+  type: TIOTypes
   description: string
 }
 
@@ -8,6 +10,16 @@ export type TInput = TIOVariable
 
 export type TOutput = TIOVariable
 
+/*
+ * If updated
+ * also update the class CDnDState in src/util/AssistanceType/useDnD.ts
+ */
+export type TAssistanceTypeInput = TIOVariable
+
+/*
+ * If updated
+ * also update the class CDnDState in src/util/AssistanceType/useDnD.ts
+ */
 export type TOperation = {
   id: string
   name: string

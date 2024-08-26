@@ -1,11 +1,19 @@
 <script setup lang="ts">
 import { EAssistanceTypeTrigger, useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
+import type { TDnD } from '@/types/AssistanceType/dnd'
+import { SDnDKey } from '@/util/AssistanceType/injectionkeys'
+import useDragAndDrop from '@/util/AssistanceType/useDnD'
+import { inject, ref } from 'vue'
+import VariableRow from '../../Generics/VariableRow.vue'
+import TypeAddInputView from './TypeAddInputView.vue'
 
 const atStore = useAssistanceTypeStore()
+const createVariableView = ref(false)
+const { onDragStart } = inject<TDnD>(SDnDKey, () => useDragAndDrop(), true)
 </script>
 
 <template>
-  <div class="sidebar-type-view">
+  <div class="sidebar-type-view" v-if="createVariableView === false">
     <div>
       <div class="heading">
         <p>Assistenztyp</p>
@@ -28,7 +36,25 @@ const atStore = useAssistanceTypeStore()
         </select>
       </div>
     </div>
+    <div>
+      <p class="underheading">Eingänge</p>
+      <a @click="createVariableView = true">+ Eingang hinzufügen</a>
+      <div class="variable-list" v-if="atStore.inputs.length > 0">
+        <div
+          v-for="input of atStore.inputs"
+          :key="input.name"
+          :draggable="true"
+          @dragstart="onDragStart($event, input)"
+        >
+          <variable-row :variable="input" type="input" :show-add-remove-icon="false"></variable-row>
+        </div>
+      </div>
+      <div class="no-vars" v-else>
+        <p>Keine Eingänge vorhanden.</p>
+      </div>
+    </div>
   </div>
+  <type-add-input-view v-else @backAction="createVariableView = false"></type-add-input-view>
 </template>
 
 <style scoped lang="scss">
@@ -42,5 +68,14 @@ const atStore = useAssistanceTypeStore()
 }
 textarea {
   resize: vertical;
+}
+.variable-list {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.no-vars {
+  margin-top: 10px;
 }
 </style>

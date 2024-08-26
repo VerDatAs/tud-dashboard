@@ -1,8 +1,8 @@
-import type { TDnD, TDnDState } from '@/types/AssistanceType/dnd'
-import type { TOperation } from '@/types/AssistanceType/operation'
+import type { TDnD, TDnDDraggedObjects, TDnDState } from '@/types/AssistanceType/dnd'
+import type { TAssistanceTypeInput, TOperation } from '@/types/AssistanceType/operation'
 import { useVueFlow } from '@vue-flow/core'
 import { ref, watch } from 'vue'
-import { createOperationNode } from './nodeCreationHandler'
+import { createATVariableNode, createOperationNode } from './nodeCreationHandler'
 import { CVueFlowStoreId } from './statics'
 
 /**
@@ -15,14 +15,22 @@ export function getId(): string {
 }
 
 export class CDnDState implements TDnDState {
-  draggedOperation: TDnDState['draggedOperation']
+  draggedObject: TDnDState['draggedObject']
   isDragOver: TDnDState['isDragOver']
   isDragging: TDnDState['isDragging']
 
   constructor(state: TDnDState | undefined = undefined) {
-    this.draggedOperation = state?.draggedOperation ?? ref<TOperation | undefined>(undefined)
+    this.draggedObject = state?.draggedObject ?? ref<TDnDDraggedObjects | undefined>(undefined)
     this.isDragOver = state?.isDragOver ?? ref(false)
     this.isDragging = state?.isDragging ?? ref(false)
+  }
+
+  static isOperation(obj: TDnDDraggedObjects): obj is TOperation {
+    return 'id' in obj && 'inputs' in obj && 'outputs' in obj && 'name' in obj && 'description' in obj
+  }
+
+  static isATVariable(obj: TDnDDraggedObjects): obj is TAssistanceTypeInput {
+    return 'name' in obj && 'description' in obj && 'type' in obj
   }
 }
 
@@ -32,21 +40,25 @@ export class CDnDState implements TDnDState {
  * @returns
  */
 export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD {
-  const { draggedOperation, isDragOver, isDragging } = state
+  const { draggedObject, isDragOver, isDragging } = state
 
-  const { addNodes, screenToFlowCoordinate, onNodesInitialized, updateNode, findNode } = useVueFlow(CVueFlowStoreId)
+  const { screenToFlowCoordinate, onNodesInitialized, updateNode, findNode } = useVueFlow(CVueFlowStoreId)
 
   watch(isDragging, (dragging) => {
     document.body.style.userSelect = dragging ? 'none' : ''
   })
 
-  function onDragStart(event: DragEvent, operation: TOperation) {
+  function onDragStart(event: DragEvent, obj: TDnDDraggedObjects) {
     if (event.dataTransfer) {
-      event.dataTransfer.setData('application/vueflow', operation.id)
+      if (CDnDState.isOperation(obj)) {
+        event.dataTransfer?.setData('application/vueflow', obj.id)
+      } else if (CDnDState.isATVariable(obj)) {
+        event.dataTransfer?.setData('application/vueflow', obj.name)
+      }
       event.dataTransfer.effectAllowed = 'move'
     }
 
-    draggedOperation.value = operation
+    draggedObject.value = obj
     isDragging.value = true
 
     document.addEventListener('drop', onDragEnd)
@@ -61,7 +73,7 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
   function onDragOver(event: DragEvent) {
     event.preventDefault()
 
-    if (draggedOperation.value) {
+    if (draggedObject.value) {
       isDragOver.value = true
 
       if (event.dataTransfer) {
@@ -77,7 +89,7 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
   function onDragEnd() {
     isDragging.value = false
     isDragOver.value = false
-    draggedOperation.value = undefined
+    draggedObject.value = undefined
     document.removeEventListener('drop', onDragEnd)
     document.removeEventListener('dragend', onDragEnd)
   }
@@ -93,13 +105,23 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
       y: event.clientY
     })
 
-    if (!draggedOperation.value) return
+    if (!draggedObject.value) return
 
-    // For absolute security that no node will have already used ID
-    let nodeId: string
-    do {
-      nodeId = draggedOperation.value.id + '_' + getId()
-    } while (findNode(nodeId) != undefined)
+    let nodeId: string = ''
+    // TOperation
+    if (CDnDState.isOperation(draggedObject.value)) {
+      // For absolute security that no node will have already used ID
+      do {
+        nodeId = draggedObject.value.id + '_' + getId()
+      } while (findNode(nodeId) != undefined)
+    }
+    // TAssistanceTypeInput
+    else if (CDnDState.isATVariable(draggedObject.value)) {
+      // For absolute security that no node will have already used ID
+      do {
+        nodeId = 'at_input_' + draggedObject.value.name + '_' + getId()
+      } while (findNode(nodeId) != undefined)
+    }
 
     /**
      * Align node position after drop, so it's centered to the mouse
@@ -114,11 +136,15 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
       off()
     })
 
-    createOperationNode(nodeId, draggedOperation.value.id, position)
+    if (CDnDState.isOperation(draggedObject.value)) {
+      createOperationNode(nodeId, draggedObject.value.id, position)
+    } else if (CDnDState.isATVariable(draggedObject.value)) {
+      createATVariableNode(nodeId, draggedObject.value, position)
+    }
   }
 
   return {
-    draggedOperation,
+    draggedObject,
     isDragOver,
     isDragging,
     onDragStart,

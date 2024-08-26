@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { variableTypeToString } from '@/types/AssistanceType/variableTypes'
 import { type NodeProps } from '@vue-flow/core'
 
 const props = defineProps<NodeProps>()
@@ -6,7 +7,9 @@ const props = defineProps<NodeProps>()
 
 <template>
   <div class="node-content">
-    <p>{{ props.data.label }}</p>
+    <p>
+      <i>{{ variableTypeToString(props.data.variable.type) }}:</i> {{ props.data.label }}
+    </p>
   </div>
 </template>
 

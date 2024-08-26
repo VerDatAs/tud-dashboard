@@ -5,6 +5,7 @@ import { CVueFlowStoreId } from './statics'
 const OPERATION_TYPE = 'operation'
 const DATA_INPUT_TYPE = 'datainput'
 const DATA_OUTPUT_TYPE = 'dataoutput'
+const AT_INPUT_TYPE = 'at-input'
 
 export function addControlEdge(
   sourceId: string,
@@ -84,7 +85,11 @@ export default function useEdgeCreationHandler() {
     // Connecting own output to own input doesnt work by default
     if (source.type === OPERATION_TYPE && target.type === OPERATION_TYPE) addControlEdge(source.id, target.id)
     // Connect data nodes
-    else if (source.type === DATA_OUTPUT_TYPE && target.type === DATA_INPUT_TYPE) addDataEdge(source.id, target.id)
+    else if (
+      (source.type === DATA_OUTPUT_TYPE && target.type === DATA_INPUT_TYPE) ||
+      (source.type === AT_INPUT_TYPE && target.type === DATA_INPUT_TYPE)
+    )
+      addDataEdge(source.id, target.id)
     else {
       toast.error('Es können nur Datenknoten mit Eingabeknoten und Operationen mit Operationen verbunden werden.')
     }

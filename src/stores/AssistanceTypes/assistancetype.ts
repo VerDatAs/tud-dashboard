@@ -1,4 +1,6 @@
+import type { TAssistanceTypeInput } from '@/types/AssistanceType/operation'
 import type { TAssistanceType, TIONode, TOperationNode } from '@/types/AssistanceType/serialization'
+import type { TIOTypes } from '@/types/AssistanceType/variableTypes'
 import { addControlEdge, addDataEdge } from '@/util/AssistanceType/edgeCreationHandler'
 import { createOperationNode, createVariableNode } from '@/util/AssistanceType/nodeCreationHandler'
 import { serializeControlEdge, serializeDataEdge, serializeOperation } from '@/util/AssistanceType/serialization'
@@ -19,14 +21,17 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
   const name = ref('')
   const description = ref('')
   const trigger = ref<EAssistanceTypeTrigger>(EAssistanceTypeTrigger.PROACTIVE)
+  const _inputs = ref<TAssistanceTypeInput[]>([])
 
   const id = computed(() => _id.value)
+  const inputs = computed(() => _inputs.value)
 
   /** Creates new Assistance Type data (init id, default name, default description) */
   function createAssistanceType() {
     _id.value = getId()
     name.value = 'Unbekannt'
     description.value = ''
+    _inputs.value = []
   }
 
   /** Clears all AT Data and gets back to the selection menu */
@@ -34,6 +39,26 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     _id.value = undefined
     name.value = ''
     description.value = ''
+    _inputs.value = []
+  }
+
+  /** Create input variable for current assistance type. */
+  function createInputVariable(name: string, description: string, type: TIOTypes) {
+    _inputs.value.push({
+      name: name,
+      description: description,
+      type: type
+    })
+  }
+
+  /** Remove input variable for current assistance type. */
+  function removeInputVariable(name: string) {
+    _inputs.value = _inputs.value.filter((input) => input.name != name)
+  }
+
+  /** Get input variable for current assistance type. */
+  function getInputVariable(name: string): TAssistanceTypeInput | undefined {
+    return _inputs.value.find((input) => input.name.toLowerCase() == name.toLowerCase())
   }
 
   /** Save the current assistance type to json format */
@@ -111,8 +136,12 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     name,
     description,
     trigger,
+    inputs,
     createAssistanceType,
     unsetAssistanceType,
+    createInputVariable,
+    removeInputVariable,
+    getInputVariable,
     saveAssistanceType,
     loadAssistanceType
   }

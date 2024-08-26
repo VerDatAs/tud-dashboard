@@ -12,6 +12,7 @@ import { inject } from 'vue'
 import DropzoneBackground from './DropzoneBackground.vue'
 import ControlEdge from './Edges/ControlEdge.vue'
 import DataEdge from './Edges/DataEdge.vue'
+import AtInputNode from './Nodes/ATInputNode.vue'
 import DataInputNode from './Nodes/DataInputNode.vue'
 import DataOutputNode from './Nodes/DataOutputNode.vue'
 import OperationNode from './Nodes/OperationNode.vue'
@@ -97,6 +98,9 @@ onEdgesChange((edges) => {
     </template>
     <template #node-dataoutput="nodeProps">
       <data-output-node v-bind="nodeProps"></data-output-node>
+    </template>
+    <template #node-at-input="nodeProps">
+      <at-input-node v-bind="nodeProps"></at-input-node>
     </template>
     <template #edge-control="edgeProps">
       <control-edge v-bind="edgeProps"></control-edge>

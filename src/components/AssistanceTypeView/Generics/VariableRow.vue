@@ -1,16 +1,23 @@
 <script setup lang="ts">
 import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
-import type { TInput, TOutput } from '@/types/AssistanceType/operation'
+import type { TAssistanceTypeInput, TInput, TOutput } from '@/types/AssistanceType/operation'
+import { variableTypeToString } from '@/types/AssistanceType/variableTypes'
 import { createVariableNodeID } from '@/util/AssistanceType/AssistanceTypeHelper'
 import { createVariableNode } from '@/util/AssistanceType/nodeCreationHandler'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { useVueFlow } from '@vue-flow/core'
 import { computed, ref } from 'vue'
 
-const props = defineProps<{
-  variable: TInput | TOutput
-  type: 'input' | 'output'
-}>()
+const props = withDefaults(
+  defineProps<{
+    variable: TInput | TOutput | TAssistanceTypeInput
+    type: 'input' | 'output'
+    showAddRemoveIcon?: boolean
+  }>(),
+  {
+    showAddRemoveIcon: true
+  }
+)
 
 const showDescription = ref<boolean>(false)
 
@@ -45,10 +52,10 @@ const variableAlreadyExists = computed(() =>
           v-if="variable.description"
         />
         <div>
-          <i>{{ variable.type }}:</i> {{ variable.name }}
+          <i>{{ variableTypeToString(variable.type) }}:</i> {{ variable.name }}
         </div>
       </div>
-      <div class="addIcon">
+      <div class="addIcon" v-if="showAddRemoveIcon">
         <font-awesome-icon
           v-if="variableAlreadyExists"
           class="icon pointer"
