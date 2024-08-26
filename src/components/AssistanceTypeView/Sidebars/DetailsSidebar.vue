@@ -5,18 +5,21 @@ import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { getChildrenFromParentId } from '@/util/AssistanceType/vueFlowHelper'
 import { type GraphNode, useVueFlow } from '@vue-flow/core'
 import { computed, inject, ref } from 'vue'
+import AtInputView from './DetailViews/ATInputView.vue'
 import EdgeView from './DetailViews/EdgeView.vue'
 import NodeView from './DetailViews/NodeView.vue'
 import TypeView from './DetailViews/TypeView.vue'
 
 const isFullscreen = inject(SFullscreenMode, () => ref(false), true)
 
-const { onNodeClick, onEdgeClick, onPaneClick, removeNodes, removeEdges, findNode } = useVueFlow(CVueFlowStoreId)
+const { onNodeClick, onEdgeClick, onPaneClick, removeNodes, removeEdges } = useVueFlow(CVueFlowStoreId)
 const sidebarStore = useSidebarStore()
 
 onNodeClick((e) => {
-  if (e.node?.data?.operation) {
+  if (e.node?.type === 'operation') {
     sidebarStore.setNode(e.node.id)
+  } else if (e.node?.type === 'at-input') {
+    sidebarStore.setATInput(e.node.id)
   }
 })
 onEdgeClick((e) => {
@@ -30,15 +33,18 @@ onPaneClick(() => {
 
 const isNode = computed(() => sidebarStore.currentType === ESidebarType.Node)
 const isEdge = computed(() => sidebarStore.currentType === ESidebarType.Edge)
+const isATInput = computed(() => sidebarStore.currentType === ESidebarType.ATInput)
 const isAType = computed(() => sidebarStore.currentType === ESidebarType.AssistanceType)
-const currentObjectString = computed(() => (isNode.value ? 'Operation' : isEdge.value ? 'Verbindung' : ''))
+const currentObjectString = computed(() =>
+  isNode.value ? 'Operation' : isEdge.value ? 'Verbindung' : isATInput.value ? 'Eingang' : ''
+)
 
 function removeObject() {
   if (!confirm(`Möchten Sie diese ${currentObjectString.value} wirklich löschen?`)) return
   // Shouldnt ever happen
   if (!sidebarStore.currentId) return
 
-  if (isNode.value) {
+  if (isNode.value || isATInput.value) {
     const obj = sidebarStore.currentObject as GraphNode
     // Remove all children nodes (variables)
     if (obj.isParent) removeNodes(getChildrenFromParentId(obj.id))
@@ -51,7 +57,7 @@ function removeObject() {
 
 <template>
   <aside class="details-sidebar sidebar" :class="{ fullscreen: isFullscreen }">
-    <div class="toolbar" v-if="isNode || isEdge">
+    <div class="toolbar" v-if="isNode || isATInput || isEdge">
       <font-awesome-icon
         class="icon pointer"
         icon="trash"
@@ -62,6 +68,7 @@ function removeObject() {
     <type-view class="sidebar-view" v-if="isAType"></type-view>
     <node-view class="sidebar-view" v-else-if="isNode"></node-view>
     <edge-view class="sidebar-view" v-else-if="isEdge"></edge-view>
+    <at-input-view class="sidebar-view" v-else-if="isATInput"></at-input-view>
   </aside>
 </template>
 

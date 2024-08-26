@@ -6,7 +6,8 @@ import { computed, ref } from 'vue'
 export enum ESidebarType {
   AssistanceType = 0,
   Node = 1,
-  Edge = 2
+  Edge = 2,
+  ATInput = 3
 }
 
 export const useSidebarStore = defineStore('at/sidebar', () => {
@@ -24,6 +25,11 @@ export const useSidebarStore = defineStore('at/sidebar', () => {
     _currentId.value = id
   }
 
+  function setATInput(id: string) {
+    _currentType.value = ESidebarType.ATInput
+    _currentId.value = id
+  }
+
   function setAssistanceType() {
     _currentType.value = ESidebarType.AssistanceType
     _currentId.value = undefined
@@ -31,7 +37,7 @@ export const useSidebarStore = defineStore('at/sidebar', () => {
 
   const currentObject = computed((): GraphNode | GraphEdge | undefined => {
     const { findNode, findEdge } = useVueFlow(CVueFlowStoreId)
-    return _currentType.value === ESidebarType.Node
+    return _currentType.value === ESidebarType.Node || _currentType.value === ESidebarType.ATInput
       ? findNode(_currentId.value)
       : _currentType.value === ESidebarType.Edge
       ? findEdge(_currentId.value)
@@ -44,6 +50,7 @@ export const useSidebarStore = defineStore('at/sidebar', () => {
     currentType,
     setNode,
     setEdge,
+    setATInput,
     setAssistanceType,
     currentObject,
     currentId

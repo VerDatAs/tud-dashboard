@@ -42,7 +42,7 @@ onNodesChange((nodes) => {
   for (const node of nodes) {
     if (
       node.type === 'remove' &&
-      sidebarStore.currentType === ESidebarType.Node &&
+      (sidebarStore.currentType === ESidebarType.Node || sidebarStore.currentType === ESidebarType.ATInput) &&
       sidebarStore.currentId === node.id
     ) {
       sidebarStore.setAssistanceType()
