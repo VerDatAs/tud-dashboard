@@ -79,6 +79,7 @@ onMounted(() => {
     :connectionRadius="15"
     :min-zoom="0.1"
     fit-view-on-init
+    :deleteKeyCode="null"
   >
     <dropzone-background
       :style="{
