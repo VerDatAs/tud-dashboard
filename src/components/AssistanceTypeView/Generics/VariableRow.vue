@@ -14,14 +14,17 @@ const props = withDefaults(
     type: 'input' | 'output'
     showAddRemoveIcon?: boolean
     showDeleteIcon?: boolean
+    showEditIcon?: boolean
   }>(),
   {
     showAddRemoveIcon: true,
-    showDeleteIcon: false
+    showDeleteIcon: false,
+    showEditIcon: false
   }
 )
 const emit = defineEmits<{
   (e: 'deleteVariable'): void
+  (e: 'editVariable'): void
 }>()
 
 const showDescription = ref<boolean>(false)
@@ -60,18 +63,43 @@ const variableAlreadyExists = computed(() =>
           <i>{{ variableTypeToString(variable.type) }}:</i> {{ variable.name }}
         </div>
       </div>
-      <div class="addIcon" v-if="showAddRemoveIcon">
-        <font-awesome-icon
-          v-if="variableAlreadyExists"
-          class="icon pointer"
-          icon="minus"
-          size="sm"
-          @click="removeVariable()"
-        />
-        <font-awesome-icon v-else class="icon pointer" icon="plus" size="sm" @click="addVariable()" />
-      </div>
-      <div class="addIcon" v-if="showDeleteIcon">
-        <font-awesome-icon class="icon pointer" icon="trash" size="sm" @click="emit('deleteVariable')" />
+      <div class="icons">
+        <div v-if="showAddRemoveIcon">
+          <font-awesome-icon
+            v-if="variableAlreadyExists"
+            class="icon pointer"
+            icon="minus"
+            size="sm"
+            @click="removeVariable()"
+            title="Variable entfernen"
+          />
+          <font-awesome-icon
+            v-else
+            class="icon pointer"
+            icon="plus"
+            size="sm"
+            @click="addVariable()"
+            title="Variable hinzufügen"
+          />
+        </div>
+        <div v-if="showEditIcon">
+          <font-awesome-icon
+            class="icon pointer"
+            icon="pencil"
+            size="sm"
+            @click="emit('editVariable')"
+            title="Bearbeiten"
+          />
+        </div>
+        <div v-if="showDeleteIcon">
+          <font-awesome-icon
+            class="icon pointer"
+            icon="trash"
+            size="sm"
+            @click="emit('deleteVariable')"
+            title="Löschen"
+          />
+        </div>
       </div>
     </div>
     <div class="description" v-if="variable.description && showDescription">
@@ -105,6 +133,11 @@ const variableAlreadyExists = computed(() =>
   & > .description {
     padding: 0 5px 5px 20px;
     line-height: 1.1em;
+  }
+
+  .icons {
+    display: flex;
+    gap: 5px;
   }
 }
 </style>

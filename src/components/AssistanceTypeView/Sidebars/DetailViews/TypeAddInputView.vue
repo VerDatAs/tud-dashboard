@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 import { supportedVariableTypes, variableTypeToString } from '@/types/AssistanceType/variableTypes'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 const atStore = useAssistanceTypeStore()
+
+const props = defineProps<{
+  currentName: string | null
+}>()
 
 const emit = defineEmits<{
   (e: 'backAction'): void
@@ -13,23 +17,39 @@ function backAction() {
   emit('backAction')
 }
 
-const name = ref('')
-const description = ref('')
-const type = ref(supportedVariableTypes[0])
-const required = ref(true)
+const currentVariable = computed(() =>
+  props.currentName === null ? undefined : atStore.getInputVariable(props.currentName)
+)
+const createMode = computed(() => currentVariable.value === undefined)
 
-function addInput() {
-  if (atStore.getInputVariable(name.value)) {
-    toast.error('Ein Eingang mit diesem Namen existiert bereits.')
-    return
-  }
+const name = ref(currentVariable.value?.name ?? '')
+const description = ref(currentVariable.value?.description ?? '')
+const type = ref(currentVariable.value?.type ?? supportedVariableTypes[0])
+const required = ref(currentVariable.value?.required ?? true)
+
+function saveInput() {
   if (!supportedVariableTypes.includes(type.value)) {
     toast.error('Der Typ ist nicht unterstützt.')
     return
   }
-  atStore.createInputVariable(name.value, description.value, type.value, required.value)
-  backAction()
-  toast.success(`Eingang "${name.value}" hinzugefügt.`)
+  if (createMode.value) {
+    const res = atStore.createInputVariable(name.value, description.value, type.value, required.value)
+    if (!res) return
+    backAction()
+    toast.success(`Eingang "${name.value}" hinzugefügt.`)
+  } else {
+    if (!props.currentName) return
+    const res = atStore.updateInputVariable(
+      props.currentName,
+      name.value,
+      description.value,
+      type.value,
+      required.value
+    )
+    if (!res) return
+    backAction()
+    toast.success(`Eingang "${name.value}" aktualisiert.`)
+  }
 }
 </script>
 
@@ -62,7 +82,7 @@ function addInput() {
         <input type="checkbox" v-model="required" />
       </div>
       <div class="actions">
-        <button class="btn btn-primary" :disabled="name == ''" @click="addInput">Speichern</button>
+        <button class="btn btn-primary" :disabled="name == ''" @click="saveInput">Speichern</button>
       </div>
     </div>
   </div>

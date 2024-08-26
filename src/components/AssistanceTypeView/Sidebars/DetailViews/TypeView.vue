@@ -9,11 +9,22 @@ import TypeAddInputView from './TypeAddInputView.vue'
 
 const atStore = useAssistanceTypeStore()
 const createVariableView = ref(false)
+const currentName = ref<string | null>(null)
 const { onDragStart } = inject<TDnD>(SDnDKey, () => useDragAndDrop(), true)
 
 function removeVariable(name: string) {
   if (!confirm('Möchten Sie den Eingang "' + name + '" wirklich löschen?')) return
   atStore.removeInputVariable(name)
+}
+
+function backAction() {
+  currentName.value = null
+  createVariableView.value = false
+}
+
+function editVariable(name: string) {
+  currentName.value = name
+  createVariableView.value = true
 }
 </script>
 
@@ -56,7 +67,9 @@ function removeVariable(name: string) {
             type="input"
             :show-add-remove-icon="false"
             show-delete-icon
+            show-edit-icon
             @delete-variable="removeVariable(input.name)"
+            @edit-variable="editVariable(input.name)"
           ></variable-row>
         </div>
       </div>
@@ -65,7 +78,7 @@ function removeVariable(name: string) {
       </div>
     </div>
   </div>
-  <type-add-input-view v-else @backAction="createVariableView = false"></type-add-input-view>
+  <type-add-input-view v-else @backAction="backAction" :current-name="currentName"></type-add-input-view>
 </template>
 
 <style scoped lang="scss">

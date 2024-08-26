@@ -18,6 +18,7 @@ import { getId } from '@/util/AssistanceType/useDnD'
 import { useVueFlow } from '@vue-flow/core'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
+import { toast } from 'vue3-toastify'
 import { useOperationStore } from './operations'
 
 export enum EAssistanceTypeTrigger {
@@ -51,14 +52,59 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     _inputs.value = []
   }
 
+  /** Get input variable for current assistance type. */
+  function getInputVariable(name: string): TAssistanceTypeInput | undefined {
+    return _inputs.value.find((input) => input.name.toLowerCase() == name.toLowerCase())
+  }
+
   /** Create input variable for current assistance type. */
-  function createInputVariable(name: string, description: string, type: TIOTypes, required: boolean = true) {
+  function createInputVariable(name: string, description: string, type: TIOTypes, required: boolean = true): boolean {
+    if (getInputVariable(name)) {
+      toast.error('Ein Eingang mit diesem Namen existiert bereits.')
+      return false
+    }
     _inputs.value.push({
       name: name,
       description: description,
       type: type,
       required: required
     })
+    return true
+  }
+
+  /** Update input variable for current assistance type. */
+  function updateInputVariable(
+    oldname: string,
+    name?: string,
+    description?: string,
+    type?: TIOTypes,
+    required?: boolean
+  ): boolean {
+    const { updateNodeData, getEdges, removeEdges } = useVueFlow(CVueFlowStoreId)
+
+    const input = getInputVariable(oldname)
+    if (!input) {
+      console.error('Input variable not found', name)
+      return false
+    }
+    const nodes = getNodesForInputVariable(oldname)
+    if (type && input.type != type) {
+      if (!confirm('Eine Änderung des Typs dieses Einganges entfernt all seine Verbindungen. Möchten Sie fortfahren?'))
+        return false
+      const nodeIds = nodes.map((node) => node.id)
+      removeEdges(getEdges.value.filter((edge) => nodeIds.includes(edge.source)).map((edge) => edge.id))
+    }
+    input.name = name ?? input.name
+    input.description = description ?? input.description
+    input.type = type ?? input.type
+    input.required = required ?? input.required
+
+    nodes.forEach((node) => {
+      updateNodeData(node.id, {
+        label: input.name
+      })
+    })
+    return true
   }
 
   /** Remove input variable for current assistance type. */
@@ -68,9 +114,10 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     _inputs.value = _inputs.value.filter((input) => input.name != name)
   }
 
-  /** Get input variable for current assistance type. */
-  function getInputVariable(name: string): TAssistanceTypeInput | undefined {
-    return _inputs.value.find((input) => input.name.toLowerCase() == name.toLowerCase())
+  /** Get Nodes for Input Variable */
+  function getNodesForInputVariable(name: string) {
+    const { getNodes } = useVueFlow(CVueFlowStoreId)
+    return getNodes.value.filter((node) => node.type == 'at-input' && node.data.variable.name == name)
   }
 
   /** Save the current assistance type to json format */
@@ -167,9 +214,11 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     inputs,
     createAssistanceType,
     unsetAssistanceType,
-    createInputVariable,
-    removeInputVariable,
     getInputVariable,
+    createInputVariable,
+    updateInputVariable,
+    removeInputVariable,
+    getNodesForInputVariable,
     saveAssistanceType,
     loadAssistanceType
   }
