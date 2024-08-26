@@ -4,11 +4,12 @@ import { useVueFlowStore } from '@/stores/AssistanceTypes/vueflow'
 import type { TDnD } from '@/types/AssistanceType/dnd'
 import useEdgeCreationHandler from '@/util/AssistanceType/edgeCreationHandler'
 import { SDnDKey } from '@/util/AssistanceType/injectionkeys'
+import { createStartNode } from '@/util/AssistanceType/nodeCreationHandler'
 import useNodeSizeHandler from '@/util/AssistanceType/nodeSizeHandler'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import useDragAndDrop from '@/util/AssistanceType/useDnD'
 import { useVueFlow, VueFlow } from '@vue-flow/core'
-import { inject } from 'vue'
+import { inject, onMounted } from 'vue'
 import DropzoneBackground from './DropzoneBackground.vue'
 import ControlEdge from './Edges/ControlEdge.vue'
 import DataEdge from './Edges/DataEdge.vue'
@@ -16,6 +17,7 @@ import AtInputNode from './Nodes/ATInputNode.vue'
 import DataInputNode from './Nodes/DataInputNode.vue'
 import DataOutputNode from './Nodes/DataOutputNode.vue'
 import OperationNode from './Nodes/OperationNode.vue'
+import StartNode from './Nodes/StartNode.vue'
 
 /*
  *    Drag And Drop
@@ -61,14 +63,9 @@ onEdgesChange((edges) => {
   }
 })
 
-// Just for testing stuff
-// watch(
-//   () => flowStore,
-//   () => {
-//     console.log(flowStore.nodes, flowStore.edges)
-//   },
-//   { deep: true }
-// )
+onMounted(() => {
+  createStartNode()
+})
 </script>
 
 <template>
@@ -81,6 +78,7 @@ onEdgesChange((edges) => {
     elevate-edges-on-select
     :connectionRadius="15"
     :min-zoom="0.1"
+    fit-view-on-init
   >
     <dropzone-background
       :style="{
@@ -101,6 +99,9 @@ onEdgesChange((edges) => {
     </template>
     <template #node-at-input="nodeProps">
       <at-input-node v-bind="nodeProps"></at-input-node>
+    </template>
+    <template #node-start="nodeProps">
+      <start-node v-bind="nodeProps"></start-node>
     </template>
     <template #edge-control="edgeProps">
       <control-edge v-bind="edgeProps"></control-edge>

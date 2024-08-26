@@ -16,6 +16,7 @@ function backAction() {
 const name = ref('')
 const description = ref('')
 const type = ref(supportedVariableTypes[0])
+const required = ref(true)
 
 function addInput() {
   if (atStore.getInputVariable(name.value)) {
@@ -26,7 +27,7 @@ function addInput() {
     toast.error('Der Typ ist nicht unterstützt.')
     return
   }
-  atStore.createInputVariable(name.value, description.value, type.value)
+  atStore.createInputVariable(name.value, description.value, type.value, required.value)
   backAction()
   toast.success(`Eingang "${name.value}" hinzugefügt.`)
 }
@@ -57,6 +58,8 @@ function addInput() {
             {{ variableTypeToString(variable) }}
           </option>
         </select>
+        <p>Erforderlich:</p>
+        <input type="checkbox" v-model="required" />
       </div>
       <div class="actions">
         <button class="btn btn-primary" :disabled="name == ''" @click="addInput">Speichern</button>
@@ -81,6 +84,10 @@ function addInput() {
     .heading p {
       margin: 0;
     }
+  }
+
+  input[type='checkbox'] {
+    justify-self: flex-start;
   }
 }
 .actions {

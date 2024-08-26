@@ -7,22 +7,26 @@
 
   --vf-operation-color-bg: rgb(216, 239, 250);
   --vf-operation-color-text: #222;
-  --vf-operation-color-handle: rgb(59, 115, 138);
   --vf-operation-color-edge: var(--vf-operation-color-handle);
   --vf-operation-color-border: var(--vf-operation-color-text);
-
+  
   --vf-io-color-bg: #fff;
   --vf-io-color-text: var(--vf-operation-color-text);
-  --vf-io-color-handle: rgb(161, 62, 218);
   --vf-io-color-edge: var(--vf-io-color-handle);
   --vf-io-handle-multiplier: 0.7;
-
+  
   --vf-at-input-color-bg: rgb(229, 205, 243);
   --vf-at-input-color-text: var(--vf-operation-color-text);
-  --vf-at-input-color-handle: var(--vf-io-color-handle);
   --vf-at-input-color-border: var(--vf-at-input-color-handle);
   --vf-at-input-handle-multiplier: 0.9;
 
+  --vf-start-color-bg: rgb(202, 241, 194);
+  --vf-start-color-text: var(--vf-operation-color-text);
+  --vf-start-color-border: rgb(14, 94, 14);
+  
+  --vf-operation-color-handle: rgb(59, 115, 138);
+  --vf-io-color-handle: rgb(161, 62, 218);
+  
   --vf-selected-color-values: 9, 112, 9;
   --vf-selected-color: rgb(var(--vf-selected-color-values));
 }
@@ -56,8 +60,14 @@
   .vue-flow__handle {
     width: calc(var(--vf-handle-size) * var(--vf-io-handle-multiplier));
     height: calc(var(--vf-handle-size) * var(--vf-io-handle-multiplier));
-    background: var(--vf-io-color-handle);
   }
+}
+
+.vue-flow__handle.controll {
+  background: var(--vf-operation-color-handle);
+}
+.vue-flow__handle.data {
+  background: var(--vf-io-color-handle);
 }
 
 .vue-flow__node-operation {
@@ -78,9 +88,6 @@
     box-shadow: 0 0 10px 0 rgba(var(--vf-selected-color-values), 0.4);
   }
 
-  .vue-flow__handle {
-    background: var(--vf-operation-color-handle);
-  }
   .vue-flow__handle-top {
     left: 20px;
   }
@@ -89,15 +96,12 @@
   }
 }
 
-.vue-flow__node-at-input {
+.vue-flow__node-at-input, .vue-flow__node-start {
   font-size: 0.8em;
   padding: 0 10px;
   border-radius: 3px;
   border-width: 1px;
   border-style: solid;
-  color: var(--vf-at-input-color-text);
-  background-color: var(--vf-at-input-color-bg);
-  border-color: var(--vf-at-input-color-border);
 
   &:has(.my-custom-currently-selected) {
     border-style: solid;
@@ -105,12 +109,23 @@
     border-color: var(--vf-selected-color);
     box-shadow: 0 0 10px 0 rgba(var(--vf-selected-color-values), 0.4);
   }
+}
+
+.vue-flow__node-at-input {
+  color: var(--vf-at-input-color-text);
+  background-color: var(--vf-at-input-color-bg);
+  border-color: var(--vf-at-input-color-border);
 
   .vue-flow__handle {
     width: calc(var(--vf-handle-size) * var(--vf-at-input-handle-multiplier));
     height: calc(var(--vf-handle-size) * var(--vf-at-input-handle-multiplier));
-    background: var(--vf-at-input-color-handle);
   }
+}
+
+.vue-flow__node-start {
+  color: var(--vf-start-color-text);
+  background-color: var(--vf-start-color-bg);
+  border-color: var(--vf-start-color-border);
 }
 
 .vue-flow__handle {

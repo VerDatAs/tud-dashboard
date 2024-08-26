@@ -10,6 +10,11 @@ import TypeAddInputView from './TypeAddInputView.vue'
 const atStore = useAssistanceTypeStore()
 const createVariableView = ref(false)
 const { onDragStart } = inject<TDnD>(SDnDKey, () => useDragAndDrop(), true)
+
+function removeVariable(name: string) {
+  if (!confirm('Möchten Sie den Eingang "' + name + '" wirklich löschen?')) return
+  atStore.removeInputVariable(name)
+}
 </script>
 
 <template>
@@ -46,7 +51,13 @@ const { onDragStart } = inject<TDnD>(SDnDKey, () => useDragAndDrop(), true)
           :draggable="true"
           @dragstart="onDragStart($event, input)"
         >
-          <variable-row :variable="input" type="input" :show-add-remove-icon="false"></variable-row>
+          <variable-row
+            :variable="input"
+            type="input"
+            :show-add-remove-icon="false"
+            show-delete-icon
+            @delete-variable="removeVariable(input.name)"
+          ></variable-row>
         </div>
       </div>
       <div class="no-vars" v-else>

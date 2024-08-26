@@ -110,7 +110,13 @@ watchArray(
         </select>
         <p v-if="trigger === 'scheduled'">Wartezeit:</p>
         <div class="oneRow timing" v-if="trigger === 'scheduled'">
-          <input type="number" min="1" step="1" v-model="timeNumber" />
+          <input
+            type="number"
+            min="0"
+            step="1"
+            v-model="timeNumber"
+            @change="timeNumber = timeNumber < 0 ? 0 : timeNumber"
+          />
           <select name="timeUnit" v-model="timeUnit">
             <option :value="EMilliseconds.MILLISECOND">Millisekunden</option>
             <option :value="EMilliseconds.SECOND" selected>Sekunden</option>

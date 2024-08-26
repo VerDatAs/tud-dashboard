@@ -25,8 +25,8 @@ watch(
 <template>
   <div :class="{ 'my-custom-currently-selected': nodeSelected }">
     <!-- <NodeResizer :min-width="300" :min-height="50" /> -->
-    <Handle type="target" :position="Position.Top"></Handle>
-    <Handle type="source" :position="Position.Bottom"></Handle>
+    <Handle type="target" class="controll" :position="Position.Top"></Handle>
+    <Handle type="source" class="controll" :position="Position.Bottom"></Handle>
     <div ref="nodeContent" class="node-content">
       <p class="title">{{ props.data.label }}</p>
       <p class="description">{{ props.data.operation.description }}</p>

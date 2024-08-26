@@ -2,6 +2,7 @@ import { useVueFlow } from '@vue-flow/core'
 import { toast } from 'vue3-toastify'
 import { CVueFlowStoreId } from './statics'
 
+const START_TYPE = 'start'
 const OPERATION_TYPE = 'operation'
 const DATA_INPUT_TYPE = 'datainput'
 const DATA_OUTPUT_TYPE = 'dataoutput'
@@ -83,7 +84,11 @@ export default function useEdgeCreationHandler() {
     if (!source || !target) return
     // Connect operation nodes
     // Connecting own output to own input doesnt work by default
-    if (source.type === OPERATION_TYPE && target.type === OPERATION_TYPE) addControlEdge(source.id, target.id)
+    if (
+      (source.type === OPERATION_TYPE && target.type === OPERATION_TYPE) ||
+      (source.type === START_TYPE && target.type === OPERATION_TYPE)
+    )
+      addControlEdge(source.id, target.id)
     // Connect data nodes
     else if (
       (source.type === DATA_OUTPUT_TYPE && target.type === DATA_INPUT_TYPE) ||

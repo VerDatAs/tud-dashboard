@@ -7,7 +7,7 @@ const props = defineProps<NodeProps>()
 
 <template>
   <div>
-    <Handle type="source" :position="Position.Bottom"></Handle>
+    <Handle type="source" class="data" :position="Position.Bottom"></Handle>
     <div>
       <p>
         <i>{{ variableTypeToString(props.data.variable.type) }}:</i> {{ props.data.label }}

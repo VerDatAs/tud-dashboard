@@ -1,13 +1,16 @@
 <script setup lang="ts">
 import { Handle, type NodeProps, Position } from '@vue-flow/core'
-import VariableNode from './VariableNode.vue'
 
 const props = defineProps<NodeProps>()
 </script>
 
 <template>
   <div>
-    <Handle type="target" class="data" :position="Position.Top"></Handle>
-    <variable-node v-bind="props" />
+    <Handle type="source" class="controll" :position="Position.Bottom"></Handle>
+    <div>
+      <p>
+        <b>{{ props.data.label }}</b>
+      </p>
+    </div>
   </div>
 </template>

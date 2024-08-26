@@ -93,3 +93,20 @@ export function createOperationNode(
 
   addNodes(newNode)
 }
+
+export function createStartNode() {
+  const { addNodes } = useVueFlow(CVueFlowStoreId)
+
+  const newNode = {
+    id: 'start-node',
+    type: 'start',
+    position: { x: 0, y: 0 },
+    deletable: false,
+    draggable: false,
+    data: {
+      label: 'Start'
+    }
+  }
+
+  addNodes(newNode)
+}

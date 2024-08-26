@@ -13,11 +13,16 @@ const props = withDefaults(
     variable: TInput | TOutput | TAssistanceTypeInput
     type: 'input' | 'output'
     showAddRemoveIcon?: boolean
+    showDeleteIcon?: boolean
   }>(),
   {
-    showAddRemoveIcon: true
+    showAddRemoveIcon: true,
+    showDeleteIcon: false
   }
 )
+const emit = defineEmits<{
+  (e: 'deleteVariable'): void
+}>()
 
 const showDescription = ref<boolean>(false)
 
@@ -64,6 +69,9 @@ const variableAlreadyExists = computed(() =>
           @click="removeVariable()"
         />
         <font-awesome-icon v-else class="icon pointer" icon="plus" size="sm" @click="addVariable()" />
+      </div>
+      <div class="addIcon" v-if="showDeleteIcon">
+        <font-awesome-icon class="icon pointer" icon="trash" size="sm" @click="emit('deleteVariable')" />
       </div>
     </div>
     <div class="description" v-if="variable.description && showDescription">

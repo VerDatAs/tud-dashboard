@@ -43,16 +43,19 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
   }
 
   /** Create input variable for current assistance type. */
-  function createInputVariable(name: string, description: string, type: TIOTypes) {
+  function createInputVariable(name: string, description: string, type: TIOTypes, required: boolean = true) {
     _inputs.value.push({
       name: name,
       description: description,
-      type: type
+      type: type,
+      required: required
     })
   }
 
   /** Remove input variable for current assistance type. */
   function removeInputVariable(name: string) {
+    const { getNodes, removeNodes } = useVueFlow(CVueFlowStoreId)
+    removeNodes(getNodes.value.filter((node) => node.type == 'at-input' && node.data.variable.name == name))
     _inputs.value = _inputs.value.filter((input) => input.name != name)
   }
 
