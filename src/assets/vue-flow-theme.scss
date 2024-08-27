@@ -72,9 +72,9 @@
 
 .vue-flow__node-operation {
   font-size: 0.8em;
-  padding: 5px 10px 15px 10px;
+  padding: 5px 20px 15px 20px;
   border-radius: 3px;
-  width: 300px;
+  min-width: fit-content;
   border-width: 1px;
   border-style: solid;
   color: var(--vf-operation-color-text);

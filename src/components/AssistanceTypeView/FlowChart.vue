@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import { ESidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { useVueFlowStore } from '@/stores/AssistanceTypes/vueflow'
 import type { TDnD } from '@/types/AssistanceType/dnd'
 import useEdgeCreationHandler from '@/util/AssistanceType/edgeCreationHandler'
+import useFlowChangeHandler from '@/util/AssistanceType/flowChangeHandler'
 import { SDnDKey } from '@/util/AssistanceType/injectionkeys'
 import { createStartNode } from '@/util/AssistanceType/nodeCreationHandler'
-import useNodeSizeHandler from '@/util/AssistanceType/nodeSizeHandler'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import useDragAndDrop from '@/util/AssistanceType/useDnD'
-import { useVueFlow, VueFlow } from '@vue-flow/core'
+import { VueFlow } from '@vue-flow/core'
 import { inject, onMounted } from 'vue'
 import DropzoneBackground from './DropzoneBackground.vue'
 import ControlEdge from './Edges/ControlEdge.vue'
@@ -25,43 +24,11 @@ import StartNode from './Nodes/StartNode.vue'
 const { onDragOver, onDragLeave, onDrop, isDragOver } = inject<TDnD>(SDnDKey, () => useDragAndDrop(), true)
 
 /*
- *    Node Size Handler
- */
-useNodeSizeHandler()
-
-/*
  *    Vue Flow
  */
 const flowStore = useVueFlowStore()
 useEdgeCreationHandler()
-const { onNodesChange, onEdgesChange } = useVueFlow(CVueFlowStoreId)
-const sidebarStore = useSidebarStore()
-
-/* Set Sidebar to Assistance Type when currently selected node gets removed */
-onNodesChange((nodes) => {
-  for (const node of nodes) {
-    if (
-      node.type === 'remove' &&
-      (sidebarStore.currentType === ESidebarType.Node || sidebarStore.currentType === ESidebarType.ATInput) &&
-      sidebarStore.currentId === node.id
-    ) {
-      sidebarStore.setAssistanceType()
-    }
-  }
-})
-
-/* Set Sidebar to Assistance Type when currently selected edge gets removed */
-onEdgesChange((edges) => {
-  for (const edge of edges) {
-    if (
-      edge.type === 'remove' &&
-      sidebarStore.currentType === ESidebarType.Edge &&
-      sidebarStore.currentId === edge.id
-    ) {
-      sidebarStore.setAssistanceType()
-    }
-  }
-})
+useFlowChangeHandler()
 
 onMounted(() => {
   createStartNode()
@@ -70,6 +37,7 @@ onMounted(() => {
 
 <template>
   <vue-flow
+    :id="CVueFlowStoreId"
     v-model:nodes="flowStore.nodes"
     v-model:edges="flowStore.edges"
     @dragover="onDragOver"
@@ -80,6 +48,7 @@ onMounted(() => {
     :min-zoom="0.1"
     fit-view-on-init
     :deleteKeyCode="null"
+    :apply-default="false"
   >
     <dropzone-background
       :style="{

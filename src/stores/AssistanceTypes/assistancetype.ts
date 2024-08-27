@@ -20,6 +20,7 @@ import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import { useOperationStore } from './operations'
+import { triggerNodeSizer } from '@/util/AssistanceType/nodeSizeHandler'
 
 export enum EAssistanceTypeTrigger {
   PROACTIVE = 'proactive',
@@ -32,6 +33,8 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
   const description = ref('')
   const trigger = ref<EAssistanceTypeTrigger>(EAssistanceTypeTrigger.PROACTIVE)
   const _inputs = ref<TAssistanceTypeInput[]>([])
+
+  const showVariableTypesOnNodes = ref(true)
 
   const id = computed(() => _id.value)
   const inputs = computed(() => _inputs.value)
@@ -204,6 +207,13 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     for (const edge of data.connectors.data) {
       addDataEdge(edge.source, edge.target)
     }
+
+    /*
+     *  Wait for animations to finish, then resize the nodes
+     */
+    setTimeout(() => {
+      triggerNodeSizer()
+    }, 500)
   }
 
   return {
@@ -212,6 +222,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     description,
     trigger,
     inputs,
+    showVariableTypesOnNodes,
     createAssistanceType,
     unsetAssistanceType,
     getInputVariable,

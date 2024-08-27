@@ -18,6 +18,21 @@
                 "name": "channel",
                 "type": "string",
                 "description": "Der Kanal, über den die Nachricht gesendet werden soll. Auswahl zwischen 'chat' und 'email'."
+            },
+            {
+                "name": "priority",
+                "type": "integer",
+                "description": "Die Priorität der Nachricht. Auswahl zwischen 'low', 'medium' und 'high'."
+            },
+            {
+                "name": "attachments",
+                "type": "array",
+                "description": "Anhänge, die der Nachricht hinzugefügt werden sollen"
+            },
+            {
+                "name": "cc",
+                "type": "array",
+                "description": "Benutzer, die in CC gesetzt werden sollen"
             }
         ],
         "outputs": [

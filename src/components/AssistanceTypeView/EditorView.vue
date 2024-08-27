@@ -73,15 +73,31 @@ function updateDashboardElement() {
         <h1>Editor für Assistenztypen</h1>
       </div>
       <div class="actions">
+        <font-awesome-icon
+          v-if="atStore.showVariableTypesOnNodes"
+          class="icon pointer"
+          icon="eye-slash"
+          size="lg"
+          title="Variablentypen verstecken"
+          @click="atStore.showVariableTypesOnNodes = false"
+        />
+        <font-awesome-icon
+          v-else
+          class="icon pointer"
+          icon="eye"
+          size="lg"
+          title="Variablentypen anzeigen"
+          @click="atStore.showVariableTypesOnNodes = true"
+        />
         <font-awesome-icon class="icon pointer" icon="clock" size="lg" title="Laden" @click="loadAssistanceType" />
         <font-awesome-icon class="icon pointer" icon="save" size="lg" title="Speichern" @click="saveAssistanceType" />
-        <font-awesome-icon
+        <!-- <font-awesome-icon
           class="icon pointer"
           icon="house"
           size="lg"
           title="Assistenztyp anzeigen"
           @click="sidebarStore.setAssistanceType()"
-        />
+        /> -->
         <font-awesome-icon
           class="icon pointer"
           :icon="isFullscreen ? 'minimize' : 'maximize'"

@@ -21,6 +21,9 @@ onNodeClick((e) => {
   } else if (e.node?.type === 'at-input') {
     sidebarStore.setATInput(e.node.id)
   }
+  if (e.node?.type === 'datainput' || e.node?.type === 'dataoutput') {
+    if (e.node?.parentNode) sidebarStore.setNode(e.node?.parentNode)
+  }
 })
 onEdgeClick((e) => {
   if (e.edge) {
@@ -36,11 +39,17 @@ const isEdge = computed(() => sidebarStore.currentType === ESidebarType.Edge)
 const isATInput = computed(() => sidebarStore.currentType === ESidebarType.ATInput)
 const isAType = computed(() => sidebarStore.currentType === ESidebarType.AssistanceType)
 const currentObjectString = computed(() =>
-  isNode.value ? 'Operation' : isEdge.value ? 'Verbindung' : isATInput.value ? 'Eingang' : ''
+  isNode.value
+    ? 'diese Operation'
+    : isEdge.value
+    ? 'diese Verbindung'
+    : isATInput.value
+    ? 'diesen Eingang'
+    : 'dieses Element'
 )
 
 function removeObject() {
-  if (!confirm(`Möchten Sie diese ${currentObjectString.value} wirklich löschen?`)) return
+  if (!confirm(`Möchten Sie ${currentObjectString.value} wirklich löschen?`)) return
   // Shouldnt ever happen
   if (!sidebarStore.currentId) return
 

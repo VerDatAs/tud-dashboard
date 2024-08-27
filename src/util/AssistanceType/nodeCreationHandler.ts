@@ -2,7 +2,7 @@ import { useOperationStore } from '@/stores/AssistanceTypes/operations'
 import type { TAssistanceTypeInput, TInput, TOutput } from '@/types/AssistanceType/operation'
 import { useVueFlow } from '@vue-flow/core'
 import { createVariableNodeID } from './AssistanceTypeHelper'
-import { CVueFlowStoreId } from './statics'
+import { COperationDefaultNodeWidth, CVueFlowStoreId } from './statics'
 
 export function createATVariableNode(
   nodeId: string,
@@ -57,7 +57,9 @@ export function createVariableNode(
       variable: variable
     },
     parentNode: operationNodeId,
-    extent: 'parent'
+    extent: 'parent',
+    draggable: false,
+    focusable: false
   }
   if (data?.dimensions) {
     newNode['width'] = data.dimensions.width
@@ -84,7 +86,8 @@ export function createOperationNode(
     data: {
       label: operation.name,
       operation: operation
-    }
+    },
+    width: COperationDefaultNodeWidth
   }
   if (dimensions) {
     newNode['width'] = dimensions.width
