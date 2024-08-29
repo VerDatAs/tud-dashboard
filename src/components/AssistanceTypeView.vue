@@ -15,8 +15,8 @@ withDefaults(
 
 const atStore = useAssistanceTypeStore()
 
-function onSelection(id: string | undefined) {
-  // currentTypeID.value = id
+function onSelection(id: string) {
+  atStore.loadAssistanceType(id)
 }
 
 function onCreation() {

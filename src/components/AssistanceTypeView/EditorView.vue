@@ -3,7 +3,6 @@ import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { SFullscreenMode } from '@/util/AssistanceType/injectionkeys'
 import { closeFullscreen, openFullscreen } from '@/util/SiteHelpers'
-import axios from 'axios'
 import { onMounted, provide, ref } from 'vue'
 import EditorMainView from './EditorMainView.vue'
 const atStore = useAssistanceTypeStore()
@@ -38,9 +37,7 @@ function saveAssistanceType() {
   atStore.saveAssistanceType()
 }
 function loadAssistanceType() {
-  axios.get('/example-type.json').then((response) => {
-    atStore.loadAssistanceType(response.data)
-  })
+  atStore.loadAssistanceType('1')
 }
 
 onMounted(() => {

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
+const atStore = useAssistanceTypeStore()
+
 const emit = defineEmits<{
   (e: 'assistanceTypeSelected', id: string): void
   (e: 'newAssistanceType'): void
@@ -18,7 +21,7 @@ const emit = defineEmits<{
     </div>
     <div class="divider"></div>
     <div class="list-types">
-      <p>Test</p>
+      <p @click="atStore.loadAssistanceType('1')">Test</p>
     </div>
   </div>
 </template>

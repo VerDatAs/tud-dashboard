@@ -7,6 +7,7 @@ import {
   createOperationNode,
   createVariableNode
 } from '@/util/AssistanceType/nodeCreationHandler'
+import { triggerNodeSizer } from '@/util/AssistanceType/nodeSizeHandler'
 import {
   serializeATInputNode,
   serializeControlEdge,
@@ -16,11 +17,11 @@ import {
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { getId } from '@/util/AssistanceType/useDnD'
 import { useVueFlow } from '@vue-flow/core'
+import axios from 'axios'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import { useOperationStore } from './operations'
-import { triggerNodeSizer } from '@/util/AssistanceType/nodeSizeHandler'
 
 export enum EAssistanceTypeTrigger {
   PROACTIVE = 'proactive',
@@ -152,19 +153,24 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
   }
 
   /** Load the assistance type from json format */
-  async function loadAssistanceType(json: TAssistanceType) {
+  async function loadAssistanceType(id: string) {
+    const resType = await axios.get('/example-type.json')
+    if (!resType) return
+
     const res = await useOperationStore().requestOperations()
     if (res.status != 200) {
       console.error('Failed to load operations')
       return
     }
 
-    const data = json
+    const data = resType.data
     _id.value = data.id
     name.value = data.name
     description.value = data.description
     trigger.value = EAssistanceTypeTrigger[data.trigger.type.toUpperCase()]
     _inputs.value = data.inputs.definitions
+
+    await setTimeout(() => {}, 100)
 
     for (const operation of data.operations as TOperationNode[]) {
       createOperationNode(
