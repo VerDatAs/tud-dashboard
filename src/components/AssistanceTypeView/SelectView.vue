@@ -15,7 +15,7 @@ const emit = defineEmits<{
     <div class="divider"></div>
     <div>
       <button class="btn btn-primary">
-        <font-awesome-icon class="icon" icon="plus" size="md" />
+        <font-awesome-icon class="icon" icon="plus" />
         <p @click.prevent="emit('newAssistanceType')">Neuer Assistenztyp</p>
       </button>
     </div>

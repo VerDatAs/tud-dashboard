@@ -121,11 +121,6 @@ const variableAlreadyExists = computed(() =>
     cursor: grab;
   }
 
-  .collapse-icon {
-    transition: all 150ms ease-in;
-    cursor: pointer;
-  }
-
   & > .permanent-row {
     display: flex;
     flex-direction: row;

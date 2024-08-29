@@ -13,7 +13,8 @@ export const useOperationStore = defineStore('at/operations', () => {
     return _operations.value.filter((operation) => {
       return (
         operation.name.toLowerCase().includes(_searchTerm.value.toLowerCase()) ||
-        operation.description.toLowerCase().includes(_searchTerm.value.toLowerCase())
+        operation.description.toLowerCase().includes(_searchTerm.value.toLowerCase()) ||
+        operation.id.toLowerCase().includes(_searchTerm.value.toLowerCase())
       )
     })
   })

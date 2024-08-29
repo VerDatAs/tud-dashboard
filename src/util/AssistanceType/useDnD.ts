@@ -2,17 +2,14 @@ import type { TDnD, TDnDDraggedObjects, TDnDState } from '@/types/AssistanceType
 import type { TAssistanceTypeInput, TOperation } from '@/types/AssistanceType/operation'
 import { useVueFlow } from '@vue-flow/core'
 import { ref, watch } from 'vue'
-import { createATVariableNode, createOperationNode } from './nodeCreationHandler'
+import {
+  centerNodeToPointOnCreation,
+  createATVariableNode,
+  createATVariableNodeId,
+  createOperationNode,
+  createOperationNodeId
+} from './nodeCreationHandler'
 import { CVueFlowStoreId } from './statics'
-
-/**
- * Return unique ID for a node.
- *
- * @returns {string} Unique ID
- */
-export function getId(): string {
-  return Math.random().toString(36).substring(2, 9)
-}
 
 export class CDnDState implements TDnDState {
   draggedObject: TDnDState['draggedObject']
@@ -111,30 +108,15 @@ export default function useDragAndDrop(state: CDnDState = new CDnDState()): TDnD
     // TOperation
     if (CDnDState.isOperation(draggedObject.value)) {
       // For absolute security that no node will have already used ID
-      do {
-        nodeId = draggedObject.value.id + '_' + getId()
-      } while (findNode(nodeId) != undefined)
+      nodeId = createOperationNodeId(draggedObject.value.id)
     }
     // TAssistanceTypeInput
     else if (CDnDState.isATVariable(draggedObject.value)) {
       // For absolute security that no node will have already used ID
-      do {
-        nodeId = 'at_input_' + draggedObject.value.name + '_' + getId()
-      } while (findNode(nodeId) != undefined)
+      nodeId = createATVariableNodeId(draggedObject.value.name)
     }
 
-    /**
-     * Align node position after drop, so it's centered to the mouse
-     *
-     * We can hook into events even in a callback, and we can remove the event listener after it's been called.
-     */
-    const { off } = onNodesInitialized(() => {
-      updateNode(nodeId, (node) => ({
-        position: { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 }
-      }))
-
-      off()
-    })
+    centerNodeToPointOnCreation(nodeId)
 
     if (CDnDState.isOperation(draggedObject.value)) {
       createOperationNode(nodeId, draggedObject.value.id, position)

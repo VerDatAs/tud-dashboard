@@ -5,7 +5,8 @@ import { addControlEdge, addDataEdge } from '@/util/AssistanceType/edgeCreationH
 import {
   createATVariableNode,
   createOperationNode,
-  createVariableNode
+  createVariableNode,
+  getId
 } from '@/util/AssistanceType/nodeCreationHandler'
 import { triggerNodeSizer } from '@/util/AssistanceType/nodeSizeHandler'
 import {
@@ -15,7 +16,6 @@ import {
   serializeOperation
 } from '@/util/AssistanceType/serialization'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
-import { getId } from '@/util/AssistanceType/useDnD'
 import { useVueFlow } from '@vue-flow/core'
 import axios from 'axios'
 import { defineStore } from 'pinia'

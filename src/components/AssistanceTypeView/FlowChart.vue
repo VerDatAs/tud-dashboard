@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useVueFlowStore } from '@/stores/AssistanceTypes/vueflow'
+import { useViewportStore } from '@/stores/AssistanceTypes/viewport'
 import type { TDnD } from '@/types/AssistanceType/dnd'
 import useEdgeCreationHandler from '@/util/AssistanceType/edgeCreationHandler'
 import useFlowChangeHandler from '@/util/AssistanceType/flowChangeHandler'
@@ -8,15 +8,17 @@ import { createStartNode } from '@/util/AssistanceType/nodeCreationHandler'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import useDragAndDrop from '@/util/AssistanceType/useDnD'
 import { VueFlow } from '@vue-flow/core'
-import { inject, onMounted } from 'vue'
+import { inject, onMounted, onUnmounted } from 'vue'
 import DropzoneBackground from './DropzoneBackground.vue'
 import ControlEdge from './Edges/ControlEdge.vue'
 import DataEdge from './Edges/DataEdge.vue'
+import FlowPanel from './FlowPanel.vue'
 import AtInputNode from './Nodes/ATInputNode.vue'
 import DataInputNode from './Nodes/DataInputNode.vue'
 import DataOutputNode from './Nodes/DataOutputNode.vue'
 import OperationNode from './Nodes/OperationNode.vue'
 import StartNode from './Nodes/StartNode.vue'
+const vpStore = useViewportStore()
 
 /*
  *    Drag And Drop
@@ -26,20 +28,21 @@ const { onDragOver, onDragLeave, onDrop, isDragOver } = inject<TDnD>(SDnDKey, ()
 /*
  *    Vue Flow
  */
-const flowStore = useVueFlowStore()
 useEdgeCreationHandler()
 useFlowChangeHandler()
 
 onMounted(() => {
   createStartNode()
+  vpStore.setFlowChartHtmlElement(document.getElementsByClassName('flow-chart')[0])
+})
+onUnmounted(() => {
+  vpStore.unsetFlowChartHtmlElement()
 })
 </script>
 
 <template>
   <vue-flow
     :id="CVueFlowStoreId"
-    v-model:nodes="flowStore.nodes"
-    v-model:edges="flowStore.edges"
     @dragover="onDragOver"
     @dragleave="onDragLeave"
     @drop="onDrop"
@@ -58,6 +61,9 @@ onMounted(() => {
     >
       <p v-if="isDragOver">Drop here</p>
     </dropzone-background>
+
+    <FlowPanel />
+
     <template #node-operation="nodeProps">
       <operation-node v-bind="nodeProps"></operation-node>
     </template>

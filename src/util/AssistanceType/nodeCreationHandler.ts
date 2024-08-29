@@ -4,6 +4,26 @@ import { useVueFlow } from '@vue-flow/core'
 import { createVariableNodeID } from './AssistanceTypeHelper'
 import { COperationDefaultNodeWidth, CVueFlowStoreId } from './statics'
 
+/**
+ * Return unique ID for a node.
+ *
+ * @returns {string} Unique ID
+ */
+export function getId(): string {
+  return Math.random().toString(36).substring(2, 9)
+}
+
+export function createATVariableNodeId(variableName: string): string {
+  const { findNode } = useVueFlow(CVueFlowStoreId)
+
+  let nodeId: string = ''
+  do {
+    nodeId = 'at_input_' + variableName + '_' + getId()
+  } while (findNode(nodeId) != undefined)
+
+  return nodeId
+}
+
 export function createATVariableNode(
   nodeId: string,
   variable: TAssistanceTypeInput,
@@ -69,6 +89,17 @@ export function createVariableNode(
   addNodes(newNode)
 }
 
+export function createOperationNodeId(operationId: string): string {
+  const { findNode } = useVueFlow(CVueFlowStoreId)
+
+  let nodeId: string = ''
+  do {
+    nodeId = operationId + '_' + getId()
+  } while (findNode(nodeId) != undefined)
+
+  return nodeId
+}
+
 export function createOperationNode(
   nodeId: string,
   operationId: string,
@@ -112,4 +143,21 @@ export function createStartNode() {
   }
 
   addNodes(newNode)
+}
+
+export function centerNodeToPointOnCreation(nodeId: string) {
+  const { onNodesInitialized, updateNode } = useVueFlow(CVueFlowStoreId)
+
+  /**
+   * Align node position after drop, so it's centered to the mouse
+   *
+   * We can hook into events even in a callback, and we can remove the event listener after it's been called.
+   */
+  const { off } = onNodesInitialized(() => {
+    updateNode(nodeId, (node) => ({
+      position: { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 }
+    }))
+
+    off()
+  })
 }

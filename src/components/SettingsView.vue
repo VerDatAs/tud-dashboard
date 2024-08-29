@@ -106,7 +106,6 @@ export default {
         <font-awesome-icon
           class="icon"
           icon="circle-info"
-          size="md"
           title="Dadurch wird der Debugging-Modus aktiviert, der es Ihnen derzeit ermöglicht, das Diagramm in der Komponente der Wissensstruktur herunterzuladen und neu zu zeichnen."
         />
       </div>
@@ -116,7 +115,6 @@ export default {
         <font-awesome-icon
           class="icon"
           icon="circle-info"
-          size="md"
           title="Dadurch werden erweiterte Einstellungen sichtbar, wie das Monitoring von Assistenzprozessen."
         />
       </h2>

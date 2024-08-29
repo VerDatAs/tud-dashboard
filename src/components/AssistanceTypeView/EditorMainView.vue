@@ -15,7 +15,7 @@ provide<TDnD>(SDnDKey, useDragAndDrop())
 
 <template>
   <div class="main">
-    <operations-sidebar class="operations-sidebar" />
+    <!-- <operations-sidebar class="operations-sidebar" /> -->
     <flow-chart class="flow-chart" />
     <details-sidebar class="details-sidebar" />
   </div>

@@ -114,5 +114,17 @@
                 "description": "Gibt an, ob die Daten erfolgreich gelöscht wurden"
             }
         ]
+    },
+    {
+        "id": "12eda2",
+        "name": "Sinnlose Operation die aktuell gar nichts macht",
+        "description": "",
+        "inputs": []
+    },
+    {
+        "id": "1221de",
+        "name": "E-Mail senden",
+        "description": "Sendet eine E-Mail an den Benutzer",
+        "inputs": []
     }
 ]

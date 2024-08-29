@@ -70,7 +70,7 @@ function updateDashboardElement() {
         <h1>Editor für Assistenztypen</h1>
       </div>
       <div class="actions">
-        <font-awesome-icon
+        <!-- <font-awesome-icon
           v-if="atStore.showVariableTypesOnNodes"
           class="icon pointer"
           icon="eye-slash"
@@ -87,7 +87,7 @@ function updateDashboardElement() {
           @click="atStore.showVariableTypesOnNodes = true"
         />
         <font-awesome-icon class="icon pointer" icon="clock" size="lg" title="Laden" @click="loadAssistanceType" />
-        <font-awesome-icon class="icon pointer" icon="save" size="lg" title="Speichern" @click="saveAssistanceType" />
+        <font-awesome-icon class="icon pointer" icon="save" size="lg" title="Speichern" @click="saveAssistanceType" /> -->
         <!-- <font-awesome-icon
           class="icon pointer"
           icon="house"
