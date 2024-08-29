@@ -68,6 +68,7 @@ function editVariable(name: string) {
             :show-add-remove-icon="false"
             show-delete-icon
             show-edit-icon
+            drag-and-drop
             @delete-variable="removeVariable(input.name)"
             @edit-variable="editVariable(input.name)"
           ></variable-row>

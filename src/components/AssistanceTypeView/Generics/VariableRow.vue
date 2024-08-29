@@ -15,11 +15,13 @@ const props = withDefaults(
     showAddRemoveIcon?: boolean
     showDeleteIcon?: boolean
     showEditIcon?: boolean
+    dragAndDrop?: boolean
   }>(),
   {
     showAddRemoveIcon: true,
     showDeleteIcon: false,
-    showEditIcon: false
+    showEditIcon: false,
+    dragAndDrop: false
   }
 )
 const emit = defineEmits<{
@@ -49,11 +51,11 @@ const variableAlreadyExists = computed(() =>
 </script>
 
 <template>
-  <div class="variable-row">
+  <div class="variable-row" :class="{ grab: dragAndDrop }">
     <div class="permanent-row">
       <div class="text" @click="showDescription = !showDescription">
         <font-awesome-icon
-          class="icon"
+          class="collapse-icon icon"
           :class="{ rotated: showDescription }"
           icon="chevron-right"
           size="sm"
@@ -115,6 +117,15 @@ const variableAlreadyExists = computed(() =>
   margin-bottom: 2px;
   padding-inline: 3px 10px;
 
+  &.grab {
+    cursor: grab;
+  }
+
+  .collapse-icon {
+    transition: all 150ms ease-in;
+    cursor: pointer;
+  }
+
   & > .permanent-row {
     display: flex;
     flex-direction: row;
@@ -127,7 +138,6 @@ const variableAlreadyExists = computed(() =>
     align-items: baseline;
     gap: 5px;
     padding: 5px;
-    cursor: pointer;
   }
 
   & > .description {
