@@ -1,5 +1,12 @@
 import type { TAssistanceTypeInput } from '@/types/AssistanceType/operation'
-import type { TAssistanceType, TIONode, TOperationNode } from '@/types/AssistanceType/serialization'
+import type {
+  TAssistanceType,
+  TATInputNode,
+  TControlEdge,
+  TDataEdge,
+  TIONode,
+  TOperationNode
+} from '@/types/AssistanceType/serialization'
 import type { TIOTypes } from '@/types/AssistanceType/variableTypes'
 import { addControlEdge, addDataEdge } from '@/util/AssistanceType/edgeCreationHandler'
 import {
@@ -191,7 +198,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
       }
     }
 
-    for (const input of data.inputs.nodes) {
+    for (const input of data.inputs.nodes as TATInputNode[]) {
       const i = getInputVariable(input.name)
       if (!i) {
         console.error('Input variable not found in input definitions', input.name)
@@ -202,15 +209,12 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
       })
     }
 
-    for (const edge of data.connectors.control) {
+    for (const edge of data.connectors.control as TControlEdge[]) {
       addControlEdge(edge.source, edge.target, {
-        trigger: {
-          trigger: edge.trigger,
-          schedule: edge.schedule
-        }
+        trigger: edge.trigger
       })
     }
-    for (const edge of data.connectors.data) {
+    for (const edge of data.connectors.data as TDataEdge[]) {
       addDataEdge(edge.source, edge.target)
     }
 

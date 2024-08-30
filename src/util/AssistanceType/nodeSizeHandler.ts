@@ -9,9 +9,7 @@ export function triggerNodeSizer(nodeId?: string) {
 function triggerNodeSizerAll() {
   const { getNodes } = useVueFlow(CVueFlowStoreId)
   const parentNodes = getNodes.value.filter((n) => n.isParent)
-  console.log('Hi')
   for (const node of parentNodes) {
-    console.log(node)
     triggerNodeSizerNode(node.id)
   }
 }

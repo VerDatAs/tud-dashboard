@@ -128,8 +128,8 @@
                     "type": "input",
                     "flowContext": {
                         "position": {
-                            "x": 126,
-                            "y": 10
+                            "x": 128.89862442000995,
+                            "y": 10.663422570298565
                         },
                         "dimensions": {
                             "width": 60,
@@ -175,7 +175,7 @@
                     "flowContext": {
                         "position": {
                             "x": 40,
-                            "y": 112
+                            "y": 100
                         },
                         "dimensions": {
                             "width": 65,
@@ -189,8 +189,8 @@
                     "type": "output",
                     "flowContext": {
                         "position": {
-                            "x": 110,
-                            "y": 112
+                            "x": 110.32279245164966,
+                            "y": 101.32684514059719
                         },
                         "dimensions": {
                             "width": 63,
@@ -235,8 +235,8 @@
                     "type": "input",
                     "flowContext": {
                         "position": {
-                            "x": 110,
-                            "y": 10
+                            "x": 112.97648273284398,
+                            "y": 8.673154859402814
                         },
                         "dimensions": {
                             "width": 60,
@@ -255,7 +255,7 @@
                     "y": 666.1655400250514
                 },
                 "dimensions": {
-                    "width": 310,
+                    "width": 300,
                     "height": 186
                 }
             },
@@ -293,7 +293,7 @@
                 "target": "asd123_fy5ajvt",
                 "trigger": {
                     "type": "scheduled",
-                    "schedule": 300000
+                    "schedule": 120000
                 }
             },
             {

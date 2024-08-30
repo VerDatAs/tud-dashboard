@@ -15,7 +15,7 @@ export function addControlEdge(
   data: {
     id?: string
     trigger?: {
-      trigger?: 'direct' | 'scheduled'
+      type: 'direct' | 'scheduled'
       schedule?: number
     }
   } = {}
@@ -30,8 +30,7 @@ export function addControlEdge(
     target: targetId,
     type: 'control',
     data: {
-      trigger: data?.trigger?.trigger ?? 'direct',
-      schedule: data?.trigger?.schedule ?? 0
+      trigger: data?.trigger ?? { type: 'direct' }
     }
   })
   setLabelForControlEdge(id)
@@ -41,8 +40,8 @@ export function setLabelForControlEdge(edgeId: string) {
   const { findEdge } = useVueFlow(CVueFlowStoreId)
   const edge = findEdge(edgeId)
   if (!edge) return
-  if (edge.data.trigger === 'scheduled') {
-    const { timeNumber, timeUnit } = CMillisecondsUtils.loadMilisecondsToProperValue(edge.data.schedule)
+  if (edge.data.trigger.type === 'scheduled') {
+    const { timeNumber, timeUnit } = CMillisecondsUtils.loadMilisecondsToProperValue(edge.data.trigger.schedule)
     edge.label = `${timeNumber}${CMillisecondsUtils.toString(timeUnit)}`
   } else {
     edge.label = ''

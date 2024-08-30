@@ -23,8 +23,10 @@ function selectNode(node: GraphNode) {
   sidebarStore.setNode(usedNode.id)
 }
 
-const trigger = ref(edge.value.data.trigger ?? 'direct')
-const { timeNumber: tn, timeUnit: tu } = CMillisecondsUtils.loadMilisecondsToProperValue(edge.value.data.schedule ?? 1)
+const trigger = ref(edge.value.data.trigger.type ?? 'direct')
+const { timeNumber: tn, timeUnit: tu } = CMillisecondsUtils.loadMilisecondsToProperValue(
+  edge.value.data.trigger.schedule ?? 1
+)
 const timeNumber = ref(tn)
 const timeUnit = ref(tu)
 
@@ -32,9 +34,9 @@ watch(
   () => edge.value,
   () => {
     const { timeNumber: tn, timeUnit: tu } = CMillisecondsUtils.loadMilisecondsToProperValue(
-      edge.value.data.schedule ?? 1
+      edge.value.data.trigger.schedule ?? 1
     )
-    trigger.value = edge.value.data.trigger ?? 'direct'
+    trigger.value = edge.value.data.trigger.type ?? 'direct'
     timeNumber.value = tn
     timeUnit.value = tu
   }
@@ -44,13 +46,13 @@ watchArray(
   [trigger, timeNumber, timeUnit],
   () => {
     if (isControl.value) {
-      if (trigger.value === 'scheduled') {
-        setLabelForControlEdge(edge.value.id)
-      }
       updateEdgeData(edge.value.id, {
-        trigger: trigger.value,
-        schedule: timeNumber.value * timeUnit.value
+        trigger: {
+          type: trigger.value,
+          schedule: timeNumber.value * timeUnit.value
+        }
       })
+      setLabelForControlEdge(edge.value.id)
 
       // This is all just for the redraw, else the background of the label is not getting updated properly to a new text-size
       // We move the target node 1 pixel right and after 1 tick back to the original position

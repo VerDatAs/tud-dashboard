@@ -62,7 +62,6 @@ export function serializeControlEdge(edge: GraphEdge): TControlEdge {
   return {
     source: edge.source,
     target: edge.target,
-    trigger: edge.data.trigger,
-    schedule: edge.data.schedule
+    trigger: edge.data.trigger
   }
 }

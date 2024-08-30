@@ -42,14 +42,18 @@ export type TControlEdge =
   | {
       source: string
       target: string
-      trigger: 'direct'
-      schedule?: number
+      trigger: {
+        type: 'direct'
+        schedule?: number
+      }
     }
   | {
       source: string
       target: string
-      trigger: 'scheduled'
-      schedule: number
+      trigger: {
+        type: 'scheduled'
+        schedule: number
+      }
     }
 
 export type TAssistanceType = {
