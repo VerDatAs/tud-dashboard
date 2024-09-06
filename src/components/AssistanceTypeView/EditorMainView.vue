@@ -5,7 +5,7 @@ import useDragAndDrop from '@/util/AssistanceType/useDnD'
 import { provide } from 'vue'
 import FlowChart from './FlowChart.vue'
 import DetailsSidebar from './Sidebars/DetailsSidebar.vue'
-import OperationsSidebar from './Sidebars/OperationsSidebar.vue'
+import { Splitpanes, Pane } from 'splitpanes'
 
 /*
  *    Drag And Drop
@@ -15,9 +15,17 @@ provide<TDnD>(SDnDKey, useDragAndDrop())
 
 <template>
   <div class="main">
-    <!-- <operations-sidebar class="operations-sidebar" /> -->
-    <flow-chart class="flow-chart" />
-    <details-sidebar class="details-sidebar" />
+    <Splitpanes class="default-theme">
+      <!-- <Pane>
+        <operations-sidebar class="operations-sidebar" />
+      </Pane> -->
+      <Pane>
+        <flow-chart class="flow-chart" />
+      </Pane>
+      <Pane class="details-sidebar-pane" size="30">
+        <details-sidebar class="details-sidebar" />
+      </Pane>
+    </Splitpanes>
   </div>
 </template>
 

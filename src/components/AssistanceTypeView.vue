@@ -39,6 +39,8 @@ function onCreation() {
 <style>
 @import '@/assets/assistance-type-view.scss';
 @import 'vue3-toastify/dist/index.css';
+@import 'splitpanes/dist/splitpanes.css';
+@import '@/assets/splitpane-override.scss';
 </style>
 
 <style scoped lang="scss">

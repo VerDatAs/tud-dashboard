@@ -58,6 +58,7 @@
     "object-refs": "^0.3.0",
     "pinia": "^2.0.32",
     "pinia-plugin-persistedstate": "^3.2.0",
+    "splitpanes": "^3.1.5",
     "tiny-svg": "^3.0.0",
     "vue": "^3.2.47",
     "vue-echarts": "^6.7.2",
