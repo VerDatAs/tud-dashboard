@@ -84,7 +84,7 @@ function removeObject() {
 <style scoped lang="scss">
 .details-sidebar {
   // width: 300px;
-  // overflow: scroll;
+  // overflow: auto;
 
   &.fullscreen {
     width: 400px;

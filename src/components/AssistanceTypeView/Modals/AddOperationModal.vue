@@ -70,7 +70,7 @@ function addOperation(operation: TOperation) {
   gap: 5px;
 }
 .my-main {
-  overflow: scroll;
+  overflow: auto;
   height: calc(100%);
   display: flex;
   flex-direction: column;

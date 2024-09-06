@@ -68,7 +68,7 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    overflow: scroll;
+    overflow: auto;
     background-color: var(--vf-flow-color-bg);
     border-radius: var(--border-radius);
 

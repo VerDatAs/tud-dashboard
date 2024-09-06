@@ -90,7 +90,7 @@ const { hideModal } = inject(SAddOperationModal, () => new CModalManager(), true
 
   .modal-main {
     margin-top: 1em;
-    overflow: scroll;
+    overflow: auto;
     height: calc(100% - 50px);
   }
 }
