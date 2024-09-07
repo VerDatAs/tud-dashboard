@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
-import EditorView from './AssistanceTypeView/EditorView.vue'
-import SelectView from './AssistanceTypeView/SelectView.vue'
+import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype';
+import EditorView from './AssistanceTypeView/EditorView.vue';
+import SelectView from './AssistanceTypeView/SelectView.vue';
 
 withDefaults(
   defineProps<{

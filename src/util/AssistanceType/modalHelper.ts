@@ -4,6 +4,7 @@ import { ref, type Ref } from 'vue'
 export const SDefaultModal: Symbol = Symbol('DefaultModal')
 
 export const SAddOperationModal = Symbol('AddOperationModal')
+export const SSaveAndExitModal = Symbol('SaveAndExitModal')
 
 export class CModalManager {
   private showModalRef: Ref<boolean>

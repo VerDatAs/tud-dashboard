@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { CModalManager, SAddOperationModal, SDefaultModal } from '@/util/AssistanceType/modalHelper';
-import { inject } from 'vue';
+import { CModalManager, SAddOperationModal, SDefaultModal } from '@/util/AssistanceType/modalHelper'
+import { inject } from 'vue'
 
 const props = withDefaults(
   defineProps<{
@@ -18,28 +18,34 @@ const props = withDefaults(
 )
 
 const { hideModal } = inject(SAddOperationModal, () => new CModalManager(), true)
+
+defineOptions({
+  inheritAttrs: false
+})
 </script>
 
 <template>
   <Teleport to="#verdatas-dashboard">
-    <div class="background" @click.self="closeOnBackgroundClick ? hideModal() : ''"></div>
-    <div class="at-modal">
-      <slot name="override">
-        <div class="modal-title">
-          <slot name="title">
-            <p>{{ title }}</p>
-          </slot>
-        </div>
-        <div v-if="divider" class="divider"></div>
-        <div class="modal-main">
-          <slot name="default"></slot>
-        </div>
-        <slot name="close-icon">
-          <div class="close-icon" @click="hideModal()">
-            <font-awesome-icon class="icon" icon="xmark" size="lg" title="Schließen"></font-awesome-icon>
+    <div v-bind="$attrs">
+      <div class="background" @click.self="closeOnBackgroundClick ? hideModal() : ''"></div>
+      <div class="at-modal">
+        <slot name="override">
+          <div class="modal-title">
+            <slot name="title">
+              <p>{{ title }}</p>
+            </slot>
           </div>
+          <div v-if="divider" class="divider"></div>
+          <div class="modal-main">
+            <slot name="default"></slot>
+          </div>
+          <slot name="close-icon">
+            <div class="close-icon" @click="hideModal()">
+              <font-awesome-icon class="icon" icon="xmark" size="lg" title="Schließen"></font-awesome-icon>
+            </div>
+          </slot>
         </slot>
-      </slot>
+      </div>
     </div>
   </Teleport>
 </template>
@@ -77,7 +83,7 @@ const { hideModal } = inject(SAddOperationModal, () => new CModalManager(), true
   top: 10%;
   left: 20%;
   width: 60%;
-  height: 80%;
+  height: var(--modal-height, 80%);
   background-color: rgba(255, 255, 255, 1);
   padding: 10px;
   border-radius: 10px;

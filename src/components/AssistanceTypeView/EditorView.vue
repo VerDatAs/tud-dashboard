@@ -1,16 +1,13 @@
 <script setup lang="ts">
 import { SFullscreenMode } from '@/util/AssistanceType/injectionkeys'
+import { CModalManager, SSaveAndExitModal } from '@/util/AssistanceType/modalHelper'
 import { closeFullscreen, openFullscreen } from '@/util/SiteHelpers'
 import { onMounted, provide, ref } from 'vue'
 import EditorMainView from './EditorMainView.vue'
+import SaveAndExitModal from './Modals/SaveAndExitModal.vue'
 const emit = defineEmits<{
   (e: 'backAction'): void
 }>()
-
-function backAction() {
-  if (confirm('Ihre ungespeicherten Änderungen gehen verloren. Möchten Sie wirklich zurück zur Assistenztyp-Auswahl?'))
-    emit('backAction')
-}
 
 /** The dashboard element (with id 'verdatas-dashboard') */
 const dashboardElement = ref<HTMLElement | undefined>()
@@ -29,6 +26,16 @@ function toggleFullscreen() {
   }
 }
 
+/*
+ *   Save and Exit Modal
+ */
+const saveAndExitModalManager = new CModalManager()
+provide(SSaveAndExitModal, saveAndExitModalManager)
+
+function backAction() {
+  saveAndExitModalManager.showModal()
+}
+
 onMounted(() => {
   updateDashboardElement()
   isFullscreen.value = false
@@ -45,6 +52,7 @@ function updateDashboardElement() {
 
 <template>
   <div id="assistanceTypes">
+    <save-and-exit-modal v-if="saveAndExitModalManager.getShowModal" />
     <div class="headline">
       <div class="title">
         <font-awesome-icon
