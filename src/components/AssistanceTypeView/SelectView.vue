@@ -7,14 +7,9 @@ import { toast } from 'vue3-toastify'
 import LoadingIndicator from './Generics/LoadingIndicator.vue'
 const atStore = useAssistanceTypeStore()
 
-const emit = defineEmits<{
-  (e: 'assistanceTypeSelected', id: string): void
-  (e: 'newAssistanceType'): void
-}>()
-
 const assistanceTypes = ref<TAssistanceType[]>()
 const loadingAssistanceTypes = ref<boolean>(true)
-const loadingAssistanceTypeAfterClick = ref<boolean>(false)
+const loadingEditor = ref<boolean>(false)
 
 async function loadAssistanceTypes() {
   const res = await axios.get('/example-types.json')
@@ -28,10 +23,16 @@ async function loadAssistanceTypes() {
 }
 
 function loadAT(id: string) {
-  loadingAssistanceTypeAfterClick.value = true
+  loadingEditor.value = true
   atStore.loadAssistanceType(id).finally(() => {
-    loadingAssistanceTypeAfterClick.value = false
+    loadingEditor.value = false
   })
+}
+
+function newAssistanceType() {
+  loadingEditor.value = true
+  atStore.createAssistanceType()
+  loadingEditor.value = false
 }
 
 loadAssistanceTypes().then(() => {
@@ -47,14 +48,14 @@ loadAssistanceTypes().then(() => {
     <div>
       <button class="btn btn-primary">
         <font-awesome-icon class="icon" icon="plus" />
-        <p @click.prevent="emit('newAssistanceType')">Neuer Assistenztyp</p>
+        <p @click.prevent="newAssistanceType()">Neuer Assistenztyp</p>
       </button>
     </div>
     <div class="divider"></div>
-    <div v-if="loadingAssistanceTypes || loadingAssistanceTypeAfterClick" class="loading-indicator">
+    <div v-if="loadingAssistanceTypes || loadingEditor" class="loading-indicator">
       <loading-indicator size="5em" />
       <p v-if="loadingAssistanceTypes">Assistenztypen werden geladen.</p>
-      <p v-if="loadingAssistanceTypeAfterClick">Editor wird geladen.</p>
+      <p v-if="loadingEditor">Editor wird geladen.</p>
     </div>
     <div class="list-types" v-else>
       <div v-if="assistanceTypes?.length === 0">

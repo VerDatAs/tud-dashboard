@@ -14,23 +14,11 @@ withDefaults(
 )
 
 const atStore = useAssistanceTypeStore()
-
-function onSelection(id: string) {
-  atStore.loadAssistanceType(id)
-}
-
-function onCreation() {
-  atStore.createAssistanceType()
-}
 </script>
 
 <template>
   <div id="assistanceTypesContainer" :class="{ expanded: isExpanded }">
-    <SelectView
-      v-if="atStore.id === undefined"
-      @assistanceTypeSelected="onSelection"
-      @newAssistanceType="onCreation"
-    ></SelectView>
+    <SelectView v-if="atStore.id === undefined"></SelectView>
     <EditorView v-else @backAction="atStore.unsetAssistanceType()"></EditorView>
   </div>
   <div class="Toastify"></div>

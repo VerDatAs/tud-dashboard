@@ -2,12 +2,31 @@
 import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 import { CModalManager, SAddOperationModal } from '@/util/AssistanceType/modalHelper'
 import { Panel } from '@vue-flow/core'
-import { provide } from 'vue'
+import { provide, ref } from 'vue'
+import { toast } from 'vue3-toastify'
+import LoadingIndicator from './Generics/LoadingIndicator.vue'
 import AddOperationModal from './Modals/AddOperationModal.vue'
 const atStore = useAssistanceTypeStore()
 
 const modalManager = new CModalManager()
 provide(SAddOperationModal, modalManager)
+
+const loadingSave = ref<boolean>(false)
+
+function saveAT() {
+  loadingSave.value = true
+  atStore
+    .saveAssistanceType()
+    .then((res: string) => {
+      toast.success(res)
+    })
+    .catch((err: string) => {
+      toast.error(err)
+    })
+    .finally(() => {
+      loadingSave.value = false
+    })
+}
 </script>
 
 <template>
@@ -41,13 +60,8 @@ provide(SAddOperationModal, modalManager)
       />
     </div>
     <div>
-      <font-awesome-icon
-        class="icon pointer"
-        icon="save"
-        size="lg"
-        title="Speichern"
-        @click="atStore.saveAssistanceType()"
-      />
+      <loading-indicator size="18px" background-color="#ddd" border-size="4px" v-if="loadingSave" />
+      <font-awesome-icon v-else class="icon pointer" icon="save" size="lg" title="Speichern" @click="saveAT()" />
     </div>
   </Panel>
 </template>

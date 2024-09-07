@@ -132,10 +132,12 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
   }
 
   /** Save the current assistance type to json format */
-  function saveAssistanceType() {
+  async function saveAssistanceType() {
     const { getNodes, getEdges } = useVueFlow(CVueFlowStoreId)
 
-    if (!_id.value) return
+    if (!_id.value) {
+      return Promise.reject('Aktuell ist kein Assistenztyp ausgewählt.')
+    }
     const operations = getNodes.value.filter((node) => node.type == 'operation').map(serializeOperation)
     const resObj: TAssistanceType = {
       id: _id.value,
@@ -157,6 +159,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     }
     console.log(resObj)
     console.log(JSON.stringify(resObj))
+    return Promise.resolve('Assistenztyp erfolgreich gespeichert.')
   }
 
   /** Load the assistance type from json format */
