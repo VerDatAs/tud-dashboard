@@ -40,6 +40,8 @@ provide<TDnD>(SDnDKey, useDragAndDrop())
     flex-shrink: 0;
   }
   .details-sidebar {
+    overflow: auto;
+    height: 100%;
     flex-shrink: 0;
   }
 }

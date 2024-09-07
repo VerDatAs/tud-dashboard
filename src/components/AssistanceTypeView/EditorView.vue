@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
-import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { SFullscreenMode } from '@/util/AssistanceType/injectionkeys'
 import { closeFullscreen, openFullscreen } from '@/util/SiteHelpers'
 import { onMounted, provide, ref } from 'vue'
 import EditorMainView from './EditorMainView.vue'
-const atStore = useAssistanceTypeStore()
-
 const emit = defineEmits<{
   (e: 'backAction'): void
 }>()
@@ -33,19 +29,10 @@ function toggleFullscreen() {
   }
 }
 
-function saveAssistanceType() {
-  atStore.saveAssistanceType()
-}
-function loadAssistanceType() {
-  atStore.loadAssistanceType('1')
-}
-
 onMounted(() => {
   updateDashboardElement()
   isFullscreen.value = false
 })
-
-const sidebarStore = useSidebarStore()
 
 /*
  *    Helper Functions
@@ -70,31 +57,6 @@ function updateDashboardElement() {
         <h1>Editor für Assistenztypen</h1>
       </div>
       <div class="actions">
-        <!-- <font-awesome-icon
-          v-if="atStore.showVariableTypesOnNodes"
-          class="icon pointer"
-          icon="eye-slash"
-          size="lg"
-          title="Variablentypen verstecken"
-          @click="atStore.showVariableTypesOnNodes = false"
-        />
-        <font-awesome-icon
-          v-else
-          class="icon pointer"
-          icon="eye"
-          size="lg"
-          title="Variablentypen anzeigen"
-          @click="atStore.showVariableTypesOnNodes = true"
-        />
-        <font-awesome-icon class="icon pointer" icon="clock" size="lg" title="Laden" @click="loadAssistanceType" />
-        <font-awesome-icon class="icon pointer" icon="save" size="lg" title="Speichern" @click="saveAssistanceType" /> -->
-        <!-- <font-awesome-icon
-          class="icon pointer"
-          icon="house"
-          size="lg"
-          title="Assistenztyp anzeigen"
-          @click="sidebarStore.setAssistanceType()"
-        /> -->
         <font-awesome-icon
           class="icon pointer"
           :icon="isFullscreen ? 'minimize' : 'maximize'"
