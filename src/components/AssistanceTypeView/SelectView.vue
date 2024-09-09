@@ -2,14 +2,26 @@
 import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 import type { TAssistanceType } from '@/types/AssistanceType/serialization'
 import axios from 'axios'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import LoadingIndicator from './Generics/LoadingIndicator.vue'
 const atStore = useAssistanceTypeStore()
 
-const assistanceTypes = ref<TAssistanceType[]>()
+const assistanceTypes = ref<TAssistanceType[]>([])
 const loadingAssistanceTypes = ref<boolean>(true)
 const loadingEditor = ref<boolean>(false)
+const searchTerm = ref<string>('')
+
+const searchedAssistanceTypes = computed(() => {
+  const search = searchTerm.value.toLowerCase().trim()
+  return assistanceTypes.value.filter((operation) => {
+    return (
+      operation.name.toLowerCase().includes(search) ||
+      operation.description.toLowerCase().includes(search) ||
+      operation.id.toLowerCase().includes(search)
+    )
+  })
+})
 
 async function loadAssistanceTypes() {
   const res = await axios.get('/example-types.json')
@@ -43,7 +55,10 @@ loadAssistanceTypes().then(() => {
 <template>
   <div class="container">
     <h1><b>Assistenztyp - Auswahl</b></h1>
-    <p>Erstellen Sie einen neuen Assistenztyp, oder wählen Sie einen vorhandenen Assistenztyp aus, um den Editor zu öffnen.</p>
+    <p>
+      Erstellen Sie einen neuen Assistenztyp, oder wählen Sie einen vorhandenen Assistenztyp aus, um den Editor zu
+      öffnen.
+    </p>
     <div class="divider"></div>
     <div>
       <button class="btn btn-primary">
@@ -61,7 +76,11 @@ loadAssistanceTypes().then(() => {
       <div v-if="assistanceTypes?.length === 0">
         <p>Keine Assistenztypen vorhanden.</p>
       </div>
-      <div class="at-container" v-for="at of assistanceTypes" :key="at.id" @click="loadAT(at.id)">
+      <div v-else class="search-container">
+        <font-awesome-icon icon="search" title="Suche nach Assistenztypen" />
+        <input type="text" placeholder="Suche nach Assistenztypen..." v-model="searchTerm" />
+      </div>
+      <div class="at-container" v-for="at of searchedAssistanceTypes" :key="at.id" @click="loadAT(at.id)">
         <p class="at-name">
           {{ at.name }}
         </p>
@@ -112,6 +131,16 @@ loadAssistanceTypes().then(() => {
   height: calc(100% - 140px);
   gap: 5px;
   overflow: auto;
+}
+
+.search-container {
+  width: fit-content;
+  align-self: flex-end;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  padding: 5px 10px;
 }
 
 .at-container {
