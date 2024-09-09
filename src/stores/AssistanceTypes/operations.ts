@@ -10,11 +10,12 @@ export const useOperationStore = defineStore('at/operations', () => {
   const searchTerm = computed(() => _searchTerm.value)
 
   const searchedOperations = computed(() => {
+    const search = _searchTerm.value.toLowerCase().trim()
     return _operations.value.filter((operation) => {
       return (
-        operation.name.toLowerCase().includes(_searchTerm.value.toLowerCase()) ||
-        operation.description.toLowerCase().includes(_searchTerm.value.toLowerCase()) ||
-        operation.id.toLowerCase().includes(_searchTerm.value.toLowerCase())
+        operation.name.toLowerCase().includes(search) ||
+        operation.description.toLowerCase().includes(search) ||
+        operation.id.toLowerCase().includes(search)
       )
     })
   })
