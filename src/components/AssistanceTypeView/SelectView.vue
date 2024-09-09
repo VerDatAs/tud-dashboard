@@ -42,8 +42,8 @@ loadAssistanceTypes().then(() => {
 
 <template>
   <div class="container">
-    <h1>Assistenztypen</h1>
-    <p>Wählen Sie einen Assistenztyp aus, oder erstellen Sie einen neuen Assistenztypen.</p>
+    <h1><b>Assistenztyp - Auswahl</b></h1>
+    <p>Erstellen Sie einen neuen Assistenztyp, oder wählen Sie einen vorhandenen Assistenztyp aus, um den Editor zu öffnen.</p>
     <div class="divider"></div>
     <div>
       <button class="btn btn-primary">
