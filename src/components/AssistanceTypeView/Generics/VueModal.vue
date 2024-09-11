@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { CModalManager, SAddOperationModal, SDefaultModal } from '@/util/AssistanceType/modalHelper'
+import { CModalManager, SDefaultModal } from '@/util/AssistanceType/modalHelper'
 import { inject } from 'vue'
 
 const props = withDefaults(
@@ -17,7 +17,7 @@ const props = withDefaults(
   }
 )
 
-const { hideModal } = inject(SAddOperationModal, () => new CModalManager(), true)
+const { hideModal } = inject(props.symbol, () => new CModalManager(), true)
 
 defineOptions({
   inheritAttrs: false
