@@ -3,19 +3,15 @@ import { useOperationStore } from '@/stores/AssistanceTypes/operations'
 import { useViewportStore } from '@/stores/AssistanceTypes/viewport'
 import type { TOperation } from '@/types/AssistanceType/operation'
 import { SAddOperationModal } from '@/util/AssistanceType/modalHelper'
-import {
-  centerNodeToPointOnCreation,
-  createOperationNode,
-  createOperationNodeId
-} from '@/util/AssistanceType/nodeCreationHandler'
+import { createOperationNode, createOperationNodeId } from '@/util/AssistanceType/nodeCreationHandler'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
-import { useVueFlow } from '@vue-flow/core'
+import { type Dimensions, useVueFlow } from '@vue-flow/core'
 import { onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import OperationRow from '../Generics/OperationRow.vue'
 import VueModal from '../Generics/VueModal.vue'
 const operationStore = useOperationStore()
-const { screenToFlowCoordinate } = useVueFlow(CVueFlowStoreId)
+const { screenToFlowCoordinate, onNodesChange } = useVueFlow(CVueFlowStoreId)
 const vpStore = useViewportStore()
 
 const searchTerm = ref('')
@@ -24,15 +20,29 @@ onMounted(() => {
   operationStore.requestOperations()
 })
 
-function addOperation(operation: TOperation) {
+const addedNodesWithDimensions = ref<{ id: string; dimensions: Dimensions }[]>([])
+
+async function addOperation(operation: TOperation) {
   const nodeId = createOperationNodeId(operation.id)
-  centerNodeToPointOnCreation(nodeId)
-  // const { x, y, zoom } = getViewport()
-  // const position = { x: -x / zoom, y: -y / zoom }
-  const position = screenToFlowCoordinate(vpStore.getCenterPoint())
+  // centerNodeToPointOnCreation(nodeId) // Centers the node in the middle, else the top left of the node is in the center
+  // let position = screenToFlowCoordinate(vpStore.getCenterPoint())
+  let position = screenToFlowCoordinate(vpStore.getPoint(3, 3))
+  position.y += addedNodesWithDimensions.value.reduce((acc, cur) => acc + cur.dimensions.height + 20, 0)
   createOperationNode(nodeId, operation.id, position)
+  addedNodesWithDimensions.value.push({ id: nodeId, dimensions: { height: 0, width: 0 } })
   toast.success(`Operation "${operation.name}" hinzugefügt.`)
 }
+
+onNodesChange((changes) => {
+  for (const change of changes) {
+    if (change.type === 'dimensions') {
+      const node = addedNodesWithDimensions.value.find((n) => n.id === change.id)
+      if (node && change.dimensions) {
+        node.dimensions = change.dimensions
+      }
+    }
+  }
+})
 </script>
 
 <template>

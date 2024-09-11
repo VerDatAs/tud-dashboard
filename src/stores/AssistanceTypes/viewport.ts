@@ -13,15 +13,20 @@ export const useViewportStore = defineStore('at/viewport', () => {
   }
 
   function getCenterPoint() {
-    if (!_flowChartHtmlElement.value) return { x: window.screenX / 2, y: window.screenY / 2 }
+    return getPoint(2, 2)
+  }
+
+  function getPoint(x: number, y: number) {
+    if (!_flowChartHtmlElement.value) return { x: window.screenX / x, y: window.screenY / y }
     const rect = _flowChartHtmlElement.value.getBoundingClientRect()
-    return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 }
+    return { x: rect.x + rect.width / x, y: rect.y + rect.height / y }
   }
 
   return {
     flowChartHtmlElement,
     setFlowChartHtmlElement,
     unsetFlowChartHtmlElement,
-    getCenterPoint
+    getCenterPoint,
+    getPoint
   }
 })
