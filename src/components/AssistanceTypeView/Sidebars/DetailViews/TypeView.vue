@@ -51,10 +51,10 @@ function editVariable(name: string) {
           <option :value="EAssistanceTypeTrigger.PROACTIVE">Proaktiv</option>
         </select>
         <font-awesome-icon class="icon info-icon" icon="circle-info"></font-awesome-icon>
-        <p class="info-text" v-if="EAssistanceTypeTrigger.REACTIVE">
+        <p class="info-text" v-if="atStore.trigger === EAssistanceTypeTrigger.REACTIVE">
           <b>Reaktiv</b> bedeutet, dass der Assistenztyp auf eine bestimmte Aktion eines Nutzers reagiert.
         </p>
-        <p class="info-text" v-else-if="EAssistanceTypeTrigger.PROACTIVE">
+        <p class="info-text" v-else-if="atStore.trigger === EAssistanceTypeTrigger.PROACTIVE">
           <b>Proaktiv</b> bedeutet, dass der Assistenztyp aktiv durch eine Anfrage ausgeführt werden muss.
         </p>
       </div>
@@ -116,6 +116,6 @@ textarea {
   font-size: 1em;
 }
 .info-text {
-  font-size: .8em;
+  font-size: 0.8em;
 }
 </style>
