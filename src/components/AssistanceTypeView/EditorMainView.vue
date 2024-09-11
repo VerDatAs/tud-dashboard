@@ -2,19 +2,28 @@
 import type { TDnD } from '@/types/AssistanceType/dnd'
 import { SDnDKey } from '@/util/AssistanceType/injectionkeys'
 import useDragAndDrop from '@/util/AssistanceType/useDnD'
+import { Pane, Splitpanes } from 'splitpanes'
 import { provide } from 'vue'
 import FlowChart from './FlowChart.vue'
 import DetailsSidebar from './Sidebars/DetailsSidebar.vue'
-import { Splitpanes, Pane } from 'splitpanes'
 
 /*
  *    Drag And Drop
  */
 provide<TDnD>(SDnDKey, useDragAndDrop())
+
+/*
+ *    Remove Preload Class
+ *    preload class is needed to disable transitions before everything has finished loading
+ *      else the center start-element is not working, because both panes start with 50% and we would need to wait the transition time before centering
+ */
+function rmPreloadClass() {
+  document.querySelector('.main')?.classList.remove('preload')
+}
 </script>
 
 <template>
-  <div class="main">
+  <div class="main preload" @load="rmPreloadClass">
     <Splitpanes class="default-theme">
       <!-- <Pane>
         <operations-sidebar class="operations-sidebar" />
@@ -30,6 +39,10 @@ provide<TDnD>(SDnDKey, useDragAndDrop())
 </template>
 
 <style scoped lang="scss">
+.preload * {
+  transition: none !important;
+}
+
 .main {
   display: flex;
   flex-direction: row;
