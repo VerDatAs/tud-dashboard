@@ -57,7 +57,7 @@ function saveAndExitAction() {
 
 <style lang="scss">
 .saveAndExitModal {
-  --modal-height: 40%;
+  --modal-height: 200px;
   background-color: red;
 }
 </style>
