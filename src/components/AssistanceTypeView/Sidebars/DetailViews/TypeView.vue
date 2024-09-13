@@ -62,6 +62,7 @@ function editVariable(name: string) {
     <div>
       <p class="underheading">Eingänge</p>
       <a @click="createVariableView = true">+ Eingang hinzufügen</a>
+      <p class="hint"><font-awesome-icon class="icon" icon="info-circle" /> Eingänge können via Drag and Drop platziert werden.</p>
       <div class="variable-list" v-if="atStore.inputs.length > 0">
         <div
           v-for="input of atStore.inputs"
@@ -116,6 +117,9 @@ textarea {
   font-size: 1em;
 }
 .info-text {
+  font-size: 0.8em;
+}
+.hint {
   font-size: 0.8em;
 }
 </style>
