@@ -23,9 +23,9 @@ function selectNode(node: GraphNode) {
   sidebarStore.setNode(usedNode.id)
 }
 
-const trigger = ref(edge.value.data.trigger.type ?? 'direct')
+const trigger = ref(edge.value.data?.trigger?.type ?? 'direct')
 const { timeNumber: tn, timeUnit: tu } = CMillisecondsUtils.loadMilisecondsToProperValue(
-  edge.value.data.trigger.schedule ?? 1
+  edge.value.data?.trigger?.schedule ?? 1
 )
 const timeNumber = ref(tn)
 const timeUnit = ref(tu)
@@ -34,9 +34,9 @@ watch(
   () => edge.value,
   () => {
     const { timeNumber: tn, timeUnit: tu } = CMillisecondsUtils.loadMilisecondsToProperValue(
-      edge.value.data.trigger.schedule ?? 1
+      edge.value.data?.trigger?.schedule ?? 1
     )
-    trigger.value = edge.value.data.trigger.type ?? 'direct'
+    trigger.value = edge.value.data?.trigger?.type ?? 'direct'
     timeNumber.value = tn
     timeUnit.value = tu
   }
