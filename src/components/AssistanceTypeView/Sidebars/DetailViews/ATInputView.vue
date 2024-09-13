@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
-import { variableTypeToString } from '@/types/AssistanceType/variableTypes'
-import { type GraphNode } from '@vue-flow/core'
+import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar';
+import { variableTypeToString } from '@/types/AssistanceType/variableTypes';
+import { type GraphNode } from '@vue-flow/core';
+import { computed } from 'vue';
 const sidebarStore = useSidebarStore()
 
 const obj = sidebarStore.currentObject as GraphNode
+
+const hasDefault = computed(() => obj.data.variable?.default && obj.data.variable.default != '')
 </script>
 
 <template>
@@ -24,6 +27,8 @@ const obj = sidebarStore.currentObject as GraphNode
         <p>{{ variableTypeToString(obj.data.variable.type) }}</p>
         <p>Erforderlich:</p>
         <p>{{ obj.data.variable.required }}</p>
+        <p v-if="hasDefault">Standard:</p>
+        <p v-if="hasDefault">{{ obj.data.variable.default }}</p>
       </div>
     </div>
   </div>

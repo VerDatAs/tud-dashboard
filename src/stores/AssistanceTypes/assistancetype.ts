@@ -69,7 +69,13 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
   }
 
   /** Create input variable for current assistance type. */
-  function createInputVariable(name: string, description: string, type: TIOTypes, required: boolean = true): boolean {
+  function createInputVariable(
+    name: string,
+    description: string,
+    type: TIOTypes,
+    required: boolean = true,
+    defaultValue: any = ''
+  ): boolean {
     if (getInputVariable(name)) {
       toast.error('Ein Eingang mit diesem Namen existiert bereits.')
       return false
@@ -78,7 +84,8 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
       name: name,
       description: description,
       type: type,
-      required: required
+      required: required,
+      default: defaultValue
     })
     return true
   }
@@ -89,7 +96,8 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     name?: string,
     description?: string,
     type?: TIOTypes,
-    required?: boolean
+    required?: boolean,
+    defaultValue?: any
   ): boolean {
     const { updateNodeData, getEdges, removeEdges } = useVueFlow(CVueFlowStoreId)
 
@@ -109,6 +117,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     input.description = description ?? input.description
     input.type = type ?? input.type
     input.required = required ?? input.required
+    input.default = defaultValue ?? input.default
 
     nodes.forEach((node) => {
       updateNodeData(node.id, {

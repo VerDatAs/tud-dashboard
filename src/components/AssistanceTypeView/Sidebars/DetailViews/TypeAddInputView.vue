@@ -26,6 +26,7 @@ const name = ref(currentVariable.value?.name ?? '')
 const description = ref(currentVariable.value?.description ?? '')
 const type = ref(currentVariable.value?.type ?? supportedVariableTypes[0])
 const required = ref(currentVariable.value?.required ?? true)
+const defaultValue = ref(currentVariable.value?.default ?? '')
 
 function saveInput() {
   if (!supportedVariableTypes.includes(type.value)) {
@@ -33,7 +34,7 @@ function saveInput() {
     return
   }
   if (createMode.value) {
-    const res = atStore.createInputVariable(name.value, description.value, type.value, required.value)
+    const res = atStore.createInputVariable(name.value, description.value, type.value, required.value, defaultValue.value)
     if (!res) return
     backAction()
     toast.success(`Eingang "${name.value}" hinzugefügt.`)
@@ -44,7 +45,8 @@ function saveInput() {
       name.value,
       description.value,
       type.value,
-      required.value
+      required.value,
+      defaultValue.value
     )
     if (!res) return
     backAction()
@@ -80,6 +82,8 @@ function saveInput() {
         </select>
         <p>Erforderlich:</p>
         <input type="checkbox" v-model="required" />
+        <p>Standard:</p>
+        <input type="text" v-model="defaultValue" />
       </div>
       <div class="actions">
         <button class="btn btn-primary" :disabled="name == ''" @click="saveInput">Speichern</button>

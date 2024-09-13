@@ -12,7 +12,8 @@
                 "name": "Nutzer ID",
                 "description": "",
                 "type": "string",
-                "required": true
+                "required": true,
+                "default": "123"
             },
             {
                 "name": "Nutzer Name",
