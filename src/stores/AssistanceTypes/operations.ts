@@ -8,6 +8,9 @@ export const useOperationStore = defineStore('at/operations', () => {
   const _searchTerm = ref<string>('')
   const operations = computed(() => _operations.value)
   const searchTerm = computed(() => _searchTerm.value)
+  const loadOperations = ref<boolean>(false)
+
+  const isLoadingOperations = computed(() => loadOperations.value)
 
   const searchedOperations = computed(() => {
     const search = _searchTerm.value.toLowerCase().trim()
@@ -40,6 +43,7 @@ export const useOperationStore = defineStore('at/operations', () => {
   }
 
   async function requestOperations() {
+    loadOperations.value = true
     return new Promise<AxiosResponse>((resolve, reject) => {
       return axios
         .get('/example-operations.json')
@@ -48,6 +52,9 @@ export const useOperationStore = defineStore('at/operations', () => {
           resolve(response)
         })
         .catch(reject)
+        .finally(() => {
+          loadOperations.value = false
+        })
     })
   }
 
@@ -55,6 +62,7 @@ export const useOperationStore = defineStore('at/operations', () => {
     operations,
     searchTerm,
     searchedOperations,
+    isLoadingOperations,
     getOperationById,
     getVariableById,
     setSearchTerm,

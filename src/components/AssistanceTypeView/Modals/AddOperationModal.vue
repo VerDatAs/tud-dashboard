@@ -8,6 +8,7 @@ import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { type Dimensions, useVueFlow } from '@vue-flow/core'
 import { onMounted, ref } from 'vue'
 import { toast } from 'vue3-toastify'
+import LoadingIndicator from '../Generics/LoadingIndicator.vue'
 import OperationRow from '../Generics/OperationRow.vue'
 import VueModal from '../Generics/VueModal.vue'
 const operationStore = useOperationStore()
@@ -47,7 +48,11 @@ onNodesChange((changes) => {
 
 <template>
   <vue-modal title="Operationen hinzufügen" :symbol="SAddOperationModal">
-    <div class="modal-layout">
+    <div v-if="operationStore.isLoadingOperations" class="loading-indicator">
+      <loading-indicator size="5em" background-color="#ddd" />
+      <p>Lade Operationen...</p>
+    </div>
+    <div v-else class="modal-layout">
       <div class="search">
         <p>Suche</p>
         <input
@@ -73,6 +78,12 @@ onNodesChange((changes) => {
 </template>
 
 <style scoped lang="scss">
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .modal-layout {
   height: calc(100% - 10px);
   display: grid;
