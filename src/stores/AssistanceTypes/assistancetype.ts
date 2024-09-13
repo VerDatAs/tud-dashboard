@@ -12,8 +12,7 @@ import { addControlEdge, addDataEdge } from '@/util/AssistanceType/edgeCreationH
 import {
   createATVariableNode,
   createOperationNode,
-  createVariableNode,
-  getId
+  createVariableNode
 } from '@/util/AssistanceType/nodeCreationHandler'
 import { triggerNodeSizer } from '@/util/AssistanceType/nodeSizeHandler'
 import {
@@ -36,31 +35,45 @@ export enum EAssistanceTypeTrigger {
 }
 
 export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
-  const _id = ref<string | undefined>(undefined)
+  const _id = ref<string>('')
   const name = ref('')
   const description = ref('')
   const trigger = ref<EAssistanceTypeTrigger>(EAssistanceTypeTrigger.PROACTIVE)
   const _inputs = ref<TAssistanceTypeInput[]>([])
 
+  const _alreadySaved = ref(false)
+  const _showAT = ref(false)
+  const _saving = ref(false)
+
   const showVariableTypesOnNodes = ref(true)
 
   const id = computed(() => _id.value)
   const inputs = computed(() => _inputs.value)
+  const showAT = computed(() => _showAT.value)
+  const isSaving = computed(() => _saving.value)
 
   /** Creates new Assistance Type data (init id, default name, default description) */
-  function createAssistanceType() {
-    _id.value = getId()
+  function initEmptyAssistanceType() {
+    _showAT.value = true
+    _id.value = ''
     name.value = 'Unbekannt'
     description.value = ''
     _inputs.value = []
+    _alreadySaved.value = false
   }
 
   /** Clears all AT Data and gets back to the selection menu */
   function unsetAssistanceType() {
-    _id.value = undefined
+    _showAT.value = false
+    _id.value = ''
     name.value = ''
     description.value = ''
     _inputs.value = []
+    _alreadySaved.value = false
+
+    const { removeEdges, getEdges, removeNodes, getNodes } = useVueFlow(CVueFlowStoreId)
+    removeEdges(getEdges.value)
+    removeNodes(getNodes.value)
   }
 
   /** Get input variable for current assistance type. */
@@ -144,9 +157,16 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
   async function saveAssistanceType() {
     const { getNodes, getEdges } = useVueFlow(CVueFlowStoreId)
 
-    if (!_id.value) {
+    if (!_id.value && _alreadySaved.value) {
       return Promise.reject('Aktuell ist kein Assistenztyp ausgewählt.')
     }
+
+    if (_saving.value) {
+      return Promise.reject('Speichern ist bereits im Gange.')
+    }
+
+    _saving.value = true
+
     const operations = getNodes.value.filter((node) => node.type == 'operation').map(serializeOperation)
     const resObj: TAssistanceType = {
       id: _id.value,
@@ -168,6 +188,15 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     }
     console.log(resObj)
     console.log(JSON.stringify(resObj))
+
+    if (_alreadySaved.value) {
+      // Send Update Request
+    } else {
+      // Send Create Request
+    }
+
+    _alreadySaved.value = true
+    _saving.value = false
     return Promise.resolve('Assistenztyp erfolgreich gespeichert.')
   }
 
@@ -183,13 +212,13 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     }
 
     const data = resType.data
+    _showAT.value = true
     _id.value = data.id
     name.value = data.name
     description.value = data.description
     trigger.value = EAssistanceTypeTrigger[data.trigger.type.toUpperCase()]
     _inputs.value = data.inputs.definitions
-
-    await setTimeout(() => {}, 100)
+    _alreadySaved.value = true
 
     for (const operation of data.operations as TOperationNode[]) {
       createOperationNode(
@@ -245,7 +274,9 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     trigger,
     inputs,
     showVariableTypesOnNodes,
-    createAssistanceType,
+    showAT,
+    isSaving,
+    initEmptyAssistanceType,
     unsetAssistanceType,
     getInputVariable,
     createInputVariable,

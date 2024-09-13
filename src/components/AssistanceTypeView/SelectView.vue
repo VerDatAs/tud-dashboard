@@ -43,7 +43,7 @@ function loadAT(id: string) {
 
 function newAssistanceType() {
   loadingEditor.value = true
-  atStore.createAssistanceType()
+  atStore.initEmptyAssistanceType()
   loadingEditor.value = false
 }
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype';
-import EditorView from './AssistanceTypeView/EditorView.vue';
-import SelectView from './AssistanceTypeView/SelectView.vue';
+import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
+import EditorView from './AssistanceTypeView/EditorView.vue'
+import SelectView from './AssistanceTypeView/SelectView.vue'
 
 withDefaults(
   defineProps<{
@@ -18,7 +18,7 @@ const atStore = useAssistanceTypeStore()
 
 <template>
   <div id="assistanceTypesContainer" :class="{ expanded: isExpanded }">
-    <SelectView v-if="atStore.id === undefined"></SelectView>
+    <SelectView v-if="atStore.showAT === false"></SelectView>
     <EditorView v-else @backAction="atStore.unsetAssistanceType()"></EditorView>
   </div>
   <div class="Toastify"></div>

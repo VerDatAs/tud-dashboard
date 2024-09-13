@@ -7,7 +7,7 @@ import { SDnDKey } from '@/util/AssistanceType/injectionkeys'
 import { createStartNode } from '@/util/AssistanceType/nodeCreationHandler'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import useDragAndDrop from '@/util/AssistanceType/useDnD'
-import { VueFlow } from '@vue-flow/core'
+import { useVueFlow, VueFlow } from '@vue-flow/core'
 import { inject, onMounted, onUnmounted } from 'vue'
 import DropzoneBackground from './DropzoneBackground.vue'
 import ControlEdge from './Edges/ControlEdge.vue'
@@ -19,6 +19,7 @@ import DataOutputNode from './Nodes/DataOutputNode.vue'
 import OperationNode from './Nodes/OperationNode.vue'
 import StartNode from './Nodes/StartNode.vue'
 const vpStore = useViewportStore()
+const { fitView } = useVueFlow(CVueFlowStoreId)
 
 /*
  *    Drag And Drop
@@ -34,6 +35,7 @@ useFlowChangeHandler()
 onMounted(() => {
   createStartNode()
   vpStore.setFlowChartHtmlElement(document.getElementsByClassName('flow-chart')[0])
+  fitView()
 })
 onUnmounted(() => {
   vpStore.unsetFlowChartHtmlElement()
