@@ -1,39 +1,13 @@
 <script setup lang="ts">
-import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
-import type { TAssistanceType } from '@/types/AssistanceType/serialization'
-import axios from 'axios'
-import { computed, ref } from 'vue'
-import { baseApiUrl, defaultHeaders } from '@/util/AssistanceType/statics'
-import { toast } from 'vue3-toastify'
-import LoadingIndicator from './Generics/LoadingIndicator.vue'
+import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype';
+import { ref } from 'vue';
+import LoadingIndicator from './Generics/LoadingIndicator.vue';
 const atStore = useAssistanceTypeStore()
 
-const assistanceTypes = ref<TAssistanceType[]>([])
-const loadingAssistanceTypes = ref<boolean>(true)
 const loadingEditor = ref<boolean>(false)
-const searchTerm = ref<string>('')
 
-const searchedAssistanceTypes = computed(() => {
-  const search = searchTerm.value.toLowerCase().trim()
-  return assistanceTypes.value.filter((operation) => {
-    return (
-      operation.name.toLowerCase().includes(search) ||
-      operation.description.toLowerCase().includes(search) ||
-      operation.id.toLowerCase().includes(search)
-    )
-  })
-})
-
-async function loadAssistanceTypes() {
-  axios.get(baseApiUrl, {
-    headers: defaultHeaders,
-  }).then((res) => {
-    assistanceTypes.value = res.data.types
-    return res.data.types
-  }).catch((err) => {
-    toast.error('Fehler beim Laden der Assistenztypen.')
-    return err
-  })
+function loadAssistanceTypes() {
+  atStore.requestAssistanceTypes()
 }
 
 function loadAT(id: string) {
@@ -43,15 +17,19 @@ function loadAT(id: string) {
   })
 }
 
+function deleteAT(id: string, name: string) {
+  if (confirm(`Möchten Sie den Assistenztyp "${name}" wirklich löschen?`)) {
+    atStore.deleteAssistanceType(id)
+  }
+}
+
 function newAssistanceType() {
   loadingEditor.value = true
   atStore.initEmptyAssistanceType()
   loadingEditor.value = false
 }
 
-loadAssistanceTypes().then(() => {
-  loadingAssistanceTypes.value = false
-})
+loadAssistanceTypes()
 </script>
 
 <template>
@@ -69,25 +47,30 @@ loadAssistanceTypes().then(() => {
       </button>
     </div>
     <div class="divider"></div>
-    <div v-if="loadingAssistanceTypes || loadingEditor" class="loading-indicator">
+    <div v-if="atStore.loadingAssistanceTypes || loadingEditor" class="loading-indicator">
       <loading-indicator size="5em" />
-      <p v-if="loadingAssistanceTypes">Assistenztypen werden geladen.</p>
+      <p v-if="atStore.loadingAssistanceTypes">Assistenztypen werden geladen.</p>
       <p v-if="loadingEditor">Editor wird geladen.</p>
     </div>
     <div class="list-types" v-else>
-      <div v-if="assistanceTypes?.length === 0">
+      <div v-if="atStore.assistanceTypes?.length === 0">
         <p>Keine Assistenztypen vorhanden.</p>
       </div>
       <div v-else class="search-container">
         <font-awesome-icon icon="search" title="Suche nach Assistenztypen" />
-        <input type="text" placeholder="Suche nach Assistenztypen..." v-model="searchTerm" />
+        <input type="text" placeholder="Suche nach Assistenztypen..." v-model="atStore.atsSearchTerm" />
       </div>
-      <div class="at-container" v-for="at of searchedAssistanceTypes" :key="at.id" @click="loadAT(at.id)">
-        <p class="at-name">
-          {{ at.name }}
-        </p>
-        <p class="at-id">ID: {{ at.id }}</p>
-        <p class="at-description">{{ at.description }}</p>
+      <div class="at-container" v-for="at of atStore.searchedAssistanceTypes" :key="at.id">
+        <div class="at-texts">
+          <p class="at-name" @click="loadAT(at.id)">
+            {{ at.name }}
+          </p>
+          <p class="at-id" @click="loadAT(at.id)">ID: {{ at.id }}</p>
+          <p class="at-description" @click="loadAT(at.id)">{{ at.description }}</p>
+        </div>
+        <div class="at-actions">
+          <font-awesome-icon class="icon" icon="trash" @click.stop="deleteAT(at.id, at.name)"></font-awesome-icon>
+        </div>
       </div>
     </div>
   </div>
@@ -149,7 +132,28 @@ loadAssistanceTypes().then(() => {
   padding: 5px 15px;
   background-color: #fff;
   border-radius: 5px;
-  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .at-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+
+    .icon {
+      padding: 10px;
+      cursor: pointer;
+    }
+  }
+
+  .at-texts {
+    & > * {
+      width: fit-content;
+      cursor: pointer;
+    }
+  }
 
   .at-name {
     font-weight: bold;

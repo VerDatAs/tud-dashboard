@@ -61,6 +61,9 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     description.value = ''
     _inputs.value = []
     _alreadySaved.value = false
+
+    // Clear atSearchTerm
+    atsSearchTerm.value = ''
   }
 
   /** Clears all AT Data and gets back to the selection menu */
@@ -72,6 +75,10 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     _inputs.value = []
     _alreadySaved.value = false
 
+    // Clear atSearchTerm
+    atsSearchTerm.value = ''
+
+    // Clear Flow
     const { removeEdges, getEdges, removeNodes, getNodes } = useVueFlow(CVueFlowStoreId)
     removeEdges(getEdges.value)
     removeNodes(getNodes.value)
@@ -298,6 +305,61 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     return Promise.resolve('Assistenztyp erfolgreich geladen.')
   }
 
+  async function deleteAssistanceType(id: string) {
+    return axios
+      .delete(baseApiUrl + '/' + id, { headers: defaultHeaders })
+      .then((res) => {
+        toast.success('Assistenztyp erfolgreich gelöscht.')
+        requestAssistanceTypes()
+        return res
+      })
+      .catch((err) => {
+        toast.error('Fehler beim Löschen des Assistenztyps.')
+        console.error(err)
+        return err
+      })
+  }
+
+  /*
+   *    All Assistance Types
+   */
+  const _assistanceTypes = ref<TAssistanceType[]>([])
+  const _loadingAssistanceTypes = ref<boolean>(true)
+  const atsSearchTerm = ref<string>('')
+
+  const assistanceTypes = computed(() => _assistanceTypes.value)
+  const loadingAssistanceTypes = computed(() => _loadingAssistanceTypes.value)
+
+  const searchedAssistanceTypes = computed(() => {
+    const search = atsSearchTerm.value.toLowerCase().trim()
+    return assistanceTypes.value.filter((operation) => {
+      return (
+        operation.name.toLowerCase().includes(search) ||
+        operation.description.toLowerCase().includes(search) ||
+        operation.id.toLowerCase().includes(search)
+      )
+    })
+  })
+
+  async function requestAssistanceTypes() {
+    _loadingAssistanceTypes.value = true
+    return axios
+      .get(baseApiUrl, {
+        headers: defaultHeaders
+      })
+      .then((res) => {
+        _assistanceTypes.value = res.data.types
+        return res.data.types
+      })
+      .catch((err) => {
+        toast.error('Fehler beim Laden der Assistenztypen.')
+        return err
+      })
+      .finally(() => {
+        _loadingAssistanceTypes.value = false
+      })
+  }
+
   return {
     id,
     name,
@@ -315,6 +377,13 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     removeInputVariable,
     getNodesForInputVariable,
     saveAssistanceType,
-    loadAssistanceType
+    loadAssistanceType,
+    deleteAssistanceType,
+    // All Assistance Types
+    assistanceTypes,
+    atsSearchTerm,
+    loadingAssistanceTypes,
+    searchedAssistanceTypes,
+    requestAssistanceTypes
   }
 })
