@@ -3,7 +3,6 @@ import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 import { CModalManager, SAddOperationModal } from '@/util/AssistanceType/modalHelper'
 import { Panel } from '@vue-flow/core'
 import { provide } from 'vue'
-import { toast } from 'vue3-toastify'
 import LoadingIndicator from './Generics/LoadingIndicator.vue'
 import AddOperationModal from './Modals/AddOperationModal.vue'
 const atStore = useAssistanceTypeStore()
@@ -12,14 +11,7 @@ const modalManager = new CModalManager()
 provide(SAddOperationModal, modalManager)
 
 function saveAT() {
-  atStore
-    .saveAssistanceType()
-    .then((res: string) => {
-      toast.success(res)
-    })
-    .catch((err: string) => {
-      toast.error(err)
-    })
+  atStore.saveAssistanceType()
 }
 </script>
 

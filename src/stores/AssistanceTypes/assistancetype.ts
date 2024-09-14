@@ -9,19 +9,20 @@ import type {
 } from '@/types/AssistanceType/serialization'
 import type { TIOTypes } from '@/types/AssistanceType/variableTypes'
 import { addControlEdge, addDataEdge } from '@/util/AssistanceType/edgeCreationHandler'
+import useFlowChangeHandler from '@/util/AssistanceType/flowChangeHandler'
 import {
   createATVariableNode,
   createOperationNode,
+  createStartNode,
   createVariableNode
 } from '@/util/AssistanceType/nodeCreationHandler'
-import { triggerNodeSizer } from '@/util/AssistanceType/nodeSizeHandler'
 import {
   serializeATInputNode,
   serializeControlEdge,
   serializeDataEdge,
   serializeOperation
 } from '@/util/AssistanceType/serialization'
-import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
+import { baseApiUrl, CVueFlowStoreId, defaultHeaders } from '@/util/AssistanceType/statics'
 import { useVueFlow } from '@vue-flow/core'
 import axios from 'axios'
 import { defineStore } from 'pinia'
@@ -186,29 +187,53 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
         data: getEdges.value.filter((edge) => edge.type == 'data').map(serializeDataEdge)
       }
     }
-    console.log(resObj)
-    console.log(JSON.stringify(resObj))
 
     if (_alreadySaved.value) {
       // Send Update Request
+      return axios
+        .put(baseApiUrl + '/' + _id.value, resObj, { headers: defaultHeaders })
+        .then((res) => {
+          toast.success('Assistenztyp erfolgreich aktualisiert.')
+          return res
+        })
+        .catch((err) => {
+          toast.error('Fehler beim Aktualisieren des Assistenztyps.')
+          console.error(err)
+          return err
+        })
+        .finally(() => {
+          _saving.value = false
+        })
     } else {
       // Send Create Request
+      return axios
+        .post(baseApiUrl, resObj, { headers: defaultHeaders })
+        .then((res) => {
+          _alreadySaved.value = true
+          _id.value = res.data.id
+          toast.success('Assistenztyp erfolgreich erstellt.')
+          return res
+        })
+        .catch((err) => {
+          toast.error('Fehler beim Erstellen des Assistenztyps.')
+          console.error(err)
+          return err
+        })
+        .finally(() => {
+          _saving.value = false
+        })
     }
-
-    _alreadySaved.value = true
-    _saving.value = false
-    return Promise.resolve('Assistenztyp erfolgreich gespeichert.')
   }
 
   /** Load the assistance type from json format */
-  async function loadAssistanceType(id: string) {
-    const resType = await axios.get('/example-type.json')
-    if (!resType) return
+  async function loadAssistanceType(id: string): Promise<string> {
+    const resType = await axios.get(baseApiUrl + '/' + id, { headers: defaultHeaders })
+    if (!resType) return Promise.reject('Assistenztyp konnte nicht geladen werden.')
 
     const res = await useOperationStore().requestOperations()
     if (res.status != 200) {
-      console.error('Failed to load operations')
-      return
+      console.error('Failed to load operations', res)
+      return Promise.reject('Fehler beim Laden der Operationen.')
     }
 
     const data = resType.data
@@ -219,6 +244,9 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     trigger.value = EAssistanceTypeTrigger[data.trigger.type.toUpperCase()]
     _inputs.value = data.inputs.definitions
     _alreadySaved.value = true
+
+    useFlowChangeHandler() // So the following changes get applied
+    createStartNode()
 
     for (const operation of data.operations as TOperationNode[]) {
       createOperationNode(
@@ -261,10 +289,13 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
 
     /*
      *  Wait for animations to finish, then resize the nodes
+     *  -> now triggers onMounted FlowChart
      */
-    setTimeout(() => {
-      triggerNodeSizer()
-    }, 500)
+    // setTimeout(() => {
+    // triggerNodeSizer()
+    // }, 250)
+
+    return Promise.resolve('Assistenztyp erfolgreich geladen.')
   }
 
   return {

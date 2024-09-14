@@ -2,7 +2,6 @@
 import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 import { CModalManager, SSaveAndExitModal } from '@/util/AssistanceType/modalHelper'
 import { inject, ref } from 'vue'
-import { toast } from 'vue3-toastify'
 import LoadingIndicator from '../Generics/LoadingIndicator.vue'
 import VueModal from '../Generics/VueModal.vue'
 const atStore = useAssistanceTypeStore()
@@ -22,13 +21,9 @@ function saveAndExitAction() {
 
   atStore
     .saveAssistanceType()
-    .then((res) => {
-      toast.success(res)
+    .then(() => {
       hideModal()
       atStore.unsetAssistanceType()
-    })
-    .catch((err) => {
-      toast.error(err)
     })
     .finally(() => {
       loadingSave.value = false

@@ -3,6 +3,7 @@ import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 import type { TAssistanceType } from '@/types/AssistanceType/serialization'
 import axios from 'axios'
 import { computed, ref } from 'vue'
+import { baseApiUrl, defaultHeaders } from '@/util/AssistanceType/statics'
 import { toast } from 'vue3-toastify'
 import LoadingIndicator from './Generics/LoadingIndicator.vue'
 const atStore = useAssistanceTypeStore()
@@ -24,14 +25,15 @@ const searchedAssistanceTypes = computed(() => {
 })
 
 async function loadAssistanceTypes() {
-  const res = await axios.get('/example-types.json')
-  console.log(res)
-  if (!res || res.status !== 200) {
+  axios.get(baseApiUrl, {
+    headers: defaultHeaders,
+  }).then((res) => {
+    assistanceTypes.value = res.data.types
+    return res.data.types
+  }).catch((err) => {
     toast.error('Fehler beim Laden der Assistenztypen.')
-    return Promise.reject('Error loading assistance types')
-  }
-  assistanceTypes.value = res.data
-  return Promise.resolve(res.data)
+    return err
+  })
 }
 
 function loadAT(id: string) {

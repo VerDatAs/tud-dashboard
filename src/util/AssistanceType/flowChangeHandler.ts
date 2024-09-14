@@ -4,17 +4,16 @@ import { triggerNodeSizer } from './nodeSizeHandler'
 import { CVueFlowStoreId } from './statics'
 
 export default function useFlowChangeHandler() {
-  const { findNode, onNodesChange, onEdgesChange, applyNodeChanges, applyEdgeChanges, onNodesInitialized } =
-    useVueFlow(CVueFlowStoreId)
+  const { findNode, onNodesChange, onEdgesChange, applyNodeChanges, applyEdgeChanges } = useVueFlow(CVueFlowStoreId)
   const sidebarStore = useSidebarStore()
 
   /* Set Sidebar to Assistance Type when currently selected node gets removed */
-  onNodesChange((nodes) => {
-    for (const node of nodes) {
+  onNodesChange((changes) => {
+    for (const change of changes) {
       if (
-        node.type === 'remove' &&
+        change.type === 'remove' &&
         (sidebarStore.currentType === ESidebarType.Node || sidebarStore.currentType === ESidebarType.ATInput) &&
-        sidebarStore.currentId === node.id
+        sidebarStore.currentId === change.id
       ) {
         sidebarStore.setAssistanceType()
       }

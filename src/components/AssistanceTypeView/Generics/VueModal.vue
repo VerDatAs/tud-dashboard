@@ -28,24 +28,26 @@ defineOptions({
   <Teleport to="#verdatas-dashboard">
     <div v-bind="$attrs">
       <div class="background" @click.self="closeOnBackgroundClick ? hideModal() : ''"></div>
-      <div class="at-modal">
-        <slot name="override">
-          <div class="modal-title">
-            <slot name="title">
-              <p>{{ title }}</p>
-            </slot>
-          </div>
-          <div v-if="divider" class="divider"></div>
-          <div class="modal-main">
-            <slot name="default"></slot>
-          </div>
-          <slot name="close-icon">
-            <div class="close-icon" @click="hideModal()">
-              <font-awesome-icon class="icon" icon="xmark" size="lg" title="Schließen"></font-awesome-icon>
+      <slot name="override">
+        <div class="at-modal">
+          <slot name="window">
+            <div class="modal-title">
+              <slot name="title">
+                <p>{{ title }}</p>
+              </slot>
             </div>
+            <div v-if="divider" class="divider"></div>
+            <div class="modal-main">
+              <slot name="default"></slot>
+            </div>
+            <slot name="close-icon">
+              <div class="close-icon" @click="hideModal()">
+                <font-awesome-icon class="icon" icon="xmark" size="lg" title="Schließen"></font-awesome-icon>
+              </div>
+            </slot>
           </slot>
-        </slot>
-      </div>
+        </div>
+      </slot>
     </div>
   </Teleport>
 </template>

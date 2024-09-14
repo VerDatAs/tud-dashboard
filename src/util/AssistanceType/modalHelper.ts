@@ -5,6 +5,7 @@ export const SDefaultModal: Symbol = Symbol('DefaultModal')
 
 export const SAddOperationModal = Symbol('AddOperationModal')
 export const SSaveAndExitModal = Symbol('SaveAndExitModal')
+export const SLoadingModal = Symbol('LoadingModal')
 
 export class CModalManager {
   private showModalRef: Ref<boolean>

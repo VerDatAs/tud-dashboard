@@ -5,14 +5,16 @@ import useEdgeCreationHandler from '@/util/AssistanceType/edgeCreationHandler'
 import useFlowChangeHandler from '@/util/AssistanceType/flowChangeHandler'
 import { SDnDKey } from '@/util/AssistanceType/injectionkeys'
 import { createStartNode } from '@/util/AssistanceType/nodeCreationHandler'
+import { triggerNodeSizer } from '@/util/AssistanceType/nodeSizeHandler'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import useDragAndDrop from '@/util/AssistanceType/useDnD'
 import { useVueFlow, VueFlow } from '@vue-flow/core'
-import { inject, onMounted, onUnmounted } from 'vue'
+import { inject, onMounted, onUnmounted, ref } from 'vue'
 import DropzoneBackground from './DropzoneBackground.vue'
 import ControlEdge from './Edges/ControlEdge.vue'
 import DataEdge from './Edges/DataEdge.vue'
 import FlowPanel from './FlowPanel.vue'
+import LoadingModal from './Modals/LoadingModal.vue'
 import AtInputNode from './Nodes/ATInputNode.vue'
 import DataInputNode from './Nodes/DataInputNode.vue'
 import DataOutputNode from './Nodes/DataOutputNode.vue'
@@ -32,17 +34,27 @@ const { onDragOver, onDragLeave, onDrop, isDragOver } = inject<TDnD>(SDnDKey, ()
 useEdgeCreationHandler()
 useFlowChangeHandler()
 
+const initialLoading = ref(true)
+
 onMounted(() => {
+  initialLoading.value = true
   createStartNode()
   vpStore.setFlowChartHtmlElement(document.getElementsByClassName('flow-chart')[0])
-  fitView()
+  setTimeout(() => {
+    triggerNodeSizer() // When loading an assistance type
+    fitView()
+    initialLoading.value = false
+  }, 250)
 })
 onUnmounted(() => {
   vpStore.unsetFlowChartHtmlElement()
 })
+
+defineOptions({ applyDefault: false })
 </script>
 
 <template>
+  <loading-modal v-if="initialLoading" />
   <vue-flow
     :id="CVueFlowStoreId"
     @dragover="onDragOver"
@@ -54,6 +66,7 @@ onUnmounted(() => {
     fit-view-on-init
     :deleteKeyCode="null"
     :apply-default="false"
+    v-bind="$attrs"
   >
     <dropzone-background
       :style="{
