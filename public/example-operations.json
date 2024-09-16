@@ -1,130 +1,126 @@
 [
     {
         "id": "asd123",
-        "name": "Nachricht senden",
-        "description": "Sendet eine Nachricht an den Benutzer",
+        "name": "Nachricht an Nutzer senden",
+        "description": "Sendet eine Nachricht an einen oder mehrere Benutzer.",
         "inputs": [
             {
-                "name": "message",
-                "type": "string",
-                "description": "Die Nachricht, die gesendet werden soll"
-            },
-            {
-                "name": "user",
-                "type": "string",
-                "description": "Der Benutzer, an den die Nachricht gesendet werden soll"
-            },
-            {
-                "name": "channel",
-                "type": "string",
-                "description": "Der Kanal, über den die Nachricht gesendet werden soll. Auswahl zwischen 'chat' und 'email'."
-            },
-            {
-                "name": "priority",
-                "type": "integer",
-                "description": "Die Priorität der Nachricht. Auswahl zwischen 'low', 'medium' und 'high'."
-            },
-            {
-                "name": "attachments",
+                "name": "NutzerID-Liste",
                 "type": "array",
-                "description": "Anhänge, die der Nachricht hinzugefügt werden sollen"
+                "description": "Eine Liste aller Nutzer, an die diese Nachricht gesendet werden soll.",
+                "required": true
             },
             {
-                "name": "cc",
-                "type": "array",
-                "description": "Benutzer, die in CC gesetzt werden sollen"
+                "name": "Nachricht",
+                "type": "string",
+                "description": "Die zu sendende Nachricht.",
+                "required": true
             }
         ],
         "outputs": [
             {
-                "name": "success",
+                "name": "Erfolgreich",
                 "type": "boolean",
-                "description": "Gibt an, ob die Nachricht erfolgreich gesendet wurde"
+                "description": "Gibt an, ob die Nachricht erfolgreich gesendet wurde."
+            }
+        ]
+    },
+    {
+        "id": "qwe123",
+        "name": "Test nicht bestanden",
+        "description": "Diese Operation überprüft, ob ein Nutzer einen Test nicht bestanden hat. Die nach dieser Operation folgende Operation wird nur ausgeführt, wenn dies der Fall ist.",
+        "inputs": [
+            {
+                "name": "NutzerID",
+                "type": "string",
+                "description": "Die ID des Nutzers, dessen Testergebnis überprüft werden soll.",
+                "required": true
+            },
+            {
+                "name": "ObjektID",
+                "type": "string",
+                "description": "Die ID des Tests, dessen Ergebnis überprüft werden soll.",
+                "required": true
+            }
+        ],
+        "outputs": []
+    },
+    {
+        "id": "asd456",
+        "name": "Feedback oder Kolaboration auswählen",
+        "description": "Diese Operation sendet dem Nutzer eine Nachricht, in der er auswählen kann, ob er ein Feedback oder die Kolaboration mit einem anderen Nutzer wünscht.",
+        "inputs": [
+            {
+                "name": "NutzerID",
+                "type": "string",
+                "description": "Die ID des Nutzers, an den die Anfrage gesendet wird.",
+                "required": true
+            }
+        ],
+        "outputs": [
+            {
+                "name": "Kollaboration",
+                "type": "boolean",
+                "description": "Ist wahr, wenn der Nutzer die Kolaboration wünscht."
+            },
+            {
+                "name": "Feedback",
+                "type": "boolean",
+                "description": "Ist wahr, wenn der Nutzer ein Feedback wünscht."
             }
         ]
     },
     {
         "id": "qwe456",
-        "name": "Benutzerdaten abrufen",
-        "description": "Ruft die Daten eines Benutzers ab",
+        "name": "Feedback senden",
+        "description": "Sendet dem Nutzer ein Feedback.",
         "inputs": [
             {
-                "name": "user",
-                "type": "string",
-                "description": "Der Benutzer, dessen Daten abgerufen werden sollen"
-            }
-        ],
-        "outputs": [
-            {
-                "name": "name",
-                "type": "string",
-                "description": "Der Name des Benutzers"
-            },
-            {
-                "name": "email",
-                "type": "string",
-                "description": "Die E-Mail-Adresse des Benutzers"
-            }
-        ]
-    },
-    {
-        "id": "zxc789",
-        "name": "Benutzerdaten aktualisieren",
-        "description": "Aktualisiert die Daten eines Benutzers",
-        "inputs": [
-            {
-                "name": "user",
-                "type": "string",
-                "description": "Der Benutzer, dessen Daten aktualisiert werden sollen"
-            },
-            {
-                "name": "name",
-                "type": "string",
-                "description": "Der neue Name des Benutzers"
-            },
-            {
-                "name": "email",
-                "type": "string",
-                "description": "Die neue E-Mail-Adresse des Benutzers"
-            }
-        ],
-        "outputs": [
-            {
-                "name": "success",
+                "name": "Ausführen",
                 "type": "boolean",
-                "description": "Gibt an, ob die Daten erfolgreich aktualisiert wurden"
+                "description": "Gibt an, ob diese Operation ausgeführt werden soll.",
+                "required": false
+            },
+            {
+                "name": "NutzerID",
+                "type": "string",
+                "description": "Die ID des Nutzers, an den das Feedback gesendet wird.",
+                "required": true
+            },
+            {
+                "name": "Feedback",
+                "type": "string",
+                "description": "Das Feedback, das gesendet wird.",
+                "required": true
             }
+        ],
+        "outputs": [
         ]
     },
     {
-        "id": "rty012",
-        "name": "Benutzerdaten löschen langer Titel",
-        "description": "Löscht die Daten eines Benutzers",
+        "id": "rtz321",
+        "name": "Kolaboration initiieren",
+        "description": "Diese Operation sucht nach einem anderen Nutzer um eine Kolaboration zu starten. Wenn ein Nutzer gefunden wurde, wird die ID des Nutzers zurückgegeben und die nächste Operation ausgeführt.",
         "inputs": [
             {
-                "name": "user",
+                "name": "Ausführen",
+                "type": "boolean",
+                "description": "Gibt an, ob diese Operation ausgeführt werden soll.",
+                "required": false
+            },
+            {
+                "name": "NutzerID",
                 "type": "string",
-                "description": "Der Benutzer, dessen Daten gelöscht werden sollen"
+                "description": "Die ID des Nutzers, der die Kolaboration starten möchte.",
+                "required": true
             }
         ],
         "outputs": [
             {
-                "name": "success",
-                "type": "boolean",
-                "description": "Gibt an, ob die Daten erfolgreich gelöscht wurden"
+                "name": "NutzerID",
+                "type": "string",
+                "description": "Die ID des Nutzers, mit dem die Kolaboration gestartet werden kann."
             }
         ]
-    },
-    {
-        "id": "12eda2",
-        "name": "Sinnlose Operation die aktuell gar nichts macht",
-        "description": "",
-        "inputs": []
-    },
-    {
-        "id": "1221de",
-        "name": "E-Mail senden",
-        "description": "Sendet eine E-Mail an den Benutzer",
-        "inputs": []
     }
 ]
