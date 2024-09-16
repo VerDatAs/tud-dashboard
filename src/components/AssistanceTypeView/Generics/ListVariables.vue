@@ -11,7 +11,11 @@ defineProps<{
 <template>
   <div>
     <div v-for="v of variableArray" :key="v.name" :value="v.name">
-      <variable-row :variable="v" :type="type"></variable-row>
+      <variable-row
+        :variable="v"
+        :type="type"
+        :show-add-remove-icon="type === 'output' || !(v.required === true)"
+      ></variable-row>
     </div>
   </div>
 </template>

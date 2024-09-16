@@ -4,6 +4,7 @@ export type TIOVariable = {
   name: string
   type: TIOTypes
   description: string
+  required?: boolean
 }
 
 export type TInput = TIOVariable

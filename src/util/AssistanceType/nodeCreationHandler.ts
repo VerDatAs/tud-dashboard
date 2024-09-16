@@ -124,8 +124,12 @@ export function createOperationNode(
     newNode['width'] = dimensions.width
     newNode['height'] = dimensions.height
   }
-
   addNodes(newNode)
+
+  for (const input of operation.inputs) {
+    if (input.required === true) createVariableNode(nodeId, input, 'input')
+  }
+  // Outputs currently do not use the required option, cuz no output is ever required
 }
 
 export function createStartNode() {
