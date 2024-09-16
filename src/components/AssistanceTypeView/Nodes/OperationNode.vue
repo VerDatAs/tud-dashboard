@@ -23,13 +23,13 @@ watch(
 </script>
 
 <template>
-  <div :class="{ 'my-custom-currently-selected': nodeSelected }">
+  <div :class="{ 'my-custom-currently-selected': nodeSelected }" :title="props.data.operation.description">
     <!-- <NodeResizer :min-width="300" :min-height="50" /> -->
     <Handle type="target" class="controll" :position="Position.Top"></Handle>
     <Handle type="source" class="controll" :position="Position.Bottom"></Handle>
     <div ref="nodeContent" class="node-content">
       <p class="title">{{ props.data.label }}</p>
-      <p class="description">{{ props.data.operation.description }}</p>
+      <!-- <p class="description">{{ props.data.operation.description }}</p> -->
     </div>
   </div>
 </template>
