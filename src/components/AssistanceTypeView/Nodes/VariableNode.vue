@@ -18,6 +18,6 @@ const atStore = useAssistanceTypeStore()
 
 <style scoped lang="scss">
 .node-content {
-  font-size: 0.8em;
+  font-size: 0.7em;
 }
 </style>
