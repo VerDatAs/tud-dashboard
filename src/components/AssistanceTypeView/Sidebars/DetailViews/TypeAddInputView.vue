@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
-import { supportedVariableTypes, variableTypeToString } from '@/types/AssistanceType/variableTypes'
+import { supportedVariableTypes, type TIOType, variableTypeToString } from '@/types/AssistanceType/variableTypes'
 import { computed, ref } from 'vue'
 import { toast } from 'vue3-toastify'
+import AtInputDefaultValueInput from '../../Generics/ATInputDefaultValueInput.vue'
 const atStore = useAssistanceTypeStore()
 
 const props = defineProps<{
@@ -26,7 +27,7 @@ const name = ref(currentVariable.value?.name ?? '')
 const description = ref(currentVariable.value?.description ?? '')
 const type = ref(currentVariable.value?.type ?? supportedVariableTypes[0])
 const required = ref(currentVariable.value?.required ?? true)
-const defaultValue = ref(currentVariable.value?.default ?? '')
+const defaultValue = ref<TIOType>(currentVariable.value?.default ?? '')
 
 function saveInput() {
   if (!supportedVariableTypes.includes(type.value)) {
@@ -34,7 +35,13 @@ function saveInput() {
     return
   }
   if (createMode.value) {
-    const res = atStore.createInputVariable(name.value, description.value, type.value, required.value, defaultValue.value)
+    const res = atStore.createInputVariable(
+      name.value,
+      description.value,
+      type.value,
+      required.value,
+      defaultValue.value
+    )
     if (!res) return
     backAction()
     toast.success(`Eingang "${name.value}" hinzugefügt.`)
@@ -82,8 +89,13 @@ function saveInput() {
         </select>
         <p>Erforderlich:</p>
         <input type="checkbox" v-model="required" />
-        <p>Standard:</p>
-        <input type="text" v-model="defaultValue" />
+        <p v-if="!required">Standard:</p>
+        <at-input-default-value-input
+          v-if="!required"
+          :atType="type"
+          :value="defaultValue"
+          @update:value="defaultValue = $event"
+        ></at-input-default-value-input>
       </div>
       <div class="actions">
         <button class="btn btn-primary" :disabled="name == ''" @click="saveInput">Speichern</button>

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar';
-import { variableTypeToString } from '@/types/AssistanceType/variableTypes';
-import { type GraphNode } from '@vue-flow/core';
-import { computed } from 'vue';
+import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
+import { variableTypeToString } from '@/types/AssistanceType/variableTypes'
+import { type GraphNode } from '@vue-flow/core'
+import { computed } from 'vue'
+import AtInputDefaultValueInput from '../../Generics/ATInputDefaultValueInput.vue'
 const sidebarStore = useSidebarStore()
 
-const obj = sidebarStore.currentObject as GraphNode
+const obj = computed(() => sidebarStore.currentObject as GraphNode)
 
-const hasDefault = computed(() => obj.data.variable?.default && obj.data.variable.default != '')
+const isRequired = computed(() => obj.value.data.variable.required)
 </script>
 
 <template>
@@ -26,9 +27,15 @@ const hasDefault = computed(() => obj.data.variable?.default && obj.data.variabl
         <p>Typ:</p>
         <p>{{ variableTypeToString(obj.data.variable.type) }}</p>
         <p>Erforderlich:</p>
-        <p>{{ obj.data.variable.required }}</p>
-        <p v-if="hasDefault">Standard:</p>
-        <p v-if="hasDefault">{{ obj.data.variable.default }}</p>
+        <input type="checkbox" v-model="obj.data.variable.required" disabled />
+        <p v-if="!isRequired">Standard:</p>
+        <at-input-default-value-input
+          v-if="!isRequired"
+          :value="obj.data.variable.default"
+          @update:value="obj.data.variable.default = $event"
+          :at-type="obj.data.variable.type"
+          readonly
+        ></at-input-default-value-input>
       </div>
     </div>
   </div>
