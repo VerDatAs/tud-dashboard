@@ -11,8 +11,8 @@ const { findNode, updateEdgeData } = useVueFlow(CVueFlowStoreId)
 
 const edge = computed((): GraphEdge => sidebarStore.currentObject as GraphEdge)
 
-const isControl = computed(() => edge.value.type === 'control')
-const isData = computed(() => edge.value.type === 'data')
+const isControl = computed(() => edge.value?.type === 'control')
+const isData = computed(() => edge.value?.type === 'data')
 
 function selectNode(node: GraphNode) {
   let usedNode = node
@@ -23,9 +23,9 @@ function selectNode(node: GraphNode) {
   sidebarStore.setNode(usedNode.id)
 }
 
-const trigger = ref(edge.value.data?.trigger?.type ?? 'direct')
+const trigger = ref(edge.value?.data?.trigger?.type ?? 'direct')
 const { timeNumber: tn, timeUnit: tu } = CMillisecondsUtils.loadMilisecondsToProperValue(
-  edge.value.data?.trigger?.schedule ?? 1
+  edge.value?.data?.trigger?.schedule ?? 1
 )
 const timeNumber = ref(tn)
 const timeUnit = ref(tu)
@@ -34,9 +34,9 @@ watch(
   () => edge.value,
   () => {
     const { timeNumber: tn, timeUnit: tu } = CMillisecondsUtils.loadMilisecondsToProperValue(
-      edge.value.data?.trigger?.schedule ?? 1
+      edge.value?.data?.trigger?.schedule ?? 1
     )
-    trigger.value = edge.value.data?.trigger?.type ?? 'direct'
+    trigger.value = edge.value?.data?.trigger?.type ?? 'direct'
     timeNumber.value = tn
     timeUnit.value = tu
   }
@@ -46,13 +46,13 @@ watchArray(
   [trigger, timeNumber, timeUnit],
   () => {
     if (isControl.value) {
-      updateEdgeData(edge.value.id, {
+      updateEdgeData(edge.value?.id, {
         trigger: {
           type: trigger.value,
           schedule: timeNumber.value * timeUnit.value
         }
       })
-      setLabelForControlEdge(edge.value.id)
+      setLabelForControlEdge(edge.value?.id)
 
       // This is all just for the redraw, else the background of the label is not getting updated properly to a new text-size
       // We move the target node 1 pixel right and after 1 tick back to the original position

@@ -28,7 +28,7 @@ onMounted(() => {
 <template>
   <div id="assistanceTypesContainer" :class="{ expanded: isExpanded }">
     <SelectView v-if="atStore.showAT === false"></SelectView>
-    <EditorView v-else @backAction="atStore.unsetAssistanceType()"></EditorView>
+    <EditorView v-else></EditorView>
   </div>
   <div class="Toastify"></div>
 </template>
