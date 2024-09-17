@@ -3,6 +3,7 @@ import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 import { ref } from 'vue'
 import AssistanceTypeContainer from './Generics/AssistanceTypeContainer.vue'
 import LoadingIndicator from './Generics/LoadingIndicator.vue'
+import ToggleFullscreenIcon from './Generics/ToggleFullscreenIcon.vue'
 const atStore = useAssistanceTypeStore()
 
 const loadingEditor = ref<boolean>(false)
@@ -22,7 +23,12 @@ loadAssistanceTypes()
 
 <template>
   <div class="container">
-    <h1><b>Assistenztyp - Auswahl</b></h1>
+    <div class="heading">
+      <h1><b>Assistenztyp - Auswahl</b></h1>
+      <div class="actions">
+        <toggle-fullscreen-icon />
+      </div>
+    </div>
     <p>
       Erstellen Sie einen neuen Assistenztyp, oder wählen Sie einen vorhandenen Assistenztyp aus, um den Editor zu
       öffnen.
@@ -64,6 +70,13 @@ loadAssistanceTypes()
   margin-top: var(--offset);
   width: 100%;
   height: calc(100% - var(--offset));
+
+  .heading {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
 .loading-indicator {

@@ -3,13 +3,14 @@ import { useViewportStore } from '@/stores/AssistanceTypes/viewport'
 import type { TDnD } from '@/types/AssistanceType/dnd'
 import useEdgeCreationHandler from '@/util/AssistanceType/edgeCreationHandler'
 import useFlowChangeHandler from '@/util/AssistanceType/flowChangeHandler'
-import { SDnDKey } from '@/util/AssistanceType/injectionkeys'
+import { CFullscreenHelper } from '@/util/AssistanceType/fullscreenHelper'
+import { SDnDKey, SFullscreenMode } from '@/util/AssistanceType/injectionkeys'
 import { createStartNode } from '@/util/AssistanceType/nodeCreationHandler'
 import { triggerNodeSizer } from '@/util/AssistanceType/nodeSizeHandler'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import useDragAndDrop from '@/util/AssistanceType/useDnD'
 import { useVueFlow, VueFlow } from '@vue-flow/core'
-import { inject, onMounted, onUnmounted, ref } from 'vue'
+import { inject, onMounted, onUnmounted, ref, watch } from 'vue'
 import DropzoneBackground from './DropzoneBackground.vue'
 import ControlEdge from './Edges/ControlEdge.vue'
 import DataEdge from './Edges/DataEdge.vue'
@@ -27,6 +28,18 @@ const { fitView } = useVueFlow(CVueFlowStoreId)
  *    Drag And Drop
  */
 const { onDragOver, onDragLeave, onDrop, isDragOver } = inject<TDnD>(SDnDKey, () => useDragAndDrop(), true)
+
+/*
+ *    Fullscreen
+ */
+const { isFullscreen } = inject(SFullscreenMode, () => new CFullscreenHelper(), true)
+watch(isFullscreen, () => {
+  initialLoading.value = true
+  setTimeout(() => {
+    fitView()
+    initialLoading.value = false
+  }, 250)
+})
 
 /*
  *    Vue Flow

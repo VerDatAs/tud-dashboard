@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
+import { CFullscreenHelper } from '@/util/AssistanceType/fullscreenHelper'
+import { SFullscreenMode } from '@/util/AssistanceType/injectionkeys'
+import { onMounted, provide } from 'vue'
 import EditorView from './AssistanceTypeView/EditorView.vue'
 import SelectView from './AssistanceTypeView/SelectView.vue'
 
@@ -14,6 +17,12 @@ withDefaults(
 )
 
 const atStore = useAssistanceTypeStore()
+
+const fullscreenHelper = new CFullscreenHelper()
+provide(SFullscreenMode, fullscreenHelper)
+onMounted(() => {
+  fullscreenHelper.updateDashboardElement()
+})
 </script>
 
 <template>

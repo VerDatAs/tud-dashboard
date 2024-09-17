@@ -3,9 +3,11 @@ import type { TDnD } from '@/types/AssistanceType/dnd'
 import { SDnDKey } from '@/util/AssistanceType/injectionkeys'
 import useDragAndDrop from '@/util/AssistanceType/useDnD'
 import { Pane, Splitpanes } from 'splitpanes'
-import { provide } from 'vue'
+import { provide, ref } from 'vue'
 import FlowChart from './FlowChart.vue'
 import DetailsSidebar from './Sidebars/DetailsSidebar.vue'
+
+const sidebarSize = ref(30)
 
 /*
  *    Drag And Drop
@@ -24,14 +26,14 @@ function rmPreloadClass() {
 
 <template>
   <div class="main preload" @load="rmPreloadClass">
-    <Splitpanes class="default-theme">
+    <Splitpanes class="default-theme" :dbl-click-splitter="false">
       <!-- <Pane>
         <operations-sidebar class="operations-sidebar" />
       </Pane> -->
       <Pane>
         <flow-chart class="flow-chart" />
       </Pane>
-      <Pane class="details-sidebar-pane" size="30">
+      <Pane class="details-sidebar-pane" :size="sidebarSize">
         <details-sidebar class="details-sidebar" />
       </Pane>
     </Splitpanes>

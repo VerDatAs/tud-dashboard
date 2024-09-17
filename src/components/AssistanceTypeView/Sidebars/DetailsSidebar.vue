@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import { ESidebarType, useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
+import { CFullscreenHelper } from '@/util/AssistanceType/fullscreenHelper'
 import { SFullscreenMode } from '@/util/AssistanceType/injectionkeys'
 import { CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { getChildrenFromParentId } from '@/util/AssistanceType/vueFlowHelper'
 import { type GraphNode, useVueFlow } from '@vue-flow/core'
-import { computed, inject, ref } from 'vue'
+import { computed, inject } from 'vue'
 import AtInputView from './DetailViews/ATInputView.vue'
 import EdgeView from './DetailViews/EdgeView.vue'
 import NodeView from './DetailViews/NodeView.vue'
 import TypeView from './DetailViews/TypeView.vue'
 
-const isFullscreen = inject(SFullscreenMode, () => ref(false), true)
+const { isFullscreen } = inject(SFullscreenMode, () => new CFullscreenHelper(), true)
 
 const { onNodeClick, onEdgeClick, onPaneClick, removeNodes, removeEdges } = useVueFlow(CVueFlowStoreId)
 const sidebarStore = useSidebarStore()
@@ -87,7 +88,7 @@ function removeObject() {
   // overflow: auto;
 
   &.fullscreen {
-    width: 400px;
+    // width: 400px;
   }
   &.sidebar {
     gap: 0px;
