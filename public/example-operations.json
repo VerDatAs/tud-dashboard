@@ -47,8 +47,8 @@
     },
     {
         "id": "asd456",
-        "name": "Feedback oder Kolaboration auswählen",
-        "description": "Diese Operation sendet dem Nutzer eine Nachricht, in der er auswählen kann, ob er ein Feedback oder die Kolaboration mit einem anderen Nutzer wünscht.",
+        "name": "Feedback oder Kollaboration auswählen",
+        "description": "Diese Operation sendet dem Nutzer eine Nachricht, in der er auswählen kann, ob er ein Feedback oder die Kollaboration mit einem anderen Nutzer wünscht.",
         "inputs": [
             {
                 "name": "NutzerID",
@@ -61,7 +61,7 @@
             {
                 "name": "Kollaboration",
                 "type": "boolean",
-                "description": "Ist wahr, wenn der Nutzer die Kolaboration wünscht."
+                "description": "Ist wahr, wenn der Nutzer die Kollaboration wünscht."
             },
             {
                 "name": "Feedback",
@@ -99,8 +99,8 @@
     },
     {
         "id": "rtz321",
-        "name": "Kolaboration initiieren",
-        "description": "Diese Operation sucht nach einem anderen Nutzer um eine Kolaboration zu starten. Wenn ein Nutzer gefunden wurde, wird die ID des Nutzers zurückgegeben und die nächste Operation ausgeführt.",
+        "name": "Kollaboration initiieren",
+        "description": "Diese Operation sucht nach einem anderen Nutzer um eine Kollaboration zu starten. Wenn ein Nutzer gefunden wurde, wird die ID des Nutzers zurückgegeben und die nächste Operation ausgeführt.",
         "inputs": [
             {
                 "name": "Ausführen",
@@ -111,7 +111,7 @@
             {
                 "name": "NutzerID",
                 "type": "string",
-                "description": "Die ID des Nutzers, der die Kolaboration starten möchte.",
+                "description": "Die ID des Nutzers, der die Kollaboration starten möchte.",
                 "required": true
             }
         ],
@@ -119,7 +119,7 @@
             {
                 "name": "NutzerID",
                 "type": "string",
-                "description": "Die ID des Nutzers, mit dem die Kolaboration gestartet werden kann."
+                "description": "Die ID des Nutzers, mit dem die Kollaboration gestartet werden kann."
             }
         ]
     }
