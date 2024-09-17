@@ -73,4 +73,7 @@ export type TAssistanceType = {
     control: TControlEdge[]
     data: TDataEdge[]
   }
+  startNode?: {
+    flowContext?: TFlowContext
+  }
 }

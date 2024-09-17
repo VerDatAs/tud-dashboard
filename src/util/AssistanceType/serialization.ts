@@ -39,6 +39,12 @@ export function serializeFlowContext(node: GraphNode): TFlowContext {
   }
 }
 
+export function serializeStartNode(node: GraphNode): { flowContext: TFlowContext } {
+  return {
+    flowContext: serializeFlowContext(node)
+  }
+}
+
 export function serializeOperation(node: GraphNode): TOperationNode {
   const { getNodes } = useVueFlow(CVueFlowStoreId)
   let children: TIONode[] = []

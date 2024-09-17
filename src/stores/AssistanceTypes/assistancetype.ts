@@ -20,7 +20,8 @@ import {
   serializeATInputNode,
   serializeControlEdge,
   serializeDataEdge,
-  serializeOperation
+  serializeOperation,
+  serializeStartNode
 } from '@/util/AssistanceType/serialization'
 import { baseApiUrl, CVueFlowStoreId, defaultHeaders } from '@/util/AssistanceType/statics'
 import { useVueFlow } from '@vue-flow/core'
@@ -163,7 +164,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
 
   /** Save the current assistance type to json format */
   async function saveAssistanceType() {
-    const { getNodes, getEdges } = useVueFlow(CVueFlowStoreId)
+    const { getNodes, getEdges, findNode } = useVueFlow(CVueFlowStoreId)
 
     if (!_id.value && _alreadySaved.value) {
       return Promise.reject('Aktuell ist kein Assistenztyp ausgewählt.')
@@ -171,6 +172,12 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
 
     if (_saving.value) {
       return Promise.reject('Speichern ist bereits im Gange.')
+    }
+
+    const startNode = findNode('start-node')
+    if (!startNode) {
+      toast.error('Es muss ein Startknoten vorhanden sein.')
+      return Promise.reject('Es muss ein Startknoten vorhanden sein.')
     }
 
     _saving.value = true
@@ -192,7 +199,8 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
       connectors: {
         control: getEdges.value.filter((edge) => edge.type == 'control').map(serializeControlEdge),
         data: getEdges.value.filter((edge) => edge.type == 'data').map(serializeDataEdge)
-      }
+      },
+      startNode: serializeStartNode(startNode)
     }
 
     if (_alreadySaved.value) {
@@ -243,7 +251,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
       return Promise.reject('Fehler beim Laden der Operationen.')
     }
 
-    const data = resType.data
+    const data: TAssistanceType = resType.data
     _showAT.value = true
     _id.value = data.id
     name.value = data.name
@@ -253,7 +261,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     _alreadySaved.value = true
 
     useFlowChangeHandler() // So the following changes get applied
-    createStartNode()
+    createStartNode({ position: data?.startNode?.flowContext?.position ?? undefined })
 
     for (const operation of data.operations as TOperationNode[]) {
       createOperationNode(
