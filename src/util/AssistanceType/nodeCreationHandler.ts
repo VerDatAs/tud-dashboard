@@ -140,7 +140,7 @@ export function createStartNode() {
     type: 'start',
     position: { x: 0, y: 0 },
     deletable: false,
-    draggable: false,
+    draggable: true,
     data: {
       label: 'Start'
     }
