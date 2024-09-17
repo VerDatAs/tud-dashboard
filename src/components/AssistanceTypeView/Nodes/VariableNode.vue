@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAssistanceTypeStore } from '@/stores/AssistanceTypes/assistancetype'
 import { variableTypeToString } from '@/types/AssistanceType/variableTypes'
-import { type NodeProps } from '@vue-flow/core'
+import type { NodeProps } from '@vue-flow/core'
 
 const props = defineProps<NodeProps>()
 const atStore = useAssistanceTypeStore()

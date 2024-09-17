@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
 import { variableTypeToString } from '@/types/AssistanceType/variableTypes'
-import { type GraphNode } from '@vue-flow/core'
+import type { GraphNode } from '@vue-flow/core'
 import { computed } from 'vue'
 import AtInputDefaultValueInput from '../../Generics/ATInputDefaultValueInput.vue'
 const sidebarStore = useSidebarStore()

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useSidebarStore } from '@/stores/AssistanceTypes/sidebar'
-import { type TOperation } from '@/types/AssistanceType/operation'
+import type { TOperation } from '@/types/AssistanceType/operation'
 import { computed, ref } from 'vue'
 import ListVariables from '../../Generics/ListVariables.vue'
 const sidebarStore = useSidebarStore()

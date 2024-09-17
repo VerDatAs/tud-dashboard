@@ -1,4 +1,4 @@
-import { type Ref } from 'vue'
+import type { Ref } from 'vue'
 import type { TAssistanceTypeInput, TOperation } from './operation'
 
 export type TDnDDraggedObjects = TOperation | TAssistanceTypeInput
