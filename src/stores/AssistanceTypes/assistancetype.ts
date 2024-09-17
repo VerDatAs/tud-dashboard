@@ -320,6 +320,24 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
       })
   }
 
+  async function duplicateAssistanceType(id: string) {
+    const resType = await axios.get(baseApiUrl + '/' + id, { headers: defaultHeaders })
+    if (!resType) return Promise.reject('Assistenztyp konnte nicht geladen werden.')
+
+    return axios
+      .post(baseApiUrl, resType.data, { headers: defaultHeaders })
+      .then((res) => {
+        toast.success('Assistenztyp erfolgreich dupliziert.')
+        requestAssistanceTypes()
+        return res
+      })
+      .catch((err) => {
+        toast.error('Fehler beim Duplizieren des Assistenztyps.')
+        console.error(err)
+        return err
+      })
+  }
+
   /*
    *    All Assistance Types
    */
@@ -330,7 +348,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
   const assistanceTypes = computed(() => _assistanceTypes.value)
   const loadingAssistanceTypes = computed(() => _loadingAssistanceTypes.value)
 
-  const searchedAssistanceTypes = computed(() => {
+  const searchedAssistanceTypes = computed<TAssistanceType[]>(() => {
     const search = atsSearchTerm.value.toLowerCase().trim()
     return assistanceTypes.value.filter((operation) => {
       return (
@@ -379,6 +397,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     saveAssistanceType,
     loadAssistanceType,
     deleteAssistanceType,
+    duplicateAssistanceType,
     // All Assistance Types
     assistanceTypes,
     atsSearchTerm,
