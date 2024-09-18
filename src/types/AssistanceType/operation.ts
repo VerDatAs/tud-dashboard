@@ -15,7 +15,7 @@ export type TOutput = TIOVariable
  * If updated
  * also update the class CDnDState in src/util/AssistanceType/useDnD.ts
  */
-export type TAssistanceTypeInput = TIOVariable & { required: boolean; default?: string }
+export type TAssistanceTypeInput = TIOVariable & { required: boolean; default?: string | number | boolean }
 
 /*
  * If updated

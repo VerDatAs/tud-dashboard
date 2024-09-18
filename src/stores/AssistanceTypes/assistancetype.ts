@@ -192,7 +192,10 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
         definition: {}
       },
       inputs: {
-        definitions: _inputs.value,
+        definitions: _inputs.value.map((input) => {
+          input.default = input.default?.toString()
+          return input
+        }),
         nodes: getNodes.value.filter((node) => node.type == 'at-input').map(serializeATInputNode)
       },
       operations: operations,
@@ -257,7 +260,25 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     name.value = data.name
     description.value = data.description
     trigger.value = EAssistanceTypeTrigger[data.trigger.type.toUpperCase()]
-    _inputs.value = data.inputs.definitions
+    _inputs.value = data.inputs.definitions.map((input) => {
+      if (input.default && typeof input.default == 'string') {
+        switch (input.type) {
+          case 'string':
+            input.default = input.default.toString()
+            break
+          case 'number':
+            input.default = parseFloat(input.default)
+            break
+          case 'integer':
+            input.default = parseInt(input.default)
+            break
+          case 'boolean':
+            input.default = input.default == 'true'
+            break
+        }
+      }
+      return input
+    })
     _alreadySaved.value = true
 
     useFlowChangeHandler() // So the following changes get applied
