@@ -51,7 +51,7 @@ export default {
 <template>
   <aside :class="`${isExpanded ? 'is-expanded' : ''}`">
     <div class="menu">
-      <div class="tab active" @click="setCurrentView($event, 'knowledgeStructure')" title="Wissensstruktur">
+      <!-- <div class="tab active" @click="setCurrentView($event, 'knowledgeStructure')" title="Wissensstruktur">
         <font-awesome-icon class="icon" icon="sitemap" />
         <span class="text">Wissensstruktur</span>
       </div>
@@ -74,8 +74,8 @@ export default {
       <div class="tab" @click="setCurrentView($event, 'settings')" title="Einstellungen">
         <font-awesome-icon class="icon" icon="gear" />
         <span class="text">Einstellungen</span>
-      </div>
-      <div class="tab" @click="setCurrentView($event, 'assistanceType')" title="Assistenztypen">
+      </div> -->
+      <div class="tab active" @click="setCurrentView($event, 'assistanceType')" title="Assistenztypen">
         <font-awesome-icon class="icon" icon="bars-staggered" />
         <span class="text">Assistenztypen</span>
       </div>
