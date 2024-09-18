@@ -22,7 +22,7 @@ import DataOutputNode from './Nodes/DataOutputNode.vue'
 import OperationNode from './Nodes/OperationNode.vue'
 import StartNode from './Nodes/StartNode.vue'
 const vpStore = useViewportStore()
-const { fitView } = useVueFlow(CVueFlowStoreId)
+const { fitView, findNode } = useVueFlow(CVueFlowStoreId)
 
 /*
  *    Drag And Drop
@@ -51,7 +51,9 @@ const initialLoading = ref(true)
 
 onMounted(() => {
   initialLoading.value = true
-  createStartNode()
+  if (findNode('start-node') === undefined) {
+    createStartNode()
+  }
   vpStore.setFlowChartHtmlElement(document.getElementsByClassName('flow-chart')[0])
   setTimeout(() => {
     triggerNodeSizer() // When loading an assistance type
