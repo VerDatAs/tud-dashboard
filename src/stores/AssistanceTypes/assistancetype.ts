@@ -23,13 +23,14 @@ import {
   serializeOperation,
   serializeStartNode
 } from '@/util/AssistanceType/serialization'
-import { baseApiUrl, CVueFlowStoreId, defaultHeaders } from '@/util/AssistanceType/statics'
+import { baseApiUrl, CVueFlowStoreId } from '@/util/AssistanceType/statics'
 import { useVueFlow } from '@vue-flow/core'
 import axios from 'axios'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { toast } from 'vue3-toastify'
 import { useOperationStore } from './operations'
+import { useDashboardDataStore } from '@/stores/dashboardData'
 
 export enum EAssistanceTypeTrigger {
   PROACTIVE = 'proactive',
@@ -209,7 +210,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     if (_alreadySaved.value) {
       // Send Update Request
       return axios
-        .put(baseApiUrl + '/' + _id.value, resObj, { headers: defaultHeaders })
+        .put(baseApiUrl + '/' + _id.value, resObj, { headers: { Authorization: 'Bearer ' + useDashboardDataStore().data.token } })
         .then((res) => {
           toast.success('Assistenztyp erfolgreich aktualisiert.')
           return res
@@ -225,7 +226,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     } else {
       // Send Create Request
       return axios
-        .post(baseApiUrl, resObj, { headers: defaultHeaders })
+        .post(baseApiUrl, resObj, { headers: { Authorization: 'Bearer ' + useDashboardDataStore().data.token } })
         .then((res) => {
           _alreadySaved.value = true
           _id.value = res.data.id
@@ -245,7 +246,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
 
   /** Load the assistance type from json format */
   async function loadAssistanceType(id: string): Promise<string> {
-    const resType = await axios.get(baseApiUrl + '/' + id, { headers: defaultHeaders })
+    const resType = await axios.get(baseApiUrl + '/' + id, { headers: { Authorization: 'Bearer ' + useDashboardDataStore().data.token } })
     if (!resType) return Promise.reject('Assistenztyp konnte nicht geladen werden.')
 
     const res = await useOperationStore().requestOperations()
@@ -336,7 +337,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
 
   async function deleteAssistanceType(id: string) {
     return axios
-      .delete(baseApiUrl + '/' + id, { headers: defaultHeaders })
+      .delete(baseApiUrl + '/' + id, { headers: { Authorization: 'Bearer ' + useDashboardDataStore().data.token } })
       .then((res) => {
         toast.success('Assistenztyp erfolgreich gelöscht.')
         requestAssistanceTypes()
@@ -350,11 +351,11 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
   }
 
   async function duplicateAssistanceType(id: string) {
-    const resType = await axios.get(baseApiUrl + '/' + id, { headers: defaultHeaders })
+    const resType = await axios.get(baseApiUrl + '/' + id, { headers: { Authorization: 'Bearer ' + useDashboardDataStore().data.token } })
     if (!resType) return Promise.reject('Assistenztyp konnte nicht geladen werden.')
 
     return axios
-      .post(baseApiUrl, resType.data, { headers: defaultHeaders })
+      .post(baseApiUrl, resType.data, { headers: { Authorization: 'Bearer ' + useDashboardDataStore().data.token } })
       .then((res) => {
         toast.success('Assistenztyp erfolgreich dupliziert.')
         requestAssistanceTypes()
@@ -392,7 +393,7 @@ export const useAssistanceTypeStore = defineStore('at/assistancetype', () => {
     _loadingAssistanceTypes.value = true
     return axios
       .get(baseApiUrl, {
-        headers: defaultHeaders
+        headers: { Authorization: 'Bearer ' + useDashboardDataStore().data.token }
       })
       .then((res) => {
         _assistanceTypes.value = res.data.types

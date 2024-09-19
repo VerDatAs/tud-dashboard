@@ -16,14 +16,14 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <script>
-import CollaborationMonitoring from '@/components/CollaborationMonitoring.vue'
-import KnowledgeGraph from '@/components/KnowledgeGraph/KnowledgeGraph.vue'
+// import CollaborationMonitoring from '@/components/CollaborationMonitoring.vue'
+// import KnowledgeGraph from '@/components/KnowledgeGraph/KnowledgeGraph.vue'
 import LoadingScreen from '@/components/LoadingScreen.vue'
 import NavigationView from '@/components/NavigationView.vue'
 import PreviewContainer from '@/components/PreviewContainer.vue'
-import QueryView from '@/components/Query/QueryView.vue'
+// import QueryView from '@/components/Query/QueryView.vue'
 import Settings from '@/components/SettingsView.vue'
-import StatementSimulation from '@/components/StatementSimulation.vue'
+// import StatementSimulation from '@/components/StatementSimulation.vue'
 // import StatementVisualization from '@/components/StatementVisualization.vue'
 import { useAdministrationStore } from '@/stores/administration'
 import { useDashboardDataStore } from '@/stores/dashboardData'
@@ -33,14 +33,14 @@ import AssistanceTypeView from './components/AssistanceTypeView.vue'
 export default {
   name: 'VerDatAsDashboard',
   components: {
-    CollaborationMonitoring,
-    KnowledgeGraph,
+    // CollaborationMonitoring,
+    // KnowledgeGraph,
     LoadingScreen,
     NavigationView,
     PreviewContainer,
-    QueryView,
+    // QueryView,
     Settings,
-    StatementSimulation,
+    // StatementSimulation,
     // StatementVisualization,
     AssistanceTypeView
   },
@@ -49,7 +49,7 @@ export default {
       administrationStore: useAdministrationStore(),
       dashboardDataStore: useDashboardDataStore(),
       diagram: null,
-      diagramLoaded: false,
+      diagramLoaded: true,
       currentView: 'assistanceType',
       isExpanded: ref(localStorage.getItem('is_expanded') === 'true'),
       courseNode: {},
@@ -172,41 +172,41 @@ export default {
       @setCurrentView="setCurrentView"
       @toggleNavigationExpanded="toggleNavigationExpanded"
     />
-    <KnowledgeGraph
-      ref="knowledgeGraph"
-      v-show="currentView === 'knowledgeStructure'"
-      :backendUrl="backendUrl"
-      :canViewOnly="canViewOnly"
-      :courseNode="courseNode"
-      :currentView="currentView"
-      :diagram="diagram"
-      :diagramLoaded="diagramLoaded"
-      :isExpanded="isExpanded"
-      :members="members"
-      :pseudoId="pseudoId"
-      :token="token"
-      @loadedDiagram="changeDiagramLoaded"
-      @setCurrentView="setCurrentView"
-      @setDiagram="setDiagram"
-    />
-    <CollaborationMonitoring
-      :adminToken="adminToken"
-      :backendUrl="backendUrl"
-      :isExpanded="isExpanded"
-      v-if="adminTokenAvailable && currentView === 'collaborationMonitoring'"
-    />
-    <QueryView
-      :backendUrl="backendUrl"
-      :isExpanded="isExpanded"
-      :token="token"
-      v-if="adminTokenAvailable && currentView === 'query'"
-    />
-    <StatementSimulation
-      :adminToken="adminToken"
-      :backendUrl="backendUrl"
-      :isExpanded="isExpanded"
-      v-if="adminTokenAvailable && currentView === 'statementSimulation'"
-    />
+<!--    <KnowledgeGraph-->
+<!--      ref="knowledgeGraph"-->
+<!--      v-show="currentView === 'knowledgeStructure'"-->
+<!--      :backendUrl="backendUrl"-->
+<!--      :canViewOnly="canViewOnly"-->
+<!--      :courseNode="courseNode"-->
+<!--      :currentView="currentView"-->
+<!--      :diagram="diagram"-->
+<!--      :diagramLoaded="diagramLoaded"-->
+<!--      :isExpanded="isExpanded"-->
+<!--      :members="members"-->
+<!--      :pseudoId="pseudoId"-->
+<!--      :token="token"-->
+<!--      @loadedDiagram="changeDiagramLoaded"-->
+<!--      @setCurrentView="setCurrentView"-->
+<!--      @setDiagram="setDiagram"-->
+<!--    />-->
+<!--    <CollaborationMonitoring-->
+<!--      :adminToken="adminToken"-->
+<!--      :backendUrl="backendUrl"-->
+<!--      :isExpanded="isExpanded"-->
+<!--      v-if="adminTokenAvailable && currentView === 'collaborationMonitoring'"-->
+<!--    />-->
+<!--    <QueryView-->
+<!--      :backendUrl="backendUrl"-->
+<!--      :isExpanded="isExpanded"-->
+<!--      :token="token"-->
+<!--      v-if="adminTokenAvailable && currentView === 'query'"-->
+<!--    />-->
+<!--    <StatementSimulation-->
+<!--      :adminToken="adminToken"-->
+<!--      :backendUrl="backendUrl"-->
+<!--      :isExpanded="isExpanded"-->
+<!--      v-if="adminTokenAvailable && currentView === 'statementSimulation'"-->
+<!--    />-->
 <!--    <StatementVisualization-->
 <!--      :adminToken="adminToken"-->
 <!--      :backendUrl="backendUrl"-->

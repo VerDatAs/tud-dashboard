@@ -163,17 +163,33 @@ function initDashboard(initDashboardData: DashboardData) {
 }
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL
-const pseudoId = import.meta.env.VITE_PSEUDO_ID
-const authUrl = backendUrl + '/api/v1/auth/login'
+const localStorageKey: string = 'evaluation_pseudoId';
+const pseudoId: string = localStorage.getItem(localStorageKey) ?? makeId(9)
+const authUrl: string = backendUrl + '/api/v1/auth/login'
 const request = {
-  actorAccountName: pseudoId
+  actorAccountName: pseudoId,
+  password: 'evaluation'
 }
 axios.post(authUrl, request).then((data: any) => {
   const token = data.data?.token
-  const dashboardData = new DashboardData(localNode, token, backendUrl)
+  const dashboardData: DashboardData = new DashboardData(localNode, token, backendUrl)
   dashboardData.previewMode = import.meta.env.VITE_PREVIEW_MODE === 'true'
   dashboardData.canViewOnly = import.meta.env.VITE_CAN_VIEW_ONLY === 'true'
   dashboardData.pseudoId = pseudoId
+  localStorage.setItem(localStorageKey, pseudoId)
   dashboardData.path = ''
   initDashboard(dashboardData)
 })
+
+// retrieved from https://stackoverflow.com/a/1349426
+function makeId(length: number) {
+  let result: string = '';
+  const characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength: number = characters.length;
+  let counter: number = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+}
