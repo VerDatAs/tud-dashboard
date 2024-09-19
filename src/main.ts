@@ -17,7 +17,7 @@
  */
 
 import { useDashboardDataStore } from '@/stores/dashboardData'
-import type { DashboardData } from '@/types/dashboard-data'
+import { DashboardData } from '@/types/dashboard-data'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
   faAnglesRight,
@@ -116,13 +116,12 @@ library.add(
 
 import { createI18n } from 'vue-i18n'
 import './assets/main.scss'
-
-function isDevelopmentBuild(): boolean {
-  return import.meta.env.MODE != 'production'
-}
+import('./assets/local-dev.scss')
 
 /* Toast Notifications */
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify'
+import axios from 'axios';
+import { localNode } from '@/util/InitialEvent';
 
 /**
  * Initialize the dashboard with the provided data.
@@ -163,45 +162,18 @@ function initDashboard(initDashboardData: DashboardData) {
   }, 1000)
 }
 
-if (isDevelopmentBuild()) {
-  // Conditional imports: https://stackoverflow.com/a/67059286
-  const axios = (await import('axios')).default
-  const localNode = (await import('@/util/InitialEvent')).localNode
-  import('./assets/local-dev.scss')
-  const DashboardData = (await import('@/types/dashboard-data')).DashboardData
-
-  const backendUrl = import.meta.env.VITE_BACKEND_URL
-  const pseudoId = import.meta.env.VITE_PSEUDO_ID
-  const authUrl = backendUrl + '/api/v1/auth/login'
-  const request = {
-    actorAccountName: pseudoId
-  }
-  axios.post(authUrl, request).then((data: any) => {
-    const token = data.data?.token
-    const dashboardData = new DashboardData(localNode, token, backendUrl)
-    dashboardData.previewMode = import.meta.env.VITE_PREVIEW_MODE === 'true'
-    dashboardData.canViewOnly = import.meta.env.VITE_CAN_VIEW_ONLY === 'true'
-    dashboardData.pseudoId = pseudoId
-    dashboardData.path = ''
-    initDashboard(dashboardData)
-  })
+const backendUrl = import.meta.env.VITE_BACKEND_URL
+const pseudoId = import.meta.env.VITE_PSEUDO_ID
+const authUrl = backendUrl + '/api/v1/auth/login'
+const request = {
+  actorAccountName: pseudoId
 }
-
-/**
- * Init function that is called from an external system (e.g., ILIAS).
- *
- * @param initDashboardData
- */
-export function init(initDashboardData: DashboardData) {
-  initDashboard(initDashboardData)
-}
-
-/**
- * Helper function to re-initialize the app with the existing dashboardData.
- */
-export function reInit() {
-  if (useDashboardDataStore().reInitNecessary) {
-    const dashboardData = useDashboardDataStore().data
-    initDashboard(dashboardData)
-  }
-}
+axios.post(authUrl, request).then((data: any) => {
+  const token = data.data?.token
+  const dashboardData = new DashboardData(localNode, token, backendUrl)
+  dashboardData.previewMode = import.meta.env.VITE_PREVIEW_MODE === 'true'
+  dashboardData.canViewOnly = import.meta.env.VITE_CAN_VIEW_ONLY === 'true'
+  dashboardData.pseudoId = pseudoId
+  dashboardData.path = ''
+  initDashboard(dashboardData)
+})

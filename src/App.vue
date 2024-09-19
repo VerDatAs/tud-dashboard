@@ -24,7 +24,7 @@ import PreviewContainer from '@/components/PreviewContainer.vue'
 import QueryView from '@/components/Query/QueryView.vue'
 import Settings from '@/components/SettingsView.vue'
 import StatementSimulation from '@/components/StatementSimulation.vue'
-import StatementVisualization from '@/components/StatementVisualization.vue'
+// import StatementVisualization from '@/components/StatementVisualization.vue'
 import { useAdministrationStore } from '@/stores/administration'
 import { useDashboardDataStore } from '@/stores/dashboardData'
 import { ref } from 'vue'
@@ -41,7 +41,7 @@ export default {
     QueryView,
     Settings,
     StatementSimulation,
-    StatementVisualization,
+    // StatementVisualization,
     AssistanceTypeView
   },
   data() {
@@ -207,13 +207,13 @@ export default {
       :isExpanded="isExpanded"
       v-if="adminTokenAvailable && currentView === 'statementSimulation'"
     />
-    <StatementVisualization
-      :adminToken="adminToken"
-      :backendUrl="backendUrl"
-      :isExpanded="isExpanded"
-      :pseudoId="pseudoId"
-      v-show="adminTokenAvailable && currentView === 'statementVisualization'"
-    />
+<!--    <StatementVisualization-->
+<!--      :adminToken="adminToken"-->
+<!--      :backendUrl="backendUrl"-->
+<!--      :isExpanded="isExpanded"-->
+<!--      :pseudoId="pseudoId"-->
+<!--      v-show="adminTokenAvailable && currentView === 'statementVisualization'"-->
+<!--    />-->
     <Settings
       :adminTokenAvailable="adminTokenAvailable"
       :backendUrl="backendUrl"

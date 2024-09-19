@@ -47,11 +47,7 @@ export default defineConfig({
   ],
   assetsInclude: ['**/*.xml'],
   build: {
-    lib: {
-      entry: fileURLToPath(new URL('./src/main.ts', import.meta.url)),
-      name: 'VerDatAsDashboard',
-      formats: ['umd']
-    },
+    outDir: './dist/evaluation-assistance-type-editor/',
     rollupOptions: {
       // Avoid having varying names with hashes: https://github.com/vitejs/vite/issues/378#issuecomment-768816653
       output: {
@@ -73,8 +69,5 @@ export default defineConfig({
   define: {
     'process.env.NODE_ENV': JSON.stringify('production')
   },
-  // Define a custom name for the .html file and serve it: https://stackoverflow.com/a/71359021
-  server: {
-    open: '/index.html'
-  }
+  base: '/evaluation-assistance-type-editor/'
 })
