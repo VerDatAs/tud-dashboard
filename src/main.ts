@@ -116,7 +116,6 @@ library.add(
 
 import { createI18n } from 'vue-i18n'
 import './assets/main.scss'
-import('./assets/local-dev.scss')
 
 /* Toast Notifications */
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify'
